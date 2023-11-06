@@ -1,0 +1,7 @@
+{
+  "item.testmod.example_item": "Example item",
+  "item.testmod.syringe": "Syringe",
+  "item.testmod.latex_syringe": "Latex syringe",
+  "block.testmod.example_block": "Example block",
+  "itemGroup.testmod.example_tab": "Item tab"
+}
