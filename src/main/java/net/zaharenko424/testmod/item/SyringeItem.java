@@ -18,6 +18,7 @@ public class SyringeItem extends AbstractSyringe {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
         if(!TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
+        pPlayer.displayClientMessage(Component.literal("isTransfurred=true"),true);
         return super.use(pLevel,pPlayer,pUsedHand);
     }
 

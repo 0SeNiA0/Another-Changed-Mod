@@ -1,6 +1,5 @@
 package net.zaharenko424.testmod.item;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,14 +15,15 @@ public class LatexSyringeItem extends AbstractSyringe{
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel , @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
         if(TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
+        //pPlayer.displayClientMessage(Component.literal("isTransfurred=false"),true);
         return super.use(pLevel, pPlayer, pUsedHand);
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
-        ((Player)pLivingEntity).displayClientMessage(Component.literal("Imagine, that you are transfurred."),true);
+        if(!pLevel.isClientSide) TransfurManager.addTransfurProgress((Player) pLivingEntity,5,"white_latex");
         return super.finishUsingItem(pStack, pLevel, pLivingEntity);
     }
 }
