@@ -16,7 +16,7 @@ public class Transfur {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
                 Commands.literal("transfur")
-                        .requires(source->source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(source->source.hasPermission(Commands.LEVEL_ADMINS))
                         .then(
                                 Commands.argument("transfurType", ComponentArgument.textComponent())
                                         .executes(

@@ -14,7 +14,7 @@ public class UnTransfur {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
                 Commands.literal("untransfur")
-                        .requires(source-> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(source-> source.hasPermission(Commands.LEVEL_ADMINS))
                         .executes(command->command.getSource().isPlayer()?execute(command.getSource().getPlayer()):0)
                         .then(
                                 Commands.argument("target", EntityArgument.player())
