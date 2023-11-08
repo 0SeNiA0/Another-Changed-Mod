@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    " II",
+    " GI",
+    "I  "
+  ],
+  "key":
+  {
+    "I":
+    {
+      "tag": "forge:nuggets/iron"
+    },
+    "G":
+    {
+      "item": "forge:glass_panes"
+    }
+  },
+  "result":
+  {
+    "item": "testmod:syringe",
+    "count": 8
+  }
+}
