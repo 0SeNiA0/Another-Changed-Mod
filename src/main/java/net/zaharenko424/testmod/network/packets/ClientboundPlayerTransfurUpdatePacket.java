@@ -43,6 +43,7 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
         //ClientPacketHandler.handlePlayerTransfurUpdate(transfurProgress,transfurType,context);
         TransfurHolder holder=(TransfurHolder) Minecraft.getInstance().player;
         if(holder==null) return;
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("Transfur progress is "+transfurProgress));
         if(!isTransfurred) {
             if (holder.mod$isTransfurred()) {
                 holder.mod$unTransfur();
@@ -50,6 +51,5 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
             return;
         }
         holder.mod$transfur(transfurType);
-        Minecraft.getInstance().player.sendSystemMessage(Component.literal("Transfur progress is "+transfurProgress));
     }
 }
