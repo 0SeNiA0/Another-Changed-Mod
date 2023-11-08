@@ -3,7 +3,6 @@ package net.zaharenko424.testmod.mixins;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.entity.TransfurHolder;
@@ -33,7 +32,6 @@ public abstract class MixinLocalPlayer extends Player implements TransfurHolder 
     public void mod$setTransfurProgress(int amount, @NotNull String transfurType) {
         mod$transfurProgress =amount;
         this.mod$transfurType =transfurType;
-        sendSystemMessage(Component.literal("Transfur progress is "+amount));
     }
 
     @Override
