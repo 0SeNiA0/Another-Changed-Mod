@@ -32,7 +32,8 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
-        if(!pLevel.isClientSide) TransfurManager.addTransfurProgress(player, 5, "white_latex");
+        if(pLevel.isClientSide) return ItemStack.EMPTY;
+        TransfurManager.addTransfurProgress(player, 5, "white_latex");
         ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
         if(pStack.getCount()==1){
             return syringe;
@@ -48,7 +49,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     public void appendHoverText(@NotNull ItemStack p_41421_, @Nullable Level p_41422_, @NotNull List<Component> p_41423_, @NotNull TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         CompoundTag tag=p_41421_.getTag();
-        if(TransfurManager.hasModTag(tag)&&tag.contains(TRANSFUR_TYPE_KEY)){
+        if(TransfurManager.hasModTag(tag)){
             p_41423_.add(Component.literal(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY)));
         }
     }

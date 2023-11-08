@@ -27,9 +27,11 @@ public class SyringeItem extends AbstractSyringe {
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
+        if(player.getCommandSenderWorld().isClientSide) return pStack;
         ItemStack syringe=new ItemStack(TestMod.LATEX_SYRINGE_ITEM.get());
-        if(!syringe.hasTag()) syringe.setTag(new CompoundTag());
-        TransfurManager.modTag(syringe.getTag()).putString(TRANSFUR_TYPE_KEY,TransfurManager.getTransfurType(player));
+        CompoundTag tag=syringe.hasTag()?syringe.getTag():new CompoundTag();
+        TransfurManager.modTag(tag).putString(TRANSFUR_TYPE_KEY,TransfurManager.getTransfurType(player));
+        syringe.setTag(tag);
         if(pStack.getCount()==1){
             return syringe;
         }
