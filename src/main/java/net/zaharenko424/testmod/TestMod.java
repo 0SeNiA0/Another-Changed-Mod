@@ -70,7 +70,7 @@ public class TestMod {
             .icon(() -> SYRINGE_ITEM.get().getDefaultInstance())
             .title(Component.translatable("itemGroup.testmod.example_tab"))
             .displayItems((parameters, output) -> {
-            output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
+            output.accept(EXAMPLE_ITEM.get());
             output.accept(SYRINGE_ITEM.get());
             output.accept(LATEX_SYRINGE_ITEM.get());
 
