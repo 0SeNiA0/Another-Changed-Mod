@@ -1,7 +1,9 @@
 package net.zaharenko424.testmod;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
@@ -22,11 +24,14 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegistryObject;
+import net.zaharenko424.testmod.commands.Transfur;
+import net.zaharenko424.testmod.commands.UnTransfur;
 import net.zaharenko424.testmod.item.LatexSyringeItem;
 import net.zaharenko424.testmod.item.SyringeItem;
 import net.zaharenko424.testmod.network.PacketHandler;
@@ -110,12 +115,12 @@ public class TestMod {
         PacketHandler.init();
     }
 
-    /*// Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
-            event.accept(EXAMPLE_BLOCK_ITEM);
-    }*/
+    @SubscribeEvent
+    public void onRegisterCommands(@NotNull RegisterCommandsEvent event){
+        CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();
+        Transfur.register(dispatcher);
+        UnTransfur.register(dispatcher);
+    }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
