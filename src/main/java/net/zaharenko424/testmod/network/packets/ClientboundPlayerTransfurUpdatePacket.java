@@ -3,6 +3,7 @@ package net.zaharenko424.testmod.network.packets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.testmod.entity.TransfurHolder;
@@ -27,7 +28,6 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
         transfurProgress = tag.getInt(TRANSFUR_PROGRESS_KEY);
         transfurType = tag.getString(TRANSFUR_TYPE_KEY);
         isTransfurred = tag.getBoolean(TRANSFURRED_KEY);
-        System.out.println("packet received!");
     }
 
     public void encode(@NotNull FriendlyByteBuf buffer){
@@ -41,7 +41,6 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
     @Override
     public void handleMainThread(NetworkEvent.Context context) {
         //ClientPacketHandler.handlePlayerTransfurUpdate(transfurProgress,transfurType,context);
-        System.out.println("packet is being handled!");
         TransfurHolder holder=(TransfurHolder) Minecraft.getInstance().player;
         if(holder==null) return;
         if(!isTransfurred) {
@@ -51,5 +50,6 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
             return;
         }
         holder.mod$transfur(transfurType);
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("Transfur progress is "+transfurProgress));
     }
 }
