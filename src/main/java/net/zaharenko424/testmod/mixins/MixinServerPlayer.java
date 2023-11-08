@@ -6,9 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.testmod.TransfurHolder;
+import net.zaharenko424.testmod.entity.TransfurHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 import static net.zaharenko424.testmod.TransfurManager.*;
@@ -32,9 +31,9 @@ public abstract class MixinServerPlayer extends Player implements TransfurHolder
     }
 
     @Override
-    public @Nullable String mod$getTransfurType() {
+    public @NotNull String mod$getTransfurType() {
         CompoundTag tag=getPersistentData();
-        if(!tag.contains(TRANSFUR_TYPE_KEY)) return null;
+        if(!tag.contains(TRANSFUR_TYPE_KEY)) return "ERR";
         return getPersistentData().getString(TRANSFUR_TYPE_KEY);
     }
 
