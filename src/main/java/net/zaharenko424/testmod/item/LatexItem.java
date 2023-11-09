@@ -20,12 +20,12 @@ public class LatexItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
+        Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
-            Player player= (Player) p_41411_;
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
             TransfurManager.addTransfurProgress(player,10,transfurType);
         }
-        p_41409_.shrink(1);
+        if(!player.getAbilities().instabuild) p_41409_.shrink(1);
         return p_41409_;
     }
 }
