@@ -15,6 +15,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.entity.ai.LatexAttackGoal;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLatexBeast extends Monster {

@@ -1,10 +1,11 @@
-package net.zaharenko424.testmod.entity;
+package net.zaharenko424.testmod.entity.ai;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.entity.AbstractLatexBeast;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexAttackGoal extends MeleeAttackGoal {

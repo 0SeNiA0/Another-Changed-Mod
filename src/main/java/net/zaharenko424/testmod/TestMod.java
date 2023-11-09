@@ -9,10 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -22,6 +19,7 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -71,6 +69,9 @@ public class TestMod {
     //Entities
     public static final RegistryObject<EntityType<TestEntity>> TEST_ENTITY = ENTITIES.register("test_entity",()-> EntityType.Builder.of(TestEntity::new, MobCategory.CREATURE).build(new ResourceLocation(MODID,"test_entity").toString()));
 
+    //Spawn eggs
+    public static final RegistryObject<DeferredSpawnEggItem> TEST_SPAWN_EGG = ITEMS.register("test_spawn_egg", ()-> new DeferredSpawnEggItem(TEST_ENTITY,0x6d81a1,0x22302f,new Item.Properties()));
+
     //Creative tabs
     public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .icon(() -> SYRINGE_ITEM.get().getDefaultInstance())
@@ -85,6 +86,8 @@ public class TestMod {
 
             output.accept(WHITE_LATEX_BLOCK_ITEM.get());
             output.accept(DARK_LATEX_BLOCK_ITEM.get());
+
+            output.accept(TEST_SPAWN_EGG.get());
             }).build());
 
     public TestMod() {
