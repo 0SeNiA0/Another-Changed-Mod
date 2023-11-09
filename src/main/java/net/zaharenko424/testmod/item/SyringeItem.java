@@ -32,13 +32,6 @@ public class SyringeItem extends AbstractSyringe {
         CompoundTag tag=syringe.hasTag()?syringe.getTag():new CompoundTag();
         TransfurManager.modTag(tag).putString(TRANSFUR_TYPE_KEY,TransfurManager.getTransfurType(player));
         syringe.setTag(tag);
-        if(pStack.getCount()==1){
-            return syringe;
-        }
-        pStack.shrink(1);
-        if(player.getInventory().getFreeSlot()!=-1){
-            player.addItem(syringe);
-        } else player.drop(syringe,true);
-        return pStack;
+        return onUse(pStack,syringe,player);
     }
 }

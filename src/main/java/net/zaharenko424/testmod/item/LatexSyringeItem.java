@@ -35,14 +35,7 @@ public class LatexSyringeItem extends AbstractSyringe{
         if(pLevel.isClientSide) return ItemStack.EMPTY;
         TransfurManager.addTransfurProgress(player, 5, "white_latex");
         ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
-        if(pStack.getCount()==1){
-            return syringe;
-        }
-        pStack.shrink(1);
-        if(player.getInventory().getFreeSlot()!=-1){
-            player.addItem(syringe);
-        } else player.drop(syringe,true);
-        return ItemStack.EMPTY;
+        return onUse(pStack,syringe,player);
     }
 
     @Override
