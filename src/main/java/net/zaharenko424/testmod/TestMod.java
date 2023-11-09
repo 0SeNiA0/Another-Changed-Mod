@@ -33,6 +33,7 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegistryObject;
 import net.zaharenko424.testmod.commands.Transfur;
 import net.zaharenko424.testmod.commands.UnTransfur;
+import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.item.LatexSyringeItem;
 import net.zaharenko424.testmod.item.OrangeJuiceItem;
 import net.zaharenko424.testmod.item.SyringeItem;
@@ -60,6 +61,8 @@ public class TestMod {
     //Items
     public static final RegistryObject<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final RegistryObject<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
+    public static final RegistryObject<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(new Item.Properties(),"white_latex"));
+    public static final RegistryObject<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(new Item.Properties(),"dark_latex"));
     public static final RegistryObject<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", ()-> new SyringeItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", ()-> new LatexSyringeItem(new Item.Properties().stacksTo(1)));
 
@@ -70,6 +73,8 @@ public class TestMod {
             .displayItems((parameters, output) -> {
             output.accept(ORANGE_ITEM.get());
             output.accept(ORANGE_JUICE_ITEM.get());
+            output.accept(WHITE_LATEX_ITEM.get());
+            output.accept(DARK_LATEX_ITEM.get());
             output.accept(SYRINGE_ITEM.get());
             output.accept(LATEX_SYRINGE_ITEM.get());
 

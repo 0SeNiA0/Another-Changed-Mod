@@ -1,6 +1,8 @@
 {
   "item.testmod.orange": "Orange",
   "item.testmod.orange_juice": "Orange juice",
+  "item.testmod.white_latex": "White latex",
+  "item.testmod.dark_latex": "Dark latex",
   "item.testmod.syringe": "Syringe",
   "item.testmod.latex_syringe": "Latex syringe",
   "block.testmod.white_latex_block": "White latex block",
