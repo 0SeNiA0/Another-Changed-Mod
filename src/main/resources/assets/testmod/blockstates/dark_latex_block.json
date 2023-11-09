@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "testmod:block/dark_latex_block"
+    }
+  }
+}

@@ -2,6 +2,7 @@
   "item.testmod.example_item": "Example item",
   "item.testmod.syringe": "Syringe",
   "item.testmod.latex_syringe": "Latex syringe",
-  "block.testmod.example_block": "Example block",
+  "block.testmod.white_latex_block": "White latex block",
+  "block.testmod.dark_latex_block": "Dark latex block",
   "itemGroup.testmod.example_tab": "Item tab"
 }
