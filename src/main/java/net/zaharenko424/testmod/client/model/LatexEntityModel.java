@@ -2,22 +2,18 @@ package net.zaharenko424.testmod.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
-import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.entity.TestEntity;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class TestEntityModel<T extends TestEntity> extends EntityModel<T> {
+public class LatexEntityModel<T extends LivingEntity> extends HierarchicalModel<T> {
 
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(TestMod.MODID, "test_entity"), "main");
 	private final ModelPart body;
 
-	public TestEntityModel(@NotNull ModelPart root) {
+	public LatexEntityModel(@NotNull ModelPart root) {
 		this.body = root.getChild("body");
 	}
 
@@ -44,5 +40,10 @@ public class TestEntityModel<T extends TestEntity> extends EntityModel<T> {
 	@Override
 	public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	}
+
+	@Override
+	public @NotNull ModelPart root() {
+		return null;//TODO return root
 	}
 }

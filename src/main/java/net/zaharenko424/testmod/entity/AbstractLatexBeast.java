@@ -15,13 +15,14 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.TransfurType;
 import net.zaharenko424.testmod.entity.ai.LatexAttackGoal;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLatexBeast extends Monster {
-    public final String transfurType;
+    public final TransfurType transfurType;
 
-    protected AbstractLatexBeast(EntityType<? extends Monster> p_33002_, Level p_33003_, String transfurType) {
+    protected AbstractLatexBeast(EntityType<? extends Monster> p_33002_, Level p_33003_, TransfurType transfurType) {
         super(p_33002_, p_33003_);
         this.transfurType=transfurType;
     }

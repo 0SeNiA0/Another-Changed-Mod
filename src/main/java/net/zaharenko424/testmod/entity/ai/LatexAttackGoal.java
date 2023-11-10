@@ -14,7 +14,7 @@ public class LatexAttackGoal extends MeleeAttackGoal {
 
     public LatexAttackGoal(AbstractLatexBeast p_25552_, double p_25553_, boolean p_25554_) {
         super(p_25552_, p_25553_, p_25554_);
-        this.transfurType=p_25552_.transfurType;
+        this.transfurType=p_25552_.transfurType.resourceLocation.toString();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.zaharenko424.testmod;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -73,5 +74,9 @@ public class TransfurManager {
 
     public static boolean hasModTag(@Nullable CompoundTag tag){
         return tag != null && tag.contains(KEY);
+    }
+
+    public static TransfurType getTransfur(ResourceLocation location){
+        return TestMod.REGISTRY.get().getValue(location);
     }
 }
