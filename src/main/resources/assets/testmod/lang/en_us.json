@@ -5,8 +5,13 @@
   "item.testmod.dark_latex": "Dark latex",
   "item.testmod.syringe": "Syringe",
   "item.testmod.latex_syringe": "Latex syringe",
+
   "block.testmod.white_latex_block": "White latex block",
   "block.testmod.dark_latex_block": "Dark latex block",
+
+  "transfur.testmod.white_latex": "White latex beast",
+
   "entity.testmod.test_entity": "Test entity",
+
   "itemGroup.testmod.example_tab": "Item tab"
 }

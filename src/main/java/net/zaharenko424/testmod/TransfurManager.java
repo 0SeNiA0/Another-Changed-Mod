@@ -17,10 +17,11 @@ public class TransfurManager {
     public static final String TRANSFUR_TYPE_KEY ="transfur_type";
     public static final String TRANSFUR_PROGRESS_KEY="transfur_progress";
     public static final String TRANSFURRED_KEY="transfurred";
-    public static final int TRANSFUR_TOLERANCE=20;
+    public static final int TRANSFUR_TOLERANCE=20;//TODO add a way to change this magic number
 
     public static void updatePlayer(@NotNull Player player){
         if(player.getCommandSenderWorld().isClientSide) return;
+
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player),
                 new ClientboundPlayerTransfurUpdatePacket(getTransfurProgress(player),
                         getTransfurType(player),isTransfurred(player)));
@@ -35,7 +36,7 @@ public class TransfurManager {
         return ((TransfurHolder)player).mod$getTransfurProgress();
     }
 
-    public static void addTransfurProgress(@NotNull Player player, int amount,@NotNull String transfurType){
+    public static void addTransfurProgress(@NotNull Player player, int amount,@NotNull ResourceLocation transfurType){
         Level level=player.getCommandSenderWorld();
         if(level.isClientSide) return;
         TransfurHolder holder=(TransfurHolder) player;
@@ -48,11 +49,12 @@ public class TransfurManager {
         updatePlayer(player);
     }
 
-    public static @NotNull String getTransfurType(@NotNull Player player){
-        return ((TransfurHolder)player).mod$getTransfurType();
+    public static @Nullable TransfurType getTransfurType(@NotNull Player player){
+        ResourceLocation type = ((TransfurHolder)player).mod$getTransfurType();
+        return type!=null?getTransfur(type):null;
     }
 
-    public static void transfur(@NotNull Player player,String transfurType){
+    public static void transfur(@NotNull Player player,@NotNull ResourceLocation transfurType){
         if(player.getCommandSenderWorld().isClientSide) return;
         ((TransfurHolder)player).mod$transfur(transfurType);
         updatePlayer(player);
@@ -76,7 +78,11 @@ public class TransfurManager {
         return tag != null && tag.contains(KEY);
     }
 
-    public static TransfurType getTransfur(ResourceLocation location){
+    public static @Nullable TransfurType getTransfurFromStr(String str){
+        return getTransfur(new ResourceLocation(str));
+    }
+
+    public static @Nullable TransfurType getTransfur(ResourceLocation location){
         return TestMod.REGISTRY.get().getValue(location);
     }
 }

@@ -3,6 +3,7 @@ package net.zaharenko424.testmod.mixins;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -27,18 +28,18 @@ public abstract class MixinServerPlayer extends Player implements TransfurHolder
     }
 
     @Override
-    public void mod$setTransfurProgress(int amount, @NotNull String transfurType) {
+    public void mod$setTransfurProgress(int amount, @NotNull ResourceLocation transfurType) {
         mod$updateCompound(amount,transfurType,null);
     }
 
     @Override
-    public @NotNull String mod$getTransfurType() {
+    public @Nullable ResourceLocation mod$getTransfurType() {
         CompoundTag tag=TransfurManager.modTag(getPersistentData());
-        return tag.contains(TRANSFUR_TYPE_KEY)?tag.getString(TRANSFUR_TYPE_KEY):"ERR";
+        return tag.contains(TRANSFUR_TYPE_KEY)?new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)):null;
     }
 
     @Override
-    public void mod$setTransfurType(@NotNull String transfurType) {
+    public void mod$setTransfurType(@NotNull ResourceLocation transfurType) {
         mod$updateCompound(null,transfurType,null);
     }
 
@@ -48,7 +49,7 @@ public abstract class MixinServerPlayer extends Player implements TransfurHolder
     }
 
     @Override
-    public void mod$transfur(@NotNull String transfurType) {
+    public void mod$transfur(@NotNull ResourceLocation transfurType) {
         mod$updateCompound(20,transfurType,true);
     }
 
@@ -58,10 +59,10 @@ public abstract class MixinServerPlayer extends Player implements TransfurHolder
     }
 
     @Unique
-    private void mod$updateCompound(@Nullable Integer transfurProgress, @Nullable String transfurType,@Nullable Boolean isTransfurred){
+    private void mod$updateCompound(@Nullable Integer transfurProgress, @Nullable ResourceLocation transfurType,@Nullable Boolean isTransfurred){
         CompoundTag tag=TransfurManager.modTag(getPersistentData());
         if(transfurProgress!=null) tag.putInt(TRANSFUR_PROGRESS_KEY,transfurProgress);
-        if(transfurType!=null) tag.putString(TRANSFUR_TYPE_KEY,transfurType); else tag.remove(TRANSFUR_TYPE_KEY);
+        if(transfurType!=null) tag.putString(TRANSFUR_TYPE_KEY,transfurType.toString()); else tag.remove(TRANSFUR_TYPE_KEY);
         if(isTransfurred!=null) tag.putBoolean(TRANSFURRED_KEY,isTransfurred);
     }
 }

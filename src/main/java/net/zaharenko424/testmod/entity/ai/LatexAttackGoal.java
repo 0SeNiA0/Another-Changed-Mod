@@ -1,5 +1,6 @@
 package net.zaharenko424.testmod.entity.ai;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -10,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class LatexAttackGoal extends MeleeAttackGoal {
 
-    private final String transfurType;
+    private final ResourceLocation transfurType;
 
     public LatexAttackGoal(AbstractLatexBeast p_25552_, double p_25553_, boolean p_25554_) {
         super(p_25552_, p_25553_, p_25554_);
-        this.transfurType=p_25552_.transfurType.resourceLocation.toString();
+        this.transfurType=p_25552_.transfurType.resourceLocation;
     }
 
     @Override

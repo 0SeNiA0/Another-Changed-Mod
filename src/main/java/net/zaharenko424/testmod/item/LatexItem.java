@@ -1,5 +1,6 @@
 package net.zaharenko424.testmod.item;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -11,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class LatexItem extends Item {
 
-    private final String transfurType;
+    private final ResourceLocation transfurType;
 
-    public LatexItem(@NotNull Properties p_41383_, @NotNull String transfurType) {
+    public LatexItem(@NotNull Properties p_41383_, @NotNull ResourceLocation transfurType) {
         super(p_41383_.food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
         this.transfurType=transfurType;
     }

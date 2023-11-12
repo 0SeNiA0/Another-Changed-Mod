@@ -11,6 +11,8 @@ import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import static net.zaharenko424.testmod.TransfurManager.TRANSFUR_TYPE_KEY;
 
 public class SyringeItem extends AbstractSyringe {
@@ -30,7 +32,8 @@ public class SyringeItem extends AbstractSyringe {
         if(player.getCommandSenderWorld().isClientSide) return pStack;
         ItemStack syringe=new ItemStack(TestMod.LATEX_SYRINGE_ITEM.get());
         CompoundTag tag=syringe.hasTag()?syringe.getTag():new CompoundTag();
-        TransfurManager.modTag(tag).putString(TRANSFUR_TYPE_KEY,TransfurManager.getTransfurType(player));
+        //TransfurManager.getTransfurTypeAsStr(player)   should never be null
+        TransfurManager.modTag(tag).putString(TRANSFUR_TYPE_KEY, Objects.requireNonNull(TransfurManager.getTransfurType(player)).resourceLocation.toString());
         syringe.setTag(tag);
         return onUse(pStack,syringe,player);
     }

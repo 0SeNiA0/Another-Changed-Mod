@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.*;
 import net.zaharenko424.testmod.commands.Transfur;
 import net.zaharenko424.testmod.commands.UnTransfur;
-import net.zaharenko424.testmod.entity.LatexBeast;
+import net.zaharenko424.testmod.entity.WhiteLatexBeast;
 import net.zaharenko424.testmod.entity.transfurTypes.WhiteLatex;
 import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.item.LatexSyringeItem;
@@ -65,8 +65,8 @@ public class TestMod {
     //Items
     public static final RegistryObject<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final RegistryObject<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
-    public static final RegistryObject<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(new Item.Properties(),"white_latex"));
-    public static final RegistryObject<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(new Item.Properties(),"dark_latex"));
+    public static final RegistryObject<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(new Item.Properties(),new ResourceLocation(MODID,"white_latex")));
+    public static final RegistryObject<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(new Item.Properties(),new ResourceLocation(MODID,"dark_latex")));
     public static final RegistryObject<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", ()-> new SyringeItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", ()-> new LatexSyringeItem(new Item.Properties().stacksTo(1)));
 
@@ -74,7 +74,7 @@ public class TestMod {
     public static final RegistryObject<WhiteLatex> WHITE_LATEX_TRANSFUR = TRANSFUR_TYPES.register("white_latex", ()-> new WhiteLatex(new ResourceLocation(MODID,"white_latex")));
 
     //Entities
-    public static final RegistryObject<EntityType<LatexBeast>> TEST_ENTITY = ENTITIES.register("test_entity",()-> EntityType.Builder.<LatexBeast>of((a,b)->new LatexBeast(a,b,WHITE_LATEX_TRANSFUR.get()), MobCategory.CREATURE).build(new ResourceLocation(MODID,"test_entity").toString()));
+    public static final RegistryObject<EntityType<WhiteLatexBeast>> TEST_ENTITY = ENTITIES.register("test_entity",()-> EntityType.Builder.<WhiteLatexBeast>of((a, b)->new WhiteLatexBeast(a,b,WHITE_LATEX_TRANSFUR.get()), MobCategory.CREATURE).build(new ResourceLocation(MODID,"test_entity").toString()));
 
     //Spawn eggs
     public static final RegistryObject<DeferredSpawnEggItem> TEST_SPAWN_EGG = ITEMS.register("test_spawn_egg", ()-> new DeferredSpawnEggItem(TEST_ENTITY,0x6d81a1,0x22302f,new Item.Properties()));

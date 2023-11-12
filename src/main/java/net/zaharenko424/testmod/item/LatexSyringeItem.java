@@ -2,6 +2,7 @@ package net.zaharenko424.testmod.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public class LatexSyringeItem extends AbstractSyringe{
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel , @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
+        if(TransfurManager.isTransfurred(pPlayer)||!TransfurManager.hasModTag(pPlayer.getItemInHand(pUsedHand).getTag())) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
         return super.use(pLevel, pPlayer, pUsedHand);
     }
 
@@ -33,7 +34,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
         if(pLevel.isClientSide) return ItemStack.EMPTY;
-        TransfurManager.addTransfurProgress(player, 5, "white_latex");
+        TransfurManager.addTransfurProgress(player, 5, new ResourceLocation(TransfurManager.modTag(pStack.getTag()).getString(TRANSFUR_TYPE_KEY)));
         ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
         return onUse(pStack,syringe,player);
     }
@@ -43,7 +44,7 @@ public class LatexSyringeItem extends AbstractSyringe{
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         CompoundTag tag=p_41421_.getTag();
         if(TransfurManager.hasModTag(tag)){
-            p_41423_.add(Component.literal(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY)));
+            p_41423_.add(TransfurManager.getTransfur(new ResourceLocation(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY))).fancyName());
         }
     }
 }

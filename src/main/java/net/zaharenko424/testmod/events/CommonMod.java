@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.zaharenko424.testmod.Config;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.entity.LatexBeast;
+import net.zaharenko424.testmod.entity.WhiteLatexBeast;
 import net.zaharenko424.testmod.network.PacketHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +34,6 @@ class CommonMod {
 
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
-        event.put(TestMod.TEST_ENTITY.get(), LatexBeast.createAttributes().build());
+        event.put(TestMod.TEST_ENTITY.get(), WhiteLatexBeast.createAttributes().build());
     }
 }

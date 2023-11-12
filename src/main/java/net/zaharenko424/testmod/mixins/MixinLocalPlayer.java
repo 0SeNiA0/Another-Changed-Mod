@@ -3,10 +3,12 @@ package net.zaharenko424.testmod.mixins;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.entity.TransfurHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -19,7 +21,7 @@ public abstract class MixinLocalPlayer extends Player implements TransfurHolder 
     @Unique
     private int mod$transfurProgress =0;
     @Unique
-    private String mod$transfurType =null;
+    private ResourceLocation mod$transfurType =null;
     @Unique
     private boolean mod$isTransfurred =false;
 
@@ -29,18 +31,18 @@ public abstract class MixinLocalPlayer extends Player implements TransfurHolder 
     }
 
     @Override
-    public void mod$setTransfurProgress(int amount, @NotNull String transfurType) {
+    public void mod$setTransfurProgress(int amount, @NotNull ResourceLocation transfurType) {
         mod$transfurProgress =amount;
         this.mod$transfurType =transfurType;
     }
 
     @Override
-    public @NotNull String mod$getTransfurType() {
-        return mod$transfurType!=null?mod$transfurType:"ERR";
+    public @Nullable ResourceLocation mod$getTransfurType() {
+        return mod$transfurType!=null?mod$transfurType:null;
     }
 
     @Override
-    public void mod$setTransfurType(@NotNull String transfurType) {
+    public void mod$setTransfurType(@NotNull ResourceLocation transfurType) {
         this.mod$transfurType =transfurType;
     }
 
@@ -50,8 +52,10 @@ public abstract class MixinLocalPlayer extends Player implements TransfurHolder 
     }
 
     @Override
-    public void mod$transfur(@NotNull String transfurType) {
+    public void mod$transfur(@NotNull ResourceLocation transfurType) {
         mod$isTransfurred =true;
+        mod$transfurType=transfurType;
+        mod$transfurProgress=20;
         //TODO change model, etc.
     }
 

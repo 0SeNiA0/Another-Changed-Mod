@@ -7,9 +7,9 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
-public class LatexBeast extends AbstractLatexBeast {
+public class WhiteLatexBeast extends AbstractLatexBeast {
 
-    public LatexBeast(EntityType<? extends Monster> p_21368_, Level p_21369_, TransfurType transfurType) {
+    public WhiteLatexBeast(EntityType<? extends Monster> p_21368_, Level p_21369_, TransfurType transfurType) {
         super(p_21368_, p_21369_,transfurType);
     }
 

@@ -7,9 +7,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.testmod.TransfurManager;
-import net.zaharenko424.testmod.client.model.LatexEntityModel;
+import net.zaharenko424.testmod.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.testmod.client.renderer.LatexEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
     @Unique
-    private LatexEntityRenderer<AbstractClientPlayer, LatexEntityModel<AbstractClientPlayer>> mod$renderer;
+    private LatexEntityRenderer<AbstractClientPlayer, AbstractLatexEntityModel<AbstractClientPlayer>> mod$renderer;
 
     public MixinPlayerRenderer(EntityRendererProvider.Context p_174289_, PlayerModel<AbstractClientPlayer> p_174290_, float p_174291_) {
         super(p_174289_, p_174290_, p_174291_);
@@ -40,9 +39,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
             if(!mod$renderer.isTransfurTypeNull()) mod$renderer.updateTransfurType(null);
             return;
         }
-        if(mod$renderer.isTransfurTypeNull()){
-            mod$renderer.updateTransfurType(TransfurManager.getTransfur(new ResourceLocation("testmod:transfur")));//TODO get transfur model from player
-        }
+        mod$renderer.updateTransfurType(TransfurManager.getTransfurType(p_117788_));
         mod$renderer.render(p_117788_,p_117789_,p_117790_,p_117791_,p_117792_,p_117793_);
         ci.cancel();
     }
