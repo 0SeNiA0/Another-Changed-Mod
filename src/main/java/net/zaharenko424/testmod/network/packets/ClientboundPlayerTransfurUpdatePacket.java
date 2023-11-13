@@ -7,8 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.testmod.TransfurType;
 import net.zaharenko424.testmod.entity.TransfurHolder;
+import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
     private final ResourceLocation transfurType;
     private final boolean isTransfurred;
 
-    public ClientboundPlayerTransfurUpdatePacket(int transfurProgress, @Nullable TransfurType transfurType, boolean isTransfurred){
+    public ClientboundPlayerTransfurUpdatePacket(int transfurProgress, @Nullable AbstractTransfurType transfurType, boolean isTransfurred){
         this.transfurProgress=transfurProgress;
         this.transfurType=transfurType!=null?transfurType.resourceLocation:null;
         this.isTransfurred=isTransfurred;

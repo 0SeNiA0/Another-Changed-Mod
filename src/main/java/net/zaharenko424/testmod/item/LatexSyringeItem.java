@@ -12,6 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.entity.Transfurrable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
         if(pLevel.isClientSide) return ItemStack.EMPTY;
-        TransfurManager.addTransfurProgress(player, 5, new ResourceLocation(TransfurManager.modTag(pStack.getTag()).getString(TRANSFUR_TYPE_KEY)));
+        TransfurManager.addTransfurProgress((Transfurrable) player, 5, new ResourceLocation(TransfurManager.modTag(pStack.getTag()).getString(TRANSFUR_TYPE_KEY)));
         ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
         return onUse(pStack,syringe,player);
     }
@@ -44,7 +45,7 @@ public class LatexSyringeItem extends AbstractSyringe{
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         CompoundTag tag=p_41421_.getTag();
         if(TransfurManager.hasModTag(tag)){
-            p_41423_.add(TransfurManager.getTransfur(new ResourceLocation(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY))).fancyName());
+            p_41423_.add(TransfurManager.getTransfurType(new ResourceLocation(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY))).fancyName());
         }
     }
 }

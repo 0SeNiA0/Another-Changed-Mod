@@ -28,13 +28,12 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event){
-        event.registerEntityRenderer(TestMod.TEST_ENTITY.get(),(a) -> new LatexEntityRenderer<>(a,WHITE_LATEX_TRANSFUR));
-        //TODO add damageType TRANSFUR or LATEX
+        event.registerEntityRenderer(TestMod.WHITE_LATEX_BEAST.get(),(a) -> new LatexEntityRenderer<>(a,WHITE_LATEX_TRANSFUR));
     }
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event){
         event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation(TestMod.MODID,"dummy"),"main"), DummyModel::createBodyLayer);
-        event.registerLayerDefinition(WHITE_LATEX_TRANSFUR.get().modelLayerLocation, WhiteLatexModel::createBodyLayer);
+        event.registerLayerDefinition(WHITE_LATEX_TRANSFUR.get().modelLayerLocation(), WhiteLatexModel::createBodyLayer);
     }
 }

@@ -12,6 +12,4 @@ public interface Transfurrable {
     @Nullable ResourceLocation mod$getTransfurType();
 
     void mod$setTransfurType(@NotNull ResourceLocation transfurType);
-
-    void mod$transfur(@NotNull ResourceLocation transfurType);
 }

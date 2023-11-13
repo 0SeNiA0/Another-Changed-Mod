@@ -7,10 +7,10 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "MixinServerPlayer"
+    "MixinPlayer",
+    "MixinZombie"
   ],
   "client": [
-    "MixinLocalPlayer",
     "MixinPlayerRenderer"
   ]
 }

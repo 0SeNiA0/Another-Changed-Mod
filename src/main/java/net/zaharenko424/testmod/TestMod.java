@@ -31,11 +31,13 @@ import net.neoforged.neoforge.registries.*;
 import net.zaharenko424.testmod.commands.Transfur;
 import net.zaharenko424.testmod.commands.UnTransfur;
 import net.zaharenko424.testmod.entity.WhiteLatexBeast;
+import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.testmod.entity.transfurTypes.WhiteLatex;
 import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.item.LatexSyringeItem;
 import net.zaharenko424.testmod.item.OrangeJuiceItem;
 import net.zaharenko424.testmod.item.SyringeItem;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -52,9 +54,9 @@ public class TestMod {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-    public static final DeferredRegister<TransfurType> TRANSFUR_TYPES = DeferredRegister.create(new ResourceLocation("transfur_registry"),MODID);
+    public static final DeferredRegister<AbstractTransfurType> TRANSFUR_TYPES = DeferredRegister.create(resourceLocation("transfur_registry"),MODID);
 
-    public static final Supplier<IForgeRegistry<TransfurType>> REGISTRY = TRANSFUR_TYPES.makeRegistry(RegistryBuilder::new);//TODO
+    public static final Supplier<IForgeRegistry<AbstractTransfurType>> REGISTRY = TRANSFUR_TYPES.makeRegistry(RegistryBuilder::new);//TODO
 
     //Blocks & BlockItems
     public static final RegistryObject<Block> WHITE_LATEX_BLOCK = BLOCKS.register("white_latex_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(6,1).sound(SoundType.SLIME_BLOCK)));
@@ -65,19 +67,19 @@ public class TestMod {
     //Items
     public static final RegistryObject<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final RegistryObject<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
-    public static final RegistryObject<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(new Item.Properties(),new ResourceLocation(MODID,"white_latex")));
-    public static final RegistryObject<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(new Item.Properties(),new ResourceLocation(MODID,"dark_latex")));
+    public static final RegistryObject<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(new Item.Properties(),resourceLocation("white_latex")));
+    public static final RegistryObject<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(new Item.Properties(),resourceLocation("dark_latex")));
     public static final RegistryObject<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", ()-> new SyringeItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", ()-> new LatexSyringeItem(new Item.Properties().stacksTo(1)));
 
     //Transfur types
-    public static final RegistryObject<WhiteLatex> WHITE_LATEX_TRANSFUR = TRANSFUR_TYPES.register("white_latex", ()-> new WhiteLatex(new ResourceLocation(MODID,"white_latex")));
+    public static final RegistryObject<WhiteLatex> WHITE_LATEX_TRANSFUR = TRANSFUR_TYPES.register("white_latex", ()-> new WhiteLatex(resourceLocation("white_latex"),resourceLocation("white_latex_beast")));
 
     //Entities
-    public static final RegistryObject<EntityType<WhiteLatexBeast>> TEST_ENTITY = ENTITIES.register("test_entity",()-> EntityType.Builder.<WhiteLatexBeast>of((a, b)->new WhiteLatexBeast(a,b,WHITE_LATEX_TRANSFUR.get()), MobCategory.CREATURE).build(new ResourceLocation(MODID,"test_entity").toString()));
+    public static final RegistryObject<EntityType<WhiteLatexBeast>> WHITE_LATEX_BEAST = ENTITIES.register("white_latex_beast",()-> EntityType.Builder.<WhiteLatexBeast>of((a, b)->new WhiteLatexBeast(a,b,WHITE_LATEX_TRANSFUR.get()), MobCategory.CREATURE).build(MODID+":white_latex_beast"));
 
     //Spawn eggs
-    public static final RegistryObject<DeferredSpawnEggItem> TEST_SPAWN_EGG = ITEMS.register("test_spawn_egg", ()-> new DeferredSpawnEggItem(TEST_ENTITY,0x6d81a1,0x22302f,new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> TEST_SPAWN_EGG = ITEMS.register("test_spawn_egg", ()-> new DeferredSpawnEggItem(WHITE_LATEX_BEAST,0x6d81a1,0x22302f,new Item.Properties()));
 
     //Creative tabs
     public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -96,6 +98,11 @@ public class TestMod {
 
             output.accept(TEST_SPAWN_EGG.get());
             }).build());
+
+    @Contract("_ -> new")
+    private static @NotNull ResourceLocation resourceLocation(@NotNull String path){
+        return new ResourceLocation(MODID,path);
+    }
 
     public TestMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

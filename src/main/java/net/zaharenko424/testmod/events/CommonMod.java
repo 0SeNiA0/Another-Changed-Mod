@@ -34,6 +34,6 @@ class CommonMod {
 
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
-        event.put(TestMod.TEST_ENTITY.get(), WhiteLatexBeast.createAttributes().build());
+        event.put(TestMod.WHITE_LATEX_BEAST.get(), WhiteLatexBeast.createAttributes().build());
     }
 }

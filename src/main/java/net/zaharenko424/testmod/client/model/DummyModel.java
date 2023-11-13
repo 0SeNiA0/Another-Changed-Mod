@@ -6,7 +6,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class DummyModel<T extends LivingEntity> extends AbstractLatexEntityModel<T>{//TODO finish dummy model!!
+public class DummyModel<T extends LivingEntity> extends AbstractLatexEntityModel<T>{
     public DummyModel(@NotNull ModelPart root) {
         super(root);
     }

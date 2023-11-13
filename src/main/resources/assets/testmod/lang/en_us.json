@@ -11,7 +11,10 @@
 
   "transfur.testmod.white_latex": "White latex beast",
 
-  "entity.testmod.test_entity": "Test entity",
+  "entity.testmod.white_latex_beast": "White Latex Beast",
 
-  "itemGroup.testmod.example_tab": "Item tab"
+  "itemGroup.testmod.example_tab": "Item tab",
+
+  "death.attack.transfur": "%1$s was transfurred by %2$s",
+  "death.attack.transfur.player": "%1$s was transfurred by %2$s"
 }
