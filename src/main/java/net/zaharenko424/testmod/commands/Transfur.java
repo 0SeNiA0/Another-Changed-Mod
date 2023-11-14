@@ -9,7 +9,6 @@ import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.zaharenko424.testmod.TransfurManager;
-import net.zaharenko424.testmod.entity.Transfurrable;
 import org.jetbrains.annotations.NotNull;
 
 public class Transfur {
@@ -33,7 +32,7 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        TransfurManager.transfur((Transfurrable) player,transfurType);
+        TransfurManager.transfur(player,transfurType);
         return Command.SINGLE_SUCCESS;
     }
 }

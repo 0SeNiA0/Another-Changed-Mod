@@ -20,6 +20,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurDamageSource;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.capability.TransfurCapability;
 import net.zaharenko424.testmod.entity.ai.LatexAttackGoal;
 import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,8 @@ public abstract class AbstractLatexBeast extends Monster {
 
     @Override
     public boolean doHurtTarget(@NotNull Entity p_21372_) {
-        boolean b=p_21372_ instanceof Transfurrable &&(!(p_21372_ instanceof TransfurHolder holder)||!holder.mod$isTransfurred());
+        boolean b=p_21372_ instanceof LivingEntity entity&&entity.getCapability(TransfurCapability.CAPABILITY).isPresent()&&
+                (!(entity instanceof Player)||!entity.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC).isTransfurred()&&getMainHandItem().isEmpty());
         float f = b?0.1F:(float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         if (p_21372_ instanceof LivingEntity) {
             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity)p_21372_).getMobType());
@@ -71,10 +73,7 @@ public abstract class AbstractLatexBeast extends Monster {
             this.doEnchantDamageEffects(this, p_21372_);
             this.setLastHurtMob(p_21372_);
         }
-        if(!(p_21372_ instanceof LivingEntity)||level().isClientSide) return flag;
-        if(b){
-            TransfurManager.addTransfurProgress((Transfurrable)p_21372_,5,transfurType);
-        }
+        if(b&&!level().isClientSide) TransfurManager.addTransfurProgress((LivingEntity) p_21372_,5,transfurType);
         return flag;
     }
 }

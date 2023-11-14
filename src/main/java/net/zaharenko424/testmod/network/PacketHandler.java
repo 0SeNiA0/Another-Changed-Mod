@@ -5,6 +5,7 @@ import net.neoforged.neoforge.network.NetworkRegistry;
 import net.neoforged.neoforge.network.simple.SimpleChannel;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.network.packets.ClientboundPlayerTransfurUpdatePacket;
+import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
 
 public final class PacketHandler {
     private PacketHandler(){}
@@ -20,5 +21,7 @@ public final class PacketHandler {
         int i=0;
         INSTANCE.simpleMessageBuilder(ClientboundPlayerTransfurUpdatePacket.class,i++)
                 .decoder(ClientboundPlayerTransfurUpdatePacket::new).add();
+        INSTANCE.simpleMessageBuilder(ClientboundRemotePlayerTransfurUpdatePacket.class,i++)
+                .decoder(ClientboundRemotePlayerTransfurUpdatePacket::new).add();
     }
 }

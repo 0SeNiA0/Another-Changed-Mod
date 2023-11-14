@@ -8,7 +8,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurManager;
-import net.zaharenko424.testmod.entity.Transfurrable;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexItem extends Item {
@@ -25,7 +24,7 @@ public class LatexItem extends Item {
         Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            TransfurManager.addTransfurProgress((Transfurrable) player,10,transfurType);
+            TransfurManager.addTransfurProgress(player,10,transfurType);
         }
         if(!player.getAbilities().instabuild) p_41409_.shrink(1);
         return p_41409_;

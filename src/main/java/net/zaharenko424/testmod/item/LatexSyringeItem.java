@@ -12,11 +12,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
-import net.zaharenko424.testmod.entity.Transfurrable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static net.zaharenko424.testmod.TransfurManager.TRANSFUR_TYPE_KEY;
 
@@ -35,7 +35,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
         if(pLevel.isClientSide) return ItemStack.EMPTY;
-        TransfurManager.addTransfurProgress((Transfurrable) player, 5, new ResourceLocation(TransfurManager.modTag(pStack.getTag()).getString(TRANSFUR_TYPE_KEY)));
+        TransfurManager.transfur(pLivingEntity,new ResourceLocation(TransfurManager.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY)));
         ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
         return onUse(pStack,syringe,player);
     }

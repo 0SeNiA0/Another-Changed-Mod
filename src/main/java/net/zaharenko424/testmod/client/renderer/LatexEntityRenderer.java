@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.RegistryObject;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.client.model.DummyModel;
@@ -13,6 +15,7 @@ import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@OnlyIn(Dist.CLIENT)
 public class LatexEntityRenderer<T extends LivingEntity, M extends HierarchicalModel<T>> extends LivingEntityRenderer<T, M> {
 
     protected AbstractTransfurType transfurType=null;
@@ -40,6 +43,11 @@ public class LatexEntityRenderer<T extends LivingEntity, M extends HierarchicalM
         if(transfurType==this.transfurType) return;
         this.transfurType=transfurType;
         if(transfurType!=null) this.model= (M) transfurType.getModel(context);
+    }
+
+    protected boolean shouldShowName(@NotNull T p_115506_) {
+        return super.shouldShowName(p_115506_)
+                && (p_115506_.shouldShowName() || p_115506_.hasCustomName() && p_115506_ == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
     @Override

@@ -1,11 +1,10 @@
 package net.zaharenko424.testmod;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
@@ -17,19 +16,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.*;
-import net.zaharenko424.testmod.commands.Transfur;
-import net.zaharenko424.testmod.commands.UnTransfur;
 import net.zaharenko424.testmod.entity.WhiteLatexBeast;
 import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.testmod.entity.transfurTypes.WhiteLatex;
@@ -56,7 +48,7 @@ public class TestMod {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     public static final DeferredRegister<AbstractTransfurType> TRANSFUR_TYPES = DeferredRegister.create(resourceLocation("transfur_registry"),MODID);
 
-    public static final Supplier<IForgeRegistry<AbstractTransfurType>> REGISTRY = TRANSFUR_TYPES.makeRegistry(RegistryBuilder::new);//TODO
+    public static final Supplier<IForgeRegistry<AbstractTransfurType>> REGISTRY = TRANSFUR_TYPES.makeRegistry(RegistryBuilder::new);
 
     //Blocks & BlockItems
     public static final RegistryObject<Block> WHITE_LATEX_BLOCK = BLOCKS.register("white_latex_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(6,1).sound(SoundType.SLIME_BLOCK)));
@@ -80,6 +72,9 @@ public class TestMod {
 
     //Spawn eggs
     public static final RegistryObject<DeferredSpawnEggItem> TEST_SPAWN_EGG = ITEMS.register("test_spawn_egg", ()-> new DeferredSpawnEggItem(WHITE_LATEX_BEAST,0x6d81a1,0x22302f,new Item.Properties()));
+
+    //Tags
+    public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE,resourceLocation("transfurrable"));
 
     //Creative tabs
     public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -112,27 +107,7 @@ public class TestMod {
         CREATIVE_MODE_TABS.register(modEventBus);
         TRANSFUR_TYPES.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in
-        NeoForge.EVENT_BUS.register(this);
-
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info("HELLO from server starting");
-    }
-
-    @SubscribeEvent
-    public void onRegisterCommands(@NotNull RegisterCommandsEvent event){
-        CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();
-        Transfur.register(dispatcher);
-        UnTransfur.register(dispatcher);
-    }
-
-    @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event){
-        TransfurManager.updatePlayer(event.getEntity());
     }
 }
