@@ -1,6 +1,7 @@
 package net.zaharenko424.testmod.network.packets;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -43,14 +44,18 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
 
     @Override
     public void handleMainThread(NetworkEvent.Context context) {
-        ITransfurHandler handler=Minecraft.getInstance().player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
+        LocalPlayer player=Minecraft.getInstance().player;
+        if(player==null) return;
+        ITransfurHandler handler=player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
         if(!isTransfurred){
             if(handler.isTransfurred()){
                 handler.unTransfur();
+                player.refreshDimensions();
             } else handler.setTransfurProgress(transfurProgress,transfurType);
             Minecraft.getInstance().player.sendSystemMessage(Component.literal("Transfur progress is "+transfurProgress));
             return;
         }
         handler.transfur(transfurType);
+        player.refreshDimensions();
     }
 }

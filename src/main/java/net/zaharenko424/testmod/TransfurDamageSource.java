@@ -7,15 +7,28 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.zaharenko424.testmod.capability.TransfurCapability;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface TransfurDamageSource {
 
-    ResourceKey<DamageType> key=ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(TestMod.MODID,"transfur"));
+    ResourceKey<DamageType> transfur=ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(TestMod.MODID,"transfur"));
+    ResourceKey<DamageType> solvent=ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(TestMod.MODID,"latex_solvent"));
 
     @Contract("_, _ -> new")
-    static <T extends Entity,E extends LivingEntity> @NotNull DamageSource transfur(@NotNull T target, @NotNull E entity){
-        return new DamageSource(entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key),target,entity);
+    static <T extends Entity,E extends LivingEntity> @NotNull DamageSource transfur(@NotNull T target, @Nullable E entity){
+        return new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(transfur),target,entity);
+    }
+
+    @Contract("_ -> new")
+    static <T extends Entity> @NotNull DamageSource latexSolvent(@NotNull T target){
+        return new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(solvent),target,null);
+    }
+
+    static boolean checkTarget(Entity target){
+        return target instanceof LivingEntity entity&&entity.getCapability(TransfurCapability.CAPABILITY).isPresent()&&(!(target instanceof Player player)||!TransfurManager.isTransfurred(player));
     }
 }

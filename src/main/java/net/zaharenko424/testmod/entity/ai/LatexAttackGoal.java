@@ -13,7 +13,6 @@ public class LatexAttackGoal extends MeleeAttackGoal {
 
     @Override
     public boolean canUse() {
-        if(mob.getTarget()==null) return false;
         if(mob.getTarget() instanceof Player player&&TransfurManager.isTransfurred(player)&&mob.getLastHurtByMob()!=player) return false;
         return super.canUse();
     }

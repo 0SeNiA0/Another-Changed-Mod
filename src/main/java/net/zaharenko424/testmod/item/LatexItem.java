@@ -14,8 +14,8 @@ public class LatexItem extends Item {
 
     private final ResourceLocation transfurType;
 
-    public LatexItem(@NotNull Properties p_41383_, @NotNull ResourceLocation transfurType) {
-        super(p_41383_.food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
+    public LatexItem(@NotNull ResourceLocation transfurType) {
+        super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
         this.transfurType=transfurType;
     }
 

@@ -62,9 +62,11 @@ public class ClientboundRemotePlayerTransfurUpdatePacket implements SimpleMessag
         if(!isTransfurred){
             if(capability.isTransfurred()){
                 capability.unTransfur();
+                player.refreshDimensions();
             } else capability.setTransfurProgress(transfurProgress,transfurType);
             return;
         }
         capability.transfur(transfurType);
+        player.refreshDimensions();
     }
 }

@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.zaharenko424.testmod.mixins",
+  "package": "net.zaharenko424.testmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8.5",
   "injectors": {

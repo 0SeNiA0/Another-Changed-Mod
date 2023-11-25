@@ -10,8 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +21,8 @@ import java.util.Objects;
 import static net.zaharenko424.testmod.TransfurManager.TRANSFUR_TYPE_KEY;
 
 public class LatexSyringeItem extends AbstractSyringe{
-    public LatexSyringeItem(@NotNull Properties properties) {
-        super(properties);
+    public LatexSyringeItem() {
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -34,10 +34,8 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
-        if(pLevel.isClientSide) return ItemStack.EMPTY;
-        TransfurManager.transfur(pLivingEntity,new ResourceLocation(TransfurManager.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY)));
-        ItemStack syringe=new ItemStack(TestMod.SYRINGE_ITEM.get());
-        return onUse(pStack,syringe,player);
+        if(!pLevel.isClientSide) TransfurManager.transfur(pLivingEntity,new ResourceLocation(TransfurManager.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY)));
+        return onUse(pStack,new ItemStack(ItemRegistry.SYRINGE_ITEM.get()),player);
     }
 
     @Override
@@ -45,7 +43,20 @@ public class LatexSyringeItem extends AbstractSyringe{
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
         CompoundTag tag=p_41421_.getTag();
         if(TransfurManager.hasModTag(tag)){
-            p_41423_.add(TransfurManager.getTransfurType(new ResourceLocation(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY))).fancyName());
+            ResourceLocation transfurType=new ResourceLocation(TransfurManager.modTag(tag).getString(TRANSFUR_TYPE_KEY));
+            try {
+                p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
+            } catch (Exception ex) {
+                p_41423_.add(Component.literal("Invalid transfur type "+transfurType));
+            }
         }
+    }
+
+    public static @NotNull ItemStack encodeTransfur(@NotNull ResourceLocation transfurType){
+        ItemStack syringe=new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
+        CompoundTag tag=syringe.hasTag()?syringe.getTag():new CompoundTag();
+        TransfurManager.modTag(tag).putString(TRANSFUR_TYPE_KEY,transfurType.toString());
+        syringe.setTag(tag);
+        return syringe;
     }
 }

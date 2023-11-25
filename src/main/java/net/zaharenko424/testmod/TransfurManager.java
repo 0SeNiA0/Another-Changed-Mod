@@ -1,5 +1,6 @@
 package net.zaharenko424.testmod;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -11,7 +12,6 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.zaharenko424.testmod.capability.ITransfurHandler;
 import net.zaharenko424.testmod.capability.TransfurCapability;
 import net.zaharenko424.testmod.entity.AbstractLatexBeast;
@@ -19,6 +19,7 @@ import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundPlayerTransfurUpdatePacket;
 import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
+import net.zaharenko424.testmod.registry.TransfurRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 import static net.zaharenko424.testmod.TestMod.LOGGER;
-import static net.zaharenko424.testmod.TestMod.WHITE_LATEX_BEAST;
+import static net.zaharenko424.testmod.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 import static net.zaharenko424.testmod.capability.TransfurCapability.NO_CAPABILITY_EXC;
 
 public class TransfurManager {
@@ -34,15 +35,21 @@ public class TransfurManager {
     public static final String TRANSFUR_TYPE_KEY ="transfur_type";
     public static final String TRANSFUR_PROGRESS_KEY="transfur_progress";
     public static final String TRANSFURRED_KEY="transfurred";
+    public static final int LATEX_DAMAGE_BONUS=1;
     @ApiStatus.Internal
     public static int TRANSFUR_TOLERANCE=20;
 
+
+    public static boolean hasCapability(@NotNull LivingEntity entity){
+        return entity.getCapability(TransfurCapability.CAPABILITY).isPresent();
+    }
 
     public static void updatePlayer(@NotNull ServerPlayer player){
         updatePlayer(player,player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC));
     }
 
     private static void updatePlayer(@NotNull ServerPlayer player,@NotNull ITransfurHandler handler){
+        player.refreshDimensions();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundPlayerTransfurUpdatePacket(handler));
         PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(()->player),new ClientboundRemotePlayerTransfurUpdatePacket(handler,player.getUUID()));
     }
@@ -91,7 +98,7 @@ public class TransfurManager {
             updatePlayer(player,handler);
             return;
         }
-        Objects.requireNonNullElseGet(getTransfurEntity(transfurType),WHITE_LATEX_BEAST).spawn((ServerLevel) entity.level(),entity.blockPosition(),MobSpawnType.CONVERSION);
+        Objects.requireNonNullElseGet(getTransfurEntity(transfurType), WHITE_LATEX_WOLF_MALE).spawn((ServerLevel) entity.level(),entity.blockPosition(),MobSpawnType.CONVERSION);
         entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
@@ -115,12 +122,12 @@ public class TransfurManager {
     }
 
     public static @Nullable AbstractTransfurType getTransfurType(ResourceLocation transfurType){
-        return TestMod.REGISTRY.get().getValue(transfurType);
+        return TransfurRegistry.TRANSFUR_REGISTRY.get(transfurType);
     }
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(ResourceLocation transfurType){
         try {
-            return (EntityType<AbstractLatexBeast>) ForgeRegistries.ENTITY_TYPES.getHolder(getTransfurType(transfurType).entityResourceLocation).get().get();
+            return (EntityType<AbstractLatexBeast>) BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).resourceLocation);
 
         } catch (Exception exception){
             TestMod.LOGGER.warn("Exception occurred while fetching entity for transfur type "+transfurType.toString(),exception);

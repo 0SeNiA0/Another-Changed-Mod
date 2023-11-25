@@ -1,9 +1,7 @@
-package net.zaharenko424.testmod.mixins;
+package net.zaharenko424.testmod.mixin;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurDamageSource;
@@ -13,7 +11,9 @@ import net.zaharenko424.testmod.capability.TransfurCapability;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
@@ -27,10 +27,21 @@ public abstract class MixinPlayer extends LivingEntity {
     public boolean hurtProxy(@NotNull Entity instance, DamageSource p_19946_, float p_19947_){
         if(instance.level().isClientSide) return instance.hurt(p_19946_,p_19947_);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
-        if(getMainHandItem().isEmpty()&&handler.isTransfurred()&&instance instanceof LivingEntity entity){
-            TransfurManager.addTransfurProgress(entity,5, Objects.requireNonNull(handler.getTransfurType()));
-            return instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_);
+        if(!(getMainHandItem().isEmpty()&&handler.isTransfurred())) return instance.hurt(p_19946_,p_19947_);
+        p_19947_+=TransfurManager.LATEX_DAMAGE_BONUS;
+        if(!TransfurDamageSource.checkTarget(instance)) return instance.hurt(p_19946_,p_19947_);
+        TransfurManager.addTransfurProgress((LivingEntity) instance,5, Objects.requireNonNull(handler.getTransfurType()));
+        return instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_);
+    }
+
+    @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)
+    public void onGetDimensions(Pose p_36166_, CallbackInfoReturnable<EntityDimensions> ci) {
+        if(p_36166_==Pose.STANDING){
+            getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
+                if(!handler.isTransfurred()) return;
+                ci.cancel();
+                ci.setReturnValue(EntityDimensions.scalable(.6f,2));
+            });
         }
-        return instance.hurt(p_19946_,p_19947_);
     }
 }

@@ -28,10 +28,12 @@ public abstract class AbstractSyringe extends Item {
     }
 
     protected ItemStack onUse(@NotNull ItemStack inUse, @NotNull ItemStack result, @NotNull Player player){
-        if(inUse.getCount()==1){
-            return result;
+        if(!player.getAbilities().instabuild) {
+            if (inUse.getCount() == 1) {
+                return result;
+            }
+            inUse.shrink(1);
         }
-        inUse.shrink(1);
         if(player.getInventory().getFreeSlot()!=-1){
             player.addItem(result);
         } else player.drop(result,true);

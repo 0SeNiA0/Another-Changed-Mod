@@ -130,6 +130,7 @@ public class TransfurCapability {
 
         @Override
         public void tick() {
+            if(isTransfurred) return;
             if(i0>0) {
                 i0--;
                 return;
