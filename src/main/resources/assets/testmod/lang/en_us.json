@@ -1,6 +1,9 @@
 {
   "block.testmod.bolted_lab_tile": "Bolted lab tile",
+  "block.testmod.carpet_block": "Carpet block",
   "block.testmod.dark_latex_block": "Dark latex block",
+  "block.testmod.hazard_block": "Hazard block",
+  "block.testmod.lab_block": "Lab block",
   "block.testmod.lab_tile": "Lab tile",
   "block.testmod.white_latex_block": "White latex block",
 

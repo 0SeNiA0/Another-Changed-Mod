@@ -27,9 +27,9 @@ import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
-import static net.zaharenko424.testmod.registry.ItemRegistry.*;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_REGISTRY;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_TYPES;
+import static net.zaharenko424.testmod.registry.ItemRegistry.*;
 
 @Mod(TestMod.MODID)
 public class TestMod {
@@ -59,6 +59,11 @@ public class TestMod {
             output.accept(DARK_LATEX_ITEM);
             output.accept(WHITE_LATEX_BLOCK_ITEM);
             output.accept(DARK_LATEX_BLOCK_ITEM);
+            output.accept(HAZARD_BLOCK_ITEM);
+            output.accept(BOLTED_LAB_TILE_ITEM);
+            output.accept(LAB_BLOCK_ITEM);
+            output.accept(LAB_TILE_ITEM);
+
             output.accept(LATEX_SOLVENT_BUCKET);
             output.accept(WHITE_LATEX_BUCKET);
             output.accept(DARK_LATEX_BUCKET);

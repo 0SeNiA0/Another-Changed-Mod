@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "testmod:block/dark_latex_block"
-  }
-}
