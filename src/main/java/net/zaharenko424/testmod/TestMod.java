@@ -61,6 +61,7 @@ public class TestMod {
             output.accept(DARK_LATEX_BLOCK_ITEM);
             output.accept(HAZARD_BLOCK_ITEM);
             output.accept(BOLTED_LAB_TILE_ITEM);
+            output.accept(CONNECTED_LAB_TILE_ITEM);
             output.accept(LAB_BLOCK_ITEM);
             output.accept(LAB_TILE_ITEM);
 

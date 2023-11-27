@@ -1,6 +1,7 @@
 {
   "block.testmod.bolted_lab_tile": "Bolted lab tile",
   "block.testmod.carpet_block": "Carpet block",
+  "block.testmod.connected_lab_tile": "Connected lab tile",
   "block.testmod.dark_latex_block": "Dark latex block",
   "block.testmod.hazard_block": "Hazard block",
   "block.testmod.lab_block": "Lab block",
@@ -35,8 +36,8 @@
 
   "itemGroup.testmod.example_tab": "Item tab",
 
-  "transfur.testmod.white_latex_wolf_female": "white latex wolf female transfur",
-  "transfur.testmod.white_latex_wolf_male": "white latex wolf male transfur",
-  "transfur.testmod.dark_latex_wolf_female": "dark latex wolf female transfur",
-  "transfur.testmod.dark_latex_wolf_male": "dark latex wolf male transfur"
+  "transfur.testmod.white_latex_wolf_female": "white latex wolf female",
+  "transfur.testmod.white_latex_wolf_male": "white latex wolf male",
+  "transfur.testmod.dark_latex_wolf_female": "dark latex wolf female",
+  "transfur.testmod.dark_latex_wolf_male": "dark latex wolf male"
 }

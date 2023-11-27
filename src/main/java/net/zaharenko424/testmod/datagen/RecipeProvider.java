@@ -30,9 +30,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy("hasQuartz",has(Items.QUARTZ_BLOCK))
                 .save(p_301172_,LAB_BLOCK_ITEM.getId());
 
-        stonecutting(LAB_BLOCK_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{LAB_TILE_ITEM,BOLTED_LAB_TILE_ITEM},"hasLabBlock",has(LAB_BLOCK_ITEM),p_301172_);
-        stonecutting(LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{LAB_BLOCK_ITEM,BOLTED_LAB_TILE_ITEM},"hasLabTile",has(LAB_TILE_ITEM),p_301172_);
-        stonecutting(BOLTED_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{LAB_BLOCK_ITEM,LAB_TILE_ITEM},"hasBoltedLabTile",has(BOLTED_LAB_TILE_ITEM),p_301172_);
+        stonecutting(BOLTED_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{CONNECTED_LAB_TILE_ITEM,LAB_BLOCK_ITEM,LAB_TILE_ITEM},"hasBoltedLabTile",has(BOLTED_LAB_TILE_ITEM),p_301172_);
+        stonecutting(CONNECTED_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{BOLTED_LAB_TILE_ITEM, LAB_BLOCK_ITEM, LAB_TILE_ITEM},"hasConnectedLabTile",has(CONNECTED_LAB_TILE_ITEM),p_301172_);
+        stonecutting(LAB_BLOCK_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{BOLTED_LAB_TILE_ITEM,CONNECTED_LAB_TILE_ITEM,LAB_TILE_ITEM},"hasLabBlock",has(LAB_BLOCK_ITEM),p_301172_);
+        stonecutting(LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem[]{BOLTED_LAB_TILE_ITEM,CONNECTED_LAB_TILE_ITEM,LAB_BLOCK_ITEM},"hasLabTile",has(LAB_TILE_ITEM),p_301172_);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD,ORANGE_JUICE_ITEM)
                 .requires(ORANGE_ITEM,4)

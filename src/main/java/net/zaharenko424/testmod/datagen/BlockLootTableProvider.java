@@ -20,6 +20,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     protected void generate() {
         dropSelf(BOLTED_LAB_TILE.get());
         dropSelf(CARPET_BLOCK.get());
+        dropSelf(CONNECTED_LAB_TILE.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         dropSelf(HAZARD_BLOCK.get());
         dropSelf(LAB_BLOCK.get());

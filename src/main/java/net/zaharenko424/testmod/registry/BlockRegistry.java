@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.testmod.block.CarpetBlock;
+import net.zaharenko424.testmod.block.ConnectedLabTile;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.testmod.TestMod.MODID;
@@ -23,7 +25,8 @@ public class BlockRegistry {
 
     //Blocks
     public static final DeferredBlock<Block> BOLTED_LAB_TILE = BLOCKS.registerSimpleBlock("bolted_lab_tile", decorProperties().mapColor(DyeColor.WHITE));
-    public static final DeferredBlock<Block> CARPET_BLOCK = BLOCKS.registerSimpleBlock("carpet_block", BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava());
+    public static final DeferredBlock<CarpetBlock> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new CarpetBlock(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
+    public static final DeferredBlock<ConnectedLabTile> CONNECTED_LAB_TILE = BLOCKS.register("connected_lab_tile", ()-> new ConnectedLabTile(decorProperties().mapColor(DyeColor.WHITE)));
     public static final DeferredBlock<Block> DARK_LATEX_BLOCK = BLOCKS.registerSimpleBlock("dark_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(6,1).sound(SoundType.SLIME_BLOCK));
     public static final DeferredBlock<Block> HAZARD_BLOCK = BLOCKS.registerSimpleBlock("hazard_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Block> LAB_BLOCK = BLOCKS.registerSimpleBlock("lab_block", decorProperties().mapColor(DyeColor.WHITE));
