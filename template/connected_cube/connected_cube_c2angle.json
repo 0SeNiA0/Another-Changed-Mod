@@ -1,0 +1,13 @@
+{
+    "__comment": "Model for when two adgacent sides are connected.",
+	"parent": "block/cube",
+    "textures": {
+		"particle": "testmod:block/connected_cube/connected_cube0c",
+        "down": "testmod:block/connected_cube/connected_cube1c_e",
+		"up": "testmod:block/connected_cube/connected_cube4c",
+		"north": "testmod:block/connected_cube/connected_cube2c_uw",
+		"south": "testmod:block/connected_cube/connected_cube2c_ue",
+		"west": "testmod:block/connected_cube/connected_cube1c_u",
+		"east": "testmod:block/connected_cube/connected_cube4c"
+    }
+}

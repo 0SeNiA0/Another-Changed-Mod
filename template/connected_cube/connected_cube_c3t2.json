@@ -1,0 +1,13 @@
+{
+    "__comment": "Model for when three adjacent sides connected sides in a T shape.",
+	"parent": "block/cube",
+    "textures": {
+		"particle": "testmod:block/connected_cube/connected_cube0c",
+        "down": "testmod:block/connected_cube/connected_cube2c_we",
+		"up": "testmod:block/connected_cube/connected_cube4c",
+		"north": "testmod:block/connected_cube/connected_cube3c_uwe",
+		"south": "testmod:block/connected_cube/connected_cube3c_uwe",
+		"west": "testmod:block/connected_cube/connected_cube4c",
+		"east": "testmod:block/connected_cube/connected_cube4c"
+    }
+}

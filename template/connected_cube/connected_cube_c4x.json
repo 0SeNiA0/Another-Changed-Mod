@@ -1,0 +1,13 @@
+{
+    "__comment": "Model file for four connected sides in a cross shape.",
+	"parent": "block/cube",
+    "textures": {
+		"particle": "testmod:block/connected_cube/connected_cube0c",
+        "down": "testmod:block/connected_cube/connected_cube4c",
+		"up": "testmod:block/connected_cube/connected_cube4c",
+		"north": "testmod:block/connected_cube/connected_cube4c",
+		"south": "testmod:block/connected_cube/connected_cube4c",
+		"west": "testmod:block/connected_cube/connected_cube4c",
+		"east": "testmod:block/connected_cube/connected_cube4c"
+    }
+}
