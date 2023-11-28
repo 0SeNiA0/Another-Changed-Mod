@@ -3,9 +3,11 @@ package net.zaharenko424.testmod.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.zaharenko424.testmod.TestMod;
+import net.zaharenko424.testmod.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,5 +20,6 @@ public class ItemTagProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
+        tag(ItemTags.SAPLINGS).add(ItemRegistry.ORANGE_SAPLING_ITEM.get());
     }
 }

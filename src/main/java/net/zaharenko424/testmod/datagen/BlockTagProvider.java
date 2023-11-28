@@ -21,5 +21,8 @@ public class BlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BOLTED_LAB_TILE.get(),CONNECTED_LAB_TILE.get(),LAB_BLOCK.get(),LAB_TILE.get());
+        tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());
+        tag(BlockTags.LOGS).add(ORANGE_TREE_LOG.get());
+        tag(BlockTags.SAPLINGS).add(ORANGE_SAPLING.get());
     }
 }

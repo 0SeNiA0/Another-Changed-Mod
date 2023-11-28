@@ -10,12 +10,10 @@ import net.zaharenko424.testmod.client.model.LatexWolfMaleModel;
 import net.zaharenko424.testmod.client.model.LatexWolfFemaleModel;
 import org.jetbrains.annotations.NotNull;
 
-public class LatexWolf extends AbstractTransfurType {
-    private final boolean male;
+public class LatexWolf extends AbstractGenderedTransfurType {
 
     public LatexWolf(@NotNull ResourceLocation resourceLocation, boolean male){
-        super(resourceLocation);
-        this.male=male;
+        super(resourceLocation,male);
     }
 
     @Override @OnlyIn(Dist.CLIENT)

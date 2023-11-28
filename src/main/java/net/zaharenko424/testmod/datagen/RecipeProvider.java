@@ -21,6 +21,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     @Override
     protected void buildRecipes(@NotNull RecipeOutput p_301172_) {
+        latexBlockItem(false,p_301172_);
+        latexBlockItem(true,p_301172_);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,LAB_BLOCK_ITEM,32)
                 .pattern("QIQ")
                 .pattern("IQI")
@@ -56,5 +59,20 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         for(DeferredItem<?> result:results) {
             SingleItemRecipeBuilder.stonecutting((Ingredient.of(material)), category, result).unlockedBy(str,criterion).save(out,result.getId().withSuffix("_stonecutting_from_"+material.getId().getPath()));
         }
+    }
+
+    private void latexBlockItem(boolean white, RecipeOutput out){
+        DeferredItem<?> block=white?WHITE_LATEX_BLOCK_ITEM:DARK_LATEX_BLOCK_ITEM;
+        DeferredItem<?> latex=white?WHITE_LATEX_ITEM:DARK_LATEX_ITEM;
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,block,1)
+                .pattern("LL")
+                .pattern("LL")
+                .define('L',latex)
+                .unlockedBy("has"+(white?"White":"Dark")+"Latex",has(latex))
+                .save(out,block.getId());
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,latex,4)
+                .requires(block)
+                .unlockedBy("has"+(white?"White":"Dark")+"LatexBlock",has(block))
+                .save(out,latex.getId());
     }
 }

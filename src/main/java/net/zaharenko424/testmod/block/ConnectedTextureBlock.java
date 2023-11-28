@@ -39,7 +39,7 @@ public abstract class ConnectedTextureBlock extends Block {
         BlockPos.MutableBlockPos blockPos=new BlockPos.MutableBlockPos();
         BlockState state=defaultBlockState();
         for(Direction direction: Direction.values()){
-            blockPos.set(p_49820_.getClickedPos()).move(direction);
+            blockPos.setWithOffset(p_49820_.getClickedPos(),direction);
             if(p_49820_.getLevel().getBlockState(blockPos).is(BlockRegistry.CARPET_BLOCK)) state=state.setValue(propByDirection.get(direction),true);
         }
         return state;

@@ -1,9 +1,13 @@
 package net.zaharenko424.testmod.datagen;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
@@ -19,8 +23,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     @Override
     protected void registerStatesAndModels() {
-
         blockWithItem(BOLTED_LAB_TILE);
+        blockWithItem(BROWN_LAB_BLOCK);
         connectedTextureWithItem(CARPET_BLOCK,"carpet");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
         blockWithItem(DARK_LATEX_BLOCK);
@@ -29,12 +33,41 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(LAB_BLOCK);
         blockWithItem(LAB_TILE);
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/latex_solvent_still"));
+        blockWithItem(ORANGE_LEAVES);
+        saplingWithItem(ORANGE_SAPLING);
+        logWithItem(ORANGE_TREE_LOG);
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(),models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/white_latex_still"));
+        blockWithItem(YELLOW_LAB_BLOCK);
+    }
+
+    private void saplingWithItem(@NotNull DeferredBlock<SaplingBlock> sapling){
+        ResourceLocation id=sapling.getId();
+        simpleBlockWithItem(sapling.get(),models().cross(id.getPath(),blockLoc(id)).renderType("cutout"));
     }
 
     private void blockWithItem(@NotNull DeferredBlock<?> block){
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
+    }
+
+    private void logWithItem(@NotNull DeferredBlock<RotatedPillarBlock> block){
+        ResourceLocation id=block.getId();
+        ResourceLocation side=blockLoc(id);
+        ResourceLocation end=blockLoc(id).withSuffix("_top");
+        ModelFile vertical=models().cubeColumn(id.getPath(), side, end);
+        ModelFile horizontal=models().cubeColumnHorizontal(id.getPath() + "_horizontal", side, end);
+        getVariantBuilder(block.get())
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y)
+                .modelForState().modelFile(vertical).addModel()
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Z)
+                .modelForState().modelFile(horizontal).rotationX(90).addModel()
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.X)
+                .modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel();
+        itemModels().getBuilder(id.getPath()).parent(vertical);
+    }
+
+    private @NotNull ResourceLocation blockLoc(@NotNull ResourceLocation loc){
+        return loc.withPrefix(ModelProvider.BLOCK_FOLDER+"/");
     }
 
     private ModelFile cube(@NotNull ResourceLocation textureLoc,String modelId, String str0, String str1, String str2, String str3, String str5, String str4){
