@@ -22,14 +22,14 @@ public class LatexWolfFemaleModel<T extends LivingEntity> extends AbstractLatexE
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
                 .texOffs(40, 12).addBox(-2.0F, -3.0F, -6.0F, 4.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(8, 55).addBox(-1.5F, -1.0F, -5.5F, 3.0F, 1.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+                .texOffs(56, 40).addBox(-1.5F, -1.0F, -5.5F, 3.0F, 1.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
         head.addOrReplaceChild("ear_r1", CubeListBuilder.create().texOffs(40, 0).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -7.0F, -1.0F, -0.4284F, 0.3822F, 0.3645F));
-        head.addOrReplaceChild("ear_inner_r1", CubeListBuilder.create().texOffs(54, 25).addBox(-0.72F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -9.0F, -2.0F, -1.1266F, 0.3822F, 0.3645F));
-        head.addOrReplaceChild("ear_inner_r2", CubeListBuilder.create().texOffs(0, 55).addBox(-1.28F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -9.0F, -2.0F, -1.1266F, -0.3822F, -0.3645F));
+        head.addOrReplaceChild("ear_inner_r1", CubeListBuilder.create().texOffs(12, 55).addBox(-0.72F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -9.0F, -2.0F, -1.1266F, 0.3822F, 0.3645F));
+        head.addOrReplaceChild("ear_inner_r2", CubeListBuilder.create().texOffs(24, 55).addBox(-1.28F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -9.0F, -2.0F, -1.1266F, -0.3822F, -0.3645F));
         head.addOrReplaceChild("ear_r2", CubeListBuilder.create().texOffs(40, 20).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -7.0F, -1.0F, -0.4284F, -0.3822F, -0.3645F));
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -24.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        body.addOrReplaceChild("body_r1", CubeListBuilder.create().texOffs(1, 17).mirror().addBox(-1.7F, -2.0F, -2.0F, 3.4F, 3.4F, 3.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(1, 17).addBox(-5.7F, -2.0F, -2.0F, 3.4F, 3.4F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -20.0F, -1.5F, -0.48F, 0.0F, 0.0F));
+        body.addOrReplaceChild("body_r1", CubeListBuilder.create().texOffs(54, 25).addBox(-1.7F, -2.0F, -2.0F, 3.4F, 3.4F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 55).addBox(-5.7F, -2.0F, -2.0F, 3.4F, 3.4F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -20.0F, -1.5F, -0.48F, 0.0F, 0.0F));
         PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offset(0.0F, -12.0F, 2.0F));
         tail.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(23, 7).addBox(-2.0F, -2.0F, 1.0F, 4.0F, 4.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 2.0F, -0.2182F, 0.0F, 0.0F));
         tail.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(48, 32).addBox(-1.5F, -1.5F, -1.0F, 3.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0873F, 0.0F, 0.0F));

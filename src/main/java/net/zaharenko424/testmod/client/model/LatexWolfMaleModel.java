@@ -21,7 +21,6 @@ public class LatexWolfMaleModel<T extends LivingEntity> extends AbstractLatexEnt
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
-
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
                 .texOffs(40, 12).addBox(-2.0F, -3.0F, -6.0F, 4.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(8, 55).addBox(-1.5F, -1.0F, -5.5F, 3.0F, 1.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
