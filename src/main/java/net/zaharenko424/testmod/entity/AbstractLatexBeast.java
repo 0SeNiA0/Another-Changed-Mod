@@ -19,7 +19,7 @@ import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurDamageSource;
 import net.zaharenko424.testmod.TransfurManager;
 import net.zaharenko424.testmod.entity.ai.LatexAttackGoal;
-import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLatexBeast extends Monster {
@@ -27,7 +27,7 @@ public abstract class AbstractLatexBeast extends Monster {
 
     protected AbstractLatexBeast(@NotNull EntityType<? extends Monster> p_33002_,@NotNull Level p_33003_,@NotNull AbstractTransfurType transfurType) {
         super(p_33002_, p_33003_);
-        this.transfurType=transfurType.resourceLocation;
+        this.transfurType=transfurType.location;
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
     }
 

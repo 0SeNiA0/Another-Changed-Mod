@@ -32,8 +32,7 @@ import net.zaharenko424.testmod.client.layers.ArmorLayer;
 import net.zaharenko424.testmod.client.layers.SpinAttackEffect;
 import net.zaharenko424.testmod.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.testmod.client.model.DummyModel;
-import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
-import net.zaharenko424.testmod.entity.transfurTypes.LatexWolf;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +61,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         addLayer(new SpinAttackEffect<>(this,p_174304_.getModelSet()));
     }
 
-    public LatexEntityRenderer(EntityRendererProvider.Context context, @NotNull DeferredHolder<AbstractTransfurType, LatexWolf> transfurType){
+    public LatexEntityRenderer(EntityRendererProvider.Context context, @NotNull DeferredHolder<AbstractTransfurType,? extends AbstractTransfurType> transfurType){
         this(context);
         updateTransfurType(transfurType.get());
     }
@@ -215,6 +214,6 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull LivingEntity p_114482_) {
-        return transfurType!=null?transfurType.resourceLocation.withPrefix("textures/entity/").withSuffix(".png"):new ResourceLocation(TestMod.MODID,"textures/entity/dummy.png");
+        return transfurType!=null?transfurType.location.withPrefix("textures/entity/").withSuffix(".png"):new ResourceLocation(TestMod.MODID,"textures/entity/dummy.png");
     }
 }

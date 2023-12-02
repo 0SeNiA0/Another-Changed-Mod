@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import static net.zaharenko424.testmod.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
@@ -46,7 +47,7 @@ public class TestMod {
     public static final DeferredHolder<MobEffect, LatexSolventEffect> LATEX_SOLVENT = EFFECTS.register("latex_solvent", LatexSolventEffect::new);
 
     //Tags
-    public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE,resourceLocation("transfurrable"));
+    public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
 
     //Creative tabs
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -71,25 +72,30 @@ public class TestMod {
             output.accept(LAB_TILE_ITEM);
             output.accept(YELLOW_LAB_BLOCK_ITEM);
 
+            output.accept(CARDBOARD_BOX_ITEM);
+            output.accept(CHAIR_ITEM);
+            output.accept(METAL_BOX_ITEM);
+            output.accept(SCANNER_ITEM);
+            output.accept(TABLE_ITEM);
+
             output.accept(LATEX_SOLVENT_BUCKET);
             output.accept(WHITE_LATEX_BUCKET);
             output.accept(DARK_LATEX_BUCKET);
 
-            output.accept(TEST_SPAWN_EGG);
-
             output.accept(SYRINGE_ITEM);
             output.accept(UNTRANSFUR_SYRINGE_ITEM);
-            TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.resourceLocation)));
+            TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.location)));
             }).build());
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation resourceLocation(@NotNull String path){
+    public static @NotNull ResourceLocation resourceLoc(@NotNull String path){
         return new ResourceLocation(MODID,path);
     }
 
     public TestMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modEventBus);
+        BLOCK_ENTITIES.register(modEventBus);
         ITEMS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);

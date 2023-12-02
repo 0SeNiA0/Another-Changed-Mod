@@ -13,6 +13,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
     @Override
     protected void registerModels() {
+        basicItem(CARDBOARD.get());
         basicItem(DARK_LATEX_ITEM.getId());
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(LATEX_SOLVENT_BUCKET.getId());

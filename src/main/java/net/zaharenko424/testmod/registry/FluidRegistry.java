@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 import static net.zaharenko424.testmod.TestMod.MODID;
-import static net.zaharenko424.testmod.TestMod.resourceLocation;
+import static net.zaharenko424.testmod.TestMod.resourceLoc;
 
 public final class FluidRegistry {
 
@@ -28,12 +28,12 @@ public final class FluidRegistry {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
                 public ResourceLocation getStillTexture() {
-                    return resourceLocation("block/latex_solvent_still");
+                    return resourceLoc("block/latex_solvent_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture() {
-                    return resourceLocation("block/latex_solvent_flowing");
+                    return resourceLoc("block/latex_solvent_flowing");
                 }
             });
         }
@@ -45,12 +45,12 @@ public final class FluidRegistry {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
                 public ResourceLocation getStillTexture() {
-                    return resourceLocation("block/white_latex_still");
+                    return resourceLoc("block/white_latex_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture() {
-                    return resourceLocation("block/white_latex_flowing");
+                    return resourceLoc("block/white_latex_flowing");
                 }
             });
         }
@@ -62,12 +62,12 @@ public final class FluidRegistry {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
                 public ResourceLocation getStillTexture() {
-                    return resourceLocation("block/dark_latex_still");
+                    return resourceLoc("block/dark_latex_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture() {
-                    return resourceLocation("block/dark_latex_flowing");
+                    return resourceLoc("block/dark_latex_flowing");
                 }
             });
         }

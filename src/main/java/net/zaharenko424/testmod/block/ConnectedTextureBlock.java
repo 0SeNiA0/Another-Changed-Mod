@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ConnectedTextureBlock extends Block {
+public class ConnectedTextureBlock extends Block {
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
@@ -47,10 +47,8 @@ public abstract class ConnectedTextureBlock extends Block {
 
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return p_60541_.setValue(propByDirection.get(p_60542_),isSame(p_60543_));
+        return p_60541_.setValue(propByDirection.get(p_60542_),p_60543_.is(this));
     }
-
-    protected abstract boolean isSame(BlockState state);
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {

@@ -10,7 +10,7 @@ import net.zaharenko424.testmod.TestMod;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class LatexWolfFemaleModel<T extends LivingEntity> extends AbstractLatexEntityModel<T>{//TODO
+public class LatexWolfFemaleModel<T extends LivingEntity> extends AbstractLatexEntityModel<T>{
     public LatexWolfFemaleModel(@NotNull EntityRendererProvider.Context context, boolean main){
         super(context.bakeLayer(main?modelLayerLocation():armorLayerLocation()));
     }

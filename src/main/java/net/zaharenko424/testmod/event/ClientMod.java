@@ -11,10 +11,12 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.zaharenko424.testmod.client.model.DummyModel;
 import net.zaharenko424.testmod.client.model.LatexWolfFemaleModel;
 import net.zaharenko424.testmod.client.model.LatexWolfMaleModel;
+import net.zaharenko424.testmod.client.renderer.ChairRenderer;
 import net.zaharenko424.testmod.client.renderer.LatexEntityRenderer;
 import org.jetbrains.annotations.NotNull;
 
-import static net.zaharenko424.testmod.TestMod.*;
+import static net.zaharenko424.testmod.TestMod.LOGGER;
+import static net.zaharenko424.testmod.TestMod.MODID;
 import static net.zaharenko424.testmod.registry.EntityRegistry.*;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.*;
 
@@ -29,6 +31,8 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event){
+        event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);//Dummy renderer
+
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF));
 

@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.testmod.capability.ITransfurHandler;
 import net.zaharenko424.testmod.capability.TransfurCapability;
 import net.zaharenko424.testmod.entity.AbstractLatexBeast;
-import net.zaharenko424.testmod.entity.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundPlayerTransfurUpdatePacket;
 import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
@@ -127,7 +127,7 @@ public class TransfurManager {
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(ResourceLocation transfurType){
         try {
-            return (EntityType<AbstractLatexBeast>) BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).resourceLocation);
+            return (EntityType<AbstractLatexBeast>) BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).location);
 
         } catch (Exception exception){
             TestMod.LOGGER.warn("Exception occurred while fetching entity for transfur type "+transfurType.toString(),exception);

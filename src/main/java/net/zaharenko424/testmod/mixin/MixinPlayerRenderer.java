@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.zaharenko424.testmod.TransfurManager;
 import net.zaharenko424.testmod.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.testmod.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,7 +35,11 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
     @Inject(at = @At("HEAD"),
             method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             cancellable = true)
-    private void onRender(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_, CallbackInfo ci){
+    private void onRender(@NotNull AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_, CallbackInfo ci){
+        if(p_117788_.getVehicle() instanceof SeatEntity seat&&!seat.renderPlayer()){
+            ci.cancel();
+            return;
+        }
         if(mod$check(p_117788_)) {
             mod$renderer.render(p_117788_, p_117789_, p_117790_, p_117791_, p_117792_, p_117793_);
             ci.cancel();

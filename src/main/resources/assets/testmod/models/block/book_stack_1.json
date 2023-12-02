@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"3": "testmod:block/book_stack",
+		"particle": "#3"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 4],
+			"to": [12, 2, 13],
+			"faces": {
+				"north": {"uv": [7, 13, 10.5, 14], "texture": "#3"},
+				"east": {"uv": [0, 10.5, 4.5, 11.5], "texture": "#3"},
+				"south": {"uv": [3.5, 12.5, 7, 13.5], "texture": "#3"},
+				"west": {"uv": [4.5, 10.5, 9, 11.5], "texture": "#3"},
+				"up": {"uv": [4.5, 10.5, 0, 7], "rotation": 90, "texture": "#3"},
+				"down": {"uv": [9, 7, 4.5, 10.5], "rotation": 270, "texture": "#3"}
+			}
+		}
+	]
+}

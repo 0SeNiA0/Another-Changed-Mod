@@ -24,6 +24,31 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         latexBlockItem(false,p_301172_);
         latexBlockItem(true,p_301172_);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,CARDBOARD,1)
+                .pattern("P")
+                .pattern("P")
+                .pattern("P")
+                .define('P',Items.PAPER)
+                .unlockedBy(getHasName(Items.PAPER), has(Items.PAPER))
+                .save(p_301172_,CARDBOARD.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,CARDBOARD_BOX_ITEM,1)
+                .pattern("CCC")
+                .pattern("C C")
+                .pattern("CCC")
+                .define('C',CARDBOARD)
+                .unlockedBy(getHasName(CARDBOARD),has(CARDBOARD))
+                .save(p_301172_,CARDBOARD_BOX_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,CHAIR_ITEM,3)
+                .pattern("I ")
+                .pattern("II")
+                .pattern("BB")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B',Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
+                .save(p_301172_,CHAIR_ITEM.getId());
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,LAB_BLOCK_ITEM,32)
                 .pattern("QIQ")
                 .pattern("IQI")
@@ -53,6 +78,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('G', Tags.Items.GLASS_PANES)
                 .unlockedBy("hasIron",has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,SYRINGE_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,TABLE_ITEM,3)
+                .pattern("III")
+                .pattern("B B")
+                .pattern("B B")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B',Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
+                .save(p_301172_,TABLE_ITEM.getId());
     }
 
     private void stonecutting(DeferredItem<?> material, RecipeCategory category, DeferredItem<?> @NotNull [] results, String str, Criterion<?> criterion, RecipeOutput out){

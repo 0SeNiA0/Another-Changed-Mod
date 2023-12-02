@@ -2,17 +2,24 @@ package net.zaharenko424.testmod.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.testmod.TestMod;
@@ -25,6 +32,8 @@ import net.zaharenko424.testmod.commands.UnTransfur;
 import net.zaharenko424.testmod.entity.AbstractLatexBeast;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
+import net.zaharenko424.testmod.registry.BlockEntityRegistry;
+import net.zaharenko424.testmod.registry.BlockRegistry;
 import net.zaharenko424.testmod.registry.FluidRegistry;
 import net.zaharenko424.testmod.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -61,15 +70,32 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.@NotNull RightClickBlock event){
+        Level level=event.getLevel();
+        if(level.isClientSide) return;
+        ServerPlayer player=(ServerPlayer) event.getEntity();
+        ItemStack item=player.getItemInHand(event.getHand());
+        if(item.is(ItemTags.BOOKSHELF_BOOKS)&&player.isCrouching()){
+            BlockPos pos=event.getPos().above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING,player.getDirection().getOpposite()), 3)) return;
+            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item,!player.isCreative())));
+            event.setUseBlock(Event.Result.DENY);
+            event.setUseItem(Event.Result.DENY);
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public static void onLivingTick(LivingEvent.@NotNull LivingTickEvent event){
         LivingEntity entity=event.getEntity();
         if(TransfurDamageSource.checkTarget(entity)){
             if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get().resourceLocation);
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get().location);
                 return;
             }
             if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4,TransfurRegistry.DARK_LATEX_WOLF_M_TF.get().resourceLocation);
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4,TransfurRegistry.DARK_LATEX_WOLF_M_TF.get().location);
                 return;
             }
         }
