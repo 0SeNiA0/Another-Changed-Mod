@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.client.layers;
+package net.zaharenko424.testmod.client.model.layers;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;

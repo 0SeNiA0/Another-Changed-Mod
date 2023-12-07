@@ -1,0 +1,8 @@
+{
+  "test": {
+    "subtitle": "sounds.testmod.test",
+    "sounds": [
+      "testmod:test"
+    ]
+  }
+}

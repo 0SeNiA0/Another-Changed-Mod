@@ -21,6 +21,9 @@ import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
 public class Chair extends HorizontalDirectionalBlock implements ISeatBlock{
 

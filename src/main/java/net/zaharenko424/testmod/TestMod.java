@@ -24,11 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import static net.zaharenko424.testmod.registry.BlockEntityRegistry.BLOCK_ENTITIES;
-import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
+import static net.zaharenko424.testmod.registry.BlockRegistry.*;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
 import static net.zaharenko424.testmod.registry.ItemRegistry.*;
+import static net.zaharenko424.testmod.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_REGISTRY;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_TYPES;
 
@@ -43,8 +44,10 @@ public class TestMod {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, MODID);
 
     //Effects
-    public static final DeferredHolder<MobEffect, UnTransfurEffect> UNTRANSFUR = EFFECTS.register("untransfur", UnTransfurEffect::new);
-    public static final DeferredHolder<MobEffect, LatexSolventEffect> LATEX_SOLVENT = EFFECTS.register("latex_solvent", LatexSolventEffect::new);
+    public static final DeferredHolder<MobEffect, UnTransfurEffect> UNTRANSFUR = EFFECTS
+            .register("untransfur", UnTransfurEffect::new);
+    public static final DeferredHolder<MobEffect, LatexSolventEffect> LATEX_SOLVENT = EFFECTS
+            .register("latex_solvent", LatexSolventEffect::new);
 
     //Tags
     public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
@@ -74,9 +77,21 @@ public class TestMod {
 
             output.accept(CARDBOARD_BOX_ITEM);
             output.accept(CHAIR_ITEM);
+            output.accept(LAB_DOOR_ITEM);
+            output.accept(LATEX_CONTAINER_ITEM);
+            output.accept(LIBRARY_DOOR_ITEM);
+            output.accept(MAINTENANCE_DOOR_ITEM);
             output.accept(METAL_BOX_ITEM);
+            output.accept(NOTE_ITEM);
+            output.accept(NOTEPAD_ITEM);
             output.accept(SCANNER_ITEM);
             output.accept(TABLE_ITEM);
+            output.accept(VENT_ITEM);
+
+            output.accept(HAZMAT_HELMET);
+            output.accept(HAZMAT_CHESTPLATE);
+            output.accept(HAZMAT_LEGGINGS);
+            output.accept(HAZMAT_BOOTS);
 
             output.accept(LATEX_SOLVENT_BUCKET);
             output.accept(WHITE_LATEX_BUCKET);
@@ -103,6 +118,7 @@ public class TestMod {
         EFFECTS.register(modEventBus);
         TRANSFUR_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        SOUNDS.register(modEventBus);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);

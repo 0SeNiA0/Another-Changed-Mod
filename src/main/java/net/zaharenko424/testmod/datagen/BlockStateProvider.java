@@ -13,9 +13,7 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.BookStack;
-import net.zaharenko424.testmod.block.Box;
-import net.zaharenko424.testmod.block.Table;
+import net.zaharenko424.testmod.block.*;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.testmod.block.ConnectedTextureBlock.*;
@@ -39,20 +37,25 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/dark_latex_still"));
         blockWithItem(HAZARD_BLOCK);
         blockWithItem(LAB_BLOCK);
+        twoByTwoDoorWithItem(LAB_DOOR);
         blockWithItem(LAB_TILE);
+        doublePartBlockWithItem(LATEX_CONTAINER);
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/latex_solvent_still"));
+        twoByTwoDoorWithItem(LIBRARY_DOOR);
+        twoByTwoDoorWithItem(MAINTENANCE_DOOR);
         doublePartBlockWithItem(METAL_BOX);
-        blockWithItem(ORANGE_LEAVES);
+        horizontalDirectionalBlockWithItem(NOTE);
+        horizontalDirectionalBlockWithItem(NOTEPAD);
+        leavesWithItem(ORANGE_LEAVES);
         saplingWithItem(ORANGE_SAPLING);
         logWithItem(ORANGE_TREE_LOG);
         horizontalDirectionalBlockWithItem(SCANNER);
         tableModel();
+        ventWithItem();
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(),models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/white_latex_still"));
         blockWithItem(YELLOW_LAB_BLOCK);
     }
-
-
 
     private void saplingWithItem(@NotNull DeferredBlock<SaplingBlock> sapling){
         ResourceLocation id=sapling.getId();
@@ -60,19 +63,57 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleItem(id,blockLoc(id));
     }
 
+    private void leavesWithItem(@NotNull DeferredBlock<?> leaves){
+        ResourceLocation id=leaves.getId();
+        simpleBlockWithItem(leaves.get(),models().withExistingParent(id.getPath(),"block/leaves").texture("all",blockLoc(id)));
+    }
+
     private void blockWithItem(@NotNull DeferredBlock<?> block){
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
     }
 
+    private void ventWithItem(){
+        ResourceLocation id=VENT.getId();
+        ModelFile top=models().getExistingFile(blockLoc(id).withSuffix("_top"));
+        ModelFile bottom=models().getExistingFile(blockLoc(id).withSuffix("_bottom"));
+        ModelFile open=models().getExistingFile(blockLoc(id).withSuffix("_open"));
+        trapdoorBlock(VENT.get(),bottom,top,open,true);
+        itemModels().getBuilder(id.getPath()).parent(bottom);
+    }
+
     private void doublePartBlockWithItem(@NotNull DeferredBlock<?> block){
-        ModelFile upper= models().getExistingFile(blockTexture(block.get()).withSuffix("_upper"));
-        ModelFile lower= models().getExistingFile(blockTexture(block.get()));
+        ResourceLocation id=block.getId();
+        ModelFile upper= models().getExistingFile(blockLoc(id).withSuffix("_upper"));
+        ModelFile lower= models().getExistingFile(blockLoc(id));
         getVariantBuilder(block.get())
                 .partialState().with(Box.PART, DoubleBlockHalf.UPPER)
                 .modelForState().modelFile(upper).addModel()
                 .partialState().with(Box.PART,DoubleBlockHalf.LOWER)
                 .modelForState().modelFile(lower).addModel();
-        itemModels().getBuilder(block.getId().getPath()).parent(lower);
+        itemModels().getBuilder(id.getPath()).parent(lower);
+    }
+
+    private void twoByTwoDoorWithItem(@NotNull DeferredBlock<? extends AbstractTwoByTwoDoor> block){
+        ResourceLocation id=blockLoc(block.getId().withPrefix(block.getId().getPath()+"/"));
+        ModelFile part_0= models().getExistingFile(id.withSuffix("_0"));
+        ModelFile part_0_open= models().getExistingFile(id.withSuffix("_0_open"));
+        ModelFile part_1= models().getExistingFile(id.withSuffix("_1"));
+        ModelFile part_1_open= models().getExistingFile(id.withSuffix("_1_open"));
+        ModelFile part_2= models().getExistingFile(id.withSuffix("_2"));
+        ModelFile part_2_open= models().getExistingFile(id.withSuffix("_2_open"));
+        ModelFile part_3= models().getExistingFile(id.withSuffix("_3"));
+        ModelFile part_3_open= models().getExistingFile(id.withSuffix("_3_open"));
+        getVariantBuilder(block.get()).forAllStates(state->{
+            boolean open=state.getValue(AbstractMultiDoor.OPEN);
+            Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
+            return switch(state.getValue(AbstractTwoByTwoDoor.PART)){
+                default -> horizontalRotatedModel(open ? part_0_open : part_0,direction);
+                case 1 -> horizontalRotatedModel(open?part_1_open:part_1,direction);
+                case 2 -> horizontalRotatedModel(open?part_2_open:part_2,direction);
+                case 3 -> horizontalRotatedModel(open?part_3_open:part_3,direction);
+            };
+        });
+        itemModels().getBuilder(block.getId().getPath()).parent(models().getExistingFile(id));
     }
 
     private void logWithItem(@NotNull DeferredBlock<RotatedPillarBlock> block){
@@ -95,6 +136,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0",texture);
     }
 
+    private ConfiguredModel[] arr(ModelFile file){
+        return new ConfiguredModel[]{new ConfiguredModel(file)};
+    }
+
     private @NotNull ResourceLocation blockLoc(@NotNull ResourceLocation loc){
         return loc.withPrefix(ModelProvider.BLOCK_FOLDER+"/");
     }
@@ -113,10 +158,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                 .forAllStates(state->{
                     Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
                     return switch (state.getValue(BookStack.BOOK_AMOUNT)){
-                        case 2 -> new ConfiguredModel[]{horizontalRotatedModel(file2, direction)};
-                        case 3 -> new ConfiguredModel[]{horizontalRotatedModel(file3, direction)};
-                        case 4 -> new ConfiguredModel[]{horizontalRotatedModel(file4, direction)};
-                        default -> new ConfiguredModel[]{horizontalRotatedModel(file1, direction)};
+                        case 2 -> horizontalRotatedModel(file2, direction);
+                        case 3 -> horizontalRotatedModel(file3, direction);
+                        case 4 -> horizontalRotatedModel(file4, direction);
+                        default -> horizontalRotatedModel(file1, direction);
                     };
                 });
     }
@@ -136,16 +181,15 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile file= models().getExistingFile(blockLoc(block.getId()));
         simpleBlockItem(block.get(),file);
         getVariantBuilder(block.get())
-                .forAllStates(state->
-                        new ConfiguredModel[]{horizontalRotatedModel(file, state.getValue(HorizontalDirectionalBlock.FACING))});
+                .forAllStates(state-> horizontalRotatedModel(file, state.getValue(HorizontalDirectionalBlock.FACING)));
     }
 
-    private ConfiguredModel horizontalRotatedModel(@NotNull ModelFile file, @NotNull Direction direction){
+    private ConfiguredModel[] horizontalRotatedModel(@NotNull ModelFile file, @NotNull Direction direction){
         return switch (direction){
-            case EAST -> new ConfiguredModel(file,0,90,false);
-            case SOUTH -> new ConfiguredModel(file,0,180,false);
-            case WEST -> new ConfiguredModel(file,0,270,false);
-            default -> new ConfiguredModel(file);
+            default -> arr(file);
+            case EAST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 90, false)};
+            case SOUTH -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 180, false)};
+            case WEST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 270, false)};
         };
     }
 

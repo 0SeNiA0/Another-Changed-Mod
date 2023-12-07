@@ -3,6 +3,7 @@ package net.zaharenko424.testmod.event;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.neoforged.bus.api.Event;
@@ -75,15 +77,34 @@ public class CommonEvent {
         if(level.isClientSide) return;
         ServerPlayer player=(ServerPlayer) event.getEntity();
         ItemStack item=player.getItemInHand(event.getHand());
-        if(item.is(ItemTags.BOOKSHELF_BOOKS)&&player.isCrouching()){
-            BlockPos pos=event.getPos().above();
-            if(!level.getBlockState(pos).canBeReplaced()) return;
-            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING,player.getDirection().getOpposite()), 3)) return;
+        if(!player.isCrouching()) return;
+        Direction direction=player.getDirection().getOpposite();
+        BlockPos pos=event.getPos();
+        if(item.is(ItemTags.BOOKSHELF_BOOKS)){
+            if(!level.getBlockState(pos).canBeReplaced()) {
+                pos=pos.above();
+                if(!level.getBlockState(pos).canBeReplaced()) return;
+            }
+            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING,direction), 3)) return;
             level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item,!player.isCreative())));
-            event.setUseBlock(Event.Result.DENY);
-            event.setUseItem(Event.Result.DENY);
-            event.setCanceled(true);
+            denyEvent(event);
+            return;
         }
+        if(item.is(Items.PAPER)){
+            if(!level.getBlockState(pos).canBeReplaced()) {
+                pos=pos.relative(direction);
+                if(!level.getBlockState(pos).canBeReplaced()) return;
+            }
+            if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING,direction),3)) return;
+            if(!player.isCreative()) player.getItemInHand(event.getHand()).shrink(1);
+            denyEvent(event);
+        }
+    }
+
+    private static void denyEvent(PlayerInteractEvent.@NotNull RightClickBlock event){
+        event.setUseBlock(Event.Result.DENY);
+        event.setUseItem(Event.Result.DENY);
+        event.setCanceled(true);
     }
 
     @SubscribeEvent

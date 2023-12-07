@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.client.layers;
+package net.zaharenko424.testmod.client.model.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

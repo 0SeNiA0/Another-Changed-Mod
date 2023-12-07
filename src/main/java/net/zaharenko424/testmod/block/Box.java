@@ -17,14 +17,15 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
 public class Box extends Block {
     protected static final VoxelShape SHAPE = Block.box(2,0,2,14,26,14);
+    private static final VoxelShape SHAPE_UPPER = SHAPE.move(0,-1,0);
     public static final EnumProperty<DoubleBlockHalf> PART = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public Box(Properties p_49795_) {
@@ -44,38 +45,33 @@ public class Box extends Block {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState p_60479_, @NotNull BlockGetter p_60480_, @NotNull BlockPos p_60481_, @NotNull CollisionContext p_60482_) {
-        return p_60479_.getValue(PART)==DoubleBlockHalf.LOWER?SHAPE:SHAPE.move(0,-1,0);
+        return p_60479_.getValue(PART)==DoubleBlockHalf.LOWER?SHAPE:SHAPE_UPPER;
     }
 
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        if(p_60542_.getAxis()== Direction.Axis.Y){
-            return p_60543_.is(this) && p_60541_.getValue(PART)!=p_60543_.getValue(PART)?p_60541_:Blocks.AIR.defaultBlockState();
+        DoubleBlockHalf doubleblockhalf = p_60541_.getValue(PART);
+        if (p_60542_.getAxis() != Direction.Axis.Y || doubleblockhalf == DoubleBlockHalf.LOWER != (p_60542_ == Direction.UP)) {
+            return doubleblockhalf == DoubleBlockHalf.LOWER && p_60542_ == Direction.DOWN && !p_60541_.canSurvive(p_60544_, p_60545_)
+                    ? Blocks.AIR.defaultBlockState()
+                    : super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
+        } else {
+            return p_60543_.is(this) && p_60543_.getValue(PART) != doubleblockhalf
+                    ? p_60541_ : Blocks.AIR.defaultBlockState();
         }
-        return super.updateShape(p_60541_,p_60542_,p_60543_,p_60544_,p_60545_,p_60546_);
     }
 
     @Override
     public void playerWillDestroy(@NotNull Level p_49852_, @NotNull BlockPos p_49853_, @NotNull BlockState p_49854_, @NotNull Player p_49855_) {
         if (!p_49852_.isClientSide && p_49855_.isCreative()) {
-            DoubleBlockHalf doubleblockhalf = p_49854_.getValue(PART);
-            if (doubleblockhalf == DoubleBlockHalf.UPPER) {
-                BlockPos blockpos = p_49853_.below();
-                BlockState blockstate = p_49852_.getBlockState(blockpos);
-                if (blockstate.is(p_49854_.getBlock()) && blockstate.getValue(PART) == DoubleBlockHalf.LOWER) {
-                    p_49852_.setBlock(blockpos, blockstate.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 35);
-                    p_49852_.levelEvent(p_49855_, 2001, blockpos, Block.getId(blockstate));
-                }
-            }
+            Utils.fixCreativeDoubleBlockDrops(p_49852_,p_49853_,p_49854_,p_49855_);
         }
         super.playerWillDestroy(p_49852_, p_49853_, p_49854_, p_49855_);
     }
 
     @Override
     public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        BlockPos pos=p_60527_.below();
-        BlockState state=p_60526_.getBlockState(pos);
-        return p_60525_.getValue(PART) == DoubleBlockHalf.LOWER ? state.isFaceSturdy(p_60526_, pos, Direction.UP) : state.is(this);
+        return p_60525_.getValue(Box.PART) == DoubleBlockHalf.LOWER || p_60526_.getBlockState(p_60527_.below()).is(this);
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.zaharenko424.testmod.datagen;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableConditio
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.testmod.block.Box;
+import net.zaharenko424.testmod.block.AbstractTwoByTwoDoor;
 import net.zaharenko424.testmod.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,13 +38,20 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(DARK_LATEX_BLOCK.get());
         dropSelf(HAZARD_BLOCK.get());
         dropSelf(LAB_BLOCK.get());
+        twoByTwoDoorDrops(LAB_DOOR.get());
         dropSelf(LAB_TILE.get());
+        doublePartBlockDrops(LATEX_CONTAINER.get());
+        twoByTwoDoorDrops(LIBRARY_DOOR.get());
+        twoByTwoDoorDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());
+        dropOther(NOTE.get(), Items.PAPER);
+        dropSelf(NOTEPAD.get());
         createOrangeLeavesDrops();
         dropSelf(ORANGE_SAPLING.get());
         dropSelf(ORANGE_TREE_LOG.get());
         dropSelf(SCANNER.get());
         dropSelf(TABLE.get());
+        dropSelf(VENT.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
         dropSelf(YELLOW_LAB_BLOCK.get());
     }
@@ -63,6 +72,15 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Box.PART,"lower")))
+                .add(
+                        applyExplosionCondition(block,LootItem.lootTableItem(block))
+                )));
+    }
+
+    private void twoByTwoDoorDrops(AbstractTwoByTwoDoor block){
+        add(block, LootTable.lootTable().withPool(LootPool.lootPool()
+                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(AbstractTwoByTwoDoor.PART,0)))
                 .add(
                         applyExplosionCondition(block,LootItem.lootTableItem(block))
                 )));

@@ -65,7 +65,6 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
             if(item.is(ItemTags.BOOKSHELF_BOOKS)&&bookStack.hasSpace()){
                 bookStack.addBook(item,!p_60506_.getAbilities().instabuild);
                 p_60504_.setBlock(p_60505_,p_60503_.setValue(BOOK_AMOUNT, bookStack.bookAmount()),3);
-
                 return InteractionResult.CONSUME;
             }
             if(item.isEmpty()){
@@ -85,9 +84,7 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     public void onRemove(@NotNull BlockState p_60515_, @NotNull Level p_60516_, @NotNull BlockPos p_60517_, @NotNull BlockState p_60518_, boolean p_60519_) {
         if(p_60515_.getBlock()!=p_60518_.getBlock()){
             BlockEntity entity = p_60516_.getBlockEntity(p_60517_);
-            if (entity instanceof BookStackEntity bookStack) {
-                bookStack.dropBooks();
-            }
+            if (entity instanceof BookStackEntity bookStack) bookStack.dropBooks();
         }
         super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
     }
