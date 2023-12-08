@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -26,6 +27,9 @@ import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
 public class BookStack extends HorizontalDirectionalBlock implements EntityBlock {
 
@@ -42,12 +46,12 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos p_153215_, @NotNull BlockState p_153216_) {
+    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
         return new BookStackEntity(p_153215_,p_153216_);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
         return switch(p_60555_.getValue(BOOK_AMOUNT)){
             case 2-> Utils.rotateShape(p_60555_.getValue(FACING),TWO_BOOKS);
             case 3-> Utils.rotateShape(p_60555_.getValue(FACING),THREE_BOOKS);
@@ -57,7 +61,7 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState p_60503_, @NotNull Level p_60504_, @NotNull BlockPos p_60505_, @NotNull Player p_60506_, @NotNull InteractionHand p_60507_, @NotNull BlockHitResult p_60508_) {
+    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity entity=p_60504_.getBlockEntity(p_60505_);
         if(entity instanceof BookStackEntity bookStack){
@@ -81,7 +85,7 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     }
 
     @Override
-    public void onRemove(@NotNull BlockState p_60515_, @NotNull Level p_60516_, @NotNull BlockPos p_60517_, @NotNull BlockState p_60518_, boolean p_60519_) {
+    public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
         if(p_60515_.getBlock()!=p_60518_.getBlock()){
             BlockEntity entity = p_60516_.getBlockEntity(p_60517_);
             if (entity instanceof BookStackEntity bookStack) bookStack.dropBooks();
@@ -90,7 +94,13 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
+    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
+        BlockPos pos= p_60527_.below();
+        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos,Direction.UP);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
         p_49915_.add(BOOK_AMOUNT,FACING);
     }
 }

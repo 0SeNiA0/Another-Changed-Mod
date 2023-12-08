@@ -15,20 +15,21 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.testmod.capability.ITransfurHandler;
 import net.zaharenko424.testmod.capability.TransfurCapability;
 import net.zaharenko424.testmod.entity.AbstractLatexBeast;
-import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundPlayerTransfurUpdatePacket;
 import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
 import net.zaharenko424.testmod.registry.TransfurRegistry;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static net.zaharenko424.testmod.TestMod.LATEX_RESISTANCE;
 import static net.zaharenko424.testmod.TestMod.LOGGER;
-import static net.zaharenko424.testmod.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 import static net.zaharenko424.testmod.capability.TransfurCapability.NO_CAPABILITY_EXC;
+import static net.zaharenko424.testmod.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 
 public class TransfurManager {
 
@@ -58,17 +59,29 @@ public class TransfurManager {
         return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).isTransfurred();
     }
 
-    public static int getTransfurProgress(@NotNull Player player){
+    public static float getTransfurProgress(@NotNull Player player){
         return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).getTransfurProgress();
+    }
+
+    public static void addTransfurProgress(@NotNull LivingEntity entity, float amount, @NotNull AbstractTransfurType transfurType){
+        addTransfurProgress(entity,amount,transfurType,true);
     }
 
     /**
      * Serverside use only!
      */
-    public static void addTransfurProgress(@NotNull LivingEntity entity, int amount, @NotNull ResourceLocation transfurType){
+    public static void addTransfurProgress(@NotNull LivingEntity entity,float amount, @NotNull AbstractTransfurType transfurType, boolean checkResistance){
         if(entity.level().isClientSide) return;
         entity.getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
-            int progress=handler.getTransfurProgress()+amount;
+            LOGGER.warn("base value "+amount);
+            float finalAmount=amount;
+            if(checkResistance) {
+                float resistance = (float) entity.getAttributeValue(LATEX_RESISTANCE);
+                finalAmount=(1-resistance)*finalAmount;
+            }
+            LOGGER.warn("reduced tf "+finalAmount);
+            float progress=handler.getTransfurProgress()+finalAmount;
+            LOGGER.warn("progress is "+progress);
             if(progress>=TRANSFUR_TOLERANCE){
                 transfur(entity,handler,transfurType);
                 return;
@@ -80,25 +93,25 @@ public class TransfurManager {
 
     public static @Nullable AbstractTransfurType getTransfurType(@NotNull Player player){
         LazyOptional<ITransfurHandler> optional = player.getCapability(TransfurCapability.CAPABILITY);
-        return optional.isPresent()?getTransfurType(optional.orElseThrow(NO_CAPABILITY_EXC).getTransfurType()):null;
+        return optional.isPresent()?optional.orElseThrow(NO_CAPABILITY_EXC).getTransfurType():null;
     }
 
     /**
      * Serverside use only!
      */
-    public static void transfur(@NotNull LivingEntity entity, @NotNull ResourceLocation transfurType){
+    public static void transfur(@NotNull LivingEntity entity, @NotNull AbstractTransfurType transfurType){
         if(entity.level().isClientSide) return;
         LOGGER.info("transfur");
         entity.getCapability(TransfurCapability.CAPABILITY).ifPresent((handler-> transfur(entity,handler,transfurType)));
     }
 
-    private static void transfur(@NotNull LivingEntity entity,@NotNull ITransfurHandler handler,@NotNull ResourceLocation transfurType){
+    private static void transfur(@NotNull LivingEntity entity,@NotNull ITransfurHandler handler,@NotNull AbstractTransfurType transfurType){
         if(entity instanceof ServerPlayer player){
             handler.transfur(transfurType);
             updatePlayer(player,handler);
             return;
         }
-        Objects.requireNonNullElseGet(getTransfurEntity(transfurType), WHITE_LATEX_WOLF_MALE).spawn((ServerLevel) entity.level(),entity.blockPosition(),MobSpawnType.CONVERSION);
+        Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn((ServerLevel) entity.level(),entity.blockPosition(),MobSpawnType.CONVERSION);
         entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
@@ -127,7 +140,7 @@ public class TransfurManager {
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(ResourceLocation transfurType){
         try {
-            return (EntityType<AbstractLatexBeast>) BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).location);
+            return (EntityType<AbstractLatexBeast>) BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).id);
 
         } catch (Exception exception){
             TestMod.LOGGER.warn("Exception occurred while fetching entity for transfur type "+transfurType.toString(),exception);

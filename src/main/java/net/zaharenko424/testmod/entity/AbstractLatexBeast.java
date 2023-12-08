@@ -1,6 +1,5 @@
 package net.zaharenko424.testmod.entity;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,11 +22,11 @@ import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLatexBeast extends Monster {
-    public final @NotNull ResourceLocation transfurType;
+    public final @NotNull AbstractTransfurType transfurType;
 
     protected AbstractLatexBeast(@NotNull EntityType<? extends Monster> p_33002_,@NotNull Level p_33003_,@NotNull AbstractTransfurType transfurType) {
         super(p_33002_, p_33003_);
-        this.transfurType=transfurType.location;
+        this.transfurType=transfurType;
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
     }
 

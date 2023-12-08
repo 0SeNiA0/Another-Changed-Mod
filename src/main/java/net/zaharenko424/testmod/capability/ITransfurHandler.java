@@ -1,23 +1,23 @@
 package net.zaharenko424.testmod.capability;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ITransfurHandler {
 
-    int getTransfurProgress();
+    float getTransfurProgress();
 
-    void setTransfurProgress(int amount,@NotNull ResourceLocation transfurType);
+    void setTransfurProgress(float amount,@NotNull AbstractTransfurType transfurType);
 
-    @Nullable ResourceLocation getTransfurType();
+    @Nullable AbstractTransfurType getTransfurType();
 
-    void setTransfurType(@NotNull ResourceLocation transfurType);
+    void setTransfurType(@NotNull AbstractTransfurType transfurType);
 
     boolean isTransfurred();
 
-    void transfur(@NotNull ResourceLocation transfurType);
+    void transfur(@NotNull AbstractTransfurType transfurType);
 
     void unTransfur();
 

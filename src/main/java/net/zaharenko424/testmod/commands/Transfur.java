@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
 import net.zaharenko424.testmod.registry.TransfurRegistry;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class Transfur {
@@ -42,7 +43,9 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        TransfurManager.transfur(player,transfurType);
+        AbstractTransfurType transfur=TransfurManager.getTransfurType(transfurType);
+        if(transfur==null) return 0;
+        TransfurManager.transfur(player,transfur);
         return Command.SINGLE_SUCCESS;
     }
 }

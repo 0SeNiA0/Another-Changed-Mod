@@ -1,6 +1,5 @@
 package net.zaharenko424.testmod.item;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -8,13 +7,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public class LatexItem extends Item {
 
-    private final ResourceLocation transfurType;
+    private final Supplier<? extends AbstractTransfurType> transfurType;
 
-    public LatexItem(@NotNull ResourceLocation transfurType) {
+    public LatexItem(@NotNull Supplier<? extends AbstractTransfurType> transfurType) {
         super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
         this.transfurType=transfurType;
     }
@@ -24,7 +26,7 @@ public class LatexItem extends Item {
         Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            TransfurManager.addTransfurProgress(player,10,transfurType);
+            TransfurManager.addTransfurProgress(player,10,transfurType.get(),false);
         }
         if(!player.getAbilities().instabuild) p_41409_.shrink(1);
         return p_41409_;

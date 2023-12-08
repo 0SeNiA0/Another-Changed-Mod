@@ -10,6 +10,7 @@ import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.common.util.NonNullSupplier;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.TransfurManager;
+import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +60,8 @@ public class TransfurCapability {
 
         final LivingEntity entity;
 
-        int transfurProgress=0;
-        ResourceLocation transfurType=null;
+        float transfurProgress=0;
+        AbstractTransfurType transfurType=null;
         boolean isTransfurred=false;
 
         static final int ticksUntilTFProgressDecrease=200;
@@ -72,24 +73,24 @@ public class TransfurCapability {
         }
 
         @Override
-        public int getTransfurProgress() {
+        public float getTransfurProgress() {
             return transfurProgress;
         }
 
         @Override
-        public void setTransfurProgress(int amount, @NotNull ResourceLocation transfurType) {
+        public void setTransfurProgress(float amount, @NotNull AbstractTransfurType transfurType) {
             i0=ticksUntilTFProgressDecrease;
             transfurProgress=amount;
             this.transfurType=transfurType;
         }
 
         @Override
-        public @Nullable ResourceLocation getTransfurType() {
+        public @Nullable AbstractTransfurType getTransfurType() {
             return transfurType!=null?transfurType:null;
         }
 
         @Override
-        public void setTransfurType(@NotNull ResourceLocation transfurType) {
+        public void setTransfurType(@NotNull AbstractTransfurType transfurType) {
             this.transfurType=transfurType;
         }
 
@@ -99,7 +100,7 @@ public class TransfurCapability {
         }
 
         @Override
-        public void transfur(@NotNull ResourceLocation transfurType) {
+        public void transfur(@NotNull AbstractTransfurType transfurType) {
             transfurProgress=20;
             this.transfurType=transfurType;
             isTransfurred=true;
@@ -114,16 +115,16 @@ public class TransfurCapability {
 
         @Override
         public void load(@NotNull CompoundTag tag) {
-            transfurProgress=tag.getInt(TRANSFUR_PROGRESS_KEY);
-            if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType=new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY));
+            transfurProgress=tag.getFloat(TRANSFUR_PROGRESS_KEY);
+            if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType=TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
             isTransfurred=tag.getBoolean(TRANSFURRED_KEY);
         }
 
         @Override
         public CompoundTag save() {
             CompoundTag tag=new CompoundTag();
-            tag.putInt(TRANSFUR_PROGRESS_KEY,transfurProgress);
-            if(transfurType!=null) tag.putString(TRANSFUR_TYPE_KEY,transfurType.toString());
+            tag.putFloat(TRANSFUR_PROGRESS_KEY,transfurProgress);
+            if(transfurType!=null) tag.putString(TRANSFUR_TYPE_KEY,transfurType.id.toString());
             tag.putBoolean(TRANSFURRED_KEY,isTransfurred);
             return tag;
         }

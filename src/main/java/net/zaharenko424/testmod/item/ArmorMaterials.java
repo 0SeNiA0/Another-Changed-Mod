@@ -14,23 +14,25 @@ import java.util.function.Supplier;
 @ParametersAreNonnullByDefault
 public enum ArmorMaterials implements ArmorMaterial {
 
-    HAZMAT("hazmat",15,new int[]{2, 4, 3, 2},15, SoundEvents.ARMOR_EQUIP_LEATHER,1,
+    HAZMAT("hazmat",20,new int[]{2, 4, 3, 2},new float[]{.15f,.25f,.2f,.15f},15, SoundEvents.ARMOR_EQUIP_LEATHER,1,
             .1f, ()->Ingredient.EMPTY);
 
     private final String name;
     private final int durabilityMultiplier;
     private final int[] protection;
+    private final float[] latexProtection;
     private final int enchantmentValue;
     private final SoundEvent sound;
     private final float toughness;
     private final float knockbackResistance;
     private final LazyLoadedValue<Ingredient> repairIngredient;
 
-    ArmorMaterials(String name, int durabilityMult, int[] protection, int enchValue, SoundEvent sound, float toughness,
-                   float knockbackRes, Supplier<Ingredient> repairIngredient){
+    ArmorMaterials(String name, int durabilityMult, int[] protection, float[] latexProtection, int enchValue, SoundEvent sound,
+                   float toughness, float knockbackRes, Supplier<Ingredient> repairIngredient){
         this.name = name;
         this.durabilityMultiplier = durabilityMult;
         this.protection = protection;
+        this.latexProtection=latexProtection;
         this.enchantmentValue = enchValue;
         this.sound = sound;
         this.toughness = toughness;
@@ -46,6 +48,10 @@ public enum ArmorMaterials implements ArmorMaterial {
     @Override
     public int getDefenseForType(ArmorItem.Type p_267168_) {
         return protection[p_267168_.ordinal()];
+    }
+
+    public float getLatexProtection(ArmorItem.Type type) {
+        return latexProtection[type.ordinal()];
     }
 
     @Override

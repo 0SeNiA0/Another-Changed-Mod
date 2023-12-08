@@ -214,6 +214,6 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull LivingEntity p_114482_) {
-        return transfurType!=null?transfurType.location.withPrefix("textures/entity/").withSuffix(".png"):new ResourceLocation(TestMod.MODID,"textures/entity/dummy.png");
+        return transfurType!=null?transfurType.id.withPrefix("textures/entity/").withSuffix(".png"):new ResourceLocation(TestMod.MODID,"textures/entity/dummy.png");
     }
 }

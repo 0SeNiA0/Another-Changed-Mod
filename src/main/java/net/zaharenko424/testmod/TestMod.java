@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import static net.zaharenko424.testmod.registry.BlockEntityRegistry.BLOCK_ENTITIES;
-import static net.zaharenko424.testmod.registry.BlockRegistry.*;
+import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
@@ -40,8 +42,13 @@ public class TestMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     //Registries
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE,MODID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT,MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, MODID);
+
+    //Attributes
+    public static final DeferredHolder<Attribute,Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
+            ()-> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
 
     //Effects
     public static final DeferredHolder<MobEffect, UnTransfurEffect> UNTRANSFUR = EFFECTS
@@ -99,7 +106,7 @@ public class TestMod {
 
             output.accept(SYRINGE_ITEM);
             output.accept(UNTRANSFUR_SYRINGE_ITEM);
-            TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.location)));
+            TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.id)));
             }).build());
 
     @Contract("_ -> new")
@@ -109,14 +116,15 @@ public class TestMod {
 
     public TestMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        TRANSFUR_TYPES.register(modEventBus);
+        ATTRIBUTES.register(modEventBus);
+        EFFECTS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         ITEMS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
         ENTITIES.register(modEventBus);
-        EFFECTS.register(modEventBus);
-        TRANSFUR_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         SOUNDS.register(modEventBus);
 

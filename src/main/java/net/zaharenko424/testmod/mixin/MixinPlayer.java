@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @Mixin(Player.class)
 public abstract class MixinPlayer extends LivingEntity {
-    protected MixinPlayer(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
+    public MixinPlayer(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
     }
 
@@ -50,7 +50,7 @@ public abstract class MixinPlayer extends LivingEntity {
         getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
             if(!handler.isTransfurred()) return;
             ci.cancel();
-            ci.setReturnValue(TransfurManager.getTransfurType(handler.getTransfurType()).getEyeHeight(p_36259_));
+            ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
         });
     }
 }

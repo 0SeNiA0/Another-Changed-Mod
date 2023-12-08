@@ -10,7 +10,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.testmod.item.*;
 
 import static net.zaharenko424.testmod.TestMod.MODID;
-import static net.zaharenko424.testmod.TestMod.resourceLoc;
 import static net.zaharenko424.testmod.registry.BlockRegistry.*;
 import static net.zaharenko424.testmod.registry.FluidRegistry.*;
 
@@ -47,7 +46,7 @@ public final class ItemRegistry {
 
     //Items
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
-    public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(resourceLoc("dark_latex_wolf")));
+    public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_HELMET = ITEMS.register("hazmat_helmet", ()-> new HazmatArmorItem(ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_CHESTPLATE = ITEMS.register("hazmat_chestplate", ()-> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_LEGGINGS = ITEMS.register("hazmat_leggings", ()-> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties()));
@@ -58,7 +57,7 @@ public final class ItemRegistry {
     public static final DeferredItem<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", SyringeItem::new);
     public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM=ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
     public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM=ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);
-    public static final DeferredItem<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(resourceLoc("white_latex_wolf")));
+    public static final DeferredItem<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
 
     public static final DeferredItem<BucketItem> LATEX_SOLVENT_BUCKET = ITEMS.register("latex_solvent_bucket", ()->new BucketItem(LATEX_SOLVENT_STILL,new Item.Properties().stacksTo(1)));
     public static final DeferredItem<BucketItem> WHITE_LATEX_BUCKET = ITEMS.register("white_latex_bucket", ()-> new BucketItem(WHITE_LATEX_STILL,new Item.Properties().stacksTo(1)));

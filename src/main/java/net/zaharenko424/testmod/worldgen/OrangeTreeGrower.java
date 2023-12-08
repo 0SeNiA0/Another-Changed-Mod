@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.worldgen;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;

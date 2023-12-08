@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSi
 import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
-import net.zaharenko424.testmod.block.OrangeTreeGrower;
+import net.zaharenko424.testmod.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.testmod.registry.BlockRegistry.ORANGE_LEAVES;

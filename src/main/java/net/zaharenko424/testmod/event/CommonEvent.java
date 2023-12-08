@@ -38,15 +38,15 @@ import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 import net.zaharenko424.testmod.registry.FluidRegistry;
 import net.zaharenko424.testmod.registry.TransfurRegistry;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static net.zaharenko424.testmod.TestMod.LOGGER;
 import static net.zaharenko424.testmod.capability.TransfurCapability.CAPABILITY;
 import static net.zaharenko424.testmod.capability.TransfurCapability.NO_CAPABILITY_EXC;
-
+@ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = TestMod.MODID)
 public class CommonEvent {
 
@@ -56,7 +56,7 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onRegisterCommands(@NotNull RegisterCommandsEvent event){
+    public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();
         Transfur.register(dispatcher);
         UnTransfur.register(dispatcher);
@@ -64,7 +64,7 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event){
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player= (ServerPlayer) event.getEntity();
         TransfurManager.updatePlayer(player);
@@ -72,7 +72,7 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onRightClickBlock(PlayerInteractEvent.@NotNull RightClickBlock event){
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event){
         Level level=event.getLevel();
         if(level.isClientSide) return;
         ServerPlayer player=(ServerPlayer) event.getEntity();
@@ -101,22 +101,22 @@ public class CommonEvent {
         }
     }
 
-    private static void denyEvent(PlayerInteractEvent.@NotNull RightClickBlock event){
+    private static void denyEvent(PlayerInteractEvent.RightClickBlock event){
         event.setUseBlock(Event.Result.DENY);
         event.setUseItem(Event.Result.DENY);
         event.setCanceled(true);
     }
 
     @SubscribeEvent
-    public static void onLivingTick(LivingEvent.@NotNull LivingTickEvent event){
+    public static void onLivingTick(LivingEvent.LivingTickEvent event){
         LivingEntity entity=event.getEntity();
         if(TransfurDamageSource.checkTarget(entity)){
             if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get().location);
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get());
                 return;
             }
             if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4,TransfurRegistry.DARK_LATEX_WOLF_M_TF.get().location);
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4,TransfurRegistry.DARK_LATEX_WOLF_M_TF.get());
                 return;
             }
         }
@@ -126,9 +126,9 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onAttachCapabilities(@NotNull AttachCapabilitiesEvent<Entity> event){
+    public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event){
         if(!(event.getObject() instanceof LivingEntity entity)) return;
-        if(entity instanceof Player||entity.getType().is(TestMod.TRANSFURRABLE_TAG)){
+        if(entity.getType().is(TestMod.TRANSFURRABLE_TAG)){
             event.addCapability(TransfurCapability.KEY,TransfurCapability.createProvider(entity));
         }
     }
@@ -137,7 +137,7 @@ public class CommonEvent {
      * Server event
      */
     @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.@NotNull StartTracking event){
+    public static void onStartTracking(PlayerEvent.StartTracking event){
         if(!(event.getTarget() instanceof Player remotePlayer)) return;
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) event.getEntity()),
                 new ClientboundRemotePlayerTransfurUpdatePacket(remotePlayer.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC),remotePlayer.getUUID()));
@@ -147,7 +147,7 @@ public class CommonEvent {
      * Server event
      */
     @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.@NotNull Clone event){
+    public static void onPlayerClone(PlayerEvent.Clone event){
         if(!event.isWasDeath()) return;
         ServerPlayer og=(ServerPlayer) event.getOriginal();
         ServerPlayer player=(ServerPlayer) event.getEntity();

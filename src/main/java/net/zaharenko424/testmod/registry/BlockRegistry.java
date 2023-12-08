@@ -8,6 +8,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.testmod.block.*;
+import net.zaharenko424.testmod.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.testmod.TestMod.MODID;

@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractTransfurType {
 
     protected final AbstractTransfurType.Properties properties;
-    public final ResourceLocation location;
+    public final ResourceLocation id;
 
     public AbstractTransfurType(@NotNull Properties properties){
         this.properties=properties;
-        location=properties.location;
+        id =properties.location;
     }
 
     @OnlyIn(Dist.CLIENT)
