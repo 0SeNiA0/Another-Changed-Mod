@@ -35,14 +35,10 @@ public abstract class AbstractMultiDoor extends HorizontalDirectionalBlock {
 
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60507_!=InteractionHand.MAIN_HAND) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
-        if(p_60504_.isClientSide) {
-            p_60504_.playSound(p_60506_,p_60505_,SoundRegistry.TEST_SOUND.get(),SoundSource.BLOCKS);//TODO replace with actual sounds
-            return InteractionResult.SUCCESS;
-        }
-        BlockPos mainPos= getMainPos(p_60503_,p_60505_);
+        if(p_60507_!=InteractionHand.MAIN_HAND||p_60504_.isClientSide) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+        BlockPos mainPos = getMainPos(p_60503_, p_60505_);
         setOpenClose(p_60504_.getBlockState(mainPos),mainPos,p_60504_);
-        p_60504_.playSound(p_60506_,p_60505_, SoundRegistry.TEST_SOUND.get(), SoundSource.BLOCKS);
+        p_60504_.playSound(null,p_60505_, SoundRegistry.DOOR_OPEN.get(), SoundSource.BLOCKS);
         return InteractionResult.SUCCESS;
     }
 
@@ -58,9 +54,23 @@ public abstract class AbstractMultiDoor extends HorizontalDirectionalBlock {
     }
 
     @Override
+    public void neighborChanged(BlockState p_60509_, Level p_60510_, BlockPos p_60511_, Block p_60512_, BlockPos p_60513_, boolean p_60514_) {
+        super.neighborChanged(p_60509_, p_60510_, p_60511_, p_60512_, p_60513_, p_60514_);
+        BlockPos mainPos=getMainPos(p_60509_,p_60511_);
+        BlockState mainState=p_60510_.getBlockState(mainPos);
+        if(mainState.isAir()) return;
+        if(isPowered(p_60510_.getBlockState(mainPos),mainPos,p_60510_)!=p_60509_.getValue(OPEN)){
+            setOpenClose(mainState,mainPos,p_60510_);
+            p_60510_.playSound(null,p_60511_, SoundRegistry.DOOR_OPEN.get(), SoundSource.BLOCKS);
+        }
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
         p_49915_.add(FACING,OPEN,part());
     }
+
+    abstract boolean isPowered(BlockState mainState, BlockPos mainPos, LevelAccessor level);
 
     abstract void setOpenClose(BlockState mainState, BlockPos mainPos, LevelAccessor level);
 

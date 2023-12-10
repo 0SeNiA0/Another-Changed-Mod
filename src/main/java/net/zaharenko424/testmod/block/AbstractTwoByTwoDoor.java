@@ -10,7 +10,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.zaharenko424.testmod.TestMod;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -65,9 +64,14 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
         p_49847_.setBlockAndUpdate(p_49848_.relative(direction).above(), defState.setValue(PART, 2));
     }
 
+    protected boolean isPowered(BlockState mainState, BlockPos mainPos, LevelAccessor level){
+        BlockPos pos3=mainPos.relative(mainState.getValue(FACING).getCounterClockWise());
+        return level.hasNeighborSignal(mainPos)||level.hasNeighborSignal(mainPos.above())
+                ||level.hasNeighborSignal(pos3)||level.hasNeighborSignal(pos3.above());
+    }
+
     protected void setOpenClose(BlockState mainState, BlockPos mainPos, LevelAccessor level){
         boolean open=!mainState.getValue(OPEN);
-        TestMod.LOGGER.warn("open "+open);
         level.setBlock(mainPos,mainState.setValue(OPEN,open),3);
         mainPos=mainPos.above();
         level.setBlock(mainPos,level.getBlockState(mainPos).setValue(OPEN,open),3);

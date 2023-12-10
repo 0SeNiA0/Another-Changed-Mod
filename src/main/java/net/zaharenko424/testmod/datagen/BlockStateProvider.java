@@ -36,6 +36,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/dark_latex_still"));
         blockWithItem(HAZARD_BLOCK);
+        keypadWithItem();
         blockWithItem(LAB_BLOCK);
         twoByTwoDoorWithItem(LAB_DOOR);
         blockWithItem(LAB_TILE);
@@ -51,6 +52,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         logWithItem(ORANGE_TREE_LOG);
         horizontalDirectionalBlockWithItem(SCANNER);
         tableModel();
+        simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
         ventWithItem();
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(),models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/white_latex_still"));
@@ -70,6 +72,17 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private void blockWithItem(@NotNull DeferredBlock<?> block){
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
+    }
+
+    private void keypadWithItem(){
+        ResourceLocation id=KEYPAD.getId();
+        ModelFile file= models().getExistingFile(blockLoc(id));
+        ModelFile file_unlocked= models().getExistingFile(blockLoc(id).withSuffix("_unlocked"));
+        getVariantBuilder(KEYPAD.get()).forAllStates(state ->{
+            Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
+           return state.getValue(Keypad.UNLOCKED)?horizontalRotatedModel(file_unlocked,direction):horizontalRotatedModel(file,direction);
+        });
+        itemModels().getBuilder(id.getPath()).parent(file);
     }
 
     private void ventWithItem(){

@@ -27,14 +27,14 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
         super(p_174289_, p_174290_, p_174291_);
     }
 
-    @Inject(at = @At("RETURN"),method = "<init>")
+    @Inject(at = @At("RETURN"),method = "<init>", remap = false)
     private void onInit(EntityRendererProvider.Context p_174557_, boolean p_174558_, CallbackInfo ci){
         mod$renderer=new LatexEntityRenderer<>(p_174557_);
     }
 
     @Inject(at = @At("HEAD"),
             method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            cancellable = true)
+            cancellable = true, remap = false)
     private void onRender(@NotNull AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_, CallbackInfo ci){
         if(p_117788_.getVehicle() instanceof SeatEntity seat&&!seat.renderPlayer()){
             ci.cancel();
@@ -46,7 +46,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
         }
     }
 
-    @Inject(at = @At(value = "HEAD"),method = "renderRightHand", cancellable = true)
+    @Inject(at = @At(value = "HEAD"),method = "renderRightHand", cancellable = true, remap = false)
     private void onRenderRightHand(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_, CallbackInfo ci){
         if(mod$check(p_117774_)) {
             mod$renderer.renderHand(p_117771_, p_117772_, p_117773_, p_117774_, true);
@@ -54,7 +54,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
         }
     }
 
-    @Inject(at = @At(value = "HEAD"), method = "renderLeftHand", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "renderLeftHand", cancellable = true, remap = false)
     private void onRenderLeftHand(PoseStack p_117814_, MultiBufferSource p_117815_, int p_117816_, AbstractClientPlayer p_117817_, CallbackInfo ci){
         if(mod$check(p_117817_)) {
             mod$renderer.renderHand(p_117814_, p_117815_, p_117816_, p_117817_, false);

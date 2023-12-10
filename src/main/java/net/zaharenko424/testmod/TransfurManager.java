@@ -73,15 +73,12 @@ public class TransfurManager {
     public static void addTransfurProgress(@NotNull LivingEntity entity,float amount, @NotNull AbstractTransfurType transfurType, boolean checkResistance){
         if(entity.level().isClientSide) return;
         entity.getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
-            LOGGER.warn("base value "+amount);
             float finalAmount=amount;
             if(checkResistance) {
                 float resistance = (float) entity.getAttributeValue(LATEX_RESISTANCE);
-                finalAmount=(1-resistance)*finalAmount;
+                finalAmount*=(1-resistance);
             }
-            LOGGER.warn("reduced tf "+finalAmount);
             float progress=handler.getTransfurProgress()+finalAmount;
-            LOGGER.warn("progress is "+progress);
             if(progress>=TRANSFUR_TOLERANCE){
                 transfur(entity,handler,transfurType);
                 return;

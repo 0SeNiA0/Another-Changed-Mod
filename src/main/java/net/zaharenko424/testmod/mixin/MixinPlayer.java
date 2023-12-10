@@ -23,7 +23,7 @@ public abstract class MixinPlayer extends LivingEntity {
         super(p_20966_, p_20967_);
     }
 
-    @Redirect(at=@At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
+    @Redirect(at=@At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1, remap = false)
     public boolean hurtProxy(@NotNull Entity instance, DamageSource p_19946_, float p_19947_){
         if(instance.level().isClientSide) return instance.hurt(p_19946_,p_19947_);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
@@ -34,7 +34,7 @@ public abstract class MixinPlayer extends LivingEntity {
         return instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_);
     }
 
-    @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true,remap = false)
     private void onGetDimensions(Pose p_36166_, CallbackInfoReturnable<EntityDimensions> ci) {
         if(p_36166_==Pose.STANDING){
             getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
@@ -45,7 +45,7 @@ public abstract class MixinPlayer extends LivingEntity {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "getStandingEyeHeight", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getStandingEyeHeight", cancellable = true, remap = false)
     private void onGetEyeHeight(Pose p_36259_, EntityDimensions p_36260_, CallbackInfoReturnable<Float> ci){
         getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
             if(!handler.isTransfurred()) return;

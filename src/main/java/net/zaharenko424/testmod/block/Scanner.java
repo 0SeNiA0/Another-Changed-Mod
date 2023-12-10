@@ -3,6 +3,7 @@ package net.zaharenko424.testmod.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,6 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
 public class Scanner extends HorizontalDirectionalBlock {
+
     private static final VoxelShape SHAPE_NORTH = Shapes.box(0.0625, 0.1875, 0.625, 0.9375, 0.8125, 1);
     private static final VoxelShape SHAPE_EAST = Shapes.box(0, 0.1875, 0.0625, 0.375, 0.8125, 0.9375);
     private static final VoxelShape SHAPE_SOUTH = Shapes.box(0.0625, 0.1875, 0, 0.9375, 0.8125, 0.375);
@@ -42,7 +45,10 @@ public class Scanner extends HorizontalDirectionalBlock {
 
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(!p_60504_.isClientSide) ((ServerPlayer)p_60506_).setRespawnPosition(p_60504_.dimension(),p_60506_.blockPosition(),p_60506_.getYHeadRot(),true,true);
+        if(!p_60504_.isClientSide) {
+            ((ServerPlayer) p_60506_).setRespawnPosition(p_60504_.dimension(), p_60506_.blockPosition(), p_60506_.getYHeadRot(), true, true);
+            p_60504_.playSound(null, p_60505_, SoundRegistry.SAVE.get(), SoundSource.BLOCKS);
+        }
         return InteractionResult.SUCCESS;
     }
 }

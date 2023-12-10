@@ -12,8 +12,8 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.testmod.block.Box;
 import net.zaharenko424.testmod.block.AbstractTwoByTwoDoor;
+import net.zaharenko424.testmod.block.Box;
 import net.zaharenko424.testmod.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +37,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(CONNECTED_LAB_TILE.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         dropSelf(HAZARD_BLOCK.get());
+        dropSelf(KEYPAD.get());
         dropSelf(LAB_BLOCK.get());
         twoByTwoDoorDrops(LAB_DOOR.get());
         dropSelf(LAB_TILE.get());
@@ -51,6 +52,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_TREE_LOG.get());
         dropSelf(SCANNER.get());
         dropSelf(TABLE.get());
+        dropSelf(TRAFFIC_CONE.get());
         dropSelf(VENT.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
         dropSelf(YELLOW_LAB_BLOCK.get());

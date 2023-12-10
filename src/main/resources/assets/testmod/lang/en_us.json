@@ -9,6 +9,7 @@
   "block.testmod.connected_lab_tile": "Connected lab tile",
   "block.testmod.dark_latex_block": "Dark latex block",
   "block.testmod.hazard_block": "Hazard block",
+  "block.testmod.keypad": "Keypad",
   "block.testmod.lab_block": "Lab block",
   "block.testmod.lab_door": "Lab door",
   "block.testmod.lab_tile": "Lab tile",
@@ -23,6 +24,7 @@
   "block.testmod.orange_tree_log": "Orange tree log",
   "block.testmod.scanner": "Scanner",
   "block.testmod.table": "Table",
+  "block.testmod.traffic_cone": "Traffic cone",
   "block.testmod.vent": "Vent",
   "block.testmod.white_latex_block": "White latex block",
   "block.testmod.yellow_lab_block": "Yellow lab block",
@@ -60,7 +62,14 @@
 
   "itemGroup.testmod.example_tab": "Item tab",
 
+  "misc.testmod.keypad_attempt": "Try",
+  "misc.testmod.keypad_save_password": "Save password",
+
   "sounds.testmod.test":"test sound",
+  "sounds.testmod.door_open": "Door opened/closed",
+  "sounds.testmod.keypad_unlocked": "Keypad unlocked",
+  "sounds.testmod.keypad_wrong_pass": "Wrong password entered",
+  "sounds.testmod.save": "Checkpoint saved",
 
   "transfur.testmod.white_latex_wolf_female": "white latex wolf female",
   "transfur.testmod.white_latex_wolf_male": "white latex wolf male",

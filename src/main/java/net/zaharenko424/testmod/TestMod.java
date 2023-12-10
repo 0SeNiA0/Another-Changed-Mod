@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 
 import static net.zaharenko424.testmod.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
+import static net.zaharenko424.testmod.registry.BlockRegistry.TRAFFIC_CONE;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
@@ -84,6 +85,7 @@ public class TestMod {
 
             output.accept(CARDBOARD_BOX_ITEM);
             output.accept(CHAIR_ITEM);
+            output.accept(KEYPAD_ITEM);
             output.accept(LAB_DOOR_ITEM);
             output.accept(LATEX_CONTAINER_ITEM);
             output.accept(LIBRARY_DOOR_ITEM);
@@ -93,6 +95,7 @@ public class TestMod {
             output.accept(NOTEPAD_ITEM);
             output.accept(SCANNER_ITEM);
             output.accept(TABLE_ITEM);
+            output.accept(TRAFFIC_CONE);
             output.accept(VENT_ITEM);
 
             output.accept(HAZMAT_HELMET);
