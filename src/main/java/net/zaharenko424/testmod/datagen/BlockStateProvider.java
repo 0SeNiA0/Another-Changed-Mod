@@ -14,6 +14,10 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.block.*;
+import net.zaharenko424.testmod.block.boxes.SmallCardboardBox;
+import net.zaharenko424.testmod.block.boxes.TallBox;
+import net.zaharenko424.testmod.block.doors.AbstractMultiDoor;
+import net.zaharenko424.testmod.block.doors.AbstractTwoByTwoDoor;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.testmod.block.ConnectedTextureBlock.*;
@@ -26,12 +30,15 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     @Override
     protected void registerStatesAndModels() {
+        blockWithItem(BLUE_LAB_TILE);
+        blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
         bookStackModel();
         blockWithItem(BROWN_LAB_BLOCK);
-        doublePartBlockWithItem(CARDBOARD_BOX);
+        horizontalDirectionalBlockWithItem(CARDBOARD_BOX);
         connectedTextureWithItem(CARPET_BLOCK,"carpet");
         horizontalDirectionalBlockWithItem(CHAIR);
+        connectedTextureWithItem(CONNECTED_BLUE_LAB_TILE,"blue_lab_tile");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/dark_latex_still"));
@@ -51,7 +58,9 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         saplingWithItem(ORANGE_SAPLING);
         logWithItem(ORANGE_TREE_LOG);
         horizontalDirectionalBlockWithItem(SCANNER);
+        smallCardboardBoxPileWithItem();
         tableModel();
+        doublePartBlockWithItem(TALL_CARDBOARD_BOX);
         simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
         ventWithItem();
         blockWithItem(WHITE_LATEX_BLOCK);
@@ -99,9 +108,9 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile upper= models().getExistingFile(blockLoc(id).withSuffix("_upper"));
         ModelFile lower= models().getExistingFile(blockLoc(id));
         getVariantBuilder(block.get())
-                .partialState().with(Box.PART, DoubleBlockHalf.UPPER)
+                .partialState().with(TallBox.PART, DoubleBlockHalf.UPPER)
                 .modelForState().modelFile(upper).addModel()
-                .partialState().with(Box.PART,DoubleBlockHalf.LOWER)
+                .partialState().with(TallBox.PART,DoubleBlockHalf.LOWER)
                 .modelForState().modelFile(lower).addModel();
         itemModels().getBuilder(id.getPath()).parent(lower);
     }
@@ -162,7 +171,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void bookStackModel(){
-        ResourceLocation id=blockLoc(BOOK_STACK.getId());
+        ResourceLocation id=blockLoc(BOOK_STACK.getId().withPrefix("book_stack/"));
         ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
         ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
         ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
@@ -177,6 +186,23 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                         default -> horizontalRotatedModel(file1, direction);
                     };
                 });
+    }
+
+    private void smallCardboardBoxPileWithItem(){
+        ResourceLocation id=blockLoc(SMALL_CARDBOARD_BOX.getId().withPrefix("box_pile/"));
+        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
+        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
+        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
+        getVariantBuilder(SMALL_CARDBOARD_BOX.get())
+                .forAllStates(state->{
+                   Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
+                   return switch (state.getValue(SmallCardboardBox.BOX_AMOUNT)){
+                       default -> horizontalRotatedModel(file1,direction);
+                       case 2 -> horizontalRotatedModel(file2,direction);
+                       case 3 -> horizontalRotatedModel(file3,direction);
+                   };
+                });
+        itemModels().getBuilder(SMALL_CARDBOARD_BOX.getId().getPath()).parent(file1);
     }
 
     private void tableModel(){

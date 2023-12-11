@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.boxes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,12 +23,12 @@ import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
-public class Box extends Block {
+public class TallBox extends Block {
     protected static final VoxelShape SHAPE = Block.box(2,0,2,14,26,14);
     private static final VoxelShape SHAPE_UPPER = SHAPE.move(0,-1,0);
     public static final EnumProperty<DoubleBlockHalf> PART = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
-    public Box(Properties p_49795_) {
+    public TallBox(Properties p_49795_) {
         super(p_49795_);
         registerDefaultState(stateDefinition.any().setValue(PART,DoubleBlockHalf.LOWER));
     }
@@ -71,7 +71,7 @@ public class Box extends Block {
 
     @Override
     public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        return p_60525_.getValue(Box.PART) == DoubleBlockHalf.LOWER || p_60526_.getBlockState(p_60527_.below()).is(this);
+        return p_60525_.getValue(TallBox.PART) == DoubleBlockHalf.LOWER || p_60526_.getBlockState(p_60527_.below()).is(this);
     }
 
     @Override

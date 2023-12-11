@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.Box;
+import net.zaharenko424.testmod.block.boxes.TallBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -56,11 +56,11 @@ public class Utils {
     }
 
     public static void fixCreativeDoubleBlockDrops(@NotNull Level level,@NotNull BlockPos pos, @NotNull BlockState state,@NotNull Player player){
-        DoubleBlockHalf doubleblockhalf = state.getValue(Box.PART);
+        DoubleBlockHalf doubleblockhalf = state.getValue(TallBox.PART);
         if (doubleblockhalf == DoubleBlockHalf.UPPER) {
             BlockPos blockpos = pos.below();
             BlockState blockstate = level.getBlockState(blockpos);
-            if (blockstate.is(state.getBlock()) && blockstate.getValue(Box.PART) == DoubleBlockHalf.LOWER) {
+            if (blockstate.is(state.getBlock()) && blockstate.getValue(TallBox.PART) == DoubleBlockHalf.LOWER) {
                 level.setBlock(blockpos, blockstate.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 35);
                 level.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
             }

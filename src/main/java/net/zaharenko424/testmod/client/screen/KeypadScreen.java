@@ -87,7 +87,7 @@ public class KeypadScreen extends Screen {
         return false;
     }
 
-    private static final List<Integer> keys= Arrays.asList(32,257,259,261,335);
+    private static final List<Integer> keys= Arrays.asList(32,257,262,263,335);
     @Override
     public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
         if(super.keyPressed(p_96552_, p_96553_, p_96554_)){
@@ -125,7 +125,7 @@ public class KeypadScreen extends Screen {
                 yield true;
             }
             case 263 ->{
-                if(selectedChar>-1) selectedChar--;
+                if(selectedChar>0) selectedChar--; else selectedChar=charBoxes.size()-1;
                 yield true;
             }
             case 264 ->{

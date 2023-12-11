@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import static net.zaharenko424.testmod.registry.BlockEntityRegistry.BLOCK_ENTITIES;
-import static net.zaharenko424.testmod.registry.BlockRegistry.BLOCKS;
-import static net.zaharenko424.testmod.registry.BlockRegistry.TRAFFIC_CONE;
+import static net.zaharenko424.testmod.registry.BlockRegistry.*;
 import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
@@ -75,15 +74,18 @@ public class TestMod {
             output.accept(WHITE_LATEX_BLOCK_ITEM);
             output.accept(DARK_LATEX_BLOCK_ITEM);
             output.accept(HAZARD_BLOCK_ITEM);
+            output.accept(BLUE_LAB_TILE_ITEM);
+            output.accept(BOLTED_BLUE_LAB_TILE_ITEM);
             output.accept(BOLTED_LAB_TILE_ITEM);
             output.accept(BROWN_LAB_BLOCK_ITEM);
             output.accept(CARPET_BLOCK_ITEM);
+            output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
             output.accept(CONNECTED_LAB_TILE_ITEM);
             output.accept(LAB_BLOCK_ITEM);
             output.accept(LAB_TILE_ITEM);
             output.accept(YELLOW_LAB_BLOCK_ITEM);
 
-            output.accept(CARDBOARD_BOX_ITEM);
+            output.accept(CARDBOARD_BOX);
             output.accept(CHAIR_ITEM);
             output.accept(KEYPAD_ITEM);
             output.accept(LAB_DOOR_ITEM);
@@ -94,7 +96,9 @@ public class TestMod {
             output.accept(NOTE_ITEM);
             output.accept(NOTEPAD_ITEM);
             output.accept(SCANNER_ITEM);
+            output.accept(SMALL_CARDBOARD_BOX_ITEM);
             output.accept(TABLE_ITEM);
+            output.accept(TALL_CARDBOARD_BOX_ITEM);
             output.accept(TRAFFIC_CONE);
             output.accept(VENT_ITEM);
 

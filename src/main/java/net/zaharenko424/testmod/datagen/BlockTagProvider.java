@@ -20,11 +20,13 @@ public class BlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
-        tag(BlockTags.MINEABLE_WITH_AXE).add(CARDBOARD_BOX.get(),ORANGE_TREE_LOG.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(CARDBOARD_BOX.get(),ORANGE_TREE_LOG.get(),SMALL_CARDBOARD_BOX.get()
+                ,TALL_CARDBOARD_BOX.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(BOLTED_LAB_TILE.get(),BROWN_LAB_BLOCK.get(),CHAIR.get(),CONNECTED_LAB_TILE.get(),HAZARD_BLOCK.get(),KEYPAD.get()
-                        ,LAB_BLOCK.get(),LAB_DOOR.get(),LAB_TILE.get(),LATEX_CONTAINER.get(),LIBRARY_DOOR.get(),MAINTENANCE_DOOR.get()
-                        ,METAL_BOX.get(),SCANNER.get(),TABLE.get(),VENT.get(),YELLOW_LAB_BLOCK.get());
+                .add(BLUE_LAB_TILE.get(),BOLTED_BLUE_LAB_TILE.get(),BOLTED_LAB_TILE.get(),BROWN_LAB_BLOCK.get(),CHAIR.get()
+                        ,CONNECTED_BLUE_LAB_TILE.get(),CONNECTED_LAB_TILE.get(),HAZARD_BLOCK.get(),KEYPAD.get(),LAB_BLOCK.get()
+                        ,LAB_DOOR.get(),LAB_TILE.get(),LATEX_CONTAINER.get(),LIBRARY_DOOR.get(),MAINTENANCE_DOOR.get(),METAL_BOX.get()
+                        ,SCANNER.get(),TABLE.get(),VENT.get(),YELLOW_LAB_BLOCK.get());
         tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());
         tag(BlockTags.LOGS).add(ORANGE_TREE_LOG.get());
         tag(BlockTags.SAPLINGS).add(ORANGE_SAPLING.get());

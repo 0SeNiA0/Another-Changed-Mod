@@ -16,7 +16,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.LibraryDoor;
+import net.zaharenko424.testmod.block.doors.LibraryDoor;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

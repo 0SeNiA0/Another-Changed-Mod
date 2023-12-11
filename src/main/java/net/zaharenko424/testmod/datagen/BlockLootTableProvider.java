@@ -12,8 +12,8 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.testmod.block.AbstractTwoByTwoDoor;
-import net.zaharenko424.testmod.block.Box;
+import net.zaharenko424.testmod.block.doors.AbstractTwoByTwoDoor;
+import net.zaharenko424.testmod.block.boxes.TallBox;
 import net.zaharenko424.testmod.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,11 +29,14 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        dropSelf(BLUE_LAB_TILE.get());
+        dropSelf(BOLTED_BLUE_LAB_TILE.get());
         dropSelf(BOLTED_LAB_TILE.get());
-        doublePartBlockDrops(CARDBOARD_BOX.get());
         dropSelf(BROWN_LAB_BLOCK.get());
+        dropSelf(CARDBOARD_BOX.get());
         dropSelf(CARPET_BLOCK.get());
         dropSelf(CHAIR.get());
+        dropSelf(CONNECTED_BLUE_LAB_TILE.get());
         dropSelf(CONNECTED_LAB_TILE.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         dropSelf(HAZARD_BLOCK.get());
@@ -52,6 +55,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_TREE_LOG.get());
         dropSelf(SCANNER.get());
         dropSelf(TABLE.get());
+        doublePartBlockDrops(TALL_CARDBOARD_BOX.get());
         dropSelf(TRAFFIC_CONE.get());
         dropSelf(VENT.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
@@ -73,7 +77,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     private void doublePartBlockDrops(Block block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(Box.PART,"lower")))
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TallBox.PART,"lower")))
                 .add(
                         applyExplosionCondition(block,LootItem.lootTableItem(block))
                 )));

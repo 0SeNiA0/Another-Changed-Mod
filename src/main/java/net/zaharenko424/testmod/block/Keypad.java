@@ -24,6 +24,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.testmod.block.blockEntity.KeypadEntity;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundOpenKeypadPacket;
+import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.box(0.0625, 0.1875, 0.625, 0.9375, 0.8125, 1);
-    private static final VoxelShape SHAPE_EAST = Shapes.box(0, 0.1875, 0.0625, 0.375, 0.8125, 0.9375);
-    private static final VoxelShape SHAPE_SOUTH = Shapes.box(0.0625, 0.1875, 0, 0.9375, 0.8125, 0.375);
-    private static final VoxelShape SHAPE_WEST = Shapes.box(0.625, 0.1875, 0.0625, 1, 0.8125, 0.9375);
+    private static final VoxelShape SHAPE_EAST = Utils.rotateShape(Direction.EAST,SHAPE_NORTH);
+    private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH,SHAPE_NORTH);
+    private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST,SHAPE_NORTH);
     public static final BooleanProperty UNLOCKED = BooleanProperty.create("unlocked");
 
     public Keypad(Properties p_54120_) {

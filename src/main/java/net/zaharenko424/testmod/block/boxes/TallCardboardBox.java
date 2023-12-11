@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.boxes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,11 +10,12 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
+import net.zaharenko424.testmod.block.ISeatBlock;
 import net.zaharenko424.testmod.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("deprecation")
-public class CardboardBox extends Box implements ISeatBlock{
-    public CardboardBox(Properties p_49795_) {
+public class TallCardboardBox extends TallBox implements ISeatBlock {
+    public TallCardboardBox(Properties p_49795_) {
         super(p_49795_);
     }
 
