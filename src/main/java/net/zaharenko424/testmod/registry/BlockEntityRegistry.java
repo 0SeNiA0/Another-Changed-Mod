@@ -21,4 +21,6 @@ public class BlockEntityRegistry {
             .register("latex_container", ()-> BlockEntityType.Builder.of(LatexContainerEntity::new,BlockRegistry.LATEX_CONTAINER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<NoteEntity>> NOTE_ENTITY = BLOCK_ENTITIES
             .register("note", ()-> BlockEntityType.Builder.of(NoteEntity::new,BlockRegistry.NOTE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<SmartSewageEntity>> SMART_SEWAGE_ENTITY = BLOCK_ENTITIES
+            .register("smart_sewage", ()-> BlockEntityType.Builder.of(SmartSewageEntity::new,BlockRegistry.SMART_SEWAGE_SYSTEM.get()).build(null));
 }

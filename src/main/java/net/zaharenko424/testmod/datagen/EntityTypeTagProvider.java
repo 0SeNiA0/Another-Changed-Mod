@@ -19,6 +19,7 @@ public class EntityTypeTagProvider extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_255894_) {
+        tag(TestMod.SEWAGE_SYSTEM_CONSUMABLE).add(EntityType.SLIME);
         tag(TestMod.TRANSFURRABLE_TAG).add(EntityType.PLAYER,EntityType.HUSK,EntityType.VILLAGER,EntityType.ZOMBIE,EntityType.ZOMBIE_VILLAGER)
                 .addTags(EntityTypeTags.RAIDERS,EntityTypeTags.SKELETONS);
     }

@@ -26,6 +26,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         latexBlockItem(false,p_301172_);
         latexBlockItem(true,p_301172_);
 
+        //TODO air conditioner
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BLUE_LAB_TILE_ITEM,24)
                 .pattern("CIC")
                 .pattern("ICI")
@@ -70,13 +72,23 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,CHAIR_ITEM.getId());
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,HAZARD_BLOCK_ITEM,8)
-                .pattern("BO")
-                .pattern("OB")
-                .define('O', Items.ORANGE_CONCRETE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,HAZARD_BLOCK_ITEM,9)
+                .pattern("OOB")
+                .pattern("OBO")
+                .pattern("BOO")
+                .define('O', ORANGE_LAB_BLOCK_ITEM)
                 .define('B', Items.BLACK_CONCRETE)
                 .unlockedBy(getHasName(Items.ORANGE_CONCRETE),has(Items.ORANGE_CONCRETE))
                 .save(p_301172_,HAZARD_BLOCK_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,HAZARD_LAB_BLOCK_ITEM,9)
+                .pattern("LLL")
+                .pattern("OOO")
+                .pattern("LLL")
+                .define('L', LAB_BLOCK_ITEM)
+                .define('O', ORANGE_LAB_BLOCK_ITEM)
+                .unlockedBy(getHasName(LAB_BLOCK_ITEM),has(LAB_BLOCK_ITEM))
+                .save(p_301172_,HAZARD_LAB_BLOCK_ITEM.getId());
 
         //TODO keypad, hazmat armor
 
@@ -147,6 +159,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('P', Items.PAPER)
                 .unlockedBy(getHasName(Items.PAPER), has(Items.PAPER))
                 .save(p_301172_,NOTEPAD_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,ORANGE_LAB_BLOCK_ITEM,24)
+                .pattern("CIC")
+                .pattern("ICI")
+                .pattern("CIC")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('C', Items.ORANGE_CONCRETE)
+                .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
+                .save(p_301172_,ORANGE_LAB_BLOCK_ITEM.getId());
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD,ORANGE_JUICE_ITEM)
                 .requires(ORANGE_ITEM,4)

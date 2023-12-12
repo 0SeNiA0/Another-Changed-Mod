@@ -32,6 +32,6 @@ public abstract class HorizontalDirectionalBlock extends net.minecraft.world.lev
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(FACING);
+        super.createBlockStateDefinition(p_49915_.add(FACING));
     }
 }

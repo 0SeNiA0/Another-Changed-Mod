@@ -10,6 +10,12 @@
       "testmod:decision1"
     ]
   },
+  "door_locked": {
+    "subtitle": "sounds.testmod.door_locked",
+    "sounds": [
+      "testmod:door_locked"
+    ]
+  },
   "door_open": {
     "subtitle": "sounds.testmod.door_open",
     "sounds": [
@@ -32,6 +38,12 @@
     "subtitle": "sounds.testmod.save",
     "sounds": [
       "testmod:save"
+    ]
+  },
+  "smart_sewage_consume": {
+    "subtitle": "sounds.testmod.smart_sewage_consume",
+    "sounds": [
+      "testmod:water1"
     ]
   }
 }

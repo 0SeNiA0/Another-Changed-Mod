@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.zaharenko424.testmod.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectedTextureBlock extends Block {
@@ -35,19 +34,19 @@ public class ConnectedTextureBlock extends Block {
     }
 
     @Override
+    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
+        return p_60541_.setValue(propByDirection.get(p_60542_),p_60543_.is(this));
+    }
+
+    @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
         BlockPos.MutableBlockPos blockPos=new BlockPos.MutableBlockPos();
         BlockState state=defaultBlockState();
         for(Direction direction: Direction.values()){
             blockPos.setWithOffset(p_49820_.getClickedPos(),direction);
-            if(p_49820_.getLevel().getBlockState(blockPos).is(BlockRegistry.CARPET_BLOCK)) state=state.setValue(propByDirection.get(direction),true);
+            if(p_49820_.getLevel().getBlockState(blockPos).is(this)) state=state.setValue(propByDirection.get(direction),true);
         }
         return state;
-    }
-
-    @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return p_60541_.setValue(propByDirection.get(p_60542_),p_60543_.is(this));
     }
 
     @Override

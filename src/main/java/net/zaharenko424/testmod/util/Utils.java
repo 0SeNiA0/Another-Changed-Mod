@@ -14,14 +14,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.boxes.TallBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -56,11 +54,11 @@ public class Utils {
     }
 
     public static void fixCreativeDoubleBlockDrops(@NotNull Level level,@NotNull BlockPos pos, @NotNull BlockState state,@NotNull Player player){
-        DoubleBlockHalf doubleblockhalf = state.getValue(TallBox.PART);
-        if (doubleblockhalf == DoubleBlockHalf.UPPER) {
+        int part = state.getValue(StateProperties.PART);
+        if (part == 1) {
             BlockPos blockpos = pos.below();
             BlockState blockstate = level.getBlockState(blockpos);
-            if (blockstate.is(state.getBlock()) && blockstate.getValue(TallBox.PART) == DoubleBlockHalf.LOWER) {
+            if (blockstate.is(state.getBlock()) && blockstate.getValue(StateProperties.PART) == 0) {
                 level.setBlock(blockpos, blockstate.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 35);
                 level.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
             }

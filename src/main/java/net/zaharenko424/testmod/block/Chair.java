@@ -42,9 +42,13 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock{
     }
 
     @Override
-    public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
-        if(p_60567_.isClientSide) super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
-        p_60567_.addFreshEntity(new SeatEntity(p_60567_,p_60568_,true));
+    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
+        return switch (p_60555_.getValue(FACING)){
+            case EAST -> SHAPE_EAST;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            default -> SHAPE_NORTH;
+        };
     }
 
     @Override
@@ -61,13 +65,9 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock{
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
-        return switch (p_60555_.getValue(FACING)){
-            case EAST -> SHAPE_EAST;
-            case SOUTH -> SHAPE_SOUTH;
-            case WEST -> SHAPE_WEST;
-            default -> SHAPE_NORTH;
-        };
+    public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
+        if(p_60567_.isClientSide) super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
+        p_60567_.addFreshEntity(new SeatEntity(p_60567_,p_60568_,true));
     }
 
     @Override

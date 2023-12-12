@@ -21,7 +21,6 @@ import static net.zaharenko424.testmod.TransfurManager.*;
 
 public class ClientboundRemotePlayerTransfurUpdatePacket implements SimpleMessage {
     private static final String UUID_KEY = "uuid";
-    //TODO check if works
     private final UUID playerId;
     private final float transfurProgress;
     private final AbstractTransfurType transfurType;

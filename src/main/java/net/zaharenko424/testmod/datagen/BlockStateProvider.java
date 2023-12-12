@@ -6,19 +6,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.*;
+import net.zaharenko424.testmod.block.BookStack;
+import net.zaharenko424.testmod.block.Keypad;
+import net.zaharenko424.testmod.block.Table;
 import net.zaharenko424.testmod.block.boxes.SmallCardboardBox;
-import net.zaharenko424.testmod.block.boxes.TallBox;
 import net.zaharenko424.testmod.block.doors.AbstractMultiDoor;
 import net.zaharenko424.testmod.block.doors.AbstractTwoByTwoDoor;
+import net.zaharenko424.testmod.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.zaharenko424.testmod.block.ConnectedTextureBlock.*;
 import static net.zaharenko424.testmod.registry.BlockRegistry.*;
@@ -30,6 +32,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     @Override
     protected void registerStatesAndModels() {
+        rotatedDoublePartYBlockWithItem(AIR_CONDITIONER,"air_conditioner");
         blockWithItem(BLUE_LAB_TILE);
         blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
@@ -43,44 +46,93 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/dark_latex_still"));
         blockWithItem(HAZARD_BLOCK);
+        pillarWithItem(HAZARD_LAB_BLOCK,blockLoc(LAB_BLOCK.getId()));
         keypadWithItem();
         blockWithItem(LAB_BLOCK);
         twoByTwoDoorWithItem(LAB_DOOR);
         blockWithItem(LAB_TILE);
-        doublePartBlockWithItem(LATEX_CONTAINER);
+        doublePartYBlockWithItem(LATEX_CONTAINER);
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/latex_solvent_still"));
         twoByTwoDoorWithItem(LIBRARY_DOOR);
         twoByTwoDoorWithItem(MAINTENANCE_DOOR);
-        doublePartBlockWithItem(METAL_BOX);
+        rotatedDoublePartYBlockWithItem(METAL_BOX,"metal_box");
         horizontalDirectionalBlockWithItem(NOTE);
         horizontalDirectionalBlockWithItem(NOTEPAD);
+        blockWithItem(ORANGE_LAB_BLOCK);
         leavesWithItem(ORANGE_LEAVES);
         saplingWithItem(ORANGE_SAPLING);
         logWithItem(ORANGE_TREE_LOG);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
+        smartSewageSystemWithItem();
+        pillarWithItem(STRIPED_ORANGE_LAB_BLOCK,blockLoc(ORANGE_LAB_BLOCK.getId()));
         tableModel();
-        doublePartBlockWithItem(TALL_CARDBOARD_BOX);
+        rotatedDoublePartYBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
         simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
         ventWithItem();
+        pillarWithItem(VENT_WALL,null);
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(),models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/white_latex_still"));
         blockWithItem(YELLOW_LAB_BLOCK);
     }
 
-    private void saplingWithItem(@NotNull DeferredBlock<SaplingBlock> sapling){
-        ResourceLocation id=sapling.getId();
-        simpleBlock(sapling.get(),models().cross(id.getPath(),blockLoc(id)).renderType("cutout"));
-        simpleItem(id,blockLoc(id));
-    }
-
-    private void leavesWithItem(@NotNull DeferredBlock<?> leaves){
-        ResourceLocation id=leaves.getId();
-        simpleBlockWithItem(leaves.get(),models().withExistingParent(id.getPath(),"block/leaves").texture("all",blockLoc(id)));
+    private @NotNull ResourceLocation blockLoc(@NotNull ResourceLocation loc){
+        return loc.withPrefix(ModelProvider.BLOCK_FOLDER+"/");
     }
 
     private void blockWithItem(@NotNull DeferredBlock<?> block){
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
+    }
+
+    private void bookStackModel(){
+        ResourceLocation id=blockLoc(BOOK_STACK.getId().withPrefix("book_stack/"));
+        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
+        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
+        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
+        ModelFile file4= models().getExistingFile(id.withSuffix("_4"));
+        getVariantBuilder(BOOK_STACK.get()).forAllStates(state->{
+            Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
+            return switch (state.getValue(BookStack.BOOK_AMOUNT)){
+                case 2 -> horizontalRotatedModel(file2, direction);
+                case 3 -> horizontalRotatedModel(file3, direction);
+                case 4 -> horizontalRotatedModel(file4, direction);
+                default -> horizontalRotatedModel(file1, direction);
+            };
+        });
+    }
+
+    private void crystalWithItem(){
+     //TODO
+    }
+
+    private ModelFile cube(@NotNull ResourceLocation textureLoc,String modelId, String str0, String str1, String str2, String str3, String str5, String str4){
+        return models().cube(textureLoc+modelId,textureLoc.withSuffix(str0),textureLoc.withSuffix(str1),textureLoc.withSuffix(str2),textureLoc.withSuffix(str3),textureLoc.withSuffix(str4),textureLoc.withSuffix(str5)).texture("particle",textureLoc.withSuffix("0c"));
+    }
+
+    private void doublePartYBlockWithItem(@NotNull DeferredBlock<?> block){
+        ResourceLocation id=block.getId();
+        ModelFile part0= models().getExistingFile(blockLoc(id));
+        ModelFile part_1= models().getExistingFile(blockLoc(id).withSuffix("_1"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                new ConfiguredModel[]{new ConfiguredModel(state.getValue(StateProperties.PART) == 1 ? part_1 : part0)}
+        );
+        itemModels().getBuilder(id.getPath()).parent(part0);
+    }
+
+    private void horizontalDirectionalBlockWithItem(@NotNull DeferredBlock<? extends HorizontalDirectionalBlock> block){
+        ModelFile file= models().getExistingFile(blockLoc(block.getId()));
+        simpleBlockItem(block.get(),file);
+        getVariantBuilder(block.get())
+                .forAllStates(state-> horizontalRotatedModel(file, state.getValue(HorizontalDirectionalBlock.FACING)));
+    }
+
+    private ConfiguredModel[] horizontalRotatedModel(@NotNull ModelFile file, @NotNull Direction direction){
+        return switch (direction){
+            default -> new ConfiguredModel[]{new ConfiguredModel(file)};
+            case EAST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 90, false)};
+            case SOUTH -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 180, false)};
+            case WEST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 270, false)};
+        };
     }
 
     private void keypadWithItem(){
@@ -89,30 +141,96 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile file_unlocked= models().getExistingFile(blockLoc(id).withSuffix("_unlocked"));
         getVariantBuilder(KEYPAD.get()).forAllStates(state ->{
             Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
-           return state.getValue(Keypad.UNLOCKED)?horizontalRotatedModel(file_unlocked,direction):horizontalRotatedModel(file,direction);
+            return state.getValue(Keypad.UNLOCKED)?horizontalRotatedModel(file_unlocked,direction):horizontalRotatedModel(file,direction);
         });
         itemModels().getBuilder(id.getPath()).parent(file);
     }
 
-    private void ventWithItem(){
-        ResourceLocation id=VENT.getId();
-        ModelFile top=models().getExistingFile(blockLoc(id).withSuffix("_top"));
-        ModelFile bottom=models().getExistingFile(blockLoc(id).withSuffix("_bottom"));
-        ModelFile open=models().getExistingFile(blockLoc(id).withSuffix("_open"));
-        trapdoorBlock(VENT.get(),bottom,top,open,true);
-        itemModels().getBuilder(id.getPath()).parent(bottom);
+    private void leavesWithItem(@NotNull DeferredBlock<?> leaves){
+        ResourceLocation id=leaves.getId();
+        simpleBlockWithItem(leaves.get(),models().withExistingParent(id.getPath(),"block/leaves").texture("all",blockLoc(id)));
     }
 
-    private void doublePartBlockWithItem(@NotNull DeferredBlock<?> block){
+    private void logWithItem(@NotNull DeferredBlock<RotatedPillarBlock> block){
         ResourceLocation id=block.getId();
-        ModelFile upper= models().getExistingFile(blockLoc(id).withSuffix("_upper"));
-        ModelFile lower= models().getExistingFile(blockLoc(id));
+        ResourceLocation side=blockLoc(id);
+        ResourceLocation end=blockLoc(id).withSuffix("_top");
+        ModelFile vertical=models().cubeColumn(id.getPath(), side, end);
+        ModelFile horizontal=models().cubeColumnHorizontal(id.getPath() + "_horizontal", side, end);
         getVariantBuilder(block.get())
-                .partialState().with(TallBox.PART, DoubleBlockHalf.UPPER)
-                .modelForState().modelFile(upper).addModel()
-                .partialState().with(TallBox.PART,DoubleBlockHalf.LOWER)
-                .modelForState().modelFile(lower).addModel();
-        itemModels().getBuilder(id.getPath()).parent(lower);
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y)
+                .modelForState().modelFile(vertical).addModel()
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Z)
+                .modelForState().modelFile(horizontal).rotationX(90).addModel()
+                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.X)
+                .modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel();
+        itemModels().getBuilder(id.getPath()).parent(vertical);
+    }
+
+    private void pillarWithItem(@NotNull DeferredBlock<?> block, @Nullable ResourceLocation up){
+        ResourceLocation loc=blockLoc(block.getId());
+        ResourceLocation top=up!=null?up:loc.withSuffix("_up");
+        ModelFile file=models().cube(block.getId().getPath(),top,top,loc,loc,loc,loc).texture("particle",loc);
+        simpleBlockWithItem(block.get(),file);
+    }
+
+    private void rotatedDoublePartYBlockWithItem(@NotNull DeferredBlock<? extends HorizontalDirectionalBlock> block, @Nullable String subFolder){
+        ResourceLocation id=block.getId();
+        if(subFolder!=null) id=id.withPrefix(subFolder+"/");
+        ModelFile part0= models().getExistingFile(blockLoc(id).withSuffix("_0"));
+        ModelFile part1= models().getExistingFile(blockLoc(id).withSuffix("_1"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModel(state.getValue(StateProperties.PART)==1?part1:part0,state.getValue(HorizontalDirectionalBlock.FACING))
+        );
+        itemModels().getBuilder(block.getId().getPath()).parent(models().getExistingFile(blockLoc(id)));
+    }
+
+    private void saplingWithItem(@NotNull DeferredBlock<SaplingBlock> sapling){
+        ResourceLocation id=sapling.getId();
+        simpleBlock(sapling.get(),models().cross(id.getPath(),blockLoc(id)).renderType("cutout"));
+        simpleItem(id,blockLoc(id));
+    }
+
+    private void simpleItem(@NotNull ResourceLocation id,@NotNull ResourceLocation texture){
+        itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0",texture);
+    }
+
+    private void smallCardboardBoxPileWithItem(){
+        ResourceLocation id=blockLoc(SMALL_CARDBOARD_BOX.getId().withPrefix("box_pile/"));
+        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
+        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
+        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
+        getVariantBuilder(SMALL_CARDBOARD_BOX.get())
+                .forAllStates(state->{
+                    Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
+                    return switch (state.getValue(SmallCardboardBox.BOX_AMOUNT)){
+                        default -> horizontalRotatedModel(file1,direction);
+                        case 2 -> horizontalRotatedModel(file2,direction);
+                        case 3 -> horizontalRotatedModel(file3,direction);
+                    };
+                });
+        itemModels().getBuilder(SMALL_CARDBOARD_BOX.getId().getPath()).parent(file1);
+    }
+
+    private void smartSewageSystemWithItem(){
+        ResourceLocation id=SMART_SEWAGE_SYSTEM.getId();
+        ResourceLocation loc=blockLoc(LAB_BLOCK.getId());
+        ResourceLocation top=blockLoc(id);
+        String path=id.getPath();
+        ModelFile file=models().cube(path,top,top,loc,loc,loc,loc).texture("particle",loc);
+        getVariantBuilder(SMART_SEWAGE_SYSTEM.get()).forAllStates(state -> horizontalRotatedModel(file,state.getValue(HorizontalDirectionalBlock.FACING)));
+        itemModels().getBuilder(path).parent(file);
+    }
+
+    private void tableModel(){
+        ResourceLocation id=blockLoc(TABLE.getId());
+        ModelFile file1= models().getExistingFile(id.withSuffix("_top"));
+        ModelFile file2= models().getExistingFile(id.withSuffix("_leg"));
+        getMultipartBuilder(TABLE.get()).part().modelFile(file1).addModel().end()
+                .part().modelFile(file2).addModel().condition(Table.LEG_1,true).end()
+                .part().modelFile(file2).rotationY(90).addModel().condition(Table.LEG_2,true).end()
+                .part().modelFile(file2).rotationY(180).addModel().condition(Table.LEG_3,true).end()
+                .part().modelFile(file2).rotationY(270).addModel().condition(Table.LEG_4,true).end();
     }
 
     private void twoByTwoDoorWithItem(@NotNull DeferredBlock<? extends AbstractTwoByTwoDoor> block){
@@ -138,98 +256,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(block.getId().getPath()).parent(models().getExistingFile(id));
     }
 
-    private void logWithItem(@NotNull DeferredBlock<RotatedPillarBlock> block){
-        ResourceLocation id=block.getId();
-        ResourceLocation side=blockLoc(id);
-        ResourceLocation end=blockLoc(id).withSuffix("_top");
-        ModelFile vertical=models().cubeColumn(id.getPath(), side, end);
-        ModelFile horizontal=models().cubeColumnHorizontal(id.getPath() + "_horizontal", side, end);
-        getVariantBuilder(block.get())
-                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y)
-                .modelForState().modelFile(vertical).addModel()
-                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Z)
-                .modelForState().modelFile(horizontal).rotationX(90).addModel()
-                .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.X)
-                .modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel();
-        itemModels().getBuilder(id.getPath()).parent(vertical);
-    }
-
-    private void simpleItem(@NotNull ResourceLocation id,@NotNull ResourceLocation texture){
-        itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0",texture);
-    }
-
-    private ConfiguredModel[] arr(ModelFile file){
-        return new ConfiguredModel[]{new ConfiguredModel(file)};
-    }
-
-    private @NotNull ResourceLocation blockLoc(@NotNull ResourceLocation loc){
-        return loc.withPrefix(ModelProvider.BLOCK_FOLDER+"/");
-    }
-
-    private ModelFile cube(@NotNull ResourceLocation textureLoc,String modelId, String str0, String str1, String str2, String str3, String str5, String str4){
-        return models().cube(textureLoc+modelId,textureLoc.withSuffix(str0),textureLoc.withSuffix(str1),textureLoc.withSuffix(str2),textureLoc.withSuffix(str3),textureLoc.withSuffix(str4),textureLoc.withSuffix(str5)).texture("particle",textureLoc.withSuffix("0c"));
-    }
-
-    private void bookStackModel(){
-        ResourceLocation id=blockLoc(BOOK_STACK.getId().withPrefix("book_stack/"));
-        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
-        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
-        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
-        ModelFile file4= models().getExistingFile(id.withSuffix("_4"));
-        getVariantBuilder(BOOK_STACK.get())
-                .forAllStates(state->{
-                    Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
-                    return switch (state.getValue(BookStack.BOOK_AMOUNT)){
-                        case 2 -> horizontalRotatedModel(file2, direction);
-                        case 3 -> horizontalRotatedModel(file3, direction);
-                        case 4 -> horizontalRotatedModel(file4, direction);
-                        default -> horizontalRotatedModel(file1, direction);
-                    };
-                });
-    }
-
-    private void smallCardboardBoxPileWithItem(){
-        ResourceLocation id=blockLoc(SMALL_CARDBOARD_BOX.getId().withPrefix("box_pile/"));
-        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
-        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
-        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
-        getVariantBuilder(SMALL_CARDBOARD_BOX.get())
-                .forAllStates(state->{
-                   Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
-                   return switch (state.getValue(SmallCardboardBox.BOX_AMOUNT)){
-                       default -> horizontalRotatedModel(file1,direction);
-                       case 2 -> horizontalRotatedModel(file2,direction);
-                       case 3 -> horizontalRotatedModel(file3,direction);
-                   };
-                });
-        itemModels().getBuilder(SMALL_CARDBOARD_BOX.getId().getPath()).parent(file1);
-    }
-
-    private void tableModel(){
-        ResourceLocation id=blockLoc(TABLE.getId());
-        ModelFile file1= models().getExistingFile(id.withSuffix("_top"));
-        ModelFile file2= models().getExistingFile(id.withSuffix("_leg"));
-        getMultipartBuilder(TABLE.get()).part().modelFile(file1).addModel().end()
-                .part().modelFile(file2).addModel().condition(Table.LEG_1,true).end()
-                .part().modelFile(file2).rotationY(90).addModel().condition(Table.LEG_2,true).end()
-                .part().modelFile(file2).rotationY(180).addModel().condition(Table.LEG_3,true).end()
-                .part().modelFile(file2).rotationY(270).addModel().condition(Table.LEG_4,true).end();
-    }
-
-    private void horizontalDirectionalBlockWithItem(@NotNull DeferredBlock<? extends HorizontalDirectionalBlock> block){
-        ModelFile file= models().getExistingFile(blockLoc(block.getId()));
-        simpleBlockItem(block.get(),file);
-        getVariantBuilder(block.get())
-                .forAllStates(state-> horizontalRotatedModel(file, state.getValue(HorizontalDirectionalBlock.FACING)));
-    }
-
-    private ConfiguredModel[] horizontalRotatedModel(@NotNull ModelFile file, @NotNull Direction direction){
-        return switch (direction){
-            default -> arr(file);
-            case EAST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 90, false)};
-            case SOUTH -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 180, false)};
-            case WEST -> new ConfiguredModel[]{new ConfiguredModel(file, 0, 270, false)};
-        };
+    private void ventWithItem(){
+        ResourceLocation id=VENT.getId();
+        ModelFile top=models().getExistingFile(blockLoc(id).withSuffix("_top"));
+        ModelFile bottom=models().getExistingFile(blockLoc(id).withSuffix("_bottom"));
+        ModelFile open=models().getExistingFile(blockLoc(id).withSuffix("_open"));
+        trapdoorBlock(VENT.get(),bottom,top,open,true);
+        itemModels().getBuilder(id.getPath()).parent(bottom);
     }
 
     private void connectedTextureWithItem(@NotNull DeferredBlock<?> block, String subFolder){

@@ -26,7 +26,7 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
     }
 
     @Override
-    IntegerProperty part() {
+    protected IntegerProperty part() {
         return PART;
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
             if(!p_60526_.getBlockState(p_60527_.below()).is(this)) return false;
             return p_60526_.getBlockState(p_60527_.relative(part==1?direction.getCounterClockWise():direction.getClockWise())).is(this);
         }
-        return part != 3 || p_60526_.getBlockState(p_60527_.relative(direction.getClockWise())).is(this);
+        return part == 0 || p_60526_.getBlockState(p_60527_.relative(direction.getClockWise())).is(this);
     }
 
     @Override
@@ -70,8 +70,7 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
                 ||level.hasNeighborSignal(pos3)||level.hasNeighborSignal(pos3.above());
     }
 
-    protected void setOpenClose(BlockState mainState, BlockPos mainPos, LevelAccessor level){
-        boolean open=!mainState.getValue(OPEN);
+    protected void setOpen(BlockState mainState, BlockPos mainPos, LevelAccessor level, boolean open){
         level.setBlock(mainPos,mainState.setValue(OPEN,open),3);
         mainPos=mainPos.above();
         level.setBlock(mainPos,level.getBlockState(mainPos).setValue(OPEN,open),3);
@@ -87,6 +86,14 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
             case 2 ->pos.below().relative(state.getValue(FACING).getClockWise());
             case 3 ->pos.relative(state.getValue(FACING).getClockWise());
             default -> pos;
+        };
+    }
+
+    protected BlockPos getSecondaryPos(BlockState state, BlockPos pos) {
+        return switch(state.getValue(PART)){
+            case 1,3 -> pos;
+            case 2 -> pos.below();
+            default -> pos.above();
         };
     }
 }

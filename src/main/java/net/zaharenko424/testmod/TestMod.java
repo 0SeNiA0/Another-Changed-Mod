@@ -58,6 +58,7 @@ public class TestMod {
 
     //Tags
     public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
+    public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
 
     //Creative tabs
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -74,6 +75,7 @@ public class TestMod {
             output.accept(WHITE_LATEX_BLOCK_ITEM);
             output.accept(DARK_LATEX_BLOCK_ITEM);
             output.accept(HAZARD_BLOCK_ITEM);
+            output.accept(HAZARD_LAB_BLOCK_ITEM);
             output.accept(BLUE_LAB_TILE_ITEM);
             output.accept(BOLTED_BLUE_LAB_TILE_ITEM);
             output.accept(BOLTED_LAB_TILE_ITEM);
@@ -83,8 +85,13 @@ public class TestMod {
             output.accept(CONNECTED_LAB_TILE_ITEM);
             output.accept(LAB_BLOCK_ITEM);
             output.accept(LAB_TILE_ITEM);
+            output.accept(ORANGE_LAB_BLOCK_ITEM);
+            output.accept(SMART_SEWAGE_SYSTEM_ITEM);
+            output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
+            output.accept(VENT_WALL_ITEM);
             output.accept(YELLOW_LAB_BLOCK_ITEM);
 
+            output.accept(AIR_CONDITIONER_ITEM);
             output.accept(CARDBOARD_BOX);
             output.accept(CHAIR_ITEM);
             output.accept(KEYPAD_ITEM);

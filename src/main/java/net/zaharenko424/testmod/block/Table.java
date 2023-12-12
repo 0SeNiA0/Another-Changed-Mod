@@ -65,7 +65,6 @@ public class Table extends Block {
         boolean leg2 = (!e && !s) || (e && s && !(validConnection(level.getBlockState(pos.south().east()))));
         boolean leg3 = (!s && !w) || (s && w && !(validConnection(level.getBlockState(pos.south().west()))));
         boolean leg4 = (!n && !w) || (n && w && !(validConnection(level.getBlockState(pos.north().west()))));
-        boolean update = ((n ? 1 : 0) + (e ? 1 : 0) + (s ? 1 : 0) + (w ? 1 : 0)) % 2 == 0;
         return state.setValue(LEG_1, leg1).setValue(LEG_2, leg2).setValue(LEG_3, leg3).setValue(LEG_4, leg4);
     }
 

@@ -13,8 +13,8 @@ import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableConditio
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.testmod.block.doors.AbstractTwoByTwoDoor;
-import net.zaharenko424.testmod.block.boxes.TallBox;
 import net.zaharenko424.testmod.registry.ItemRegistry;
+import net.zaharenko424.testmod.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -29,6 +29,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        doublePartBlockDrops(AIR_CONDITIONER.get());
         dropSelf(BLUE_LAB_TILE.get());
         dropSelf(BOLTED_BLUE_LAB_TILE.get());
         dropSelf(BOLTED_LAB_TILE.get());
@@ -40,6 +41,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(CONNECTED_LAB_TILE.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         dropSelf(HAZARD_BLOCK.get());
+        dropSelf(HAZARD_LAB_BLOCK.get());
         dropSelf(KEYPAD.get());
         dropSelf(LAB_BLOCK.get());
         twoByTwoDoorDrops(LAB_DOOR.get());
@@ -50,14 +52,18 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         doublePartBlockDrops(METAL_BOX.get());
         dropOther(NOTE.get(), Items.PAPER);
         dropSelf(NOTEPAD.get());
+        dropSelf(ORANGE_LAB_BLOCK.get());
         createOrangeLeavesDrops();
         dropSelf(ORANGE_SAPLING.get());
         dropSelf(ORANGE_TREE_LOG.get());
         dropSelf(SCANNER.get());
+        dropSelf(SMART_SEWAGE_SYSTEM.get());
+        dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());
         dropSelf(TABLE.get());
         doublePartBlockDrops(TALL_CARDBOARD_BOX.get());
         dropSelf(TRAFFIC_CONE.get());
         dropSelf(VENT.get());
+        dropSelf(VENT_WALL.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
         dropSelf(YELLOW_LAB_BLOCK.get());
     }
@@ -77,7 +83,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     private void doublePartBlockDrops(Block block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TallBox.PART,"lower")))
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART,0)))
                 .add(
                         applyExplosionCondition(block,LootItem.lootTableItem(block))
                 )));
