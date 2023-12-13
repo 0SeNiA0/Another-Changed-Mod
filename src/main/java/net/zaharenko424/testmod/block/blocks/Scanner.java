@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.block.HorizontalDirectionalBlock;
 import net.zaharenko424.testmod.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 

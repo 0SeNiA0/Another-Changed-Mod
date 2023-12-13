@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;

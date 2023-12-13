@@ -25,7 +25,6 @@ public class TallBox extends VerticalTwoBlockMultiBlock {
 
     public TallBox(Properties p_49795_) {
         super(p_49795_);
-        registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH).setValue(PART,0));
     }
 
     @Override

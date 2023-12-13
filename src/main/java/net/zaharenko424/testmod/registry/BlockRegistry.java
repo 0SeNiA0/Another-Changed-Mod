@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.testmod.block.*;
+import net.zaharenko424.testmod.block.blocks.*;
 import net.zaharenko424.testmod.block.boxes.CardboardBox;
 import net.zaharenko424.testmod.block.boxes.SmallCardboardBox;
 import net.zaharenko424.testmod.block.boxes.TallBox;

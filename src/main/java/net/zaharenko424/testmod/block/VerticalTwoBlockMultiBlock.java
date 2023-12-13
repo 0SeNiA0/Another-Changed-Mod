@@ -1,6 +1,7 @@
 package net.zaharenko424.testmod.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -9,6 +10,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.zaharenko424.testmod.util.StateProperties;
 import org.jetbrains.annotations.Nullable;
@@ -18,10 +21,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class VerticalTwoBlockMultiBlock extends AbstractMultiBlock{
 
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty PART = StateProperties.PART;
 
     public VerticalTwoBlockMultiBlock(Properties p_54120_) {
         super(p_54120_);
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART,0));
     }
 
     @Override

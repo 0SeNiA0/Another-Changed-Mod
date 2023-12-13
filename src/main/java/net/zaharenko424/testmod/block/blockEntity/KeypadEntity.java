@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.testmod.TransfurManager;
-import net.zaharenko424.testmod.block.Keypad;
+import net.zaharenko424.testmod.block.blocks.Keypad;
 import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.SoundRegistry;
 

@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

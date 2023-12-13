@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.block.AbstractNote;
 import net.zaharenko424.testmod.block.blockEntity.NoteEntity;
 import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class Note extends AbstractNote {
     }
 
     @Override
-    int guiId() {
+    public int guiId() {
         return 0;
     }
 

@@ -27,7 +27,7 @@ public abstract class AbstractNote extends HorizontalDirectionalBlock implements
         super(p_49795_);
     }
 
-    abstract int guiId();
+    public abstract int guiId();
 
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {

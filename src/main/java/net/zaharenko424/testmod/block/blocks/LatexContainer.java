@@ -1,7 +1,6 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,19 +9,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.block.AbstractMultiBlock;
 import net.zaharenko424.testmod.block.blockEntity.LatexContainerEntity;
 import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.util.StateProperties;
@@ -34,7 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
-public class LatexContainer extends Block implements EntityBlock {
+public class LatexContainer extends AbstractMultiBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE= Shapes.or(Shapes.box(0.1875, 0, 0.1875, 0.8125, 0.125, 0.8125)
             ,Shapes.box(0.1875, 1.625, 0.1875, 0.8125, 1.75, 0.8125)
@@ -45,6 +41,11 @@ public class LatexContainer extends Block implements EntityBlock {
     public LatexContainer(Properties p_49795_) {
         super(p_49795_);
         registerDefaultState(stateDefinition.any().setValue(PART, 0));
+    }
+
+    @Override
+    protected IntegerProperty part() {
+        return PART;
     }
 
     @Nullable
@@ -78,27 +79,6 @@ public class LatexContainer extends Block implements EntityBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        int part = p_60541_.getValue(PART);
-        if (p_60542_.getAxis() != Direction.Axis.Y || part == 0 != (p_60542_ == Direction.UP)) {
-            return part == 0 && p_60542_ == Direction.DOWN && !p_60541_.canSurvive(p_60544_, p_60545_)
-                    ? Blocks.AIR.defaultBlockState()
-                    : super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
-        } else {
-            return p_60543_.is(this) && p_60543_.getValue(PART) != part
-                    ? p_60541_ : Blocks.AIR.defaultBlockState();
-        }
-    }
-
-    @Override
-    public void playerWillDestroy(Level p_49852_, BlockPos p_49853_, BlockState p_49854_, Player p_49855_) {
-        if(!p_49852_.isClientSide&&p_49855_.isCreative()){
-            Utils.fixCreativeDoubleBlockDrops(p_49852_,p_49853_,p_49854_,p_49855_);
-        }
-        super.playerWillDestroy(p_49852_, p_49853_, p_49854_, p_49855_);
-    }
-
-    @Override
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
         if(!p_60516_.isClientSide&&p_60515_.getValue(PART)==0){
             if(p_60516_.getBlockEntity(p_60517_) instanceof LatexContainerEntity container) container.onRemove();
@@ -127,7 +107,12 @@ public class LatexContainer extends Block implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(PART);
+    protected BlockPos getMainPos(BlockState state, BlockPos pos) {
+        return state.getValue(PART)==0?pos:pos.below();
+    }
+
+    @Override
+    protected BlockPos getSecondaryPos(BlockState state, BlockPos pos) {
+        return state.getValue(PART)==1?pos:pos.above();
     }
 }

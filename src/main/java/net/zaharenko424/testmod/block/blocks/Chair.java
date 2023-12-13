@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block;
+package net.zaharenko424.testmod.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.testmod.block.ISeatBlock;
 import net.zaharenko424.testmod.entity.SeatEntity;
 import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class Chair extends HorizontalDirectionalBlock implements ISeatBlock{
+public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.or(Shapes.box(0.4375, 0, 0.4375, 0.5625, 0.4375, 0.5625)
             ,Shapes.box(0.125, 0.4375, 0.125, 0.875, 0.5625, 0.875)

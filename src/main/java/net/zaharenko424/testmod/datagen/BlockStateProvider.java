@@ -12,9 +12,9 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.BookStack;
-import net.zaharenko424.testmod.block.Keypad;
-import net.zaharenko424.testmod.block.Table;
+import net.zaharenko424.testmod.block.blocks.BookStack;
+import net.zaharenko424.testmod.block.blocks.Keypad;
+import net.zaharenko424.testmod.block.blocks.Table;
 import net.zaharenko424.testmod.block.boxes.SmallCardboardBox;
 import net.zaharenko424.testmod.block.doors.AbstractMultiDoor;
 import net.zaharenko424.testmod.block.doors.AbstractTwoByTwoDoor;
@@ -22,7 +22,7 @@ import net.zaharenko424.testmod.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.zaharenko424.testmod.block.ConnectedTextureBlock.*;
+import static net.zaharenko424.testmod.block.blocks.ConnectedTextureBlock.*;
 import static net.zaharenko424.testmod.registry.BlockRegistry.*;
 
 public class BlockStateProvider extends net.neoforged.neoforge.client.model.generators.BlockStateProvider {
@@ -32,7 +32,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     @Override
     protected void registerStatesAndModels() {
-        rotatedDoublePartYBlockWithItem(AIR_CONDITIONER,"air_conditioner");
+        rotatedDoublePartBlockWithItem(AIR_CONDITIONER,"air_conditioner");
         blockWithItem(BLUE_LAB_TILE);
         blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
@@ -55,7 +55,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/latex_solvent_still"));
         twoByTwoDoorWithItem(LIBRARY_DOOR);
         twoByTwoDoorWithItem(MAINTENANCE_DOOR);
-        rotatedDoublePartYBlockWithItem(METAL_BOX,"metal_box");
+        rotatedDoublePartBlockWithItem(METAL_BOX,"metal_box");
         horizontalDirectionalBlockWithItem(NOTE);
         horizontalDirectionalBlockWithItem(NOTEPAD);
         blockWithItem(ORANGE_LAB_BLOCK);
@@ -67,7 +67,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         smartSewageSystemWithItem();
         pillarWithItem(STRIPED_ORANGE_LAB_BLOCK,blockLoc(ORANGE_LAB_BLOCK.getId()));
         tableModel();
-        rotatedDoublePartYBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
+        rotatedDoublePartBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
         simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
         ventWithItem();
         pillarWithItem(VENT_WALL,null);
@@ -174,7 +174,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlockWithItem(block.get(),file);
     }
 
-    private void rotatedDoublePartYBlockWithItem(@NotNull DeferredBlock<? extends HorizontalDirectionalBlock> block, @Nullable String subFolder){
+    private void rotatedDoublePartBlockWithItem(@NotNull DeferredBlock<?> block, @Nullable String subFolder){
         ResourceLocation id=block.getId();
         if(subFolder!=null) id=id.withPrefix(subFolder+"/");
         ModelFile part0= models().getExistingFile(blockLoc(id).withSuffix("_0"));
