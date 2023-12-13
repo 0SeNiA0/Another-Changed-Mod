@@ -20,6 +20,8 @@ import net.zaharenko424.testmod.client.model.LatexWolfMaleModel;
 import net.zaharenko424.testmod.client.overlay.HazmatOverlay;
 import net.zaharenko424.testmod.client.renderer.ChairRenderer;
 import net.zaharenko424.testmod.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.testmod.client.renderer.blockEntity.LatexContainerRenderer;
+import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,6 +61,8 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
+        event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
+
         event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF));
@@ -70,6 +74,8 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event){
+        event.registerLayerDefinition(LatexContainerRenderer.LAYER, LatexContainerRenderer::bodyLayer);
+
         event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation(MODID,"dummy"),"main"), DummyModel::createBodyLayer);
         event.registerLayerDefinition(LatexWolfMaleModel.modelLayerLocation(), LatexWolfMaleModel::createBodyLayer);
         event.registerLayerDefinition(LatexWolfMaleModel.armorLayerLocation(), LatexWolfMaleModel::createArmorLayer);

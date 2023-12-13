@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.testmod.TransfurManager;
 import net.zaharenko424.testmod.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.testmod.util.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -15,10 +16,16 @@ import java.util.function.Supplier;
 public class LatexItem extends Item {
 
     private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Latex type;
 
-    public LatexItem(@NotNull Supplier<? extends AbstractTransfurType> transfurType) {
+    public LatexItem(@NotNull Supplier<? extends AbstractTransfurType> transfurType, Latex type) {
         super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
         this.transfurType=transfurType;
+        this.type=type;
+    }
+
+    public Latex getLatexType(){
+        return type;
     }
 
     @Override

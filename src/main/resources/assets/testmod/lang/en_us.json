@@ -1,6 +1,7 @@
 {
   "attribute.testmod.latex_resistance": "Latex Resistance",
 
+  "block.testmod.air_conditioner": "Air conditioner",
   "block.testmod.blue_lab_tile": "Blue lab tile",
   "block.testmod.bolted_blue_lab_tile": "Bolted blue lab tile",
   "block.testmod.bolted_lab_tile": "Bolted lab tile",
@@ -75,11 +76,11 @@
   "misc.testmod.keypad_attempt": "Try",
   "misc.testmod.keypad_save_password": "Save password",
 
-  "sounds.testmod.test":"test sound",
+  "sounds.testmod.button_pressed": "Button pressed",
   "sounds.testmod.door_locked": "Door is locked",
   "sounds.testmod.door_open": "Door opened/closed",
   "sounds.testmod.keypad_unlocked": "Keypad unlocked",
-  "sounds.testmod.keypad_wrong_pass": "Wrong password entered",
+  "sounds.testmod.keypad_wrong_password": "Wrong password entered",
   "sounds.testmod.save": "Checkpoint saved",
   "sounds.testmod.smart_sewage_consume": "Smart sewage consumed something",
 

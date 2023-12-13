@@ -41,7 +41,7 @@ public class KeypadEntity extends BlockEntity {
             level.playSound(null,worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
             return;
         }
-        level.playSound(null,worldPosition, SoundRegistry.KEYPAD_WRONG_PASS.get(), SoundSource.BLOCKS);
+        level.playSound(null,worldPosition, SoundRegistry.KEYPAD_WRONG_PASSWORD.get(), SoundSource.BLOCKS);
     }
 
     public void setCode(int[] code){

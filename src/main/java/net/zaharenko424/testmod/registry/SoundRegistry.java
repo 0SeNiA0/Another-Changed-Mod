@@ -15,7 +15,7 @@ public class SoundRegistry {
     public static final DeferredHolder<SoundEvent,SoundEvent> DOOR_LOCKED = registerVariableRange("door_locked");
     public static final DeferredHolder<SoundEvent,SoundEvent> DOOR_OPEN = registerVariableRange("door_open");
     public static final DeferredHolder<SoundEvent,SoundEvent> KEYPAD_UNLOCKED = registerVariableRange("keypad_unlocked");
-    public static final DeferredHolder<SoundEvent,SoundEvent> KEYPAD_WRONG_PASS = registerVariableRange("keypad_wrong_pass");
+    public static final DeferredHolder<SoundEvent,SoundEvent> KEYPAD_WRONG_PASSWORD = registerVariableRange("keypad_wrong_password");
     public static final DeferredHolder<SoundEvent,SoundEvent> SAVE = registerVariableRange("save");
     public static final DeferredHolder<SoundEvent,SoundEvent> SMART_SEWAGE_CONSUME = registerVariableRange("smart_sewage_consume");
 

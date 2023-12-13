@@ -27,6 +27,7 @@ public final class DatagenEvent {
 
         generator.addProvider(event.includeClient(), new BlockStateProvider(out, helper));
         generator.addProvider(event.includeClient(), new ItemModelProvider(out, helper));
+        generator.addProvider(event.includeClient(), new SoundDefinitionProvider(out, helper));
 
         CompletableFuture<HolderLookup.Provider> lookup0=
                 generator.addProvider(event.includeServer(), new DatapackEntriesProvider(out,lookup)).getRegistryProvider();

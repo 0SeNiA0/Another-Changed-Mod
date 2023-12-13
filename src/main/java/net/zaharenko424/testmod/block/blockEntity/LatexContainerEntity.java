@@ -3,8 +3,13 @@ package net.zaharenko424.testmod.block.blockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.capabilities.Capability;
@@ -15,9 +20,13 @@ import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 import net.zaharenko424.testmod.registry.ItemRegistry;
+import net.zaharenko424.testmod.util.Latex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class LatexContainerEntity extends BlockEntity {
 
     private final ItemStackHandler handler=new ItemStackHandler(){
@@ -58,24 +67,55 @@ public class LatexContainerEntity extends BlockEntity {
         return handler.getStackInSlot(0).getCount();
     }
 
-    public void addLatex(@NotNull ItemStack item, boolean shrink){
+    public Latex getLatexType(){
+        if(isEmpty()) return null;
+        return ((LatexItem)handler.getStackInSlot(0).getItem()).getLatexType();
+    }
+
+    public void addLatex(ItemStack item, boolean shrink){
         handler.insertItem(0,item.copyWithCount(1),false);
         if(shrink) item.shrink(1);
+        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(), Block.UPDATE_ALL);
     }
 
     public ItemStack removeLatex() {
-        return handler.extractItem(0, 1, false);
+        ItemStack item=handler.extractItem(0,1,false);
+        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),Block.UPDATE_ALL);
+        return item;
     }
 
     public void onRemove(){
         if(getLatexAmount()>=8){
             BlockState state= isSameLatexType(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
-            level.setBlock(getBlockPos(),state, 3);
+            level.setBlockAndUpdate(getBlockPos(),state);
         }
     }
 
+    @Nullable
     @Override
-    public void load(@NotNull CompoundTag p_155245_) {
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag() {
+        CompoundTag tag=new CompoundTag();
+        handler.getStackInSlot(0).save(tag);
+        return tag;
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        handleUpdateTag(pkt.getTag());
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        handler.setStackInSlot(0,ItemStack.of(tag));
+    }
+
+    @Override
+    public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
         CompoundTag modTag=TransfurManager.modTag(p_155245_);
         if(!modTag.contains("latex")) return;
@@ -83,7 +123,7 @@ public class LatexContainerEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag p_187471_) {
+    protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
         if(isEmpty()) return;
         CompoundTag item=new CompoundTag();
@@ -92,7 +132,7 @@ public class LatexContainerEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    public @NotNull <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if(side!=null) return optional.cast();
         return super.getCapability(cap, null);
     }
