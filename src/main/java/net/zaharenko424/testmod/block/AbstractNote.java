@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.testmod.block.blockEntity.NoteEntity;
+import net.zaharenko424.testmod.entity.block.NoteEntity;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundOpenNotePacket;
 import org.jetbrains.annotations.NotNull;

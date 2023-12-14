@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.testmod.TestMod;
+import net.zaharenko424.testmod.registry.MobEffectRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class UnTransfurBottle extends Item {
@@ -33,7 +33,7 @@ public class UnTransfurBottle extends Item {
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
         if(!(p_41411_ instanceof Player player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-        p_41411_.addEffect(new MobEffectInstance(TestMod.UNTRANSFUR.get(),600));
+        p_41411_.addEffect(new MobEffectInstance(MobEffectRegistry.UNTRANSFUR.get(),600));
         if(player.getAbilities().instabuild) return p_41409_;
         ItemStack result=new ItemStack(Items.GLASS_BOTTLE);
         if(p_41409_.getCount()==1){

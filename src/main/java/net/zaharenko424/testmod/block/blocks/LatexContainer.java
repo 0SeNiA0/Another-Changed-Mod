@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.testmod.block.AbstractMultiBlock;
-import net.zaharenko424.testmod.block.blockEntity.LatexContainerEntity;
+import net.zaharenko424.testmod.entity.block.LatexContainerEntity;
 import net.zaharenko424.testmod.item.LatexItem;
 import net.zaharenko424.testmod.util.StateProperties;
 import net.zaharenko424.testmod.util.Utils;

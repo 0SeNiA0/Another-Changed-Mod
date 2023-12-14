@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LatexSolventEffect extends MobEffect {
     public LatexSolventEffect() {
-        super(MobEffectCategory.HARMFUL, 230);
+        super(MobEffectCategory.HARMFUL, 15330485);
     }
 
     @Override

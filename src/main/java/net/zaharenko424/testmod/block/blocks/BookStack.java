@@ -1,5 +1,6 @@
 package net.zaharenko424.testmod.block.blocks;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.ItemTags;
@@ -13,37 +14,37 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.testmod.block.blockEntity.BookStackEntity;
+import net.zaharenko424.testmod.entity.block.BookStackEntity;
 import net.zaharenko424.testmod.util.Utils;
-import net.zaharenko424.testmod.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class BookStack extends HorizontalDirectionalBlock implements EntityBlock {
+public class BookStack extends Block implements EntityBlock {
 
-    private static final VoxelShape ONE_BOOK = Shapes.box(0.3125, 0, 0.25, 0.75, 0.125, 0.8125);
-    private static final VoxelShape TWO_BOOKS = Shapes.or(ONE_BOOK,Shapes.box(0.25, 0.125, 0.34375, 0.6875, 0.25, 0.90625));
-    private static final VoxelShape THREE_BOOKS = Shapes.or(TWO_BOOKS,Shapes.box(0.34375, 0.25, 0.25, 0.78125, 0.375, 0.8125));
-    private static final VoxelShape FOUR_BOOKS = Shapes.or(THREE_BOOKS,Shapes.box(0.28125, 0.375, 0.21875, 0.6875, 0.5, 0.75));
-    private static final VoxelShapeCache CACHE = new VoxelShapeCache();
-    public static final IntegerProperty BOOK_AMOUNT = IntegerProperty.create("books",1,4);
-
+    private static final VoxelShape ONE_BOOK = Shapes.box(0.25, 0, 0.25, 0.75, 0.125, 0.75);
+    private static final VoxelShape TWO_BOOKS = Shapes.or(ONE_BOOK,Shapes.box(0.25, 0.125, 0.25, 0.75, 0.25, 0.75));
+    private static final VoxelShape THREE_BOOKS = Shapes.or(TWO_BOOKS,Shapes.box(0.25, 0.25, 0.25, 0.75, 0.375, 0.75));
+    private static final VoxelShape FOUR_BOOKS = Shapes.or(THREE_BOOKS,Shapes.box(0.25, 0.375, 0.25, 0.75, 0.5, 0.75));
+    private static final VoxelShape FIVE_BOOKS = Shapes.or(FOUR_BOOKS,Shapes.box(0.25, 0.5, 0.25, 0.75, 0.625, 0.75));
+    private static final VoxelShape SIX_BOOKS = Shapes.or(FIVE_BOOKS,Shapes.box(0.25, 0.625, 0.25, 0.75, 0.75, 0.75));
+    private static final VoxelShape SEVEN_BOOKS = Shapes.or(SIX_BOOKS,Shapes.box(0.25, 0.75, 0.25, 0.75, 0.875, 0.75));
+    private static final VoxelShape EIGHT_BOOKS = Shapes.or(SEVEN_BOOKS,Shapes.box(0.25, 0.875, 0.25, 0.75, 1, 0.75));
+    private static final ImmutableMap<Integer,VoxelShape> SHAPE_BY_AMOUNT = ImmutableMap.of(1,ONE_BOOK,2,TWO_BOOKS,3,THREE_BOOKS,
+            4,FOUR_BOOKS,5,FIVE_BOOKS,6,SIX_BOOKS,7,SEVEN_BOOKS,8,EIGHT_BOOKS);
     public BookStack(Properties p_49795_) {
         super(p_49795_);
-        registerDefaultState(stateDefinition.any().setValue(BOOK_AMOUNT,1).setValue(FACING, Direction.NORTH));
     }
 
     @Nullable
@@ -53,14 +54,15 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     }
 
     @Override
+    public @NotNull RenderShape getRenderShape(BlockState p_60550_) {
+        return RenderShape.INVISIBLE;
+    }
+
+    @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        Direction direction=p_60555_.getValue(FACING);
-        return switch(p_60555_.getValue(BOOK_AMOUNT)){
-            default -> CACHE.getShape(direction,1,ONE_BOOK);
-            case 2-> CACHE.getShape(direction,2,TWO_BOOKS);
-            case 3-> CACHE.getShape(direction,3,THREE_BOOKS);
-            case 4-> CACHE.getShape(direction,4,FOUR_BOOKS);
-        };
+        BlockEntity entity=p_60556_.getBlockEntity(p_60557_);
+        if(!(entity instanceof BookStackEntity bookStack)||bookStack.bookAmount()==0) return ONE_BOOK;
+        return Objects.requireNonNull(SHAPE_BY_AMOUNT.get(bookStack.bookAmount()),"Book amount out of bounds!");
     }
 
     @Override
@@ -69,18 +71,26 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
         BlockEntity entity=p_60504_.getBlockEntity(p_60505_);
         if(entity instanceof BookStackEntity bookStack){
             ItemStack item=p_60506_.getItemInHand(p_60507_);
-            if(item.is(ItemTags.BOOKSHELF_BOOKS)&&bookStack.hasSpace()){
-                bookStack.addBook(item,!p_60506_.getAbilities().instabuild);
-                p_60504_.setBlock(p_60505_,p_60503_.setValue(BOOK_AMOUNT, bookStack.bookAmount()),3);
-                return InteractionResult.CONSUME;
+            BlockPos above=p_60505_.above();
+            BlockState stateAbove=p_60504_.getBlockState(above);
+            if(item.is(ItemTags.BOOKSHELF_BOOKS)){
+                if(bookStack.hasSpace()) {
+                    bookStack.addBook(item, (int) -p_60506_.yHeadRot, !p_60506_.getAbilities().instabuild);
+                    return InteractionResult.CONSUME;
+                }
+                if(stateAbove.is(this)) return use(stateAbove,p_60504_,above,p_60506_,p_60507_,p_60508_);
+                if(stateAbove.canBeReplaced()){
+                    p_60504_.setBlockAndUpdate(above,defaultBlockState());
+                    return use(p_60504_.getBlockState(above),p_60504_,above,p_60506_,p_60507_,p_60508_);
+                }
             }
             if(item.isEmpty()){
+                if(stateAbove.is(this)) return use(stateAbove,p_60504_,above,p_60506_,p_60507_,p_60508_);
                 Utils.addItemOrDrop(p_60506_,bookStack.removeBook());
                 if(bookStack.isEmpty()) {
                     p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
                     return InteractionResult.SUCCESS;
                 }
-                p_60504_.setBlock(p_60505_,p_60503_.setValue(BOOK_AMOUNT, bookStack.bookAmount()),3);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -99,11 +109,7 @@ public class BookStack extends HorizontalDirectionalBlock implements EntityBlock
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
         BlockPos pos= p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos,Direction.UP);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(BOOK_AMOUNT,FACING);
+        BlockState stateBelow=p_60526_.getBlockState(pos);
+        return stateBelow.isFaceSturdy(p_60526_, pos,Direction.UP)||stateBelow.is(this);
     }
 }

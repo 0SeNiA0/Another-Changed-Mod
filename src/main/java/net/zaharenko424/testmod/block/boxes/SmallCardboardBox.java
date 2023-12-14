@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.testmod.block.blockEntity.BoxPileEntity;
+import net.zaharenko424.testmod.entity.block.BoxPileEntity;
 import net.zaharenko424.testmod.registry.ItemRegistry;
 import net.zaharenko424.testmod.util.Utils;
 import net.zaharenko424.testmod.util.VoxelShapeCache;

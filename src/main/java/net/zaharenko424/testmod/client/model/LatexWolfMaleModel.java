@@ -4,16 +4,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.testmod.TestMod;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexWolfMaleModel<T extends LivingEntity> extends AbstractLatexEntityModel<T> {
 
     public LatexWolfMaleModel(@NotNull EntityRendererProvider.Context context, boolean main){
-        super(context.bakeLayer(main?modelLayerLocation():armorLayerLocation()));
+        super(context.bakeLayer(main?modelLayerLocation:armorLayerLocation));
     }
 
     public static @NotNull LayerDefinition createBodyLayer(){
@@ -58,10 +56,7 @@ public class LatexWolfMaleModel<T extends LivingEntity> extends AbstractLatexEnt
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
-    @Contract(" -> new")
-    public static @NotNull ModelLayerLocation modelLayerLocation(){
-        return new ModelLayerLocation(new ResourceLocation(TestMod.MODID,"latex_wolf_male"),"main");
-    }
+    public static @NotNull ModelLayerLocation modelLayerLocation=new ModelLayerLocation(TestMod.resourceLoc("latex_wolf_male"),"main");
 
     public static @NotNull LayerDefinition createArmorLayer(){
         MeshDefinition meshdefinition = new MeshDefinition();
@@ -104,13 +99,5 @@ public class LatexWolfMaleModel<T extends LivingEntity> extends AbstractLatexEnt
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    @Contract(" -> new")
-    public static @NotNull ModelLayerLocation armorLayerLocation(){
-        return new ModelLayerLocation(new ResourceLocation(TestMod.MODID,"latex_wolf_male"),"armor");
-    }
-
-    @Override
-    public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.setupAnim(entity,limbSwing,limbSwingAmount,ageInTicks,netHeadYaw,headPitch);
-    }
+    public static @NotNull ModelLayerLocation armorLayerLocation=new ModelLayerLocation(TestMod.resourceLoc("latex_wolf_male"),"armor");
 }

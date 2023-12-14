@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.blockEntity.KeypadEntity;
+import net.zaharenko424.testmod.entity.block.KeypadEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerboundTryPasswordPacket implements SimpleMessage {

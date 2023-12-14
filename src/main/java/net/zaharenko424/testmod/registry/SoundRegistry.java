@@ -18,8 +18,6 @@ public class SoundRegistry {
     public static final DeferredHolder<SoundEvent,SoundEvent> KEYPAD_WRONG_PASSWORD = registerVariableRange("keypad_wrong_password");
     public static final DeferredHolder<SoundEvent,SoundEvent> SAVE = registerVariableRange("save");
     public static final DeferredHolder<SoundEvent,SoundEvent> SMART_SEWAGE_CONSUME = registerVariableRange("smart_sewage_consume");
-
-    public static final DeferredHolder<SoundEvent,SoundEvent> TEST_SOUND = SOUNDS.register("test",()-> SoundEvent.createVariableRangeEvent(TestMod.resourceLoc("test")));
     //SoundType ...
 
     private static @NotNull DeferredHolder<SoundEvent,SoundEvent> registerVariableRange(String id){

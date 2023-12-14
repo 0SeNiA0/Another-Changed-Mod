@@ -1,4 +1,4 @@
-package net.zaharenko424.testmod.block.blockEntity;
+package net.zaharenko424.testmod.entity.block;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;

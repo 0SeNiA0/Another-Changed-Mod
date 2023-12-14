@@ -12,7 +12,6 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.blocks.BookStack;
 import net.zaharenko424.testmod.block.blocks.Keypad;
 import net.zaharenko424.testmod.block.blocks.Table;
 import net.zaharenko424.testmod.block.boxes.SmallCardboardBox;
@@ -36,7 +35,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(BLUE_LAB_TILE);
         blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
-        bookStackModel();
+        simpleBlock(BOOK_STACK.get());
         blockWithItem(BROWN_LAB_BLOCK);
         horizontalDirectionalBlockWithItem(CARDBOARD_BOX);
         connectedTextureWithItem(CARPET_BLOCK,"carpet");
@@ -45,6 +44,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle",TestMod.MODID+":block/dark_latex_still"));
+        rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
         blockWithItem(HAZARD_BLOCK);
         pillarWithItem(HAZARD_LAB_BLOCK,blockLoc(LAB_BLOCK.getId()));
         keypadWithItem();
@@ -82,23 +82,6 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private void blockWithItem(@NotNull DeferredBlock<?> block){
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
-    }
-
-    private void bookStackModel(){
-        ResourceLocation id=blockLoc(BOOK_STACK.getId().withPrefix("book_stack/"));
-        ModelFile file1= models().getExistingFile(id.withSuffix("_1"));
-        ModelFile file2= models().getExistingFile(id.withSuffix("_2"));
-        ModelFile file3= models().getExistingFile(id.withSuffix("_3"));
-        ModelFile file4= models().getExistingFile(id.withSuffix("_4"));
-        getVariantBuilder(BOOK_STACK.get()).forAllStates(state->{
-            Direction direction=state.getValue(HorizontalDirectionalBlock.FACING);
-            return switch (state.getValue(BookStack.BOOK_AMOUNT)){
-                case 2 -> horizontalRotatedModel(file2, direction);
-                case 3 -> horizontalRotatedModel(file3, direction);
-                case 4 -> horizontalRotatedModel(file4, direction);
-                default -> horizontalRotatedModel(file1, direction);
-            };
-        });
     }
 
     private void crystalWithItem(){

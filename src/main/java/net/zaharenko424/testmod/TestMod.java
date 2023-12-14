@@ -1,12 +1,13 @@
 package net.zaharenko424.testmod;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
@@ -18,8 +19,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.testmod.effects.LatexSolventEffect;
-import net.zaharenko424.testmod.effects.UnTransfurEffect;
 import net.zaharenko424.testmod.item.LatexSyringeItem;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +30,7 @@ import static net.zaharenko424.testmod.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.testmod.registry.FluidRegistry.FLUID_TYPES;
 import static net.zaharenko424.testmod.registry.ItemRegistry.*;
+import static net.zaharenko424.testmod.registry.MobEffectRegistry.EFFECTS;
 import static net.zaharenko424.testmod.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_REGISTRY;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.TRANSFUR_TYPES;
@@ -43,18 +43,15 @@ public class TestMod {
 
     //Registries
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE,MODID);
-    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT,MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
 
     //Attributes
     public static final DeferredHolder<Attribute,Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
             ()-> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
 
-    //Effects
-    public static final DeferredHolder<MobEffect, UnTransfurEffect> UNTRANSFUR = EFFECTS
-            .register("untransfur", UnTransfurEffect::new);
-    public static final DeferredHolder<MobEffect, LatexSolventEffect> LATEX_SOLVENT = EFFECTS
-            .register("latex_solvent", LatexSolventEffect::new);
+    //Particles
+    public static final DeferredHolder<ParticleType<?>,SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
     //Tags
     public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
@@ -94,6 +91,7 @@ public class TestMod {
             output.accept(AIR_CONDITIONER_ITEM);
             output.accept(CARDBOARD_BOX);
             output.accept(CHAIR_ITEM);
+            output.accept(GAS_TANK_ITEM);
             output.accept(KEYPAD_ITEM);
             output.accept(LAB_DOOR_ITEM);
             output.accept(LATEX_CONTAINER_ITEM);
@@ -128,6 +126,10 @@ public class TestMod {
         return new ResourceLocation(MODID,path);
     }
 
+    public static ResourceLocation textureLoc(@NotNull String path){
+        return new ResourceLocation(MODID,"textures/"+path+".png");
+    }
+
     public TestMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         TRANSFUR_TYPES.register(modEventBus);
@@ -135,12 +137,13 @@ public class TestMod {
         EFFECTS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
-        ITEMS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
+        ITEMS.register(modEventBus);
         ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         SOUNDS.register(modEventBus);
+        PARTICLE_TYPES.register(modEventBus);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);

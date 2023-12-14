@@ -9,7 +9,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class HierarchicalHumanoidModel<T extends LivingEntity> extends AgeableHierarchicalModel<T> implements ArmedModel, HeadedModel {
+public abstract class HierarchicalHumanoidModel<T extends LivingEntity> extends AgeableHierarchicalModel<T> implements ArmedModel, HeadedModel {
 
     private final ModelPart root;
     public final ModelPart head;

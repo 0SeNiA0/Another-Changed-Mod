@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.zaharenko424.testmod.block.AbstractMultiBlock;
 import net.zaharenko424.testmod.registry.SoundRegistry;
@@ -27,7 +28,7 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
     public static final BooleanProperty OPEN= BlockStateProperties.OPEN;
 
     public AbstractMultiDoor(Properties p_54120_) {
-        super(p_54120_);
+        super(p_54120_.pushReaction(PushReaction.BLOCK));
     }
 
     @Override

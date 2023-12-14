@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.testmod.TestMod;
-import net.zaharenko424.testmod.block.blockEntity.NoteEntity;
+import net.zaharenko424.testmod.entity.block.NoteEntity;
 import net.zaharenko424.testmod.util.Utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;

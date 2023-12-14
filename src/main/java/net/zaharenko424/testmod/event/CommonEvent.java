@@ -34,10 +34,7 @@ import net.zaharenko424.testmod.commands.UnTransfur;
 import net.zaharenko424.testmod.entity.AbstractLatexBeast;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
-import net.zaharenko424.testmod.registry.BlockEntityRegistry;
-import net.zaharenko424.testmod.registry.BlockRegistry;
-import net.zaharenko424.testmod.registry.FluidRegistry;
-import net.zaharenko424.testmod.registry.TransfurRegistry;
+import net.zaharenko424.testmod.registry.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
@@ -85,8 +82,8 @@ public class CommonEvent {
                 pos=pos.above();
                 if(!level.getBlockState(pos).canBeReplaced()) return;
             }
-            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING,direction), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item,!player.isCreative())));
+            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
+            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item, (int) -player.yHeadRot,!player.isCreative())));
             denyEvent(event);
             return;
         }
@@ -122,7 +119,7 @@ public class CommonEvent {
         }
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast||(entity instanceof Player player&&TransfurManager.isTransfurred(player)))
-            entity.addEffect(new MobEffectInstance(TestMod.LATEX_SOLVENT.get(),200));
+            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
     }
 
     @SubscribeEvent

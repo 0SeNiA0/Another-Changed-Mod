@@ -5,11 +5,12 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.testmod.TransfurManager;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+@ParametersAreNonnullByDefault
 public class UnTransfurEffect extends MobEffect {
     public UnTransfurEffect() {
-        super(MobEffectCategory.NEUTRAL, 128);
+        super(MobEffectCategory.NEUTRAL, 13816530);
     }
 
     @Override
@@ -18,7 +19,7 @@ public class UnTransfurEffect extends MobEffect {
     }
 
     @Override
-    public void applyEffectTick(@NotNull LivingEntity p_19467_, int p_19468_) {
+    public void applyEffectTick(LivingEntity p_19467_, int p_19468_) {
         if(p_19467_ instanceof ServerPlayer player){
             TransfurManager.unTransfur(player);
         }

@@ -22,6 +22,9 @@ public final class TransfurRegistry {
             .register("dark_latex_wolf_female", ()-> new LatexWolf(AbstractTransfurType.Properties
                     .of(resourceLoc("dark_latex_wolf_female")).gender(false)));
 
+    public static final DeferredHolder<AbstractTransfurType, LatexWolf> GAS_WOLF = TRANSFUR_TYPES
+            .register("gas_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties.of(resourceLoc("gas_wolf"))));
+
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> WHITE_LATEX_WOLF_M_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_male", ()-> new LatexWolf(AbstractTransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_male"))));

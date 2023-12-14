@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.testmod.block.HorizontalDirectionalBlock;
-import net.zaharenko424.testmod.block.blockEntity.KeypadEntity;
+import net.zaharenko424.testmod.entity.block.KeypadEntity;
 import net.zaharenko424.testmod.network.PacketHandler;
 import net.zaharenko424.testmod.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.testmod.util.Utils;

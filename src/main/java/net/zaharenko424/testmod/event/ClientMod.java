@@ -13,6 +13,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.zaharenko424.testmod.TestMod;
 import net.zaharenko424.testmod.client.model.DummyModel;
 import net.zaharenko424.testmod.client.model.LatexWolfFemaleModel;
@@ -20,14 +21,15 @@ import net.zaharenko424.testmod.client.model.LatexWolfMaleModel;
 import net.zaharenko424.testmod.client.overlay.HazmatOverlay;
 import net.zaharenko424.testmod.client.renderer.ChairRenderer;
 import net.zaharenko424.testmod.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.testmod.client.renderer.blockEntity.BookStackRenderer;
 import net.zaharenko424.testmod.client.renderer.blockEntity.LatexContainerRenderer;
+import net.zaharenko424.testmod.client.particle.BlueGasParticle;
 import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static net.zaharenko424.testmod.TestMod.LOGGER;
-import static net.zaharenko424.testmod.TestMod.MODID;
+import static net.zaharenko424.testmod.TestMod.*;
 import static net.zaharenko424.testmod.registry.EntityRegistry.*;
 import static net.zaharenko424.testmod.registry.TransfurRegistry.*;
 @ParametersAreNonnullByDefault
@@ -60,7 +62,13 @@ public class ClientMod {
     }
 
     @SubscribeEvent
+    public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event){
+        event.registerSpriteSet(BLUE_GAS_PARTICLE.get(), BlueGasParticle.Provider::new);
+    }
+
+    @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
 
         event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);//Dummy renderer
@@ -74,12 +82,13 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event){
+        event.registerLayerDefinition(BookStackRenderer.LAYER, BookStackRenderer::bodyLayer);
         event.registerLayerDefinition(LatexContainerRenderer.LAYER, LatexContainerRenderer::bodyLayer);
 
         event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation(MODID,"dummy"),"main"), DummyModel::createBodyLayer);
-        event.registerLayerDefinition(LatexWolfMaleModel.modelLayerLocation(), LatexWolfMaleModel::createBodyLayer);
-        event.registerLayerDefinition(LatexWolfMaleModel.armorLayerLocation(), LatexWolfMaleModel::createArmorLayer);
-        event.registerLayerDefinition(LatexWolfFemaleModel.modelLayerLocation(), LatexWolfFemaleModel::createBodyLayer);
-        event.registerLayerDefinition(LatexWolfFemaleModel.armorLayerLocation(), LatexWolfFemaleModel::createArmorLayer);
+        event.registerLayerDefinition(LatexWolfMaleModel.modelLayerLocation, LatexWolfMaleModel::createBodyLayer);
+        event.registerLayerDefinition(LatexWolfMaleModel.armorLayerLocation, LatexWolfMaleModel::createArmorLayer);
+        event.registerLayerDefinition(LatexWolfFemaleModel.modelLayerLocation, LatexWolfFemaleModel::createBodyLayer);
+        event.registerLayerDefinition(LatexWolfFemaleModel.armorLayerLocation, LatexWolfFemaleModel::createArmorLayer);
     }
 }

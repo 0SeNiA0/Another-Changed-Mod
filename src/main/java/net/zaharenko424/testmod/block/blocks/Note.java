@@ -9,7 +9,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.testmod.block.AbstractNote;
-import net.zaharenko424.testmod.block.blockEntity.NoteEntity;
+import net.zaharenko424.testmod.entity.block.NoteEntity;
 import net.zaharenko424.testmod.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

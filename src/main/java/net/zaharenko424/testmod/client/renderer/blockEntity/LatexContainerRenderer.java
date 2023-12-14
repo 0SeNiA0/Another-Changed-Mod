@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.zaharenko424.testmod.block.blockEntity.LatexContainerEntity;
+import net.zaharenko424.testmod.entity.block.LatexContainerEntity;
 import net.zaharenko424.testmod.registry.BlockEntityRegistry;
 import net.zaharenko424.testmod.registry.BlockRegistry;
 import net.zaharenko424.testmod.util.Latex;
