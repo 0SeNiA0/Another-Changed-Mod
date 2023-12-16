@@ -2,6 +2,6 @@
     "__comment": "The model for a block that is not being connected to on any angle.",
     "parent": "block/cube_all",
     "textures": {
-        "all": "testmod:block/connected_cube/connected_cube0c"
+        "all": "a_changed:block/connected_cube/connected_cube0c"
     }
 }

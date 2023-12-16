@@ -2,6 +2,6 @@
     "__comment": "Model for when all sides are connected.",
     "parent": "block/cube_all",
     "textures": {
-        "all": "testmod:block/connected_cube/connected_cube4c"
+        "all": "a_changed:block/connected_cube/connected_cube4c"
     }
 }
