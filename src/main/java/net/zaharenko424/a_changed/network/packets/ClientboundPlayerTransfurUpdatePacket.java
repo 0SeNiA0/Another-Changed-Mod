@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
@@ -54,7 +53,6 @@ public class ClientboundPlayerTransfurUpdatePacket implements SimpleMessage {
                 handler.unTransfur();
                 player.refreshDimensions();
             } else handler.setTransfurProgress(transfurProgress,transfurType);
-            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Transfur progress is "+transfurProgress));
             return;
         }
         handler.transfur(transfurType);

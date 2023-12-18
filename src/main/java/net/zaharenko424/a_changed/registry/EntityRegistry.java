@@ -21,6 +21,10 @@ public final class EntityRegistry {
     //Entities
     public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> CHAIR_ENTITY = ENTITIES.register("chair_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) -> new SeatEntity(b), MobCategory.MISC).sized(.1f, .1f).build(resourceLoc("chair_entity").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> BEI_FENG =
+            registerLatex("bei_feng", EntityType.Builder.<LatexBeast>of((a,b) ->
+            new LatexBeast(a,b, BEI_FENG_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
+
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_MALE =
             registerLatex("dark_latex_wolf_male", EntityType.Builder.<LatexBeast>of((a, b) ->
             new LatexBeast(a,b, DARK_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));

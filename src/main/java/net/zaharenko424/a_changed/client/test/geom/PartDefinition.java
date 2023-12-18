@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.model.geom;
+package net.zaharenko424.a_changed.client.test.geom;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;

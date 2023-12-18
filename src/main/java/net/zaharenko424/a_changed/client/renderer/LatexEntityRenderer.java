@@ -28,10 +28,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.model.layers.ArmorLayer;
-import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
+import net.zaharenko424.a_changed.client.test.geom.Abc;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.DummyModel;
+import net.zaharenko424.a_changed.client.test.geom.ModelPart;
+import net.zaharenko424.a_changed.client.model.layers.ArmorLayer;
+import net.zaharenko424.a_changed.client.test.geom.ArmorModel;
+import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
 import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +50,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     protected LatexEntityRenderer(EntityRendererProvider.Context p_174304_,AbstractLatexEntityModel<E> model){
         super(p_174304_,model,1);
         context=p_174304_;
+        //addLayer(new PerFaceArmorLayer<>(this,context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
         addLayer(new ArmorLayer<>(this,context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
         addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
@@ -83,20 +87,31 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         return armorModel;
     }
 
+    private ModelPart armor=null;
+
+    public ArmorModel<E> armorModel(){
+        if(armor==null){
+            armor= Abc.model();
+        }
+        return new ArmorModel<>(armor);
+    }
+
     public void renderHand(@NotNull PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
         if(right) {
+            model.rightArm.resetPose();
             model.rightArm.y=2;
             model.rightArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation(player))), i, OverlayTexture.NO_OVERLAY);
         } else {
+            model.leftArm.resetPose();
             model.leftArm.y=2;
             model.leftArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation(player))), i, OverlayTexture.NO_OVERLAY);
         }
     }
 
     @Override
-    public void render(@NotNull E p_115308_, float p_115309_, float p_115310_, @NotNull PoseStack p_115311_, @NotNull MultiBufferSource p_115312_, int p_115313_) {
-        setModelProperties(p_115308_);
-        super.render(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
+    public void render(@NotNull E entity, float entityYaw, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int light) {
+        setModelProperties(entity);
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, light);
         //this.addLayer(new ArrowLayer<>(p_174557_, this));
         //this.addLayer(new SpinAttackEffectLayer<>(this, p_174557_.getModelSet()));
     }

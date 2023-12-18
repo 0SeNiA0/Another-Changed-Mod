@@ -46,6 +46,8 @@ class CommonMod {
 
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
+        event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
+
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
 

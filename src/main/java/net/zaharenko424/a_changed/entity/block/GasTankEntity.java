@@ -49,8 +49,12 @@ public class GasTankEntity extends BlockEntity {
         return open;
     }
 
+    public boolean isEmpty(){
+        return canister.getDamageValue()==canister.getMaxDamage();
+    }
+
     public void setOpenClose(){
-        open=!open;
+        if(!isEmpty()) open=!open;
     }
 
     public void tick(){
@@ -62,9 +66,10 @@ public class GasTankEntity extends BlockEntity {
         canister.hurt(1, level.random,null);
         level.playSound(null,worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
         level.getEntitiesOfClass(LivingEntity.class,ab, TransfurDamageSource::checkTarget).forEach((entity ->{
-            if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get())||isFullHazmat(entity)) return;
+            if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get())||isFullHazmat(entity)||TransfurManager.isBeingTransfurred(entity)) return;
             TransfurManager.addTransfurProgress(entity,5, TransfurRegistry.GAS_WOLF_TF.get());
         }));
+        if(isEmpty()) open=false;
     }
 
     private boolean isFullHazmat(LivingEntity entity){

@@ -19,6 +19,8 @@ public class SoundRegistry {
     public static final DeferredHolder<SoundEvent,SoundEvent> KEYPAD_WRONG_PASSWORD = registerVariableRange("keypad_wrong_password");
     public static final DeferredHolder<SoundEvent,SoundEvent> SAVE = registerVariableRange("save");
     public static final DeferredHolder<SoundEvent,SoundEvent> SMART_SEWAGE_CONSUME = registerVariableRange("smart_sewage_absorb");
+    public static final DeferredHolder<SoundEvent,SoundEvent> TRANSFUR = registerVariableRange("transfur");
+    public static final DeferredHolder<SoundEvent,SoundEvent> TRANSFUR_1 = registerVariableRange("transfur_1");
     //SoundType ...
 
     private static @NotNull DeferredHolder<SoundEvent,SoundEvent> registerVariableRange(String id){

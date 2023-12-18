@@ -66,7 +66,9 @@ public class TransfurCapability {
 
         static final int ticksUntilTFProgressDecrease=200;
         static final int ticksBetweenTFProgressDecrease=20;
-        int i0,i1 =0;
+        int i0=0;
+
+        boolean isBeingTransfurred=false;
 
         public TransfurHandler(LivingEntity entity){
             this.entity=entity;
@@ -104,6 +106,7 @@ public class TransfurCapability {
             transfurProgress=20;
             this.transfurType=transfurType;
             isTransfurred=true;
+            isBeingTransfurred=false;
         }
 
         @Override
@@ -111,6 +114,16 @@ public class TransfurCapability {
             transfurProgress=0;
             transfurType=null;
             isTransfurred=false;
+        }
+
+        @Override
+        public boolean isBeingTransfurred() {
+            return isBeingTransfurred;
+        }
+
+        @Override
+        public void setBeingTransfurred(boolean isBeingTransfurred) {
+            this.isBeingTransfurred=isBeingTransfurred;
         }
 
         @Override
@@ -131,16 +144,12 @@ public class TransfurCapability {
 
         @Override
         public void tick() {
-            if(isTransfurred) return;
+            if(isTransfurred||transfurProgress<=0) return;
             if(i0>0) {
                 i0--;
                 return;
             }
-            if(i1>0){
-                i1--;
-                return;
-            }
-            i1=ticksBetweenTFProgressDecrease;
+            if(entity.tickCount%ticksBetweenTFProgressDecrease!=0) return;
             transfurProgress--;
             if(entity instanceof ServerPlayer player) TransfurManager.updatePlayer(player);
         }

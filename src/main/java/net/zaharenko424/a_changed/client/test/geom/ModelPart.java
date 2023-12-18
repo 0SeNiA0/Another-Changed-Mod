@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.model.geom;
+package net.zaharenko424.a_changed.client.test.geom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -68,6 +68,18 @@ public class ModelPart {
     }
 
     public void copyFrom(ModelPart p_104316_) {
+        this.xScale = p_104316_.xScale;
+        this.yScale = p_104316_.yScale;
+        this.zScale = p_104316_.zScale;
+        this.xRot = p_104316_.xRot;
+        this.yRot = p_104316_.yRot;
+        this.zRot = p_104316_.zRot;
+        this.x = p_104316_.x;
+        this.y = p_104316_.y;
+        this.z = p_104316_.z;
+    }
+
+    public void copyFrom(net.minecraft.client.model.geom.ModelPart p_104316_) {
         this.xScale = p_104316_.xScale;
         this.yScale = p_104316_.yScale;
         this.zScale = p_104316_.zScale;

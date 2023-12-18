@@ -5,7 +5,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SaplingBlock;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
@@ -43,9 +42,11 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(COMPUTER);
         connectedTextureWithItem(CONNECTED_BLUE_LAB_TILE,"blue_lab_tile");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
+        crossWithItem(CRYSTAL);
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
+        doublePartCrossWithItem(GREEN_CRYSTAL);
         blockWithItem(HAZARD_BLOCK);
         pillarWithItem(HAZARD_LAB_BLOCK,blockLoc(LAB_BLOCK.getId()));
         keypadWithItem();
@@ -61,7 +62,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(NOTEPAD);
         blockWithItem(ORANGE_LAB_BLOCK);
         leavesWithItem(ORANGE_LEAVES);
-        saplingWithItem(ORANGE_SAPLING);
+        crossWithItem(ORANGE_SAPLING);
         logWithItem(ORANGE_TREE_LOG);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
@@ -77,6 +78,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(YELLOW_LAB_BLOCK);
     }
 
+    private final ResourceLocation WIDE_CROSS = blockLoc(AChanged.resourceLoc("wide_cross"));
+
     private @NotNull ResourceLocation blockLoc(@NotNull ResourceLocation loc){
         return loc.withPrefix(ModelProvider.BLOCK_FOLDER+"/");
     }
@@ -85,8 +88,19 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlockWithItem(block.get(),cubeAll(block.get()));
     }
 
-    private void crystalWithItem(){
-     //TODO
+    private void crossWithItem(@NotNull DeferredBlock<?> block){
+        ResourceLocation id=block.getId();
+        simpleBlock(block.get(),models().cross(id.getPath(),blockLoc(id)).renderType("cutout"));
+        simpleItem(id,blockLoc(id));
+    }
+
+    private void doublePartCrossWithItem(@NotNull DeferredBlock<?> block){
+        ResourceLocation id=block.getId();
+        ModelFile part0= wideCross(id.getPath()+"_0",blockLoc(id).withSuffix("_0"));
+        ModelFile part1= wideCross(id.getPath()+"_1",blockLoc(id).withSuffix("_1"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                state.getValue(StateProperties.PART)==0?new ConfiguredModel[]{new ConfiguredModel(part0)}:new ConfiguredModel[]{new ConfiguredModel(part1)});
+        simpleItem(id,blockLoc(id).withSuffix("_1"));
     }
 
     private ModelFile cube(@NotNull ResourceLocation textureLoc,String modelId, String str0, String str1, String str2, String str3, String str5, String str4){
@@ -169,12 +183,6 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(block.getId().getPath()).parent(models().getExistingFile(blockLoc(id)));
     }
 
-    private void saplingWithItem(@NotNull DeferredBlock<SaplingBlock> sapling){
-        ResourceLocation id=sapling.getId();
-        simpleBlock(sapling.get(),models().cross(id.getPath(),blockLoc(id)).renderType("cutout"));
-        simpleItem(id,blockLoc(id));
-    }
-
     private void simpleItem(@NotNull ResourceLocation id,@NotNull ResourceLocation texture){
         itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0",texture);
     }
@@ -247,6 +255,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile open=models().getExistingFile(blockLoc(id).withSuffix("_open"));
         trapdoorBlock(VENT.get(),bottom,top,open,true);
         itemModels().getBuilder(id.getPath()).parent(bottom);
+    }
+
+    private ModelFile wideCross(String path,ResourceLocation texture){
+        return models().withExistingParent(path,WIDE_CROSS).texture("1",texture);
     }
 
     private void connectedTextureWithItem(@NotNull DeferredBlock<?> block, String subFolder){

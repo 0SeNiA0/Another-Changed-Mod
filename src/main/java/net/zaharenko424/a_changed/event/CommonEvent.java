@@ -34,6 +34,7 @@ import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.ClientboundTransfurToleranceUpdatePacket;
 import net.zaharenko424.a_changed.registry.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -64,6 +65,8 @@ public class CommonEvent {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player= (ServerPlayer) event.getEntity();
+        TransfurManager.recalculateTransfurProgress(player);
+        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundTransfurToleranceUpdatePacket());
         TransfurManager.updatePlayer(player);
         player.refreshDimensions();
     }
@@ -106,8 +109,10 @@ public class CommonEvent {
 
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event){
+        if(event.getEntity().level().isClientSide) return;
         LivingEntity entity=event.getEntity();
-        if(TransfurDamageSource.checkTarget(entity)){
+        if(TransfurDamageSource.checkTarget(entity)&&!TransfurManager.isBeingTransfurred(entity)){
+            entity.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).tick();
             if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
                 if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get());
                 return;
@@ -145,18 +150,19 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
-        if(!event.isWasDeath()) return;
+        if(!event.isWasDeath()||!event.getEntity().level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR)) return;
         ServerPlayer og=(ServerPlayer) event.getOriginal();
         ServerPlayer player=(ServerPlayer) event.getEntity();
         player.respawn();
         og.reviveCaps();
         player.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC)
                 .load(og.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).save());
+        boolean isBeingTransfurred=TransfurManager.isBeingTransfurred(og);
         og.invalidateCaps();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                TransfurManager.updatePlayer(player);
+                if(isBeingTransfurred) TransfurManager.unTransfur(player); else TransfurManager.updatePlayer(player);
             }
         },25);
     }

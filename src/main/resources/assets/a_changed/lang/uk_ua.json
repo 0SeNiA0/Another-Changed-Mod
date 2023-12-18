@@ -53,8 +53,12 @@
   "effect.a_changed.untransfur": "Untransfur",
   "effect.a_changed.latex_solvent": "Розчинник латексу",
 
-  "entity.a_changed.white_latex_wolf": "Білий латексний вовк",
-  "entity.a_changed.dark_latex_wolf": "Темний латексний вовк",
+  "entity.a_changed.bei_feng": "bei_feng",
+  "entity.a_changed.dark_latex_wolf_female": "Темний латексний вовк f",
+  "entity.a_changed.dark_latex_wolf_male": "Темний латексний вовк",
+  "entity.a_changed.gas_wolf": "Аерозольний вовк",
+  "entity.a_changed.white_latex_wolf_female": "Білий латексний вовк f",
+  "entity.a_changed.white_latex_wolf_male": "Білий латексний вовк",
 
   "item.a_changed.cardboard": "Картон",
   "item.a_changed.dark_latex": "Темний латекс",
@@ -73,10 +77,12 @@
   "item.a_changed.white_latex": "Білий латекс",
   "item.a_changed.white_latex_bucket": "Відро білого латексу",
 
-  "itemGroup.a_changed.example_tab": "Item tab",
+  "itemGroup.a_changed.item_tab": "Item tab",
 
   "misc.a_changed.keypad_attempt": "Спробувати",
   "misc.a_changed.keypad_save_password": "Зберегти пароль",
+  "misc.a_changed.transfur": "Transfur and keep control",
+  "misc.a_changed.transfur_die": "Die",
 
   "sounds.a_changed.button_pressed": "Кнопка натиснута",
   "sounds.a_changed.door_locked": "Двері замкнені",
@@ -86,8 +92,11 @@
   "sounds.a_changed.save": "Чекпоінт збережено",
   "sounds.a_changed.smart_sewage_absorb": "Розумна каналізація щось поглинула",
 
-  "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
-  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male",
+  "transfur.a_changed.bei_feng": "bei feng",
   "transfur.a_changed.dark_latex_wolf_female": "dark latex wolf female",
-  "transfur.a_changed.dark_latex_wolf_male": "dark latex wolf male"
+  "transfur.a_changed.dark_latex_wolf_male": "dark latex wolf male",
+  "transfur.a_changed.gas_wolf": "аерозольний вовк",
+  "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
+  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male"
+
 }

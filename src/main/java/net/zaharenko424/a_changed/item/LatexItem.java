@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.TransfurManager;
+import net.zaharenko424.a_changed.TransfurSource;
 import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public class LatexItem extends Item {
         Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            TransfurManager.addTransfurProgress(player,10,transfurType.get(),false);
+            TransfurManager.addTransfurProgress(player,10,transfurType.get(), TransfurSource.GENERIC,false);
         }
         if(!player.getAbilities().instabuild) p_41409_.shrink(1);
         return p_41409_;

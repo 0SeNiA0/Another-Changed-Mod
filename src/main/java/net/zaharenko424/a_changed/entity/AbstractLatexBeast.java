@@ -28,6 +28,7 @@ public abstract class AbstractLatexBeast extends Monster {
         super(p_33002_, p_33003_);
         this.transfurType=transfurType;
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
+
     }
 
     protected static AttributeSupplier.@NotNull Builder baseAttributes(){
@@ -48,8 +49,8 @@ public abstract class AbstractLatexBeast extends Monster {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player)));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, false, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player)&&!TransfurManager.isBeingTransfurred(player)));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
 
     }
 

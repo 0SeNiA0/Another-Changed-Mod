@@ -18,10 +18,18 @@ public final class PacketHandler {
 
     public static void init(){
         int i=0;
+        INSTANCE.simpleMessageBuilder(ClientboundTransfurToleranceUpdatePacket.class,i++)
+                .decoder(ClientboundTransfurToleranceUpdatePacket::new).add();
+
         INSTANCE.simpleMessageBuilder(ClientboundPlayerTransfurUpdatePacket.class,i++)
                 .decoder(ClientboundPlayerTransfurUpdatePacket::new).add();
         INSTANCE.simpleMessageBuilder(ClientboundRemotePlayerTransfurUpdatePacket.class,i++)
                 .decoder(ClientboundRemotePlayerTransfurUpdatePacket::new).add();
+
+        INSTANCE.simpleMessageBuilder(ClientboundOpenTransfurScreenPacket.class,i++)
+                .decoder(ClientboundOpenTransfurScreenPacket::new).add();
+        INSTANCE.simpleMessageBuilder(ServerboundTransfurChoicePacket.class,i++)
+                .decoder(ServerboundTransfurChoicePacket::new).add();
 
         INSTANCE.simpleMessageBuilder(ClientboundOpenNotePacket.class,i++)
                 .decoder(ClientboundOpenNotePacket::new).add();

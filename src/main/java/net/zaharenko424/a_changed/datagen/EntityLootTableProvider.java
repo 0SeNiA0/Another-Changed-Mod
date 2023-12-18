@@ -25,6 +25,8 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
 
     @Override
     public void generate() {
+        add(BEI_FENG.get(), new LootTable.Builder());
+
         add(DARK_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));//TODO finish loot tables

@@ -21,6 +21,10 @@ public interface ITransfurHandler {
 
     void unTransfur();
 
+    boolean isBeingTransfurred();
+
+    void setBeingTransfurred(boolean isBeingTransfurred);
+
     void load(@NotNull CompoundTag tag);
 
     CompoundTag save();

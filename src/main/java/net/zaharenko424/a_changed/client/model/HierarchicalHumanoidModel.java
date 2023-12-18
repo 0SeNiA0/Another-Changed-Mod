@@ -7,8 +7,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.zaharenko424.a_changed.client.test.geom.ArmorModel;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public abstract class HierarchicalHumanoidModel<T extends LivingEntity> extends AgeableHierarchicalModel<T> implements ArmedModel, HeadedModel {
 
     private final ModelPart root;
@@ -23,8 +27,8 @@ public abstract class HierarchicalHumanoidModel<T extends LivingEntity> extends 
     public boolean crouching;
     public float swimAmount;
 
-    public HierarchicalHumanoidModel(@NotNull ModelPart root, float p_273694_, float p_273578_) {
-        super(p_273694_, p_273578_);
+    public HierarchicalHumanoidModel(@NotNull ModelPart root, float scaleFactor, float yOffset) {
+        super(scaleFactor, yOffset);
         this.root=root.getChild("root");
         this.head = this.root.getChild("head");
         this.body = this.root.getChild("body");
@@ -293,21 +297,30 @@ public abstract class HierarchicalHumanoidModel<T extends LivingEntity> extends 
         return -65.0F * p_102834_ + p_102834_ * p_102834_;
     }
 
-    public void copyPropertiesTo(HierarchicalHumanoidModel<T> p_102873_) {
-        super.copyPropertiesTo(p_102873_);
-        p_102873_.leftArmPose = this.leftArmPose;
-        p_102873_.rightArmPose = this.rightArmPose;
-        p_102873_.crouching = this.crouching;
-        p_102873_.head.copyFrom(this.head);
-        p_102873_.body.copyFrom(this.body);
-        p_102873_.rightArm.copyFrom(this.rightArm);
-        p_102873_.leftArm.copyFrom(this.leftArm);
-        p_102873_.rightLeg.copyFrom(this.rightLeg);
-        p_102873_.leftLeg.copyFrom(this.leftLeg);
+    public void copyPropertiesTo(HierarchicalHumanoidModel<T> copyTo) {
+        super.copyPropertiesTo(copyTo);
+        copyTo.leftArmPose = this.leftArmPose;
+        copyTo.rightArmPose = this.rightArmPose;
+        copyTo.crouching = this.crouching;
+        copyTo.head.copyFrom(this.head);
+        copyTo.body.copyFrom(this.body);
+        copyTo.rightArm.copyFrom(this.rightArm);
+        copyTo.leftArm.copyFrom(this.leftArm);
+        copyTo.rightLeg.copyFrom(this.rightLeg);
+        copyTo.leftLeg.copyFrom(this.leftLeg);
+    }
+
+    public void copyPropertiesToArmor(ArmorModel<T> copyTo) {
+        copyTo.head.copyFrom(this.head);
+        copyTo.body.copyFrom(this.body);
+        copyTo.rightArm.copyFrom(this.rightArm);
+        copyTo.leftArm.copyFrom(this.leftArm);
+        copyTo.rightLeg.copyFrom(this.rightLeg);
+        copyTo.leftLeg.copyFrom(this.leftLeg);
     }
 
     @Override
-    public void translateToHand(@NotNull HumanoidArm p_102854_, @NotNull PoseStack p_102855_) {
+    public void translateToHand(HumanoidArm p_102854_, PoseStack p_102855_) {
         this.getArm(p_102854_).translateAndRotate(p_102855_);
     }
 
@@ -320,7 +333,7 @@ public abstract class HierarchicalHumanoidModel<T extends LivingEntity> extends 
         return this.head;
     }
 
-    private HumanoidArm getAttackArm(@NotNull LivingEntity p_102857_) {
+    private HumanoidArm getAttackArm(LivingEntity p_102857_) {
         HumanoidArm humanoidarm = p_102857_.getMainArm();
         return p_102857_.swingingArm == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.getOpposite();
     }

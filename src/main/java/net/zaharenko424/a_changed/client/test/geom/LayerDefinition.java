@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.model.geom;
+package net.zaharenko424.a_changed.client.test.geom;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;

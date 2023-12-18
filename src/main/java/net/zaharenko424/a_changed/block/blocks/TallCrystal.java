@@ -10,12 +10,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.TransfurDamageSource;
 import net.zaharenko424.a_changed.TransfurManager;
+import net.zaharenko424.a_changed.TransfurSource;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.StateProperties;
@@ -23,16 +24,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
 public class TallCrystal extends AbstractMultiBlock {
 
-    private final AbstractTransfurType transfurType;
+    private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,1,.625);
+    private static final AABB aabb = SHAPE.bounds();
+    private final Supplier<? extends AbstractTransfurType> transfurType;
     public static IntegerProperty PART = StateProperties.PART;
 
-    public TallCrystal(Properties p_54120_, AbstractTransfurType transfurType) {
-        super(p_54120_.friction(.8f).speedFactor(.5f).jumpFactor(.2f).noCollission());
+    public TallCrystal(Properties p_54120_, Supplier<? extends AbstractTransfurType> transfurType) {
+        super(p_54120_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         registerDefaultState(stateDefinition.any().setValue(PART,0));
         this.transfurType=transfurType;
     }
@@ -43,20 +47,21 @@ public class TallCrystal extends AbstractMultiBlock {
     }
 
     @Override
-    public void stepOn(Level p_152431_, BlockPos p_152432_, BlockState p_152433_, Entity p_152434_) {
-        AChanged.LOGGER.warn("stepOn");
-        if(TransfurDamageSource.checkTarget(p_152434_)) TransfurManager.addTransfurProgress((LivingEntity) p_152434_,10,transfurType);
+    public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
+        if(p_60498_.tickCount%10!=0) return;
+        if(p_60498_.getBoundingBox().intersects(aabb.move(p_60497_))&&TransfurDamageSource.checkTarget(p_60498_)&&!TransfurManager.isBeingTransfurred((LivingEntity) p_60498_)) {
+            TransfurManager.addTransfurProgress((LivingEntity) p_60498_,5,transfurType.get(), TransfurSource.CRYSTAL);
+        }
     }
 
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return Shapes.create(.375,0,.375,.625,0,.625);
+        return SHAPE;
     }
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        BlockPos below=p_60527_.below();
-        return (p_60525_.getValue(PART) == 0&&p_60526_.getBlockState(below).isFaceSturdy(p_60526_,below, Direction.UP)) || p_60526_.getBlockState(p_60527_.below()).is(this);
+        return (p_60525_.getValue(PART) == 0&&canSupportCenter(p_60526_,p_60527_.below(),Direction.UP)) || p_60526_.getBlockState(p_60527_.below()).is(this);
     }
 
     @Override
