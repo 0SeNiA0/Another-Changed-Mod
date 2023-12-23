@@ -12,7 +12,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 @OnlyIn(Dist.CLIENT)
 public class HazmatOverlay {
-    private static final ResourceLocation HAZMAT_OVERLAY = AChanged.textureLoc("overlay/hazmat.png");
+    private static final ResourceLocation HAZMAT_OVERLAY = AChanged.textureLoc("overlay/hazmat");
 
     public static final IGuiOverlay OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         Minecraft minecraft=gui.getMinecraft();
