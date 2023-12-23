@@ -1,10 +1,11 @@
-package net.zaharenko424.a_changed.client.test.geom;
+package net.zaharenko424.a_changed.client.model.geom;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Direction;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
+
 @OnlyIn(Dist.CLIENT)
 public class CubeDefinition {
 
