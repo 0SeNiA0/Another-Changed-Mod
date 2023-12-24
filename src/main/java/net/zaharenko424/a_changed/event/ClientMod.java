@@ -1,9 +1,7 @@
 package net.zaharenko424.a_changed.event;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
@@ -15,15 +13,11 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.model.DummyModel;
-import net.zaharenko424.a_changed.client.model.BeiFengModel;
-import net.zaharenko424.a_changed.client.model.LatexWolfFemaleModel;
-import net.zaharenko424.a_changed.client.model.LatexWolfMaleModel;
+import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.overlay.HazmatOverlay;
 import net.zaharenko424.a_changed.client.overlay.TransfurOverlay;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.ChairRenderer;
-import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -78,27 +72,18 @@ public class ClientMod {
 
         event.registerEntityRenderer(BEI_FENG.get(),(a) -> new LatexEntityRenderer<>(a, BEI_FENG_TF));
 
-        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, DARK_LATEX_WOLF_M_TF));
         event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(),(a) -> new LatexEntityRenderer<>(a, DARK_LATEX_WOLF_F_TF));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, DARK_LATEX_WOLF_M_TF));
 
         event.registerEntityRenderer(GAS_WOLF.get(),(a) -> new LatexEntityRenderer<>(a, GAS_WOLF_TF));
 
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(),(a) -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF));
     }
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(BookStackRenderer.LAYER, BookStackRenderer::bodyLayer);
         event.registerLayerDefinition(LatexContainerRenderer.LAYER, LatexContainerRenderer::bodyLayer);
-
-        event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation(MODID,"dummy"),"main"), DummyModel::createBodyLayer);
-
-        event.registerLayerDefinition(BeiFengModel.modelLayerLocation, BeiFengModel::createBodyLayer);
-        event.registerLayerDefinition(BeiFengModel.armorLayerLocation, BeiFengModel::createArmorLayer);
-        event.registerLayerDefinition(LatexWolfMaleModel.modelLayerLocation, LatexWolfMaleModel::createBodyLayer);
-        event.registerLayerDefinition(LatexWolfMaleModel.armorLayerLocation, LatexWolfMaleModel::createArmorLayer);
-        event.registerLayerDefinition(LatexWolfFemaleModel.modelLayerLocation, LatexWolfFemaleModel::createBodyLayer);
-        event.registerLayerDefinition(LatexWolfFemaleModel.armorLayerLocation, LatexWolfFemaleModel::createArmorLayer);
     }
 }

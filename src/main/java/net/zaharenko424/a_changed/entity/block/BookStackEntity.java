@@ -39,7 +39,7 @@ public class BookStackEntity extends BlockEntity {
     }
 
     public int bookAmount(){
-        return books.size();
+        return books1.size();
     }
 
     public NonNullList<Book> getBooks(){

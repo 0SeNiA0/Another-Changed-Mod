@@ -46,11 +46,11 @@ public class GroupDefinition {
     public ModelPart bake(int textureWidth, int textureHeight) {
         Object2ObjectArrayMap<String, ModelPart> object2objectarraymap = this.children.entrySet().stream().collect(Collectors.toMap(
             Map.Entry::getKey,
-            p_171593_ -> p_171593_.getValue().bake(textureWidth,textureHeight),
+            group -> group.getValue().bake(textureWidth,textureHeight),
             (p_171595_, p_171596_) -> p_171595_,
             Object2ObjectArrayMap::new
         ));
-        List<ModelPart.Cube> list = this.cubes.stream().map(p_171589_ -> p_171589_.bake(textureWidth,textureHeight)).collect(ImmutableList.toImmutableList());
+        List<ModelPart.Cube> list = this.cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).collect(ImmutableList.toImmutableList());
         ModelPart modelpart = new ModelPart(list, object2objectarraymap);
         modelpart.setInitialPose(this.partPose);
         modelpart.loadPose(this.partPose);

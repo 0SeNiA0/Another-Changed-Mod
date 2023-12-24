@@ -40,36 +40,33 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
             ci.cancel();
             return;
         }
-        if(mod$check(p_117788_)) {
-            mod$renderer.render(p_117788_, p_117789_, p_117790_, p_117791_, p_117792_, p_117793_);
-            ci.cancel();
-        }
+        if(mod$check(p_117788_)) return;
+        mod$renderer.render(p_117788_, p_117789_, p_117790_, p_117791_, p_117792_, p_117793_);
+        ci.cancel();
     }
 
     @Inject(at = @At(value = "HEAD"),method = "renderRightHand", cancellable = true)
     private void onRenderRightHand(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_, CallbackInfo ci){
-        if(mod$check(p_117774_)) {
-            mod$renderer.renderHand(p_117771_, p_117772_, p_117773_, p_117774_, true);
-            ci.cancel();
-        }
+        if(mod$check(p_117774_)) return;
+        mod$renderer.renderHand(p_117771_, p_117772_, p_117773_, p_117774_, true);
+        ci.cancel();
     }
 
     @Inject(at = @At(value = "HEAD"), method = "renderLeftHand", cancellable = true)
     private void onRenderLeftHand(PoseStack p_117814_, MultiBufferSource p_117815_, int p_117816_, AbstractClientPlayer p_117817_, CallbackInfo ci){
-        if(mod$check(p_117817_)) {
-            mod$renderer.renderHand(p_117814_, p_117815_, p_117816_, p_117817_, false);
-            ci.cancel();
-        }
+        if(mod$check(p_117817_)) return;
+        mod$renderer.renderHand(p_117814_, p_117815_, p_117816_, p_117817_, false);
+        ci.cancel();
     }
 
     @Unique
     private boolean mod$check(@NotNull AbstractClientPlayer player){
-        if(!TransfurManager.hasCapability(player)) return mod$renderer.isTransfurTypeNonNull();
+        if(!TransfurManager.hasCapability(player)) return !mod$renderer.isTransfurTypeNonNull();
         if(!TransfurManager.isTransfurred(player)) {
             if(mod$renderer.isTransfurTypeNonNull()) mod$renderer.updateTransfurType(null);
-            return false;
+            return true;
         }
         mod$renderer.updateTransfurType(TransfurManager.getTransfurType(player));
-        return true;
+        return false;
     }
 }

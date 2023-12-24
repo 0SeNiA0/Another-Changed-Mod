@@ -15,14 +15,21 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.doors.LibraryDoor;
+import net.zaharenko424.a_changed.client.model.ModelCache;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID,value = Dist.CLIENT)
 public class ClientEvent {
+
+    @SubscribeEvent
+    public static void onAddReloadListener(AddReloadListenerEvent event){
+        event.addListener(ModelCache.INSTANCE);
+    }
 
     @SubscribeEvent
     public static void onRenderBlockHighlight(RenderHighlightEvent.Block event){

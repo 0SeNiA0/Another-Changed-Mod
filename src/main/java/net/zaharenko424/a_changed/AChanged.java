@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
@@ -36,6 +38,7 @@ import static net.zaharenko424.a_changed.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_REGISTRY;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_TYPES;
 
+@ParametersAreNonnullByDefault
 @Mod(AChanged.MODID)
 public class AChanged {
 
@@ -131,13 +134,17 @@ public class AChanged {
     }
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation resourceLoc(@NotNull String path){
+    public static @NotNull ResourceLocation resourceLoc(String path){
         return new ResourceLocation(MODID,path);
     }
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation textureLoc(@NotNull String path){
+    public static @NotNull ResourceLocation textureLoc(String path){
         return new ResourceLocation(MODID,"textures/"+path+".png");
+    }
+
+    public static @NotNull ResourceLocation textureLoc(ResourceLocation loc){
+        return loc.withPrefix("textures/").withSuffix(".png");
     }
 
     public AChanged() {

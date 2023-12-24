@@ -9,12 +9,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class LayerDefinition {
+public class ModelDefinition {
     private final MeshDefinition mesh;
     private final int textureWidth;
     private final int textureHeight;
 
-    private LayerDefinition(MeshDefinition mesh,int textureWidth, int textureHeight){
+    private ModelDefinition(MeshDefinition mesh, int textureWidth, int textureHeight){
         this.mesh=mesh;
         this.textureWidth=textureWidth;
         this.textureHeight=textureHeight;
@@ -25,7 +25,11 @@ public class LayerDefinition {
     }
 
     @Contract(value = "_,_,_ -> new", pure = true)
-    public static @NotNull LayerDefinition create(MeshDefinition mesh,int textureWidth, int textureHeight){
-        return new LayerDefinition(mesh,textureWidth,textureHeight);
+    public static @NotNull ModelDefinition create(MeshDefinition mesh, int textureWidth, int textureHeight){
+        return new ModelDefinition(mesh,textureWidth,textureHeight);
+    }
+
+    public static @NotNull ModelDefinition create(MeshDefinition mesh, int textureWidth, int textureHeight, int uvScale){
+        return new ModelDefinition(mesh,textureWidth/uvScale,textureHeight/uvScale);
     }
 }

@@ -1,47 +1,41 @@
 package net.zaharenko424.a_changed.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 
-public abstract class AbstractLatexEntityModel<T extends LivingEntity> extends HierarchicalHumanoidModel<T> implements ArmedModel, HeadedModel {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-	public boolean isCrouching;
-	public float swimAmount;
-	public float attackTime;
+@ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
+public abstract class AbstractLatexEntityModel<E extends LivingEntity> extends HierarchicalHumanoidModel<E> {
 
-	public AbstractLatexEntityModel(@NotNull ModelPart root) {
-		super(root,0,0);
-	}
+    public AbstractLatexEntityModel(ModelLayerLocation location) {
+        super(ModelCache.INSTANCE.bake(location));
+    }
 
-	@Override
-	public void prepareMobModel(@NotNull T p_102614_, float p_102615_, float p_102616_, float p_102617_) {
-		swimAmount=p_102614_.getSwimAmount(p_102617_);
-		super.prepareMobModel(p_102614_, p_102615_, p_102616_, p_102617_);
-	}
+    public void setAllVisible(boolean b){
+        root().getAllParts().filter((part)->part!=root()).forEach((child->child.visible=b));
+    }
 
-	public void setAllVisible(boolean b){
-		root().getAllParts().filter((part)->part!=root()).forEach((child->child.visible=b));
-	}
-
-	public void setAllVisible(@NotNull ModelPart part, boolean b){
-		part.getAllParts().forEach((child)->child.visible=b);
-	}
+    public void setAllVisible(ModelPart part, boolean b){
+        part.getAllParts().forEach((child)->child.visible=b);
+    }
 
     @Override
-	public void translateToHand(@NotNull HumanoidArm p_102108_, @NotNull PoseStack p_102109_) {
-		if(p_102108_==HumanoidArm.RIGHT) {
-			rightArm.y=2;
-			rightArm.x+=1;
-			rightArm.translateAndRotate(p_102109_);
-		} else {
-			leftArm.y=2;
-			leftArm.x-=1;
-			leftArm.translateAndRotate(p_102109_);
-		}
-	}
+    public void translateToHand(HumanoidArm p_102108_, PoseStack p_102109_) {
+        if(p_102108_==HumanoidArm.RIGHT) {
+            rightArm.y=2;
+            rightArm.x+=1;
+            rightArm.translateAndRotate(p_102109_);
+        } else {
+            leftArm.y=2;
+            leftArm.x-=1;
+            leftArm.translateAndRotate(p_102109_);
+        }
+    }
 }

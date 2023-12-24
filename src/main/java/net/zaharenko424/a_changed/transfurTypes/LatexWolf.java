@@ -1,10 +1,8 @@
 package net.zaharenko424.a_changed.transfurTypes;
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.LatexWolfFemaleModel;
 import net.zaharenko424.a_changed.client.model.LatexWolfMaleModel;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +14,15 @@ public class LatexWolf extends AbstractGenderedTransfurType {
 
     }
 
-    @Override @OnlyIn(Dist.CLIENT)
-    public <T extends LivingEntity> AbstractLatexEntityModel<T> getModel(@NotNull EntityRendererProvider.Context context) {
-        return isMale()?new LatexWolfMaleModel<>(context,true):new LatexWolfFemaleModel<>(context,true);
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getModel() {
+        return isMale()?new LatexWolfMaleModel<>(true):new LatexWolfFemaleModel<>(true);
     }
 
-    @Override @OnlyIn(Dist.CLIENT)
-    public <T extends LivingEntity> AbstractLatexEntityModel<T> getArmorModel(@NotNull EntityRendererProvider.Context context) {
-        return isMale()?new LatexWolfMaleModel<>(context,false):new LatexWolfFemaleModel<>(context,false);
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getArmorModel() {
+        return isMale()?new LatexWolfMaleModel<>(false):new LatexWolfFemaleModel<>(false);
     }
 }

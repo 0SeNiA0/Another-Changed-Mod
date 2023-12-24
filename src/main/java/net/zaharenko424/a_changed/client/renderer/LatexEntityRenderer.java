@@ -3,14 +3,11 @@ package net.zaharenko424.a_changed.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -28,17 +25,17 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.test.geom.Abc;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.DummyModel;
-import net.zaharenko424.a_changed.client.test.geom.ModelPart;
 import net.zaharenko424.a_changed.client.model.layers.ArmorLayer;
-import net.zaharenko424.a_changed.client.test.geom.ArmorModel;
 import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
 import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRenderer<E, AbstractLatexEntityModel<E>> {
 
@@ -47,22 +44,22 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
 
     protected final EntityRendererProvider.Context context;
 
-    protected LatexEntityRenderer(EntityRendererProvider.Context p_174304_,AbstractLatexEntityModel<E> model){
-        super(p_174304_,model,1);
-        context=p_174304_;
+    protected LatexEntityRenderer(EntityRendererProvider.Context context, AbstractLatexEntityModel<E> model){
+        super(context,model,1);
+        this.context = context;
         //addLayer(new PerFaceArmorLayer<>(this,context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
-        addLayer(new ArmorLayer<>(this,context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
-        addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
-        addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
-        addLayer(new ElytraLayer<>(this, context.getModelSet()));
+        addLayer(new ArmorLayer<>(this, context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
+        addLayer(new ItemInHandLayer<>(this, this.context.getItemInHandRenderer()));
+        //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
+        addLayer(new ElytraLayer<>(this, this.context.getModelSet()));
     }
 
     /**
     Only use for creating latex renderer for players!
      */
-    public LatexEntityRenderer(EntityRendererProvider.Context p_174304_) {
-        this(p_174304_, new DummyModel<>(p_174304_.bakeLayer(new ModelLayerLocation(new ResourceLocation(AChanged.MODID,"dummy"),"main"))));
-        addLayer(new SpinAttackEffect<>(this,p_174304_.getModelSet()));
+    public LatexEntityRenderer(EntityRendererProvider.Context context) {
+        this(context, new DummyModel<>());
+        addLayer(new SpinAttackEffect<>(this,context.getModelSet()));
     }
 
     public LatexEntityRenderer(EntityRendererProvider.Context context, @NotNull DeferredHolder<AbstractTransfurType,? extends AbstractTransfurType> transfurType){
@@ -78,22 +75,13 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         if(transfurType==this.transfurType) return;
         this.transfurType=transfurType;
         if(transfurType!=null) {
-            model = transfurType.getModel(context);
-            armorModel = transfurType.getArmorModel(context);
+            model = transfurType.getModel();
+            armorModel = transfurType.getArmorModel();
         }
     }
 
     public AbstractLatexEntityModel<E> getArmorModel(){
         return armorModel;
-    }
-
-    private ModelPart armor=null;
-
-    public ArmorModel<E> armorModel(){
-        if(armor==null){
-            armor= Abc.model();
-        }
-        return new ArmorModel<>(armor);
     }
 
     public void renderHand(@NotNull PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
@@ -117,12 +105,12 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     }
 
     private void setModelProperties(@NotNull E entity){
-        model.isCrouching=entity.isCrouching();
+        model.crouching=entity.isCrouching();
         model.attackTime=entity.attackAnim;
         if(entity instanceof Player player){
             if(player.isSpectator()){
                 model.setAllVisible(false);
-                model.setAllVisible(model.getHead(),true);
+                model.setAllVisible(model.head,true);
             } else {
                 model.setAllVisible(true);
             }
@@ -188,47 +176,45 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     }
 
     @Override
-    protected void setupRotations(@NotNull E p_117802_, @NotNull PoseStack p_117803_, float p_117804_, float p_117805_, float p_117806_) {
+    protected void setupRotations(@NotNull E entity, @NotNull PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
         //TODO or check for swimming latex || MAKE BETTER CHECK
-        float f = p_117802_.getSwimAmount(p_117806_);
-        float f1 = p_117802_.getViewXRot(p_117806_);
-        if (p_117802_.isFallFlying()&&p_117802_ instanceof AbstractClientPlayer player) {
-            super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
-            float f2 = (float)player.getFallFlyingTicks() + p_117806_;
+        float f = entity.getSwimAmount(ticks);
+        float f1 = entity.getViewXRot(ticks);
+        super.setupRotations(entity, poseStack, ageInTicks, yaw, ticks);
+        if (entity.isFallFlying()&& entity instanceof AbstractClientPlayer player) {
+            float f2 = (float)player.getFallFlyingTicks() + ticks;
             float f3 = Mth.clamp(f2 * f2 / 100.0F, 0.0F, 1.0F);
             if (!player.isAutoSpinAttack()) {
-                p_117803_.mulPose(Axis.XP.rotationDegrees(f3 * (-90.0F - f1)));
+                poseStack.mulPose(Axis.XP.rotationDegrees(f3 * (-90.0F - f1)));
             }
 
-            Vec3 vec3 = player.getViewVector(p_117806_);
-            Vec3 vec31 = player.getDeltaMovementLerped(p_117806_);
+            Vec3 vec3 = player.getViewVector(ticks);
+            Vec3 vec31 = player.getDeltaMovementLerped(ticks);
             double d0 = vec31.horizontalDistanceSqr();
             double d1 = vec3.horizontalDistanceSqr();
             if (d0 > 0.0 && d1 > 0.0) {
                 double d2 = (vec31.x * vec3.x + vec31.z * vec3.z) / Math.sqrt(d0 * d1);
                 double d3 = vec31.x * vec3.z - vec31.z * vec3.x;
-                p_117803_.mulPose(Axis.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
+                poseStack.mulPose(Axis.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
             }
         } else if (f > 0.0F) {
-            super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
-            float f3 = p_117802_.isInWater() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - p_117802_.getXRot() : -90.0F;
+            float f3 = entity.isInWater() || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType)) ? -90.0F - entity.getXRot() : -90.0F;
             float f5 = Mth.lerp(f, 0.0F, f3);
-            p_117803_.mulPose(Axis.XP.rotationDegrees(f5));
-            if (p_117802_.isVisuallySwimming()) {
-                p_117803_.translate(0.0F, -1.0F, 0.3F);
+            poseStack.mulPose(Axis.XP.rotationDegrees(f5));
+            if (entity.isVisuallySwimming()) {
+                poseStack.translate(0.0F, -1.0F, 0.3F);
             }
-        } else {
-            super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
         }
     }
 
-    protected boolean shouldShowName(@NotNull E p_115506_) {
-        return super.shouldShowName(p_115506_)
-                && (p_115506_.shouldShowName() || p_115506_.hasCustomName() && p_115506_ == this.entityRenderDispatcher.crosshairPickEntity);
+    protected boolean shouldShowName(@NotNull E entity) {
+        return super.shouldShowName(entity)
+                && (entity.shouldShowName() || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull LivingEntity p_114482_) {
-        return transfurType!=null?transfurType.id.withPrefix("textures/entity/").withSuffix(".png"):new ResourceLocation(AChanged.MODID,"textures/entity/dummy.png");
+        //return transfurType!=null ? AChanged.textureLoc("texture") : AChanged.textureLoc("entity/dummy");
+        return transfurType!=null ? AChanged.textureLoc(transfurType.id.withPrefix("entity/")) : AChanged.textureLoc("entity/dummy");
     }
 }

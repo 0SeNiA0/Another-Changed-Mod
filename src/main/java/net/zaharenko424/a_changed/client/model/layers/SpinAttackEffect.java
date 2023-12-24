@@ -20,25 +20,25 @@ import org.jetbrains.annotations.NotNull;
 public class SpinAttackEffect<E extends LivingEntity,M extends AbstractLatexEntityModel<E>> extends RenderLayer<E,M> {
     private final ModelPart box;
 
-    public SpinAttackEffect(LatexEntityRenderer<E> p_117346_, @NotNull EntityModelSet modelSet) {
-        super((RenderLayerParent<E, M>) p_117346_);
+    public SpinAttackEffect(LatexEntityRenderer<E> renderer, @NotNull EntityModelSet modelSet) {
+        super((RenderLayerParent<E, M>) renderer);
         ModelPart modelpart = modelSet.bakeLayer(ModelLayers.PLAYER_SPIN_ATTACK);
         this.box = modelpart.getChild("box");
     }
 
     @Override
-    public void render(@NotNull PoseStack p_117349_, @NotNull MultiBufferSource p_117350_, int p_117351_, @NotNull E p_117352_, float p_117353_, float p_117354_, float p_117355_, float p_117356_, float p_117357_, float p_117358_) {
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, @NotNull E p_117352_, float limbSwing, float limbSwingAmount, float ticks, float ageInTicks, float headYaw, float pitch) {
         if (p_117352_.isAutoSpinAttack()) {
-            VertexConsumer vertexconsumer = p_117350_.getBuffer(RenderType.entityCutoutNoCull(SpinAttackEffectLayer.TEXTURE));
+            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(SpinAttackEffectLayer.TEXTURE));
             for(int i = 0; i < 3; ++i) {
-                p_117349_.pushPose();
-                float f = p_117356_ * (float)(-(45 + i * 5));
-                p_117349_.mulPose(Axis.YP.rotationDegrees(f));
+                poseStack.pushPose();
+                float f = ageInTicks * (float)(-(45 + i * 5));
+                poseStack.mulPose(Axis.YP.rotationDegrees(f));
                 float f1 = 0.75F * (float)i;
-                p_117349_.scale(f1, f1, f1);
-                p_117349_.translate(0.0F, -0.2F + 0.6F * (float)i, 0.0F);
-                this.box.render(p_117349_, vertexconsumer, p_117351_, OverlayTexture.NO_OVERLAY);
-                p_117349_.popPose();
+                poseStack.scale(f1, f1, f1);
+                poseStack.translate(0.0F, -0.2F + 0.6F * (float)i, 0.0F);
+                this.box.render(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY);
+                poseStack.popPose();
             }
         }
     }

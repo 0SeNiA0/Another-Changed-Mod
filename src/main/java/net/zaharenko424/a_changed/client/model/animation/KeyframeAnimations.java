@@ -5,7 +5,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.client.model.test.HierarchicalModel;
+import net.zaharenko424.a_changed.client.model.HierarchicalModel;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import org.joml.Vector3f;
 

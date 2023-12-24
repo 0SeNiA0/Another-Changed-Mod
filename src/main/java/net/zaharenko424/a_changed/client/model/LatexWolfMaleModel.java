@@ -1,148 +1,101 @@
 package net.zaharenko424.a_changed.client.model;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.model.animation.Animations;
+import net.zaharenko424.a_changed.client.model.geom.*;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
-public class LatexWolfMaleModel<T extends LivingEntity> extends AbstractLatexEntityModel<T> {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    public LatexWolfMaleModel(@NotNull EntityRendererProvider.Context context, boolean main){
-        super(context.bakeLayer(main?modelLayerLocation:armorLayerLocation));
+@ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
+public class LatexWolfMaleModel<E extends LivingEntity> extends AbstractLatexEntityModel<E> {
+    public LatexWolfMaleModel(boolean main) {
+        super(main?bodyLayer:armorLayer);
     }
 
-    public static @NotNull LayerDefinition createBodyLayer(){
-        MeshDefinition meshdefinition = new MeshDefinition();
-        PartDefinition partdefinition = meshdefinition.getRoot();
+    public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"main");
 
-        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+    public static final ModelLayerLocation armorLayer = new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"armor");
 
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
-                .texOffs(40, 12).addBox(-2.0F, -3.0F, -6.0F, 4.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(8, 55).addBox(-1.5F, -1.0F, -5.5F, 3.0F, 1.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+    public static @NotNull ModelDefinition bodyLayer(){
+        MeshDefinition meshDefinition = new MeshDefinition();
+        GroupDefinition groupDefinition = meshDefinition.getRoot();
 
-        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        GroupDefinition root = groupDefinition.addOrReplaceChild("root", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
+        GroupDefinition head = root.addOrReplaceChild("head", GroupBuilder.create()
+                .addBox(-4f, -4f, -4f, 8f, 8f, 8f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(8f, 20f, 0f, 28f), Direction.WEST, new UVData(24f, 16f, 16f, 8f), Direction.NORTH, new UVData(8f, 20f, 0f, 12f), Direction.SOUTH, new UVData(24f, 8f, 16f, 0f), Direction.EAST, new UVData(16f, 20f, 8f, 12f), Direction.UP, new UVData(24f, 24f, 16f, 16f)))
+                .addBox(-1.5f, -4f, -5.5f, 3f, 1f, 1.5f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(52f, 47f, 49f, 48.5f), Direction.WEST, new UVData(42.5f, 51f, 41f, 50f), Direction.NORTH, new UVData(16f, 36f, 13f, 35f), Direction.SOUTH, new UVData(40f, 34f, 37f, 33f), Direction.EAST, new UVData(40.5f, 51f, 39f, 50f), Direction.UP, new UVData(28f, 37.5f, 25f, 36f)))
+                .addBox(-2f, -3f, -6f, 4f, 2f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(45f, 48f, 41f, 50f), Direction.WEST, new UVData(47f, 26f, 45f, 24f), Direction.NORTH, new UVData(41f, 50f, 37f, 48f), Direction.SOUTH, new UVData(52f, 39f, 48f, 37f), Direction.EAST, new UVData(25f, 46f, 23f, 44f), Direction.UP, new UVData(52f, 41f, 48f, 39f))), PartPose.offset(0f, 28f, 0f));
+        GroupDefinition right_ear = head.addOrReplaceChild("right_ear", GroupBuilder.create()
+                .addBox(-1f, -2f, -1f, 2f, 7f, 5f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(49f, 24f, 47f, 29f), Direction.WEST, new UVData(13f, 39f, 8f, 32f), Direction.NORTH, new UVData(29f, 53f, 27f, 46f), Direction.SOUTH, new UVData(31f, 53f, 29f, 46f), Direction.EAST, new UVData(37f, 7f, 32f, 0f), Direction.UP, new UVData(37f, 51f, 35f, 46f))), PartPose.offsetAndRotation(3f, 3f, -1f, 0.4276f, 0.384f, -0.3665f));
+        right_ear.addOrReplaceChild("right_ear_inner", GroupBuilder.create()
+                .addBox(-1f, 3.3f, -2.7f, 2f, 1f, 4f, new Vector3f(-0.01f), ImmutableMap.of(Direction.DOWN, new UVData(51f, 4f, 49f, 8f), Direction.WEST, new UVData(41f, 7f, 37f, 6f), Direction.NORTH, new UVData(47f, 27f, 45f, 26f), Direction.SOUTH, new UVData(24f, 51f, 22f, 50f), Direction.EAST, new UVData(36f, 12f, 32f, 11f), Direction.UP, new UVData(51f, 4f, 49f, 0f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.7854f, 0f, 0f));
+        GroupDefinition left_ear = head.addOrReplaceChild("left_ear", GroupBuilder.create()
+                .addBox(-1f, -2f, -1f, 2f, 7f, 5f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(19f, 48f, 17f, 53f), Direction.WEST, new UVData(37f, 34f, 32f, 27f), Direction.NORTH, new UVData(33f, 53f, 31f, 46f), Direction.SOUTH, new UVData(35f, 53f, 33f, 46f), Direction.EAST, new UVData(37f, 27f, 32f, 20f), Direction.UP, new UVData(17f, 53f, 15f, 48f))), PartPose.offsetAndRotation(-3f, 3f, -1f, 0.4276f, -0.384f, 0.3665f));
+        left_ear.addOrReplaceChild("left_ear_inner", GroupBuilder.create()
+                .addBox(-1f, 3.3f, -2.7f, 2f, 1f, 4f, new Vector3f(-0.01f), ImmutableMap.of(Direction.DOWN, new UVData(51f, 8f, 49f, 12f), Direction.WEST, new UVData(53f, 50f, 49f, 49f), Direction.NORTH, new UVData(26f, 51f, 24f, 50f), Direction.SOUTH, new UVData(39f, 51f, 37f, 50f), Direction.EAST, new UVData(53f, 29f, 49f, 28f), Direction.UP, new UVData(10f, 53f, 8f, 49f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.7854f, 0f, 0f));
+        GroupDefinition body = root.addOrReplaceChild("body", GroupBuilder.create()
+                .addBox(-4f, 12f, -2f, 8f, 12f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(40f, 34f, 32f, 38f), Direction.WEST, new UVData(16f, 32f, 12f, 20f), Direction.NORTH, new UVData(8f, 12f, 0f, 0f), Direction.SOUTH, new UVData(16f, 12f, 8f, 0f), Direction.EAST, new UVData(12f, 32f, 8f, 20f), Direction.UP, new UVData(40f, 11f, 32f, 7f))), PartPose.offset(0f, 0f, 0f));
+        GroupDefinition tail = body.addOrReplaceChild("tail", GroupBuilder.create()
+                .addBox(-1.5f, -1.5f, -2f, 3f, 3f, 6f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(15f, 44f, 12f, 50f), Direction.WEST, new UVData(47f, 33f, 41f, 30f), Direction.NORTH, new UVData(16f, 35f, 13f, 32f), Direction.SOUTH, new UVData(22f, 51f, 19f, 48f), Direction.EAST, new UVData(47f, 30f, 41f, 27f), Direction.UP, new UVData(44f, 44f, 41f, 38f))), PartPose.offsetAndRotation(0f, 12f, 2f, 0.48f, 0f, 0f));
+        tail.addOrReplaceChild("tail_0", GroupBuilder.create()
+                .addBox(-2f, -2f, -1f, 4f, 4f, 9f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(32f, 29f, 28f, 38f), Direction.WEST, new UVData(37f, 20f, 28f, 16f), Direction.NORTH, new UVData(19f, 48f, 15f, 44f), Direction.SOUTH, new UVData(23f, 48f, 19f, 44f), Direction.EAST, new UVData(37f, 16f, 28f, 12f), Direction.UP, new UVData(32f, 29f, 28f, 20f)))
+                .addBox(-1f, -1f, 7f, 2f, 2f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(14f, 50f, 12f, 52f), Direction.WEST, new UVData(6f, 52f, 4f, 50f), Direction.NORTH, new UVData(12f, 51f, 10f, 49f), Direction.SOUTH, new UVData(4f, 52f, 2f, 50f), Direction.EAST, new UVData(2f, 52f, 0f, 50f), Direction.UP, new UVData(8f, 52f, 6f, 50f))), PartPose.offsetAndRotation(0f, 0f, 4f, 0.1309f, 0f, 0f));
+        root.addOrReplaceChild("right_arm", GroupBuilder.create()
+                .addBox(0f, -10f, -2f, 4f, 12f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(41f, 44f, 37f, 48f), Direction.WEST, new UVData(24f, 36f, 20f, 24f), Direction.NORTH, new UVData(28f, 12f, 24f, 0f), Direction.SOUTH, new UVData(20f, 36f, 16f, 24f), Direction.EAST, new UVData(28f, 24f, 24f, 12f), Direction.UP, new UVData(48f, 37f, 44f, 33f))), PartPose.offset(4f, 22f, 0f));
+        root.addOrReplaceChild("left_arm", GroupBuilder.create()
+                .addBox(-4f, -10f, -2f, 4f, 12f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(45f, 44f, 41f, 48f), Direction.WEST, new UVData(8f, 40f, 4f, 28f), Direction.NORTH, new UVData(28f, 36f, 24f, 24f), Direction.SOUTH, new UVData(32f, 12f, 28f, 0f), Direction.EAST, new UVData(4f, 40f, 0f, 28f), Direction.UP, new UVData(48f, 41f, 44f, 37f))), PartPose.offset(-4f, 22f, 0f));
+        GroupDefinition right_leg = root.addOrReplaceChild("right_leg", GroupBuilder.create(), PartPose.offsetAndRotation(2f, 13f, 0f, 0f, -0.1309f, 0.1309f));
+        GroupDefinition right_leg_shin = right_leg.addOrReplaceChild("right_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        GroupDefinition right_leg_ = right_leg_shin.addOrReplaceChild("right_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
+        GroupDefinition right_foot = right_leg_.addOrReplaceChild("right_foot", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
+        right_foot.addOrReplaceChild("right_foot", GroupBuilder.create()
+                .addBox(-1.3f, -6f, -3.5f, 4f, 2f, 5f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(45f, 12f, 41f, 17f), Direction.WEST, new UVData(52f, 33f, 47f, 31f), Direction.NORTH, new UVData(53f, 22f, 49f, 20f), Direction.SOUTH, new UVData(53f, 24f, 49f, 22f), Direction.EAST, new UVData(52f, 31f, 47f, 29f), Direction.UP, new UVData(44f, 38f, 40f, 33f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0f, 0f, -0.1309f));
+        right_leg_.addOrReplaceChild("right_leg_", GroupBuilder.create()
+                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(49f, 16f, 45f, 20f), Direction.WEST, new UVData(12f, 45f, 8f, 39f), Direction.NORTH, new UVData(41f, 6f, 37f, 0f), Direction.SOUTH, new UVData(41f, 44f, 37f, 38f), Direction.EAST, new UVData(41f, 33f, 37f, 27f), Direction.UP, new UVData(49f, 16f, 45f, 12f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
+        right_leg_shin.addOrReplaceChild("right_leg_shin", GroupBuilder.create()
+                .addBox(-2f, 0.3f, 1f, 4f, 2f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(49f, 8f, 45f, 12f), Direction.WEST, new UVData(53f, 20f, 49f, 18f), Direction.NORTH, new UVData(53f, 14f, 49f, 12f), Direction.SOUTH, new UVData(53f, 18f, 49f, 16f), Direction.EAST, new UVData(53f, 16f, 49f, 14f), Direction.UP, new UVData(12f, 49f, 8f, 45f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
+        right_leg.addOrReplaceChild("right_leg_thigh", GroupBuilder.create()
+                .addBox(-2f, -8f, -2f, 4f, 8f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(49f, 4f, 45f, 8f), Direction.WEST, new UVData(41f, 19f, 37f, 11f), Direction.NORTH, new UVData(17f, 44f, 13f, 36f), Direction.SOUTH, new UVData(25f, 44f, 21f, 36f), Direction.EAST, new UVData(21f, 44f, 17f, 36f), Direction.UP, new UVData(49f, 4f, 45f, 0f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
+        GroupDefinition left_leg = root.addOrReplaceChild("left_leg", GroupBuilder.create(), PartPose.offsetAndRotation(-2f, 13f, 0f, 0f, 0.1309f, -0.1309f));
+        GroupDefinition left_leg_shin = left_leg.addOrReplaceChild("left_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        GroupDefinition left_leg_ = left_leg_shin.addOrReplaceChild("left_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
+        GroupDefinition left_foot = left_leg_.addOrReplaceChild("left_foot", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
+        left_foot.addOrReplaceChild("left_foot", GroupBuilder.create()
+                .addBox(-2.7f, -6f, -3.5f, 4f, 2f, 5f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(45f, 22f, 41f, 27f), Direction.WEST, new UVData(53f, 37f, 48f, 35f), Direction.NORTH, new UVData(49f, 51f, 45f, 49f), Direction.SOUTH, new UVData(53f, 47f, 49f, 45f), Direction.EAST, new UVData(53f, 35f, 48f, 33f), Direction.UP, new UVData(45f, 22f, 41f, 17f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0f, 0f, 0.1309f));
+        left_leg_.addOrReplaceChild("left_leg_", GroupBuilder.create()
+                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(27f, 46f, 23f, 50f), Direction.WEST, new UVData(45f, 12f, 41f, 6f), Direction.NORTH, new UVData(4f, 46f, 0f, 40f), Direction.SOUTH, new UVData(45f, 6f, 41f, 0f), Direction.EAST, new UVData(8f, 46f, 4f, 40f), Direction.UP, new UVData(8f, 50f, 4f, 46f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
+        left_leg_shin.addOrReplaceChild("left_leg_shin", GroupBuilder.create()
+                .addBox(-2f, 0.3f, 1f, 4f, 2f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(4f, 46f, 0f, 50f), Direction.WEST, new UVData(53f, 45f, 49f, 43f), Direction.NORTH, new UVData(53f, 26f, 49f, 24f), Direction.SOUTH, new UVData(53f, 43f, 49f, 41f), Direction.EAST, new UVData(53f, 28f, 49f, 26f), Direction.UP, new UVData(49f, 49f, 45f, 45f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
+        left_leg.addOrReplaceChild("left_leg_thigh", GroupBuilder.create()
+                .addBox(-2f, -8f, -2f, 4f, 8f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(49f, 41f, 45f, 45f), Direction.WEST, new UVData(37f, 46f, 33f, 38f), Direction.NORTH, new UVData(41f, 27f, 37f, 19f), Direction.SOUTH, new UVData(33f, 46f, 29f, 38f), Direction.EAST, new UVData(29f, 46f, 25f, 38f), Direction.UP, new UVData(49f, 24f, 45f, 20f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
 
-        PartDefinition ear_inner_r1 = left_ear.addOrReplaceChild("ear_inner_r1", CubeListBuilder.create().texOffs(54, 25).addBox(-0.72F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -9.0F, -2.0F, -1.1266F, 0.3822F, 0.3645F));
-
-        PartDefinition ear_r1 = left_ear.addOrReplaceChild("ear_r1", CubeListBuilder.create().texOffs(40, 0).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -7.0F, -1.0F, -0.4284F, 0.3822F, 0.3645F));
-
-        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition ear_inner_r2 = right_ear.addOrReplaceChild("ear_inner_r2", CubeListBuilder.create().texOffs(0, 55).addBox(-1.28F, -4.5F, -0.2F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -9.0F, -2.0F, -1.1266F, -0.3822F, -0.3645F));
-
-        PartDefinition ear_r2 = right_ear.addOrReplaceChild("ear_r2", CubeListBuilder.create().texOffs(40, 20).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -7.0F, -1.0F, -0.4284F, -0.3822F, -0.3645F));
-
-        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -24.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offset(0.0F, -12.0F, 2.0F));
-
-        PartDefinition cube_r1 = tail.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(23, 7).addBox(-2.0F, -2.0F, 1.0F, 4.0F, 4.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 2.0F, -0.2182F, 0.0F, 0.0F));
-
-        PartDefinition cube_r2 = tail.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(48, 32).addBox(-1.5F, -1.5F, -1.0F, 3.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0873F, 0.0F, 0.0F));
-
-        PartDefinition right_arm = root.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(0, 45).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, -22.0F, 0.0F));
-
-        PartDefinition right_arm_elbow = right_arm.addOrReplaceChild("right_arm_elbow", CubeListBuilder.create().texOffs(49, 12).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.0F, 4.0F, 0.0F));
-
-        PartDefinition right_arm_lower = right_arm_elbow.addOrReplaceChild("right_arm_lower", CubeListBuilder.create().texOffs(44, 41).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition left_arm = root.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 47).addBox(0.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(4.0F, -22.0F, 0.0F));
-
-        PartDefinition left_arm_elbow = left_arm.addOrReplaceChild("left_arm_elbow", CubeListBuilder.create().texOffs(48, 51).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, 4.0F, 0.0F));
-
-        PartDefinition left_arm_lower = left_arm_elbow.addOrReplaceChild("left_arm_lower", CubeListBuilder.create().texOffs(16, 45).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition right_leg = root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.9F, -13.0F, 0.0F, 0.0F, 0.1309F, 0.1309F));
-
-        PartDefinition right_leg_thigh_r1 = right_leg.addOrReplaceChild("right_leg_thigh_r1", CubeListBuilder.create().texOffs(16, 33).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.1305F, -0.9914F, 0.0F, -0.3491F, 0.0F, 0.0F));
-
-        PartDefinition right_leg_shin = right_leg.addOrReplaceChild("right_leg_shin", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.1305F, 4.0086F, -1.0F, 0.0F, -0.0873F, 0.0F));
-
-        PartDefinition right_leg_shin_r1 = right_leg_shin.addOrReplaceChild("right_leg_shin_r1", CubeListBuilder.create().texOffs(54, 0).addBox(-2.0F, -4.1F, -1.4F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.9809F, 0.0F, 0.0F));
-
-        PartDefinition right_leg_ = right_leg_shin.addOrReplaceChild("right_leg_", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-
-        PartDefinition right_leg__r1 = right_leg_.addOrReplaceChild("right_leg__r1", CubeListBuilder.create().texOffs(24, 20).addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-
-        PartDefinition right_leg_foot = right_leg_.addOrReplaceChild("right_leg_foot", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition right_leg_foot_r1 = right_leg_foot.addOrReplaceChild("right_leg_foot_r1", CubeListBuilder.create().texOffs(54, 7).addBox(-2.1F, 0.1F, -2.8F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0F, 0.0F, -0.1309F));
-
-        PartDefinition left_leg = root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.offsetAndRotation(1.9F, -13.0F, 0.0F, 0.0F, -0.1309F, -0.1309F));
-
-        PartDefinition left_leg_thigh_r1 = left_leg.addOrReplaceChild("left_leg_thigh_r1", CubeListBuilder.create().texOffs(32, 33).addBox(-2.0F, 0.1F, -2.0F, 4.0F, 7.9F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.1305F, -0.9914F, 0.0F, -0.3491F, 0.0F, 0.0F));
-
-        PartDefinition left_leg_shin = left_leg.addOrReplaceChild("left_leg_shin", CubeListBuilder.create(), PartPose.offsetAndRotation(0.1305F, 4.0086F, -1.0F, 0.0F, 0.0873F, 0.0F));
-
-        PartDefinition left_leg_shin_r1 = left_leg_shin.addOrReplaceChild("left_leg_shin_r1", CubeListBuilder.create().texOffs(24, 0).addBox(-2.0F, -4.1F, -1.4F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.9809F, 0.0F, 0.0F));
-
-        PartDefinition left_leg_ = left_leg_shin.addOrReplaceChild("left_leg_", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-
-        PartDefinition left_leg__r1 = left_leg_.addOrReplaceChild("left_leg__r1", CubeListBuilder.create().texOffs(0, 32).addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-
-        PartDefinition left_leg_foot = left_leg_.addOrReplaceChild("left_leg_foot", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition left_leg_foot_r1 = left_leg_foot.addOrReplaceChild("left_leg_foot_r1", CubeListBuilder.create().texOffs(49, 20).addBox(-1.9F, 0.1F, -2.8F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0F, 0.0F, 0.1309F));
-
-        return LayerDefinition.create(meshdefinition, 128, 128);
+        return ModelDefinition.create(meshDefinition, 128, 128, 2);
     }
 
-    public static @NotNull ModelLayerLocation modelLayerLocation=new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"main");
-
-    public static @NotNull LayerDefinition createArmorLayer(){
-        MeshDefinition meshdefinition = new MeshDefinition();
-        PartDefinition partdefinition = meshdefinition.getRoot();
-
-        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.6F)), PartPose.offset(0.0F, -24.0F, 0.0F));
-        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, -24.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition right_arm = root.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(-4.0F, -22.0F, 0.0F));
-        PartDefinition right_arm_elbow = right_arm.addOrReplaceChild("right_arm_elbow", CubeListBuilder.create().texOffs(40, 8).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(-2.0F, 4.0F, 0.0F));
-        right_arm_elbow.addOrReplaceChild("right_arm_lower", CubeListBuilder.create().texOffs(40, 6).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition left_arm = root.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(40, 16).mirror().addBox(0.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offset(4.0F, -22.0F, 0.0F));
-        PartDefinition left_arm_elbow = left_arm.addOrReplaceChild("left_arm_elbow", CubeListBuilder.create().texOffs(40, 8).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(2.0F, 4.0F, 0.0F));
-        left_arm_elbow.addOrReplaceChild("left_arm_lower", CubeListBuilder.create().texOffs(40, 6).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition right_leg = root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.9F, -13.0F, 0.0F, 0.0F, 0.1309F, 0.1309F));
-        right_leg.addOrReplaceChild("right_leg_thigh_r1", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offsetAndRotation(-0.1305F, -0.9914F, 0.0F, -0.3491F, 0.0F, 0.0F));
-        PartDefinition right_leg_shin = right_leg.addOrReplaceChild("right_leg_shin", CubeListBuilder.create(), PartPose.offset(-0.1305F, 4.0086F, -1.0F));
-        right_leg_shin.addOrReplaceChild("right_leg_shin_r1", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, -4.1F, -1.4F, 4.0F, 6.4F, 4.0F, new CubeDeformation(0.6F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.9809F, 0.0F, 0.0F));
-        PartDefinition right_leg_ = right_leg_shin.addOrReplaceChild("right_leg_", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-        right_leg_.addOrReplaceChild("right_leg__r1", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-        PartDefinition left_leg = root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.offsetAndRotation(1.9F, -13.0F, 0.0F, 0.0F, -0.1309F, -0.1309F));
-        left_leg.addOrReplaceChild("left_leg_thigh_r1", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-2.0F, 0.1F, -2.0F, 4.0F, 7.9F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offsetAndRotation(0.1305F, -0.9914F, 0.0F, -0.3491F, 0.0F, 0.0F));
-        PartDefinition left_leg_shin = left_leg.addOrReplaceChild("left_leg_shin", CubeListBuilder.create(), PartPose.offset(0.1305F, 4.0086F, -1.0F));
-        left_leg_shin.addOrReplaceChild("left_leg_shin_r1", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-2.0F, -4.1F, -1.4F, 4.0F, 6.4F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.9809F, 0.0F, 0.0F));
-        PartDefinition left_leg_ = left_leg_shin.addOrReplaceChild("left_leg_", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-        left_leg_.addOrReplaceChild("left_leg__r1", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-        PartDefinition right_foot = root.addOrReplaceChild("right_foot", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.9F, -13.0F, 0.0F, 0.0F, 0.1309F, 0.1309F));
-        PartDefinition right_leg_shin2 = right_foot.addOrReplaceChild("right_leg_shin2", CubeListBuilder.create(), PartPose.offset(-0.1305F, 4.0086F, -2.0F));
-        PartDefinition right_leg_2 = right_leg_shin2.addOrReplaceChild("right_leg_2", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-        right_leg_2.addOrReplaceChild("right_leg__r2", CubeListBuilder.create().texOffs(48, 0).addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-        PartDefinition right_leg_foot = right_leg_2.addOrReplaceChild("right_leg_foot", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-        right_leg_foot.addOrReplaceChild("right_leg_foot_r1", CubeListBuilder.create().texOffs(0, 26).addBox(-2.1F, 0.1F, -1.8F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0F, 0.0F, -0.1309F));
-        PartDefinition left_foot = root.addOrReplaceChild("left_foot", CubeListBuilder.create(), PartPose.offsetAndRotation(1.9F, -13.0F, 0.0F, 0.0F, -0.1309F, -0.1309F));
-        PartDefinition left_leg_shin2 = left_foot.addOrReplaceChild("left_leg_shin2", CubeListBuilder.create(), PartPose.offset(0.1305F, 4.0086F, -2.0F));
-        PartDefinition left_leg_2 = left_leg_shin2.addOrReplaceChild("left_leg_2", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));
-        left_leg_2.addOrReplaceChild("left_leg__r2", CubeListBuilder.create().texOffs(48, 0).mirror().addBox(-2.0F, -0.9487F, -1.7832F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
-        PartDefinition left_leg_foot = left_leg_2.addOrReplaceChild("left_leg_foot", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-        left_leg_foot.addOrReplaceChild("left_leg_foot_r1", CubeListBuilder.create().texOffs(0, 26).mirror().addBox(-1.9F, 0.1F, -1.8F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.6F)).mirror(false), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, 0.0F, 0.0F, 0.1309F));
-
-        return LayerDefinition.create(meshdefinition, 64, 32);
+    public static @NotNull ModelDefinition armorLayer(){
+        return bodyLayer();
     }
 
-    public static @NotNull ModelLayerLocation armorLayerLocation=new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"armor");
-
-    private final AnimationState state=new AnimationState();
+    AnimationState ears = new AnimationState();
+    AnimationState tail = new AnimationState();
 
     @Override
-    public void setupAnim(@NotNull T p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {
-        super.setupAnim(p_102618_, p_102619_, p_102620_, p_102621_, p_102622_, p_102623_);
-        if(!state.isStarted()) state.start((int) p_102621_);
-        animate(state,LatexWolfFemaleModel.ears,p_102621_);
+    public void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch);
+        if(!ears.isStarted()) ears.start((int) ageInTicks);
+        if(!tail.isStarted()) tail.start((int) ageInTicks);
+        animate(ears, Animations.EAR_ANIM,ageInTicks);
+        animate(tail,Animations.TAIL_ANIM,ageInTicks);
     }
 }

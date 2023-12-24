@@ -1,8 +1,8 @@
 package net.zaharenko424.a_changed.transfurTypes;
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.BeiFengModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,12 +12,14 @@ public class BeiFeng extends AbstractTransfurType{
     }
 
     @Override
-    public <T extends LivingEntity> AbstractLatexEntityModel<T> getModel(@NotNull EntityRendererProvider.Context context) {
-        return new BeiFengModel<>(context,true);
+    @OnlyIn(Dist.CLIENT)
+    public <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getModel() {
+        return new BeiFengModel<>(true);
     }
 
     @Override
-    public <T extends LivingEntity> AbstractLatexEntityModel<T> getArmorModel(@NotNull EntityRendererProvider.Context context) {
-        return new BeiFengModel<>(context,false);
+    @OnlyIn(Dist.CLIENT)
+    public <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getArmorModel() {
+        return new BeiFengModel<>(false);
     }
 }

@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.client.model.layers;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -17,16 +16,22 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
+import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityModel<E>> extends RenderLayer<E,M> {
     private static final Map<String, ResourceLocation> ARMOR_LOCATION_CACHE = Maps.newHashMap();
     private final TextureAtlas armorTrimAtlas;
@@ -39,7 +44,7 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, @NotNull E entity, float p_117353_, float p_117354_, float p_117355_, float p_117356_, float p_117357_, float p_117358_) {
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int light, E entity, float p_117353_, float p_117354_, float p_117355_, float p_117356_, float p_117357_, float p_117358_) {
         M model= (M) renderer.getArmorModel();
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.HEAD,light,model);
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.CHEST,light,model);
@@ -47,10 +52,9 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.FEET,light,model);
     }
 
-    private void renderArmorPiece(PoseStack poseStack, MultiBufferSource buffer, @NotNull E entity, EquipmentSlot slot, int light, M model) {
+    private void renderArmorPiece(PoseStack poseStack, MultiBufferSource buffer, E entity, EquipmentSlot slot, int light, M model) {
         ItemStack itemstack = entity.getItemBySlot(slot);
-        Item $$9 = itemstack.getItem();
-        if ($$9 instanceof ArmorItem armoritem) {
+        if (itemstack.getItem() instanceof ArmorItem armoritem) {
             if (armoritem.getEquipmentSlot() == slot) {
                 getParentModel().copyPropertiesTo(model);
                 getFoot(model,true).copyFrom(getParentModel().rightLeg);
@@ -78,11 +82,11 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         }
     }
 
-    protected void setPartVisibility(@NotNull M model, @NotNull EquipmentSlot slot) {
+    protected void setPartVisibility(M model, EquipmentSlot slot) {
         model.setAllVisible(false);
         switch(slot) {
             case HEAD:
-                model.getHead().visible = true;
+                model.head.visible = true;
                 break;
             case CHEST:
                 model.setAllVisible(model.body,true);
@@ -100,31 +104,23 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         }
     }
 
-    private void renderModel(PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, @NotNull M model, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
+    protected void renderModel(PoseStack poseStack, MultiBufferSource buffer, int light, M model, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.armorCutoutNoCull(armorResource));
         model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, p_289678_, p_289674_, p_289693_, 1.0F);
     }
 
-    private void renderTrim(ArmorMaterial material, PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, @NotNull ArmorTrim p_289692_, net.minecraft.client.model.@NotNull Model p_289663_, boolean p_289651_) {
-        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(p_289651_ ? p_289692_.innerTexture(material) : p_289692_.outerTexture(material));
-        VertexConsumer vertexconsumer = textureatlassprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(p_289692_.pattern().value().decal())));
+    protected void renderTrim(ArmorMaterial material, PoseStack poseStack, MultiBufferSource buffer, int light, ArmorTrim trim, M p_289663_, boolean p_289651_) {
+        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(p_289651_ ? trim.innerTexture(material) : trim.outerTexture(material));
+        VertexConsumer vertexconsumer = textureatlassprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
         p_289663_.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    private void renderGlint(PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, net.minecraft.client.model.@NotNull Model p_289659_) {
+    protected void renderGlint(PoseStack poseStack, MultiBufferSource buffer, int light, M p_289659_) {
         p_289659_.renderToBuffer(poseStack, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    public ResourceLocation getArmorResource(net.minecraft.world.entity.Entity entity, @NotNull ItemStack stack, EquipmentSlot slot, @Nullable String type) {
-        ArmorItem item = (ArmorItem)stack.getItem();
-        String texture = item.getMaterial().getName();
-        String domain = "minecraft";
-        int idx = texture.indexOf(':');
-        if (idx != -1) {
-            domain = texture.substring(0, idx);
-            texture = texture.substring(idx + 1);
-        }
-        String s1 = String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot==EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
+    public ResourceLocation getArmorResource(E entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
+        String s1 = Utils.getArmorTexture(stack, slot, type);
 
         s1 = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(entity, stack, s1, slot, type);
         ResourceLocation resourcelocation = ARMOR_LOCATION_CACHE.get(s1);
@@ -137,7 +133,7 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         return resourcelocation;
     }
 
-    private @NotNull ModelPart getFoot(@NotNull M model, boolean right){
-        return model.root().getChild((right?"right":"left")+"_foot");
+    protected @NotNull ModelPart getFoot(M model, boolean right){
+        return right?model.rightLeg:model.leftLeg;
     }
 }

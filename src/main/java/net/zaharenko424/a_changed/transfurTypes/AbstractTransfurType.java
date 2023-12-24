@@ -1,13 +1,11 @@
 package net.zaharenko424.a_changed.transfurTypes;
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,9 +29,10 @@ public abstract class AbstractTransfurType {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract <T extends LivingEntity> AbstractLatexEntityModel<T> getModel(EntityRendererProvider.@NotNull Context context);
+    public abstract <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getModel();
+
     @OnlyIn(Dist.CLIENT)
-    public abstract <T extends LivingEntity> AbstractLatexEntityModel<T> getArmorModel(EntityRendererProvider.@NotNull Context context);
+    public abstract <E extends LivingEntity> net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel<E> getArmorModel();
 
     public float getEyeHeight(@NotNull Pose pose){
         return switch (pose) {
