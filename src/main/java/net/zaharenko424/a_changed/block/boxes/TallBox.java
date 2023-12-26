@@ -21,7 +21,7 @@ public class TallBox extends VerticalTwoBlockMultiBlock {
     protected static final VoxelShape SHAPE_0 = Block.box(2,0,2,14,26,14);
     private static final VoxelShape SHAPE_1 = SHAPE_0.move(0,-1,0);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
-    public static final IntegerProperty PART = StateProperties.PART;
+    public static final IntegerProperty PART = StateProperties.PART2;
 
     public TallBox(Properties p_49795_) {
         super(p_49795_);

@@ -10,6 +10,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,7 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @SuppressWarnings("deprecation")
 public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
 
-    public static final IntegerProperty PART=IntegerProperty.create("part",0,3);
+    public static final IntegerProperty PART= StateProperties.PART4;
 
     public AbstractTwoByTwoDoor(Properties p_54120_) {
         super(p_54120_);

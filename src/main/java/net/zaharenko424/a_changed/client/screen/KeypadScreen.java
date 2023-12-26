@@ -7,15 +7,19 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundTryPasswordPacket;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class KeypadScreen extends Screen {
     private static final int MAX_SIZE=8;
     private Button button;
@@ -71,12 +75,12 @@ public class KeypadScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char p_94683_, int p_94684_) {
-        if(super.charTyped(p_94683_, p_94684_)){
+    public boolean charTyped(char character, int modifiers) {
+        if(super.charTyped(character, modifiers)){
             return true;
         }
-        if(Character.isDigit(p_94683_)){
-            int i=Character.getNumericValue(p_94683_);
+        if(Character.isDigit(character)){
+            int i=Character.getNumericValue(character);
             if(i>9||i<0) return false;
             CharBox box=charBoxes.get(selectedChar);
             boolean b=box.num==null;
@@ -89,12 +93,12 @@ public class KeypadScreen extends Screen {
 
     private static final List<Integer> keys= Arrays.asList(32,257,262,263,335);
     @Override
-    public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
-        if(super.keyPressed(p_96552_, p_96553_, p_96554_)){
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(super.keyPressed(keyCode, scanCode, modifiers)){
             return true;
         }
-        if(selectedChar==-1&&!keys.contains(p_96552_)) return false;
-        return switch (p_96552_){
+        if(selectedChar==-1&&!keys.contains(keyCode)) return false;
+        return switch (keyCode){
             case 32,257,335 -> {
                 button.onPress();
                 yield true;
@@ -158,15 +162,15 @@ public class KeypadScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double p_94695_, double p_94696_, int p_94697_) {
-        if(super.mouseClicked(p_94695_, p_94696_, p_94697_)){
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(super.mouseClicked(mouseX, mouseY, button)){
             return true;
         }
-        if(p_94697_==0) {
+        if(button==0) {
             CharBox box;
             for (int i = 0; i < charBoxes.size(); i++) {
                 box = charBoxes.get(i);
-                if (p_94695_ >= box.x && p_94695_ <= box.x1 && p_94696_ >= box.y && p_94696_ <= box.y1) {
+                if (mouseX >= box.x && mouseX <= box.x1 && mouseY >= box.y && mouseY <= box.y1) {
                     selectedChar = i;
                     AChanged.LOGGER.warn("charBox selected");
                     return true;
@@ -178,18 +182,18 @@ public class KeypadScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics p_281549_, int p_281550_, int p_282878_, float p_282465_) {
-        super.render(p_281549_, p_281550_, p_282878_, p_282465_);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         setFocused(null);
 
         for(CharBox charBox:charBoxes){
-            p_281549_.fill(charBox.x,charBox.y,charBox.x1,charBox.y1,-16777216);
-            if(charBox.num!=null) p_281549_.drawString(font,String.valueOf(charBox.num),charBox.x+7,charBox.y+9, 16777215);
+            guiGraphics.fill(charBox.x,charBox.y,charBox.x1,charBox.y1,-16777216);
+            if(charBox.num!=null) guiGraphics.drawString(font,String.valueOf(charBox.num),charBox.x+7,charBox.y+9, 16777215);
         }
 
         if(selectedChar!=-1) {
             CharBox selected=charBoxes.get(selectedChar);
-            p_281549_.drawString(font, "__", selected.x+4, selected.y+12,16777215,false);
+            guiGraphics.drawString(font, "__", selected.x+4, selected.y+12,16777215,false);
         }
     }
 

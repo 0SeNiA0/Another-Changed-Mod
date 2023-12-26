@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public abstract class HorizontalTwoBlockMultiBlock extends AbstractMultiBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final IntegerProperty PART = StateProperties.PART;
+    public static final IntegerProperty PART = StateProperties.PART2;
 
     public HorizontalTwoBlockMultiBlock(Properties p_54120_) {
         super(p_54120_);

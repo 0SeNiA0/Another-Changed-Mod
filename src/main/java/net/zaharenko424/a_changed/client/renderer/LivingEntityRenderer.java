@@ -234,18 +234,13 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
                 Team team1 = localplayer.getTeam();
                 if (team != null) {
                     Team.Visibility team$visibility = team.getNameTagVisibility();
-                    switch(team$visibility) {
-                        case ALWAYS:
-                            return flag;
-                        case NEVER:
-                            return false;
-                        case HIDE_FOR_OTHER_TEAMS:
-                            return team1 == null ? flag : team.isAlliedTo(team1) && (team.canSeeFriendlyInvisibles() || flag);
-                        case HIDE_FOR_OWN_TEAM:
-                            return team1 == null ? flag : !team.isAlliedTo(team1) && flag;
-                        default:
-                            return true;
-                    }
+                    return switch (team$visibility) {
+                        case ALWAYS -> flag;
+                        case NEVER -> false;
+                        case HIDE_FOR_OTHER_TEAMS ->
+                                team1 == null ? flag : team.isAlliedTo(team1) && (team.canSeeFriendlyInvisibles() || flag);
+                        case HIDE_FOR_OWN_TEAM -> team1 == null ? flag : !team.isAlliedTo(team1) && flag;
+                    };
                 }
             }
 

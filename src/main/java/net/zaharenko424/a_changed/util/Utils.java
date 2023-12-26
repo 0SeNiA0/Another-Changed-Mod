@@ -57,11 +57,11 @@ public class Utils {
     }
 
     public static void fixCreativeDoubleBlockDrops(@NotNull Level level,@NotNull BlockPos pos, @NotNull BlockState state,@NotNull Player player){
-        int part = state.getValue(StateProperties.PART);
+        int part = state.getValue(StateProperties.PART2);
         if (part == 1) {
             BlockPos blockpos = pos.below();
             BlockState blockstate = level.getBlockState(blockpos);
-            if (blockstate.is(state.getBlock()) && blockstate.getValue(StateProperties.PART) == 0) {
+            if (blockstate.is(state.getBlock()) && blockstate.getValue(StateProperties.PART2) == 0) {
                 level.setBlock(blockpos, blockstate.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 35);
                 level.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
             }

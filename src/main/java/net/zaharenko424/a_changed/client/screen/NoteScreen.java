@@ -37,8 +37,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
-@OnlyIn(Dist.CLIENT)
+
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class NoteScreen extends Screen {
     private boolean isModified;
     private int frameTick;

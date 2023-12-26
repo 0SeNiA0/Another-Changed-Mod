@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-@OnlyIn(Dist.CLIENT)
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class ModelPart {
     public float x;
     public float y;
@@ -77,6 +77,13 @@ public class ModelPart {
         x = part.x;
         y = part.y;
         z = part.z;
+    }
+
+    public void copyFromWithChildren(ModelPart part){
+        copyFrom(part);
+        children.forEach((name,p) -> {
+            if(part.children.containsKey(name)) p.copyFromWithChildren(part.getChild(name));
+        });
     }
 
     public void copyFrom(net.minecraft.client.model.geom.ModelPart part) {

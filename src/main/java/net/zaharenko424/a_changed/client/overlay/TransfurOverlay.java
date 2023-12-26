@@ -3,10 +3,13 @@ package net.zaharenko424.a_changed.client.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.gui.overlay.IGuiOverlay;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.TransfurManager;
 
+@OnlyIn(Dist.CLIENT)
 public class TransfurOverlay {
 
     private static final ResourceLocation TRANSFUR_OVERLAY = AChanged.textureLoc("overlay/transfur");

@@ -84,7 +84,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     private void doublePartBlockDrops(Block block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART,0)))
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART2,0)))
                 .add(
                         applyExplosionCondition(block,LootItem.lootTableItem(block))
                 )));

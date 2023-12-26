@@ -24,7 +24,6 @@ import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.util.Utils;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -57,26 +56,25 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         if (itemstack.getItem() instanceof ArmorItem armoritem) {
             if (armoritem.getEquipmentSlot() == slot) {
                 getParentModel().copyPropertiesTo(model);
-                getFoot(model,true).copyFrom(getParentModel().rightLeg);
-                getFoot(model,false).copyFrom(getParentModel().leftLeg);
-                this.setPartVisibility(model, slot);
+                getParentModel().copyFeetToArmor(model);
+                setPartVisibility(model, slot);
                 if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem) {
                     int i = ((net.minecraft.world.item.DyeableLeatherItem)armoritem).getColor(itemstack);
                     float f = (float)(i >> 16 & 0xFF) / 255.0F;
                     float f1 = (float)(i >> 8 & 0xFF) / 255.0F;
                     float f2 = (float)(i & 0xFF) / 255.0F;
-                    this.renderModel(poseStack, buffer, light, model, f, f1, f2, getArmorResource(entity, itemstack, slot, null));
-                    this.renderModel(poseStack, buffer, light, model, 1.0F, 1.0F, 1.0F, getArmorResource(entity, itemstack, slot, "overlay"));
+                    renderModel(poseStack, buffer, light, model, f, f1, f2, getArmorResource(entity, itemstack, slot, null));
+                    renderModel(poseStack, buffer, light, model, 1.0F, 1.0F, 1.0F, getArmorResource(entity, itemstack, slot, "overlay"));
                 } else {
-                    this.renderModel(poseStack, buffer, light, model, 1.0F, 1.0F, 1.0F, getArmorResource(entity, itemstack, slot, null));
+                    renderModel(poseStack, buffer, light, model, 1.0F, 1.0F, 1.0F, getArmorResource(entity, itemstack, slot, null));
                 }
 
                 ArmorTrim.getTrim(entity.level().registryAccess(), itemstack, true).ifPresent(p_289638_ ->
-                        this.renderTrim(armoritem.getMaterial(), poseStack, buffer, light, p_289638_, model, slot==EquipmentSlot.LEGS)
+                        renderTrim(armoritem.getMaterial(), poseStack, buffer, light, p_289638_, model, slot==EquipmentSlot.LEGS)
                 );
 
                 if (itemstack.hasFoil()) {
-                    this.renderGlint(poseStack, buffer, light, model);
+                    renderGlint(poseStack, buffer, light, model);
                 }
             }
         }
@@ -90,17 +88,20 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
                 break;
             case CHEST:
                 model.setAllVisible(model.body,true);
+                if(model.body.hasChild("tail")) model.setAllVisible(model.body.getChild("tail"),false);
                 model.rightArm.visible = true;
                 model.leftArm.visible = true;
                 break;
             case LEGS:
-                model.body.visible = true;
+                model.setAllVisible(model.body,true);
                 model.setAllVisible(model.rightLeg,true);
                 model.setAllVisible(model.leftLeg,true);
                 break;
             case FEET:
-                model.setAllVisible(getFoot(model,true),true);
-                model.setAllVisible(getFoot(model,false),true);
+                ModelPart foot = model.getFoot(true);
+                if(foot!=null) model.setAllVisible(foot,true);
+                foot = model.getFoot(false);
+                if(foot!=null) model.setAllVisible(foot,true);
         }
     }
 
@@ -131,9 +132,5 @@ public class ArmorLayer<E extends LivingEntity,M extends AbstractLatexEntityMode
         }
 
         return resourcelocation;
-    }
-
-    protected @NotNull ModelPart getFoot(M model, boolean right){
-        return right?model.rightLeg:model.leftLeg;
     }
 }

@@ -32,6 +32,7 @@ import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
 import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -45,13 +46,9 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     protected final EntityRendererProvider.Context context;
 
     protected LatexEntityRenderer(EntityRendererProvider.Context context, AbstractLatexEntityModel<E> model){
-        super(context,model,1);
+        super(context,model,.5f);
         this.context = context;
-        //addLayer(new PerFaceArmorLayer<>(this,context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
-        addLayer(new ArmorLayer<>(this, context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
-        addLayer(new ItemInHandLayer<>(this, this.context.getItemInHandRenderer()));
-        //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
-        addLayer(new ElytraLayer<>(this, this.context.getModelSet()));
+        addLayers();
     }
 
     /**
@@ -59,12 +56,21 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
      */
     public LatexEntityRenderer(EntityRendererProvider.Context context) {
         this(context, new DummyModel<>());
-        addLayer(new SpinAttackEffect<>(this,context.getModelSet()));
     }
 
-    public LatexEntityRenderer(EntityRendererProvider.Context context, @NotNull DeferredHolder<AbstractTransfurType,? extends AbstractTransfurType> transfurType){
+    public LatexEntityRenderer(EntityRendererProvider.Context context, DeferredHolder<AbstractTransfurType,? extends AbstractTransfurType> transfurType){
         this(context);
         updateTransfurType(transfurType.get());
+    }
+
+    protected void addLayers(){
+        addLayer(new ArmorLayer<>(this, context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
+        addLayer(new ItemInHandLayer<>(this, this.context.getItemInHandRenderer()));
+        addLayer(new ElytraLayer<>(this, this.context.getModelSet()));//TODO rewrite
+        addLayer(new SpinAttackEffect<>(this,context.getModelSet()));
+        //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
+        //addLayer(new ArrowLayer<>(p_174557_, this));
+        //addLayer(new SpinAttackEffectLayer<>(this, p_174557_.getModelSet()));
     }
 
     public boolean isTransfurTypeNonNull(){
@@ -84,27 +90,29 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         return armorModel;
     }
 
-    public void renderHand(@NotNull PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
+    public void renderHand(PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
         if(right) {
             model.rightArm.resetPose();
-            model.rightArm.y=2;
-            model.rightArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation(player))), i, OverlayTexture.NO_OVERLAY);
+            model.rightArm.x=3; //rotation
+            model.rightArm.z=12;//<- ->
+            model.rightArm.offsetScale(new Vector3f(.9f));
+            model.rightArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         } else {
             model.leftArm.resetPose();
-            model.leftArm.y=2;
-            model.leftArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation(player))), i, OverlayTexture.NO_OVERLAY);
+            model.leftArm.x=-1;
+            model.leftArm.z=12;
+            model.leftArm.offsetScale(new Vector3f(.9f));
+            model.leftArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         }
     }
 
     @Override
-    public void render(@NotNull E entity, float entityYaw, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int light) {
+    public void render(E entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
         setModelProperties(entity);
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, light);
-        //this.addLayer(new ArrowLayer<>(p_174557_, this));
-        //this.addLayer(new SpinAttackEffectLayer<>(this, p_174557_.getModelSet()));
     }
 
-    private void setModelProperties(@NotNull E entity){
+    private void setModelProperties(E entity){
         model.crouching=entity.isCrouching();
         model.attackTime=entity.attackAnim;
         if(entity instanceof Player player){
@@ -130,54 +138,9 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         }
     }
 
-    private HumanoidModel.ArmPose getArmPose(@NotNull E p_117795_, InteractionHand p_117796_) {
-        ItemStack itemstack = p_117795_.getItemInHand(p_117796_);
-        if (itemstack.isEmpty()) {
-            return HumanoidModel.ArmPose.EMPTY;
-        } else {
-            if (p_117795_.getUsedItemHand() == p_117796_ && p_117795_.getUseItemRemainingTicks() > 0) {
-                UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK) {
-                    return HumanoidModel.ArmPose.BLOCK;
-                }
-
-                if (useanim == UseAnim.BOW) {
-                    return HumanoidModel.ArmPose.BOW_AND_ARROW;
-                }
-
-                if (useanim == UseAnim.SPEAR) {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
-                }
-
-                if (useanim == UseAnim.CROSSBOW && p_117796_ == p_117795_.getUsedItemHand()) {
-                    return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                }
-
-                if (useanim == UseAnim.SPYGLASS) {
-                    return HumanoidModel.ArmPose.SPYGLASS;
-                }
-
-                if (useanim == UseAnim.TOOT_HORN) {
-                    return HumanoidModel.ArmPose.TOOT_HORN;
-                }
-
-                if (useanim == UseAnim.BRUSH) {
-                    return HumanoidModel.ArmPose.BRUSH;
-                } else if (!p_117795_.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
-                    return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-                }
-            }
-
-            HumanoidModel.ArmPose forgeArmPose = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(p_117795_, p_117796_, itemstack);
-            if (forgeArmPose != null) return forgeArmPose;
-
-            return HumanoidModel.ArmPose.ITEM;
-        }
-    }
-
     @Override
-    protected void setupRotations(@NotNull E entity, @NotNull PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
-        //TODO or check for swimming latex || MAKE BETTER CHECK
+    protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
+        //TODO check for swimming latex
         float f = entity.getSwimAmount(ticks);
         float f1 = entity.getViewXRot(ticks);
         super.setupRotations(entity, poseStack, ageInTicks, yaw, ticks);
@@ -207,14 +170,58 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         }
     }
 
-    protected boolean shouldShowName(@NotNull E entity) {
+    private HumanoidModel.ArmPose getArmPose(E entity, InteractionHand hand) {
+        ItemStack itemstack = entity.getItemInHand(hand);
+        if (itemstack.isEmpty()) {
+            return HumanoidModel.ArmPose.EMPTY;
+        } else {
+            if (entity.getUsedItemHand() == hand && entity.getUseItemRemainingTicks() > 0) {
+                UseAnim useanim = itemstack.getUseAnimation();
+                if (useanim == UseAnim.BLOCK) {
+                    return HumanoidModel.ArmPose.BLOCK;
+                }
+
+                if (useanim == UseAnim.BOW) {
+                    return HumanoidModel.ArmPose.BOW_AND_ARROW;
+                }
+
+                if (useanim == UseAnim.SPEAR) {
+                    return HumanoidModel.ArmPose.THROW_SPEAR;
+                }
+
+                if (useanim == UseAnim.CROSSBOW && hand == entity.getUsedItemHand()) {
+                    return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
+                }
+
+                if (useanim == UseAnim.SPYGLASS) {
+                    return HumanoidModel.ArmPose.SPYGLASS;
+                }
+
+                if (useanim == UseAnim.TOOT_HORN) {
+                    return HumanoidModel.ArmPose.TOOT_HORN;
+                }
+
+                if (useanim == UseAnim.BRUSH) {
+                    return HumanoidModel.ArmPose.BRUSH;
+                } else if (!entity.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
+                    return HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                }
+            }
+
+            HumanoidModel.ArmPose forgeArmPose = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(entity, hand, itemstack);
+            if (forgeArmPose != null) return forgeArmPose;
+
+            return HumanoidModel.ArmPose.ITEM;
+        }
+    }
+
+    protected boolean shouldShowName(E entity) {
         return super.shouldShowName(entity)
                 && (entity.shouldShowName() || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull LivingEntity p_114482_) {
-        //return transfurType!=null ? AChanged.textureLoc("texture") : AChanged.textureLoc("entity/dummy");
+    public @NotNull ResourceLocation getTextureLocation(E entity) {
         return transfurType!=null ? AChanged.textureLoc(transfurType.id.withPrefix("entity/")) : AChanged.textureLoc("entity/dummy");
     }
 }

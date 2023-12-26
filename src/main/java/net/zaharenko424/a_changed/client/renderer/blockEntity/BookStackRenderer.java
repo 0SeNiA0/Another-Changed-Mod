@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.BookStackEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.BOOK_STACK_ENTITY.getId(), "book");

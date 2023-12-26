@@ -36,7 +36,7 @@ public class LatexContainer extends AbstractMultiBlock implements EntityBlock {
             ,Shapes.box(0.1875, 1.625, 0.1875, 0.8125, 1.75, 0.8125)
             ,Shapes.box(0.28125, 0.125, 0.28125, 0.71875, 1.625, 0.71875));
     private static final VoxelShape SHAPE_UPPER=SHAPE.move(0,-1,0);
-    public static final IntegerProperty PART = StateProperties.PART;
+    public static final IntegerProperty PART = StateProperties.PART2;
 
     public LatexContainer(Properties p_49795_) {
         super(p_49795_);

@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import java.util.Optional;
+
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
@@ -114,19 +116,8 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         }
 
         setupAttackAnimation(entity);
-        if (crouching) {//TODO fix
-            body.xRot += 0.5F;
-            rightArm.xRot += 0.4F;
-            leftArm.xRot += 0.4F;
-            rightLeg.z+= 4.0F;
-            leftLeg.z+= 4.0F;
-            rightLeg.y+= .2F;
-            leftLeg.y+= .2F;
-            head.y+= 4.2F;
-            body.y+= 3.2F;
-            leftArm.y+= 3.2F;
-            rightArm.y+= 3.2F;
-        }
+
+        if (crouching) setupCrouching();
 
         if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) {
             AnimationUtils.bobModelPart(rightArm, ageInTicks, 1.0F);
@@ -139,33 +130,47 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         if (swimAmount > 0.0F) setupSwimAnimation(entity,limbSwing);
     }
 
-    protected void setupSwimAnimation(E entity, float limbSwing){//TODO fix
+    protected void setupCrouching(){
+        body.xRot -= 0.5f;
+        body.z += 5;
+        rightArm.xRot -= 0.4f;
+        rightArm.y -= 3;
+        leftArm.xRot -= 0.4f;
+        leftArm.y -= 3;
+        rightLeg.z += 4;
+        leftLeg.z += 4;
+        rightLeg.y += .2F;
+        leftLeg.y += .2F;
+        head.y -= 3;
+    }
+
+    protected void setupSwimAnimation(E entity, float limbSwing){//Should be fine
         float f5 = limbSwing % 26.0F;
         HumanoidArm humanoidarm = getAttackArm(entity);
         float f1 = humanoidarm == HumanoidArm.RIGHT && attackTime > 0.0F ? 0.0F : swimAmount;
         float f2 = humanoidarm == HumanoidArm.LEFT && attackTime > 0.0F ? 0.0F : swimAmount;
         if (!entity.isUsingItem()) {
             if (f5 < 14.0F) {
-                leftArm.xRot = rotlerpRad(f2, leftArm.xRot, 0.0F);
-                rightArm.xRot = Mth.lerp(f1, rightArm.xRot, 0.0F);
-                leftArm.yRot = rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, 0.0F);
+                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, 0.0F);
+                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI + 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI - 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
             } else if (f5 >= 14.0F && f5 < 22.0F) {
                 float f6 = (f5 - 14.0F) / 8.0F;
-                leftArm.xRot = rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) * f6);
-                rightArm.xRot = Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) * f6);
-                leftArm.yRot = rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) * f6);
+                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) * f6);
+                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, 5.012389F - 1.8707964F * f6);
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, 1.2707963F + 1.8707964F * f6);
             } else if (f5 >= 22.0F && f5 < 26.0F) {
                 float f3 = (f5 - 22.0F) / 4.0F;
-                leftArm.xRot = rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                rightArm.xRot = Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                leftArm.yRot = rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
+                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
+                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI);
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI);
             }
@@ -175,7 +180,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         rightLeg.xRot = Mth.lerp(swimAmount, rightLeg.xRot, 0.3F * Mth.cos(limbSwing * 0.33333334F));
     }
 
-    protected void setupAttackAnimation(LivingEntity entity) {
+    protected void setupAttackAnimation(E entity) {
         if (attackTime > 0.0F) {
             HumanoidArm humanoidarm = getAttackArm(entity);
             ModelPart arm = getArm(humanoidarm);
@@ -193,7 +198,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
             f *= f;
             f = 1.0F - f;
             float f1 = Mth.sin(f * (float) Math.PI);
-            float f2 = Mth.sin(attackTime * (float) Math.PI) * -(head.xRot - 0.7F) * 0.75F;
+            float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.xRot + 0.7F) * 0.75F;
             arm.xRot += f1 * 1.2F + f2;
             arm.yRot -= body.yRot * 2.0F;
             arm.zRot += Mth.sin(attackTime * (float) Math.PI) * -0.4F;
@@ -202,83 +207,91 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
 
     @Override
     public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
-        this.getArm(arm).translateAndRotate(poseStack);
+        getArm(arm).translateAndRotate(poseStack);
     }
 
-    protected HumanoidArm getAttackArm(LivingEntity entity) {
+    protected HumanoidArm getAttackArm(E entity) {
         HumanoidArm humanoidarm = entity.getMainArm();
         return entity.swingingArm == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.getOpposite();
     }
 
-    protected ModelPart getArm(HumanoidArm arm) {
+    public ModelPart getArm(HumanoidArm arm) {
         return arm == HumanoidArm.LEFT ? leftArm : rightArm;
     }
 
-    private void poseRightArm(LivingEntity entity) {
+    public ModelPart getFoot(boolean right){
+        Optional<ModelPart> optional = getAnyDescendantWithName(right?"right_foot":"left_foot");
+        return optional.orElse(null);
+    }
+
+    public void setAllVisible(boolean b){
+        root().getAllParts().filter((part)->part!=root()).forEach((child->child.visible=b));
+    }
+
+    public void setAllVisible(ModelPart part, boolean b){
+        part.getAllParts().forEach((child)->child.visible=b);
+    }
+
+    private void poseRightArm(E entity) {
         switch(rightArmPose) {
-            case EMPTY:
+            case EMPTY -> rightArm.yRot = 0.0F;
+            case BLOCK -> {
+                rightArm.xRot = rightArm.xRot * -0.5F + 0.9424779F;
+                rightArm.yRot = (float) Math.PI / 6;
+            }
+            case ITEM -> {
+                rightArm.xRot = rightArm.xRot * -0.5F + (float) (Math.PI / 10);
                 rightArm.yRot = 0.0F;
-                break;
-            case BLOCK:
-                rightArm.xRot = rightArm.xRot * 0.5F - 0.9424779F;
-                rightArm.yRot = (float) (-Math.PI / 6);
-                break;
-            case ITEM:
-                rightArm.xRot = rightArm.xRot * 0.5F - (float) (Math.PI / 10);
+            }
+            case THROW_SPEAR -> {
+                rightArm.xRot = rightArm.xRot * -0.5F + (float) Math.PI;
                 rightArm.yRot = 0.0F;
-                break;
-            case THROW_SPEAR:
-                rightArm.xRot = rightArm.xRot * 0.5F - (float) Math.PI;
+            }
+            case BOW_AND_ARROW -> {
+                rightArm.yRot = 0.1F + head.yRot;
+                leftArm.yRot = -0.5F + head.yRot;
+                rightArm.xRot = (float) Math.PI / 2 + head.xRot;
+                leftArm.xRot = (float) Math.PI / 2 + head.xRot;
+            }
+            case CROSSBOW_CHARGE -> AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, true);
+            case CROSSBOW_HOLD -> AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, true);
+            case BRUSH -> {
+                rightArm.xRot = rightArm.xRot * -0.5F + (float) (Math.PI / 5);
                 rightArm.yRot = 0.0F;
-                break;
-            case BOW_AND_ARROW:
-                rightArm.yRot = -0.1F + head.yRot;
-                leftArm.yRot = 0.1F + head.yRot + 0.4F;
-                rightArm.xRot = (float) (-Math.PI / 2) + head.xRot;
-                leftArm.xRot = (float) (-Math.PI / 2) + head.xRot;
-                break;
-            case CROSSBOW_CHARGE:
-                AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, true);
-                break;
-            case CROSSBOW_HOLD:
-                AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, true);
-                break;
-            case BRUSH:
-                rightArm.xRot = rightArm.xRot * 0.5F - (float) (Math.PI / 5);
-                rightArm.yRot = 0.0F;
-                break;
-            case SPYGLASS:
-                rightArm.xRot = Mth.clamp(head.xRot - 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
-                rightArm.yRot = head.yRot - (float) (Math.PI / 12);
-                break;
-            case TOOT_HORN:
-                rightArm.xRot = Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F;
-                rightArm.yRot = head.yRot - (float) (Math.PI / 6);
+            }
+            case SPYGLASS -> {
+                rightArm.xRot = Mth.clamp(head.xRot + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
+                rightArm.yRot = head.yRot + (float) (Math.PI / 12);
+            }
+            case TOOT_HORN -> {
+                rightArm.xRot = (Mth.clamp(head.xRot, -1.2F, 1.2F) + 1.4835298F);
+                rightArm.yRot = head.yRot + (float) (Math.PI / 6);
+            }
         }
     }
 
-    private void poseLeftArm(LivingEntity entity) {
+    private void poseLeftArm(E entity) {
         switch(leftArmPose) {
             case EMPTY:
                 leftArm.yRot = 0.0F;
                 break;
             case BLOCK:
-                leftArm.xRot = leftArm.xRot * 0.5F - 0.9424779F;
-                leftArm.yRot = (float) (Math.PI / 6);
+                leftArm.xRot = leftArm.xRot * -0.5F + 0.9424779F;
+                leftArm.yRot = (float) -Math.PI / 6;
                 break;
             case ITEM:
-                leftArm.xRot = leftArm.xRot * 0.5F - (float) (Math.PI / 10);
+                leftArm.xRot = leftArm.xRot * -0.5F + (float) (Math.PI / 10);
                 leftArm.yRot = 0.0F;
                 break;
             case THROW_SPEAR:
-                leftArm.xRot = leftArm.xRot * 0.5F - (float) Math.PI;
+                leftArm.xRot = leftArm.xRot * -0.5F + (float) Math.PI;
                 leftArm.yRot = 0.0F;
                 break;
             case BOW_AND_ARROW:
-                rightArm.yRot = -0.1F + head.yRot - 0.4F;
-                leftArm.yRot = 0.1F + head.yRot;
-                rightArm.xRot = (float) (-Math.PI / 2) + head.xRot;
-                leftArm.xRot = (float) (-Math.PI / 2) + head.xRot;
+                rightArm.yRot = 0.5F + head.yRot;
+                leftArm.yRot = -0.1F + head.yRot;
+                rightArm.xRot = (float) Math.PI / 2 + head.xRot;
+                leftArm.xRot = (float) Math.PI / 2 + head.xRot;
                 break;
             case CROSSBOW_CHARGE:
                 AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, false);
@@ -287,16 +300,16 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, false);
                 break;
             case BRUSH:
-                leftArm.xRot = leftArm.xRot * 0.5F - (float) (Math.PI / 5);
+                leftArm.xRot = leftArm.xRot * -0.5F + (float) (Math.PI / 5);
                 leftArm.yRot = 0.0F;
                 break;
             case SPYGLASS:
-                leftArm.xRot = Mth.clamp(head.xRot - 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
-                leftArm.yRot = head.yRot + (float) (Math.PI / 12);
+                leftArm.xRot = Mth.clamp(head.xRot + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
+                leftArm.yRot = head.yRot - (float) (Math.PI / 12);
                 break;
             case TOOT_HORN:
-                leftArm.xRot = Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F;
-                leftArm.yRot = head.yRot + (float) (Math.PI / 6);
+                leftArm.xRot = -(Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F);
+                leftArm.yRot = head.yRot - (float) (Math.PI / 6);
         }
     }
 
@@ -307,10 +320,46 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         copyTo.crouching = crouching;
         copyTo.head.copyFrom(head);
         copyTo.body.copyFrom(body);
+        if(copyTo.body.hasChild("tail")&& body.hasChild("tail")) copyTo.body.getChild("tail").copyFromWithChildren(body.getChild("tail"));
         copyTo.rightArm.copyFrom(rightArm);
         copyTo.leftArm.copyFrom(leftArm);
         copyTo.rightLeg.copyFrom(rightLeg);
         copyTo.leftLeg.copyFrom(leftLeg);
+    }
+
+    /**
+     * Has to be called from main entity model (not armor)
+     */
+    public <M extends HierarchicalHumanoidModel<E>> void copyFeetToArmor(M  armorModel){
+        ModelPart p0 = rightLeg;
+        ModelPart p1 = p0.getChild("right_leg_shin");
+        ModelPart p2 = p1.getChild("right_leg_");
+        ModelPart p3 = p2.getChild("right_foot");
+
+        ModelPart pt0 = armorModel.root().getChild("right_foot");
+        ModelPart pt1 = pt0.getChild("right_leg_shin2");
+        ModelPart pt2 = pt1.getChild("right_leg_2");
+        ModelPart pt3 = pt2.getChild("right_foot2");
+
+        pt0.copyFrom(p0);
+        pt1.copyFrom(p1);
+        pt2.copyFrom(p2);
+        pt3.copyFrom(p3);
+
+        p0 = leftLeg;
+        p1 = p0.getChild("left_leg_shin");
+        p2 = p1.getChild("left_leg_");
+        p3 = p2.getChild("left_foot");
+
+        pt0 = armorModel.root().getChild("left_foot");
+        pt1 = pt0.getChild("left_leg_shin2");
+        pt2 = pt1.getChild("left_leg_2");
+        pt3 = pt2.getChild("left_foot2");
+
+        pt0.copyFrom(p0);
+        pt1.copyFrom(p1);
+        pt2.copyFrom(p2);
+        pt3.copyFrom(p3);
     }
 
     @Override

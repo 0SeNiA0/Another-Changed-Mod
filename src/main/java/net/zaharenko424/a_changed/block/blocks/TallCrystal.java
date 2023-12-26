@@ -33,7 +33,7 @@ public class TallCrystal extends AbstractMultiBlock {
     private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,1,.625);
     private static final AABB aabb = SHAPE.bounds();
     private final Supplier<? extends AbstractTransfurType> transfurType;
-    public static IntegerProperty PART = StateProperties.PART;
+    public static IntegerProperty PART = StateProperties.PART2;
 
     public TallCrystal(Properties p_54120_, Supplier<? extends AbstractTransfurType> transfurType) {
         super(p_54120_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());

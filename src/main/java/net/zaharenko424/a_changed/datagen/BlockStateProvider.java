@@ -99,7 +99,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile part0= wideCross(id.getPath()+"_0",blockLoc(id).withSuffix("_0"));
         ModelFile part1= wideCross(id.getPath()+"_1",blockLoc(id).withSuffix("_1"));
         getVariantBuilder(block.get()).forAllStates(state ->
-                state.getValue(StateProperties.PART)==0?new ConfiguredModel[]{new ConfiguredModel(part0)}:new ConfiguredModel[]{new ConfiguredModel(part1)});
+                state.getValue(StateProperties.PART2)==0?new ConfiguredModel[]{new ConfiguredModel(part0)}:new ConfiguredModel[]{new ConfiguredModel(part1)});
         simpleItem(id,blockLoc(id).withSuffix("_1"));
     }
 
@@ -112,7 +112,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile part0= models().getExistingFile(blockLoc(id));
         ModelFile part_1= models().getExistingFile(blockLoc(id).withSuffix("_1"));
         getVariantBuilder(block.get()).forAllStates(state ->
-                new ConfiguredModel[]{new ConfiguredModel(state.getValue(StateProperties.PART) == 1 ? part_1 : part0)}
+                new ConfiguredModel[]{new ConfiguredModel(state.getValue(StateProperties.PART2) == 1 ? part_1 : part0)}
         );
         itemModels().getBuilder(id.getPath()).parent(part0);
     }
@@ -178,7 +178,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile part0= models().getExistingFile(blockLoc(id).withSuffix("_0"));
         ModelFile part1= models().getExistingFile(blockLoc(id).withSuffix("_1"));
         getVariantBuilder(block.get()).forAllStates(state ->
-                horizontalRotatedModel(state.getValue(StateProperties.PART)==1?part1:part0,state.getValue(HorizontalDirectionalBlock.FACING))
+                horizontalRotatedModel(state.getValue(StateProperties.PART2)==1?part1:part0,state.getValue(HorizontalDirectionalBlock.FACING))
         );
         itemModels().getBuilder(block.getId().getPath()).parent(models().getExistingFile(blockLoc(id)));
     }

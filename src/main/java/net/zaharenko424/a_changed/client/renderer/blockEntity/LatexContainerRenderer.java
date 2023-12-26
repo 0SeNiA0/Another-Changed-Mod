@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
+@OnlyIn(Dist.CLIENT)
 public class LatexContainerRenderer implements BlockEntityRenderer<LatexContainerEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.getId(), "latex");
