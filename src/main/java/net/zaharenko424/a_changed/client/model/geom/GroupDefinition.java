@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.model.geom.PartPose;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 @ParametersAreNonnullByDefault
 public class GroupDefinition {
     private final List<CubeDefinition> cubes;
@@ -46,7 +43,7 @@ public class GroupDefinition {
     public ModelPart bake(int textureWidth, int textureHeight) {
         Object2ObjectArrayMap<String, ModelPart> object2objectarraymap = this.children.entrySet().stream().collect(Collectors.toMap(
             Map.Entry::getKey,
-            group -> group.getValue().bake(textureWidth,textureHeight),
+            group -> group.getKey().startsWith("armor_")?group.getValue().bake(64, 32):group.getValue().bake(textureWidth, textureHeight),
             (p_171595_, p_171596_) -> p_171595_,
             Object2ObjectArrayMap::new
         ));
@@ -55,9 +52,5 @@ public class GroupDefinition {
         modelpart.setInitialPose(this.partPose);
         modelpart.loadPose(this.partPose);
         return modelpart;
-    }
-
-    public GroupDefinition getChild(String p_171598_) {
-        return this.children.get(p_171598_);
     }
 }

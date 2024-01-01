@@ -1,8 +1,6 @@
 package net.zaharenko424.a_changed.client.model.animation;
 
 import com.google.common.collect.Maps;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public record AnimationDefinition(float lengthInSeconds, boolean looping, Map<String, List<AnimationChannel>> boneAnimations) {
-    @OnlyIn(Dist.CLIENT)
+
     public static class Builder {
         private final float length;
         private final Map<String, List<AnimationChannel>> animationByBone = Maps.newHashMap();

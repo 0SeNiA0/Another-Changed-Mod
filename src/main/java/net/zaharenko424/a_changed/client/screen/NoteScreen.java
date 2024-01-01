@@ -21,8 +21,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundEditNotePacket;
@@ -39,7 +37,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class NoteScreen extends Screen {
     private boolean isModified;
     private int frameTick;
@@ -534,7 +531,6 @@ public class NoteScreen extends Screen {
         return new Rect2i(i, k, j - i, l - k);
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class DisplayCache {
         static final NoteScreen.DisplayCache EMPTY = new NoteScreen.DisplayCache(
                 "",
@@ -600,7 +596,6 @@ public class NoteScreen extends Screen {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class LineInfo {
         final Style style;
         final String contents;
@@ -617,7 +612,6 @@ public class NoteScreen extends Screen {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class Pos2i {
         public final int x;
         public final int y;

@@ -5,13 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.gui.overlay.IGuiOverlay;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 
-@OnlyIn(Dist.CLIENT)
 public class HazmatOverlay {
     private static final ResourceLocation HAZMAT_OVERLAY = AChanged.textureLoc("overlay/hazmat");
 

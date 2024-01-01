@@ -7,8 +7,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.animation.AnimationDefinition;
 import net.zaharenko424.a_changed.client.model.animation.KeyframeAnimations;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
@@ -18,7 +16,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.function.Function;
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public abstract class HierarchicalModel<E extends Entity> extends EntityModel<E> {
     private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
 

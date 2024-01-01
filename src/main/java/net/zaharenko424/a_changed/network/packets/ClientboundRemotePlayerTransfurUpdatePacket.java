@@ -7,17 +7,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.a_changed.TransfurManager;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
 import static net.zaharenko424.a_changed.AChanged.LOGGER;
-import static net.zaharenko424.a_changed.TransfurManager.*;
+import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
 public class ClientboundRemotePlayerTransfurUpdatePacket implements SimpleMessage {
     private static final String UUID_KEY = "uuid";

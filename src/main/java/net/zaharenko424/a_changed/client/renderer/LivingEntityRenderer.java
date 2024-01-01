@@ -20,8 +20,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.scores.Team;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,7 +30,6 @@ import static net.minecraft.client.renderer.entity.LivingEntityRenderer.getOverl
 import static net.minecraft.client.renderer.entity.LivingEntityRenderer.isEntityUpsideDown;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public abstract class LivingEntityRenderer<E extends LivingEntity, M extends EntityModel<E>> extends EntityRenderer<E> implements RenderLayerParent<E,M> {
     
     protected M model;

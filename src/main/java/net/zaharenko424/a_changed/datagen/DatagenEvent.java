@@ -31,6 +31,7 @@ public final class DatagenEvent {
 
         CompletableFuture<HolderLookup.Provider> lookup0=
                 generator.addProvider(event.includeServer(), new DatapackEntriesProvider(out,lookup)).getRegistryProvider();
+        generator.addProvider(event.includeServer(), new BiomeTagProvider(out,lookup0,helper));
         generator.addProvider(event.includeServer(), new DamageTypeTagProvider(out,lookup0,helper));
 
         generator.addProvider(event.includeServer(), new RecipeProvider(out,lookup));

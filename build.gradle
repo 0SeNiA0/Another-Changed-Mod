@@ -10,6 +10,16 @@ mixin {
     config 'a_changed.mixins.json'
 }
 
+minecraft {
+    mappings {
+        channel = official()
+        version.put "minecraft", minecraft_version
+    }
+    accessTransformers {
+        file('src/main/resources/accesstransformer.cfg')
+    }
+}
+
 version = mod_version
 group = mod_group_id
 

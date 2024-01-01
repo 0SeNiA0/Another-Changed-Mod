@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -30,8 +29,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Utils {
 
-    public static @NotNull ResourceKey<ConfiguredFeature<?,?>> featureKey(@NotNull String str){
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE,new ResourceLocation(AChanged.MODID,str));
+    public static <T> @NotNull ResourceKey<T> featureKey(ResourceKey<? extends Registry<T>> registry, @NotNull String str){
+        return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
     }
 
     public static void addItemOrDrop(@NotNull Player player, @NotNull ItemStack item){

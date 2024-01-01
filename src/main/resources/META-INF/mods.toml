@@ -1,21 +1,12 @@
-# Find more information on toml format here:  https://github.com/toml-lang/toml
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
-# Review your options at https://choosealicense.com/.
 license="${mod_license}"
-# A URL to refer people to when problems occur with this mod
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-# A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
-#credits="" #optional
+logoFile="logo.png"
 authors="${mod_authors}"
 description='''${mod_description}'''
 [[dependencies.${mod_id}]]
@@ -30,3 +21,5 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+[[accessTransformers]]
+    file="accesstransformer.cfg"

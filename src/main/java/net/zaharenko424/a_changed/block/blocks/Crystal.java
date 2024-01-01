@@ -13,10 +13,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.TransfurDamageSource;
-import net.zaharenko424.a_changed.TransfurManager;
-import net.zaharenko424.a_changed.TransfurSource;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurSource;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;

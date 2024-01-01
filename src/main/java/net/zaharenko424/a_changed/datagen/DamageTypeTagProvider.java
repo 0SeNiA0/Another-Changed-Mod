@@ -6,7 +6,7 @@ import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

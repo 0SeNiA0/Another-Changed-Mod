@@ -3,10 +3,7 @@ package net.zaharenko424.a_changed.client.model.animation;
 import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public interface Animations {
 
     AnimationDefinition DRAGON_TAIL_ANIM = AnimationDefinition.Builder.withLength(4.0F).looping()

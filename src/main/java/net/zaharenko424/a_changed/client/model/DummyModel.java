@@ -4,13 +4,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.model.geom.*;
+import net.zaharenko424.a_changed.client.model.geom.GroupBuilder;
+import net.zaharenko424.a_changed.client.model.geom.GroupDefinition;
+import net.zaharenko424.a_changed.client.model.geom.MeshDefinition;
+import net.zaharenko424.a_changed.client.model.geom.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class DummyModel<E extends LivingEntity> extends AbstractLatexEntityModel<E> {
     public DummyModel() {
         super(bodyLayer);

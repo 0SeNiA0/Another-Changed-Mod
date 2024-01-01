@@ -7,9 +7,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundTryPasswordPacket;
 
@@ -19,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class KeypadScreen extends Screen {
     private static final int MAX_SIZE=8;
     private Button button;
@@ -172,7 +168,6 @@ public class KeypadScreen extends Screen {
                 box = charBoxes.get(i);
                 if (mouseX >= box.x && mouseX <= box.x1 && mouseY >= box.y && mouseY <= box.y1) {
                     selectedChar = i;
-                    AChanged.LOGGER.warn("charBox selected");
                     return true;
                 }
             }

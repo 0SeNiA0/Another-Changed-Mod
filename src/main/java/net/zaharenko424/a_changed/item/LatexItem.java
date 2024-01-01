@@ -6,9 +6,9 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.TransfurManager;
-import net.zaharenko424.a_changed.TransfurSource;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurSource;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
 

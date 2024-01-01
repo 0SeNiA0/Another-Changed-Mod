@@ -5,17 +5,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.capabilities.*;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.common.util.NonNullSupplier;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.TransfurManager;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.zaharenko424.a_changed.TransfurManager.*;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.UUID;
+
+import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
 public class TransfurCapability {
 
@@ -56,9 +63,13 @@ public class TransfurCapability {
         }
     }
 
+    @ParametersAreNonnullByDefault
     public static class TransfurHandler implements ITransfurHandler {
 
         final LivingEntity entity;
+        static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
+        static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
+        static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
 
         float transfurProgress=0;
         AbstractTransfurType transfurType=null;
@@ -80,7 +91,7 @@ public class TransfurCapability {
         }
 
         @Override
-        public void setTransfurProgress(float amount, @NotNull AbstractTransfurType transfurType) {
+        public void setTransfurProgress(float amount, AbstractTransfurType transfurType) {
             i0=ticksUntilTFProgressDecrease;
             transfurProgress=amount;
             this.transfurType=transfurType;
@@ -92,7 +103,7 @@ public class TransfurCapability {
         }
 
         @Override
-        public void setTransfurType(@NotNull AbstractTransfurType transfurType) {
+        public void setTransfurType(AbstractTransfurType transfurType) {
             this.transfurType=transfurType;
         }
 
@@ -102,11 +113,15 @@ public class TransfurCapability {
         }
 
         @Override
-        public void transfur(@NotNull AbstractTransfurType transfurType) {
+        public void transfur(AbstractTransfurType transfurType) {
             transfurProgress=20;
             this.transfurType=transfurType;
             isTransfurred=true;
             isBeingTransfurred=false;
+            if(entity.level().isClientSide) return;
+            AttributeMap map = entity.getAttributes();
+            removeModifiers(map);
+            addModifiers(map);
         }
 
         @Override
@@ -114,6 +129,26 @@ public class TransfurCapability {
             transfurProgress=0;
             transfurType=null;
             isTransfurred=false;
+            if(entity.level().isClientSide) return;
+            removeModifiers(entity.getAttributes());
+        }
+
+        private void addModifiers(AttributeMap map){
+            float f = transfurType.airReductionModifier;
+            int i = transfurType.maxHealthModifier;
+            if(f!=0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", f, AttributeModifier.Operation.ADDITION));
+            if(i!=0) {
+                map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier, "a", i, AttributeModifier.Operation.ADDITION));
+                if(i>0) entity.heal(i);
+            }
+            f = transfurType.swimSpeedModifier;
+            if(f!=0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a",f, AttributeModifier.Operation.ADDITION));
+        }
+
+        private void removeModifiers(AttributeMap map){
+            map.getInstance(AChanged.AIR_DECREASE_SPEED).removeModifier(airDecreaseSpeed);
+            map.getInstance(Attributes.MAX_HEALTH).removeModifier(healthModifier);
+            map.getInstance(NeoForgeMod.SWIM_SPEED).removeModifier(swimSpeed);
         }
 
         @Override
@@ -127,10 +162,11 @@ public class TransfurCapability {
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
+        public void load(CompoundTag tag) {
             transfurProgress=tag.getFloat(TRANSFUR_PROGRESS_KEY);
             if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType=TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
             isTransfurred=tag.getBoolean(TRANSFURRED_KEY);
+            if(isTransfurred&&!entity.level().isClientSide) addModifiers(entity.getAttributes());
         }
 
         @Override

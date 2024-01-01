@@ -3,9 +3,9 @@ package net.zaharenko424.a_changed.registry;
 import net.minecraft.core.Registry;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
-import net.zaharenko424.a_changed.transfurTypes.BeiFeng;
-import net.zaharenko424.a_changed.transfurTypes.LatexWolf;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.BeiFeng;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.LatexWolf;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;

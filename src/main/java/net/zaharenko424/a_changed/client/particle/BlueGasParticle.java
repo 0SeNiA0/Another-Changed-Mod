@@ -3,14 +3,11 @@ package net.zaharenko424.a_changed.client.particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@OnlyIn(Dist.CLIENT)
 public class BlueGasParticle extends TextureSheetParticle {
 
     protected BlueGasParticle(ClientLevel p_108328_, double p_108329_, double p_108330_, double p_108331_, double xSpeed, double ySpeed, double zSpeed, SpriteSet sprites) {

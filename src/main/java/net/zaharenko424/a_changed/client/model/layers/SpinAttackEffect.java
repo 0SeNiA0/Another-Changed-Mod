@@ -13,21 +13,23 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
+import net.zaharenko424.a_changed.client.model.HierarchicalHumanoidModel;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
-import org.jetbrains.annotations.NotNull;
 
-public class SpinAttackEffect<E extends LivingEntity,M extends AbstractLatexEntityModel<E>> extends RenderLayer<E,M> {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+public class SpinAttackEffect<E extends LivingEntity,M extends HierarchicalHumanoidModel<E>> extends RenderLayer<E,M> {
     private final ModelPart box;
 
-    public SpinAttackEffect(LatexEntityRenderer<E> renderer, @NotNull EntityModelSet modelSet) {
+    public SpinAttackEffect(LatexEntityRenderer<E> renderer, EntityModelSet modelSet) {
         super((RenderLayerParent<E, M>) renderer);
         ModelPart modelpart = modelSet.bakeLayer(ModelLayers.PLAYER_SPIN_ATTACK);
         this.box = modelpart.getChild("box");
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int light, @NotNull E p_117352_, float limbSwing, float limbSwingAmount, float ticks, float ageInTicks, float headYaw, float pitch) {
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int light, E p_117352_, float limbSwing, float limbSwingAmount, float ticks, float ageInTicks, float headYaw, float pitch) {
         if (p_117352_.isAutoSpinAttack()) {
             VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(SpinAttackEffectLayer.TEXTURE));
             for(int i = 0; i < 3; ++i) {

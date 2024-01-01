@@ -7,6 +7,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtension
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
+
 @ParametersAreNonnullByDefault
 public class FreshAirEffect extends MobEffect {
     public FreshAirEffect() {

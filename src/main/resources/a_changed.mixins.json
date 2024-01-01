@@ -7,11 +7,13 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "MixinEntity",
     "MixinIronGolem",
+    "MixinLivingEntity",
     "MixinPlayer",
     "MixinVillagerHostileSensor"
   ],
   "client": [
-    "MixinPlayerRenderer"
+    "client.MixinPlayerRenderer"
   ]
 }

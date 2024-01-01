@@ -25,6 +25,6 @@ public class AirConditionerEntity extends BlockEntity {
         tick++;
         if(tick<20) return;
         tick=0;
-        level.getEntitiesOfClass(LivingEntity.class,ab).forEach((entity -> entity.addEffect(new MobEffectInstance(MobEffectRegistry.FRESH_AIR.get(),20))));
+        level.getEntitiesOfClass(LivingEntity.class,ab).forEach((entity -> entity.addEffect(new MobEffectInstance(MobEffectRegistry.FRESH_AIR.get(),20,0,false,false))));
     }
 }

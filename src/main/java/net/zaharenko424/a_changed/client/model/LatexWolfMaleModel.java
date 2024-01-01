@@ -6,8 +6,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.model.animation.Animations;
 import net.zaharenko424.a_changed.client.model.geom.*;
@@ -17,15 +15,12 @@ import org.joml.Vector3f;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class LatexWolfMaleModel<E extends LivingEntity> extends AbstractLatexEntityModel<E> {
-    public LatexWolfMaleModel(boolean main) {
-        super(main?bodyLayer:armorLayer);
+    public LatexWolfMaleModel() {
+        super(bodyLayer);
     }
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"main");
-
-    public static final ModelLayerLocation armorLayer = new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"armor");
 
     public static @NotNull ModelDefinition bodyLayer(){
         MeshDefinition meshDefinition = new MeshDefinition();
@@ -79,62 +74,49 @@ public class LatexWolfMaleModel<E extends LivingEntity> extends AbstractLatexEnt
                 .addBox(-2f, 0.3f, 1f, 4f, 2f, 4f, new Vector3f(), ImmutableMap.of(Direction.EAST, new UVData(53f, 28f, 49f, 26f), Direction.UP, new UVData(49f, 49f, 45f, 45f), Direction.DOWN, new UVData(4f, 46f, 0f, 50f), Direction.NORTH, new UVData(53f, 26f, 49f, 24f), Direction.SOUTH, new UVData(53f, 43f, 49f, 41f), Direction.WEST, new UVData(53f, 45f, 49f, 43f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
         left_leg.addOrReplaceChild("left_leg_thigh", GroupBuilder.create()
                 .addBox(-2f, -8f, -2f, 4f, 8f, 4f, new Vector3f(), ImmutableMap.of(Direction.EAST, new UVData(29f, 46f, 25f, 38f), Direction.UP, new UVData(49f, 24f, 45f, 20f), Direction.DOWN, new UVData(49f, 41f, 45f, 45f), Direction.NORTH, new UVData(41f, 27f, 37f, 19f), Direction.SOUTH, new UVData(33f, 46f, 29f, 38f), Direction.WEST, new UVData(37f, 46f, 33f, 38f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
-
-        return ModelDefinition.create(meshDefinition, 128, 128, 2);
-    }
-
-    public static @NotNull ModelDefinition armorLayer(){
-        MeshDefinition meshDefinition = new MeshDefinition();
-        GroupDefinition groupDefinition = meshDefinition.getRoot();
-
-        GroupDefinition root = groupDefinition.addOrReplaceChild("root", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
-        root.addOrReplaceChild("head", GroupBuilder.create()
-                .addBox(-4f, 0f, -4f, 8f, 8f, 8f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 16f, 0f, 8f), Direction.UP, new UVData(16f, 8f, 8f, 0f), Direction.DOWN, new UVData(24f, 0f, 16f, 8f), Direction.NORTH, new UVData(16f, 16f, 8f, 8f), Direction.SOUTH, new UVData(32f, 16f, 24f, 8f), Direction.WEST, new UVData(24f, 16f, 16f, 8f)))
-                .addBox(-2f, 1f, -6f, 4f, 2f, 2f, new Vector3f(), ImmutableMap.of(Direction.EAST, new UVData(25f, 46f, 23f, 44f), Direction.UP, new UVData(52f, 41f, 48f, 39f), Direction.DOWN, new UVData(45f, 48f, 41f, 50f), Direction.NORTH, new UVData(41f, 50f, 37f, 48f), Direction.SOUTH, new UVData(52f, 39f, 48f, 37f), Direction.WEST, new UVData(47f, 26f, 45f, 24f)))
-                .addBox(-1.5f, 0f, -5.5f, 3f, 1f, 1.5f, new Vector3f(), ImmutableMap.of(Direction.EAST, new UVData(40.5f, 51f, 39f, 50f), Direction.UP, new UVData(28f, 37.5f, 25f, 36f), Direction.DOWN, new UVData(52f, 47f, 49f, 48.5f), Direction.NORTH, new UVData(16f, 36f, 13f, 35f), Direction.SOUTH, new UVData(40f, 34f, 37f, 33f), Direction.WEST, new UVData(42.5f, 51f, 41f, 50f))), PartPose.offset(0f, 24f, 0f));
-        GroupDefinition body = root.addOrReplaceChild("body", GroupBuilder.create()
+        root.addOrReplaceChild("armor_head", GroupBuilder.create()
+                .addBox(-4f, 0f, -4f, 8f, 8f, 8f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 16f, 0f, 8f), Direction.UP, new UVData(16f, 8f, 8f, 0f), Direction.DOWN, new UVData(24f, 0f, 16f, 8f), Direction.NORTH, new UVData(16f, 16f, 8f, 8f), Direction.SOUTH, new UVData(32f, 16f, 24f, 8f), Direction.WEST, new UVData(24f, 16f, 16f, 8f))), PartPose.offset(0f, 24f, 0f));
+        GroupDefinition armor_body = root.addOrReplaceChild("armor_body", GroupBuilder.create()
                 .addBox(-4f, 0f, -2f, 8f, 12f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(32f, 32f, 28f, 20f), Direction.UP, new UVData(40f, 11f, 32f, 7f), Direction.DOWN, new UVData(40f, 34f, 32f, 38f), Direction.NORTH, new UVData(28f, 32f, 20f, 20f), Direction.SOUTH, new UVData(40f, 32f, 32f, 20f), Direction.WEST, new UVData(20f, 32f, 16f, 20f))), PartPose.offset(0f, 12f, 0f));
-        GroupDefinition tail = body.addOrReplaceChild("tail", GroupBuilder.create()
+        GroupDefinition ar_tail = armor_body.addOrReplaceChild("ar_tail", GroupBuilder.create()
                 .addBox(-1.5f, -1.5f, -2f, 3f, 3f, 6f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 20f, 4f, 16f), Direction.UP, new UVData(16f, 29f, 12f, 24f), Direction.DOWN, new UVData(16f, 24f, 12f, 29f), Direction.WEST, new UVData(8f, 20f, 4f, 16f))), PartPose.offsetAndRotation(0f, 0f, 2f, 0.48f, 0f, 0f));
-        tail.addOrReplaceChild("tail_0", GroupBuilder.create()
+        ar_tail.addOrReplaceChild("ar_tail_0", GroupBuilder.create()
                 .addBox(-2f, -2f, -1f, 4f, 4f, 9f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 20f, 4f, 16f), Direction.UP, new UVData(16f, 29f, 12f, 20f), Direction.DOWN, new UVData(16f, 20f, 12f, 29f), Direction.NORTH, new UVData(8f, 20f, 4f, 16f), Direction.SOUTH, new UVData(8f, 20f, 4f, 16f), Direction.WEST, new UVData(8f, 20f, 4f, 16f)))
                 .addBox(-1f, -1f, 7f, 2f, 2f, 2f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 20f, 4f, 16f), Direction.UP, new UVData(8f, 20f, 4f, 16f), Direction.DOWN, new UVData(8f, 16f, 4f, 20f), Direction.SOUTH, new UVData(8f, 20f, 4f, 16f), Direction.WEST, new UVData(8f, 20f, 4f, 16f))), PartPose.offsetAndRotation(0f, 0f, 4f, 0.1309f, 0f, 0f));
-        root.addOrReplaceChild("right_arm", GroupBuilder.create()
+        root.addOrReplaceChild("armor_right_arm", GroupBuilder.create()
                 .addBox(0f, -10f, -2f, 4f, 12f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(44f, 32f, 40f, 20f), Direction.UP, new UVData(48f, 20f, 44f, 16f), Direction.NORTH, new UVData(48f, 32f, 44f, 20f), Direction.SOUTH, new UVData(56f, 32f, 52f, 20f), Direction.WEST, new UVData(52f, 32f, 48f, 20f))), PartPose.offset(4f, 22f, 0f));
-        root.addOrReplaceChild("left_arm", GroupBuilder.create()
+        root.addOrReplaceChild("armor_left_arm", GroupBuilder.create()
                 .addBox(-4f, -10f, -2f, 4f, 12f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(52f, 32f, 48f, 20f), Direction.UP, new UVData(44f, 20f, 48f, 16f), Direction.NORTH, new UVData(56f, 32f, 52f, 20f), Direction.SOUTH, new UVData(48f, 32f, 44f, 20f), Direction.WEST, new UVData(40f, 32f, 44f, 20f))), PartPose.offset(-4f, 22f, 0f));
-        GroupDefinition right_leg = root.addOrReplaceChild("right_leg", GroupBuilder.create(), PartPose.offsetAndRotation(2f, 13f, 0f, 0f, -0.1309f, 0.1309f));
-        GroupDefinition right_leg_shin = right_leg.addOrReplaceChild("right_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
-        GroupDefinition right_leg_ = right_leg_shin.addOrReplaceChild("right_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
-        right_leg_.addOrReplaceChild("right_leg_", GroupBuilder.create()
-                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(32f, 32f, 28f, 27f), Direction.UP, new UVData(49f, 16f, 45f, 12f), Direction.DOWN, new UVData(49f, 16f, 45f, 20f), Direction.NORTH, new UVData(20f, 32f, 16f, 27f), Direction.SOUTH, new UVData(32f, 32f, 28f, 27f), Direction.WEST, new UVData(32f, 32f, 28f, 27f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
-        right_leg_shin.addOrReplaceChild("right_leg_shin", GroupBuilder.create()
+        GroupDefinition armor_right_leg = root.addOrReplaceChild("armor_right_leg", GroupBuilder.create(), PartPose.offsetAndRotation(2f, 13f, 0f, 0f, -0.1309f, 0.1309f));
+        GroupDefinition ar_right_leg_shin = armor_right_leg.addOrReplaceChild("ar_right_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        ar_right_leg_shin.addOrReplaceChild("ar_right_leg_shin", GroupBuilder.create()
                 .addBox(-2f, 0.3f, 1f, 4f, 2f, 4f, new Vector3f(0.59f), ImmutableMap.of(Direction.EAST, new UVData(8f, 20f, 4f, 16f), Direction.UP, new UVData(8f, 20f, 4f, 16f), Direction.DOWN, new UVData(49f, 8f, 45f, 12f), Direction.NORTH, new UVData(8f, 20f, 4f, 16f), Direction.SOUTH, new UVData(8f, 20f, 4f, 16f), Direction.WEST, new UVData(8f, 20f, 4f, 16f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
-        right_leg.addOrReplaceChild("right_leg_thigh", GroupBuilder.create()
+        armor_right_leg.addOrReplaceChild("ar_right_leg_thigh", GroupBuilder.create()
                 .addBox(-2f, -8f, -2f, 4f, 8f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(12f, 29f, 8f, 20f), Direction.UP, new UVData(8f, 20f, 4f, 16f), Direction.DOWN, new UVData(8f, 16f, 4f, 20f), Direction.NORTH, new UVData(8f, 29f, 4f, 20f), Direction.SOUTH, new UVData(16f, 29f, 12f, 20f), Direction.WEST, new UVData(12f, 29f, 8f, 20f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
-        GroupDefinition left_leg = root.addOrReplaceChild("left_leg", GroupBuilder.create(), PartPose.offsetAndRotation(-2f, 13f, 0f, 0f, 0.1309f, -0.1309f));
-        GroupDefinition left_leg_shin = left_leg.addOrReplaceChild("left_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
-        GroupDefinition left_leg_ = left_leg_shin.addOrReplaceChild("left_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
-        left_leg_.addOrReplaceChild("left_leg_", GroupBuilder.create()
-                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(32f, 32f, 28f, 27f), Direction.UP, new UVData(8f, 50f, 4f, 46f), Direction.DOWN, new UVData(27f, 46f, 23f, 50f), Direction.NORTH, new UVData(28f, 32f, 32f, 27f), Direction.SOUTH, new UVData(32f, 32f, 28f, 27f), Direction.WEST, new UVData(28f, 32f, 32f, 27f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
-        left_leg_shin.addOrReplaceChild("left_leg_shin", GroupBuilder.create()
+        GroupDefinition armor_left_leg = root.addOrReplaceChild("armor_left_leg", GroupBuilder.create(), PartPose.offsetAndRotation(-2f, 13f, 0f, 0f, 0.1309f, -0.1309f));
+        GroupDefinition ar_left_leg_shin = armor_left_leg.addOrReplaceChild("ar_left_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        ar_left_leg_shin.addOrReplaceChild("ar_left_leg_shin", GroupBuilder.create()
                 .addBox(-2f, 0.3f, 1f, 4f, 2f, 4f, new Vector3f(0.59f), ImmutableMap.of(Direction.EAST, new UVData(8f, 20f, 4f, 16f), Direction.UP, new UVData(8f, 20f, 4f, 16f), Direction.DOWN, new UVData(4f, 46f, 0f, 50f), Direction.NORTH, new UVData(53f, 26f, 49f, 24f), Direction.SOUTH, new UVData(8f, 20f, 4f, 16f), Direction.WEST, new UVData(4f, 20f, 8f, 16f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
-        left_leg.addOrReplaceChild("left_leg_thigh", GroupBuilder.create()
+        armor_left_leg.addOrReplaceChild("ar_left_leg_thigh", GroupBuilder.create()
                 .addBox(-2f, -8f, -2f, 4f, 8f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(12f, 29f, 8f, 20f), Direction.UP, new UVData(8f, 20f, 4f, 16f), Direction.DOWN, new UVData(4f, 16f, 8f, 20f), Direction.NORTH, new UVData(4f, 29f, 8f, 20f), Direction.SOUTH, new UVData(16f, 29f, 12f, 20f), Direction.WEST, new UVData(12f, 29f, 8f, 20f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.3491f, 0f, 0f));
-        GroupDefinition right_foot = root.addOrReplaceChild("right_foot", GroupBuilder.create(), PartPose.offsetAndRotation(2f, 13f, 0f, 0f, -0.1309f, 0.1309f));
-        GroupDefinition right_leg_shin2 = right_foot.addOrReplaceChild("right_leg_shin2", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
-        GroupDefinition right_leg_2 = right_leg_shin2.addOrReplaceChild("right_leg_2", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
-        GroupDefinition right_foot2 = right_leg_2.addOrReplaceChild("right_foot2", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
-        right_foot2.addOrReplaceChild("right_foot", GroupBuilder.create()
-                .addBox(-1.3f, -6f, -3.5f, 4f, 2f, 5f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(12f, 20f, 8f, 16f), Direction.UP, new UVData(44f, 38f, 40f, 33f), Direction.DOWN, new UVData(12f, 16f, 8f, 20f), Direction.NORTH, new UVData(12f, 20f, 8f, 16f), Direction.SOUTH, new UVData(12f, 20f, 8f, 16f), Direction.WEST, new UVData(12f, 20f, 8f, 16f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0f, 0f, -0.1309f));
-        GroupDefinition left_foot = root.addOrReplaceChild("left_foot", GroupBuilder.create(), PartPose.offsetAndRotation(-2f, 13f, 0f, 0f, 0.1309f, -0.1309f));
-        GroupDefinition left_leg_shin2 = left_foot.addOrReplaceChild("left_leg_shin2", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
-        GroupDefinition left_leg_2 = left_leg_shin2.addOrReplaceChild("left_leg_2", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
-        GroupDefinition left_foot2 = left_leg_2.addOrReplaceChild("left_foot2", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
-        left_foot2.addOrReplaceChild("left_foot", GroupBuilder.create()
+        GroupDefinition armor_right_foot = root.addOrReplaceChild("armor_right_foot", GroupBuilder.create(), PartPose.offsetAndRotation(2f, 13f, 0f, 0f, -0.1309f, 0.1309f));
+        GroupDefinition arf_right_leg_shin = armor_right_foot.addOrReplaceChild("arf_right_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        GroupDefinition arf_right_leg_ = arf_right_leg_shin.addOrReplaceChild("arf_right_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
+        GroupDefinition arf_right_foot = arf_right_leg_.addOrReplaceChild("arf_right_foot", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
+        arf_right_foot.addOrReplaceChild("arf_right_foot", GroupBuilder.create()
+                .addBox(-1.3f, -6f, -3.5f, 4f, 2f, 5f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(12f, 20f, 8f, 16f), Direction.UP, new UVData(12f, 20f, 8f, 16f), Direction.DOWN, new UVData(12f, 16f, 8f, 20f), Direction.NORTH, new UVData(12f, 20f, 8f, 16f), Direction.SOUTH, new UVData(12f, 20f, 8f, 16f), Direction.WEST, new UVData(12f, 20f, 8f, 16f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0f, 0f, -0.1309f));
+        arf_right_leg_.addOrReplaceChild("arf_right_leg_", GroupBuilder.create()
+                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 32f, 4f, 26f), Direction.UP, new UVData(49f, 16f, 45f, 12f), Direction.DOWN, new UVData(49f, 16f, 45f, 20f), Direction.NORTH, new UVData(4f, 32f, 0f, 26f), Direction.SOUTH, new UVData(4f, 32f, 0f, 26f), Direction.WEST, new UVData(8f, 32f, 4f, 26f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
+        GroupDefinition armor_left_foot = root.addOrReplaceChild("armor_left_foot", GroupBuilder.create(), PartPose.offsetAndRotation(-2f, 13f, 0f, 0f, 0.1309f, -0.1309f));
+        GroupDefinition arf_left_leg_shin = armor_left_foot.addOrReplaceChild("arf_left_leg_shin", GroupBuilder.create(), PartPose.offset(0f, -6f, -2f));
+        GroupDefinition arf_left_leg_ = arf_left_leg_shin.addOrReplaceChild("arf_left_leg_", GroupBuilder.create(), PartPose.offset(0f, -1f, 3f));
+        GroupDefinition arf_left_foot = arf_left_leg_.addOrReplaceChild("arf_left_foot", GroupBuilder.create(), PartPose.offset(0f, 0f, 0f));
+        arf_left_foot.addOrReplaceChild("arf_left_foot", GroupBuilder.create()
                 .addBox(-2.7f, -6f, -3.5f, 4f, 2f, 5f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(12f, 20f, 8f, 16f), Direction.UP, new UVData(12f, 20f, 8f, 16f), Direction.DOWN, new UVData(8f, 16f, 12f, 20f), Direction.NORTH, new UVData(8f, 20f, 12f, 16f), Direction.SOUTH, new UVData(12f, 20f, 8f, 16f), Direction.WEST, new UVData(12f, 16f, 8f, 20f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0f, 0f, 0.1309f));
+        arf_left_leg_.addOrReplaceChild("arf_left_leg_", GroupBuilder.create()
+                .addBox(-2f, -5f, -2f, 4f, 6f, 4f, new Vector3f(0.6f), ImmutableMap.of(Direction.EAST, new UVData(8f, 32f, 4f, 26f), Direction.UP, new UVData(8f, 50f, 4f, 46f), Direction.DOWN, new UVData(27f, 46f, 23f, 50f), Direction.NORTH, new UVData(0f, 32f, 4f, 26f), Direction.SOUTH, new UVData(4f, 32f, 0f, 26f), Direction.WEST, new UVData(4f, 32f, 8f, 26f))), PartPose.offsetAndRotation(0f, 0f, 0f, 0.1309f, 0f, 0f));
 
-        return ModelDefinition.create(meshDefinition, 64, 32);
+        return ModelDefinition.create(meshDefinition, 128, 128, 2);
     }
 
     AnimationState ears = new AnimationState();

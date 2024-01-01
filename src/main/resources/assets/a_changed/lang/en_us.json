@@ -60,6 +60,10 @@
   "entity.a_changed.white_latex_wolf_female": "White Latex Wolf",
   "entity.a_changed.white_latex_wolf_male": "White Latex Wolf",
 
+  "gamerule.chooseTransfurOrDie": "Allow player to choose between being transfurred and dying",
+  "gamerule.keepTransfurOnDeath": "Keep transfur on death",
+  "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
+
   "item.a_changed.cardboard": "Cardboard",
   "item.a_changed.dark_latex": "Dark latex",
   "item.a_changed.dark_latex_bucket": "Dark latex bucket",

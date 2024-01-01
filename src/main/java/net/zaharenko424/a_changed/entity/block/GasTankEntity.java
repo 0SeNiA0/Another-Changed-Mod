@@ -14,10 +14,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.TransfurDamageSource;
-import net.zaharenko424.a_changed.TransfurManager;
 import net.zaharenko424.a_changed.block.blocks.GasTank;
 import net.zaharenko424.a_changed.registry.*;
+import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

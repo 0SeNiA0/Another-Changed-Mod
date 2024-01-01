@@ -6,11 +6,11 @@ import net.minecraft.sounds.SoundSource;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.TransfurDamageSource;
-import net.zaharenko424.a_changed.TransfurManager;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -40,6 +40,7 @@ public class ServerboundTransfurChoicePacket implements SimpleMessage {
             return;
         }
         ITransfurHandler handler=player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
+        if(!handler.isBeingTransfurred()) return;
         if(becomeTransfur){
             player.level().playSound(null,player, SoundRegistry.TRANSFUR.get(), SoundSource.PLAYERS,1,1);
             handler.transfur(handler.getTransfurType());

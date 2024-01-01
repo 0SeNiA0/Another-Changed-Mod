@@ -6,8 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,7 +15,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class ModelPart {
     public float x;
     public float y;
@@ -67,22 +64,30 @@ public class ModelPart {
         zScale = 1.0F;
     }
 
-    public void copyFrom(ModelPart part) {
-        xScale = part.xScale;
-        yScale = part.yScale;
-        zScale = part.zScale;
-        xRot = part.xRot;
-        yRot = part.yRot;
-        zRot = part.zRot;
-        x = part.x;
-        y = part.y;
-        z = part.z;
+    public void copyFrom(ModelPart from) {
+        xScale = from.xScale;
+        yScale = from.yScale;
+        zScale = from.zScale;
+        xRot = from.xRot;
+        yRot = from.yRot;
+        zRot = from.zRot;
+        x = from.x;
+        y = from.y;
+        z = from.z;
     }
 
-    public void copyFromWithChildren(ModelPart part){
-        copyFrom(part);
+    public void copyFromWChildren(ModelPart from){
+        copyFrom(from);
         children.forEach((name,p) -> {
-            if(part.children.containsKey(name)) p.copyFromWithChildren(part.getChild(name));
+            if(from.children.containsKey(name)) p.copyFromWChildren(from.getChild(name));
+        });
+    }
+
+    public void copyFromWChildrenRemapped(ModelPart from, String remappingPrefix){
+        copyFrom(from);
+        children.forEach((name,p) -> {
+            String trimName = name.replace(remappingPrefix,"");
+            if(from.children.containsKey(trimName)) p.copyFromWChildren(from.getChild(trimName));
         });
     }
 
@@ -183,11 +188,14 @@ public class ModelPart {
         zScale += scale.z();
     }
 
+    public ImmutableMap<String, ModelPart> getChildren(){
+        return ImmutableMap.copyOf(children);
+    }
+
     public Stream<ModelPart> getAllParts() {
         return Stream.concat(Stream.of(this), children.values().stream().flatMap(ModelPart::getAllParts));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Cube {
         private final Quad[] quads;
         public final float minX;
@@ -267,7 +275,6 @@ public class ModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class Quad {
         public final Vertex[] vertices;
         public final Vector3f normal;
@@ -295,7 +302,6 @@ public class ModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     static class Vertex {
         public final Vector3f pos;
         public final float u;

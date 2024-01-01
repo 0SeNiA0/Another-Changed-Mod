@@ -1,29 +1,27 @@
 package net.zaharenko424.a_changed.client.model;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import java.util.Optional;
-
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends HierarchicalModel<E> implements ArmedModel {
-
     private final ModelPart root;
     public final ModelPart head;
     public final ModelPart body;
@@ -31,6 +29,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
     public final ModelPart leftArm;
     public final ModelPart rightLeg;
     public final ModelPart leftLeg;
+    protected final ImmutableList<ModelPart> bodyParts;
     public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
     public HumanoidModel.ArmPose rightArmPose = HumanoidModel.ArmPose.EMPTY;
     public boolean crouching;
@@ -45,6 +44,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         leftArm = root.getChild("left_arm");
         rightLeg = root.getChild("right_leg");
         leftLeg = root.getChild("left_leg");
+        bodyParts = ImmutableList.copyOf(root.getAllParts().filter(part -> !part.isEmpty()).iterator());
     }
 
     public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {
@@ -53,21 +53,29 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
     }
 
     @Override
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
+        super.renderToBuffer(poseStack, consumer, light, overlay, r, g, b, alpha);
+    }
+
+    @Override
     public void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+        root.getChildren().forEach((name,part)->{
+            if(name.startsWith("armor_")) part.visible=false;
+        });
         root.getAllParts().forEach(ModelPart::resetPose);
         boolean flag = entity.getFallFlyingTicks() > 4;
         boolean flag1 = entity.isVisuallySwimming();
-        head.yRot = headYaw * (float) (Math.PI / 180.0);
+        head.yRot = headYaw * Mth.DEG_TO_RAD;
         if (flag) {
-            head.xRot = (float) (-Math.PI / 4);
+            head.xRot = (float) Math.PI / 4;
         } else if (swimAmount > 0.0F) {
             if (flag1) {
-                head.xRot = rotlerpRad(swimAmount, head.xRot, (float) (-Math.PI / 4));
+                head.xRot = rotlerpRad(swimAmount, head.xRot, (float) Math.PI / 4);
             } else {
-                head.xRot = rotlerpRad(swimAmount, head.xRot, headPitch * (float) (Math.PI / 180.0));
+                head.xRot = rotlerpRad(swimAmount, head.xRot, headPitch * -Mth.DEG_TO_RAD);
             }
         } else {
-            head.xRot = headPitch * (float) (Math.PI / 180.0);
+            head.xRot = headPitch * Mth.DEG_TO_RAD;
         }
 
         float f = 1.0F;
@@ -77,24 +85,14 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
             f *= f * f;
         }
 
-        if (f < 1.0F) {
-            f = 1.0F;
-        }
+        if (f < 1.0F) f = 1.0F;
 
         rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F / f;
         leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F / f;
         rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / f;
         leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / f;
-        if (riding) {//TODO test/fix
-            rightArm.xRot += (float) (-Math.PI / 5);
-            leftArm.xRot += (float) (-Math.PI / 5);
-            rightLeg.xRot = -1.4137167F;
-            rightLeg.yRot = (float) (Math.PI / 10);
-            rightLeg.zRot = 0.07853982F;
-            leftLeg.xRot = -1.4137167F;
-            leftLeg.yRot = (float) (-Math.PI / 10);
-            leftLeg.zRot = -0.07853982F;
-        }
+
+        if (riding) setupRiding();
 
         boolean flag2 = entity.getMainArm() == HumanoidArm.RIGHT;
         if (entity.isUsingItem()) {
@@ -119,15 +117,22 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
 
         if (crouching) setupCrouching();
 
-        if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) {
-            AnimationUtils.bobModelPart(rightArm, ageInTicks, 1.0F);
-        }
+        if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(rightArm, ageInTicks, 1.0F);
 
-        if (leftArmPose != HumanoidModel.ArmPose.SPYGLASS) {
-            AnimationUtils.bobModelPart(leftArm, ageInTicks, -1.0F);
-        }
+        if (leftArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(leftArm, ageInTicks, -1.0F);
 
         if (swimAmount > 0.0F) setupSwimAnimation(entity,limbSwing);
+    }
+
+    protected void setupRiding(){
+        rightArm.xRot += (float) Math.PI / 5;
+        leftArm.xRot += (float) Math.PI / 5;
+        rightLeg.xRot = 1.4137167F;
+        rightLeg.yRot = (float) -Math.PI / 10;
+        rightLeg.zRot = 0.07853982F;
+        leftLeg.xRot = 1.4137167F;
+        leftLeg.yRot = (float) Math.PI / 10;
+        leftLeg.zRot = -0.07853982F;
     }
 
     protected void setupCrouching(){
@@ -205,6 +210,38 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         }
     }
 
+    public void setupArmorPart(EquipmentSlot slot){
+        setAllVisible(false);
+        switch(slot){
+            case HEAD -> setupArmorPart("armor_head",head);
+            case CHEST -> {
+                setupArmorPart("armor_body",body);
+                if(body.hasChild("tail")) setAllVisible(body.getChild("tail"),false);
+                setupArmorPart("armor_right_arm",rightArm);
+                setupArmorPart("armor_left_arm",leftArm);
+            }
+            case LEGS -> {
+                setupArmorPart("armor_body",body);
+                setupArmorPart("armor_right_leg",rightLeg);
+                setupArmorPart("armor_left_leg",leftLeg);
+            }
+            case FEET -> {
+                setupArmorPart("armor_right_foot",rightLeg,"arf_");
+                setupArmorPart("armor_left_foot",leftLeg,"arf_");
+            }
+        }
+    }
+
+    protected void setupArmorPart(String name, ModelPart bodyPart){
+        setupArmorPart(name,bodyPart,"ar_");
+    }
+
+    protected void setupArmorPart(String name, ModelPart bodyPart, String armorPrefix){
+        ModelPart armor0 = root.getChild(name);
+        setAllVisible(armor0,true);
+        armor0.copyFromWChildrenRemapped(bodyPart,armorPrefix);
+    }
+
     @Override
     public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
         getArm(arm).translateAndRotate(poseStack);
@@ -219,9 +256,8 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         return arm == HumanoidArm.LEFT ? leftArm : rightArm;
     }
 
-    public ModelPart getFoot(boolean right){
-        Optional<ModelPart> optional = getAnyDescendantWithName(right?"right_foot":"left_foot");
-        return optional.orElse(null);
+    public ModelPart getRandomModelPart(RandomSource p_233439_) {
+        return bodyParts.get(p_233439_.nextInt(bodyParts.size()));
     }
 
     public void setAllVisible(boolean b){
@@ -311,55 +347,6 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 leftArm.xRot = -(Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F);
                 leftArm.yRot = head.yRot - (float) (Math.PI / 6);
         }
-    }
-
-    public void copyPropertiesTo(HierarchicalHumanoidModel<E> copyTo) {
-        super.copyPropertiesTo(copyTo);
-        copyTo.leftArmPose = leftArmPose;
-        copyTo.rightArmPose = rightArmPose;
-        copyTo.crouching = crouching;
-        copyTo.head.copyFrom(head);
-        copyTo.body.copyFrom(body);
-        if(copyTo.body.hasChild("tail")&& body.hasChild("tail")) copyTo.body.getChild("tail").copyFromWithChildren(body.getChild("tail"));
-        copyTo.rightArm.copyFrom(rightArm);
-        copyTo.leftArm.copyFrom(leftArm);
-        copyTo.rightLeg.copyFrom(rightLeg);
-        copyTo.leftLeg.copyFrom(leftLeg);
-    }
-
-    /**
-     * Has to be called from main entity model (not armor)
-     */
-    public <M extends HierarchicalHumanoidModel<E>> void copyFeetToArmor(M  armorModel){
-        ModelPart p0 = rightLeg;
-        ModelPart p1 = p0.getChild("right_leg_shin");
-        ModelPart p2 = p1.getChild("right_leg_");
-        ModelPart p3 = p2.getChild("right_foot");
-
-        ModelPart pt0 = armorModel.root().getChild("right_foot");
-        ModelPart pt1 = pt0.getChild("right_leg_shin2");
-        ModelPart pt2 = pt1.getChild("right_leg_2");
-        ModelPart pt3 = pt2.getChild("right_foot2");
-
-        pt0.copyFrom(p0);
-        pt1.copyFrom(p1);
-        pt2.copyFrom(p2);
-        pt3.copyFrom(p3);
-
-        p0 = leftLeg;
-        p1 = p0.getChild("left_leg_shin");
-        p2 = p1.getChild("left_leg_");
-        p3 = p2.getChild("left_foot");
-
-        pt0 = armorModel.root().getChild("left_foot");
-        pt1 = pt0.getChild("left_leg_shin2");
-        pt2 = pt1.getChild("left_leg_2");
-        pt3 = pt2.getChild("left_foot2");
-
-        pt0.copyFrom(p0);
-        pt1.copyFrom(p1);
-        pt2.copyFrom(p2);
-        pt3.copyFrom(p3);
     }
 
     @Override

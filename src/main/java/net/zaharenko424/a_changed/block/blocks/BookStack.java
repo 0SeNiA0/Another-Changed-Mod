@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -63,6 +64,11 @@ public class BookStack extends Block implements EntityBlock {
         BlockEntity entity=p_60556_.getBlockEntity(p_60557_);
         if(!(entity instanceof BookStackEntity bookStack)||bookStack.bookAmount()==0) return ONE_BOOK;
         return Objects.requireNonNull(SHAPE_BY_AMOUNT.get(bookStack.bookAmount()),"Book amount out of bounds!");
+    }
+
+    @Override
+    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
+        return !canSurvive(p_60541_,p_60544_,p_60545_)? Blocks.AIR.defaultBlockState():super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
     }
 
     @Override

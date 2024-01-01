@@ -9,9 +9,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.TransfurManager;
 import net.zaharenko424.a_changed.block.ISeatBlock;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
 public class SeatEntity extends Entity {

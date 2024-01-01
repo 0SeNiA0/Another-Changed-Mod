@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -21,15 +20,15 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.DummyModel;
 import net.zaharenko424.a_changed.client.model.layers.ArmorLayer;
+import net.zaharenko424.a_changed.client.model.layers.ArrowLayer;
+import net.zaharenko424.a_changed.client.model.layers.ElytraLayerFix;
 import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
-import net.zaharenko424.a_changed.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -37,12 +36,9 @@ import org.joml.Vector3f;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRenderer<E, AbstractLatexEntityModel<E>> {
 
     protected AbstractTransfurType transfurType=null;
-    protected AbstractLatexEntityModel<E> armorModel;
-
     protected final EntityRendererProvider.Context context;
 
     protected LatexEntityRenderer(EntityRendererProvider.Context context, AbstractLatexEntityModel<E> model){
@@ -66,11 +62,10 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     protected void addLayers(){
         addLayer(new ArmorLayer<>(this, context.getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET)));
         addLayer(new ItemInHandLayer<>(this, this.context.getItemInHandRenderer()));
-        addLayer(new ElytraLayer<>(this, this.context.getModelSet()));//TODO rewrite
+        addLayer(new ElytraLayerFix<>(this, this.context.getModelSet()));
         addLayer(new SpinAttackEffect<>(this,context.getModelSet()));
+        addLayer(new ArrowLayer<>(context.getEntityRenderDispatcher(), this));//kinda works
         //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
-        //addLayer(new ArrowLayer<>(p_174557_, this));
-        //addLayer(new SpinAttackEffectLayer<>(this, p_174557_.getModelSet()));
     }
 
     public boolean isTransfurTypeNonNull(){
@@ -82,12 +77,13 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         this.transfurType=transfurType;
         if(transfurType!=null) {
             model = transfurType.getModel();
-            armorModel = transfurType.getArmorModel();
         }
     }
 
-    public AbstractLatexEntityModel<E> getArmorModel(){
-        return armorModel;
+    @Override
+    public void render(E entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+        setModelProperties(entity);
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, light);
     }
 
     public void renderHand(PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
@@ -104,12 +100,6 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
             model.leftArm.offsetScale(new Vector3f(.9f));
             model.leftArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         }
-    }
-
-    @Override
-    public void render(E entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        setModelProperties(entity);
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, light);
     }
 
     private void setModelProperties(E entity){

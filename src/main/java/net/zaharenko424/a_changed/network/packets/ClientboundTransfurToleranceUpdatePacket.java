@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.network.packets;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.a_changed.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

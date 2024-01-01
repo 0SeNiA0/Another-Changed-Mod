@@ -2,8 +2,6 @@ package net.zaharenko424.a_changed.client.model.geom;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Direction;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class GroupBuilder {
     private final List<CubeDefinition> cubes=new ArrayList<>();
     private final boolean mirror=false;

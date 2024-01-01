@@ -1,14 +1,11 @@
 package net.zaharenko424.a_changed.client.model.geom;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class ModelDefinition {
     private final MeshDefinition mesh;
     private final int textureWidth;

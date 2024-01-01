@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 
@@ -14,7 +12,6 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public final class ModelCache implements ResourceManagerReloadListener {
 
     public static final ModelCache INSTANCE = new ModelCache();
@@ -36,11 +33,8 @@ public final class ModelCache implements ResourceManagerReloadListener {
         map.put(DummyModel.bodyLayer,DummyModel.bodyLayer());
 
         map.put(BeiFengModel.bodyLayer,BeiFengModel.bodyLayer());
-        map.put(BeiFengModel.armorLayer,BeiFengModel.armorLayer());
         map.put(LatexWolfFemaleModel.bodyLayer,LatexWolfFemaleModel.bodyLayer());
-        map.put(LatexWolfFemaleModel.armorLayer,LatexWolfFemaleModel.armorLayer());
         map.put(LatexWolfMaleModel.bodyLayer,LatexWolfMaleModel.bodyLayer());
-        map.put(LatexWolfMaleModel.armorLayer,LatexWolfMaleModel.armorLayer());
 
         modelCache = ImmutableMap.copyOf(map);
     }

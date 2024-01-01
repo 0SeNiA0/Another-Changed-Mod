@@ -3,8 +3,6 @@ package net.zaharenko424.a_changed.client.model.animation;
 
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.HierarchicalModel;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import org.joml.Vector3f;
@@ -15,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @ParametersAreNonnullByDefault
-@OnlyIn(Dist.CLIENT)
 public class KeyframeAnimations {
 
     public static void animate(HierarchicalModel<?> p_232320_, AnimationDefinition animation, long time, float scale, Vector3f cache) {
