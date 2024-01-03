@@ -19,8 +19,8 @@ import net.zaharenko424.a_changed.item.LatexItem;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,7 +117,7 @@ public class LatexContainerEntity extends BlockEntity {
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag modTag=TransfurManager.modTag(p_155245_);
+        CompoundTag modTag= NBTUtils.modTag(p_155245_);
         if(!modTag.contains("latex")) return;
         handler.setStackInSlot(0,ItemStack.of(modTag.getCompound("latex")));
     }
@@ -128,7 +128,7 @@ public class LatexContainerEntity extends BlockEntity {
         if(isEmpty()) return;
         CompoundTag item=new CompoundTag();
         handler.getStackInSlot(0).save(item);
-        TransfurManager.modTag(p_187471_).put("latex",item);
+        NBTUtils.modTag(p_187471_).put("latex",item);
     }
 
     @Override

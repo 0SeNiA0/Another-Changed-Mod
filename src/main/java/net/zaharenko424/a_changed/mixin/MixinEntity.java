@@ -18,7 +18,7 @@ public abstract class MixinEntity {
     @Shadow @Final private static EntityDataAccessor<Integer> DATA_AIR_SUPPLY_ID;
 
     @Inject(at = @At("HEAD"), method = "getAirSupply", cancellable = true)
-    public void onGetAirSupply(@NotNull CallbackInfoReturnable<Integer> cir){
+    private void onGetAirSupply(@NotNull CallbackInfoReturnable<Integer> cir){
         int air = entityData.get(DATA_AIR_SUPPLY_ID);
         cir.setReturnValue(Math.max(air, -20));
     }

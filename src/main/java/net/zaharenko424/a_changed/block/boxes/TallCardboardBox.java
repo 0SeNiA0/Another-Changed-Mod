@@ -20,7 +20,8 @@ public class TallCardboardBox extends TallBox implements ISeatBlock {
 
     @Override
     public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
-        if(p_60567_.isClientSide) super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
+        super.onPlace(p_60566_,p_60567_,p_60568_,p_60569_,p_60570_);
+        if(p_60567_.isClientSide) return;
         if(p_60566_.getValue(PART)==0) p_60567_.addFreshEntity(new SeatEntity(p_60567_,p_60568_,true));
     }
 

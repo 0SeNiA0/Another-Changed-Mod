@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.NoteEntity;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class ServerboundEditNotePacket implements SimpleMessage {
 
     public ServerboundEditNotePacket(FriendlyByteBuf buffer){
         text=new ArrayList<>();
-        Utils.readFromTag(buffer.readNbt(),text);
+        NBTUtils.readFromTag(buffer.readNbt(),text);
         notePos=buffer.readBlockPos();
         finalize=buffer.readBoolean();
     }
@@ -37,7 +37,7 @@ public class ServerboundEditNotePacket implements SimpleMessage {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         CompoundTag tag=new CompoundTag();
-        Utils.writeToTag(tag,text);
+        NBTUtils.writeToTag(tag,text);
         buffer.writeNbt(tag);
         buffer.writeBlockPos(notePos);
         buffer.writeBoolean(finalize);

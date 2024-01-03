@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,7 @@ public class UnTransfurSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
         Player player= (Player) p_41411_;
-        if(!p_41410_.isClientSide) TransfurManager.unTransfur((ServerPlayer) player);
+        if(!p_41410_.isClientSide) TransfurEvent.UNTRANSFUR.accept((ServerPlayer) player);
         return onUse(p_41409_,new ItemStack(ItemRegistry.SYRINGE_ITEM.get()),player);
     }
 }

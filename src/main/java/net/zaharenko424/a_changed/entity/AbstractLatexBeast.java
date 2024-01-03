@@ -22,6 +22,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.ai.LatexAttackGoal;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.worldgen.biome.DarkLatexBiome;
@@ -42,6 +43,7 @@ public abstract class AbstractLatexBeast extends Monster {
         super(entityType, level);
         this.transfurType=transfurType;
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
+        registerLatexGoals();
         AttributeMap map = getAttributes();
         if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED,airDecreaseSpeed)&&transfurType.airReductionModifier!=0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a",transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
         if(!map.hasModifier(Attributes.MAX_HEALTH,healthModifier)&&transfurType.maxHealthModifier!=0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a",transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
@@ -53,7 +55,7 @@ public abstract class AbstractLatexBeast extends Monster {
 
     protected static AttributeSupplier.@NotNull Builder baseAttributes(){
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH,24)
+                .add(Attributes.MAX_HEALTH,20)
                 .add(Attributes.MOVEMENT_SPEED, .4)
                 .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)
@@ -62,16 +64,22 @@ public abstract class AbstractLatexBeast extends Monster {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new OpenDoorGoal(this,false));
-        this.goalSelector.addGoal(2, new LatexAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, .8));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player)&&!TransfurManager.isBeingTransfurred(player)));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
+        goalSelector.addGoal(0, new FloatGoal(this));
+        goalSelector.addGoal(1, new OpenDoorGoal(this,false));
+        goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, .8));
+        goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        targetSelector.addGoal(0, new HurtByTargetGoal(this));
+    }
 
+    protected void registerLatexGoals(){
+        if(transfurType.isOrganic()){
+            goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        } else {
+            goalSelector.addGoal(2, new LatexAttackGoal(this, 1.0, false));
+            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred(player)));
+            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
+        }
     }
 
     public static boolean checkLatexBeastSpawnRules(EntityType<? extends AbstractLatexBeast> p_219014_, ServerLevelAccessor p_219015_, MobSpawnType p_219016_, BlockPos p_219017_, RandomSource p_219018_){
@@ -94,7 +102,7 @@ public abstract class AbstractLatexBeast extends Monster {
         if(!p_21372_.hurt(TransfurDamageSource.transfur(p_21372_,this), 0.1F)) return false;
         doEnchantDamageEffects(this, p_21372_);
         setLastHurtMob(p_21372_);
-        TransfurManager.addTransfurProgress((LivingEntity) p_21372_,5,transfurType);
+        TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);
         return true;
     }
 }

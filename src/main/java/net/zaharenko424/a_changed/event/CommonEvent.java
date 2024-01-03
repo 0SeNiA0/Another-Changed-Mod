@@ -35,6 +35,7 @@ import net.zaharenko424.a_changed.network.packets.ClientboundRemotePlayerTransfu
 import net.zaharenko424.a_changed.network.packets.ClientboundTransfurToleranceUpdatePacket;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -65,7 +66,7 @@ public class CommonEvent {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player= (ServerPlayer) event.getEntity();
-        TransfurManager.recalculateTransfurProgress(player);
+        TransfurEvent.RECALCULATE_PROGRESS.accept(player);
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundTransfurToleranceUpdatePacket());
         TransfurManager.updatePlayer(player);
         player.refreshDimensions();
@@ -113,12 +114,14 @@ public class CommonEvent {
         LivingEntity entity=event.getEntity();
         if(TransfurDamageSource.checkTarget(entity)&&!TransfurManager.isBeingTransfurred(entity)){
             entity.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).tick();
-            if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get());
+            if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f))
+                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
                 return;
             }
-            if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f)) TransfurManager.addTransfurProgress(entity,4,TransfurRegistry.DARK_LATEX_WOLF_M_TF.get());
+            if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
+                if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f))
+                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get(), 4f);
                 return;
             }
         }
@@ -162,7 +165,7 @@ public class CommonEvent {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(isBeingTransfurred) TransfurManager.unTransfur(player); else TransfurManager.updatePlayer(player);
+                if(isBeingTransfurred) TransfurEvent.UNTRANSFUR.accept(player); else TransfurManager.updatePlayer(player);
             }
         },25);
     }

@@ -10,7 +10,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class ClientboundOpenNotePacket implements SimpleMessage {
 
     public ClientboundOpenNotePacket(FriendlyByteBuf buffer){
         text=new ArrayList<>();
-        Utils.readFromTag(buffer.readNbt(),text);
+        NBTUtils.readFromTag(buffer.readNbt(),text);
         notePos=buffer.readBlockPos();
         finalized=buffer.readBoolean();
         guiId=buffer.readInt();
@@ -41,7 +41,7 @@ public class ClientboundOpenNotePacket implements SimpleMessage {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         CompoundTag tag=new CompoundTag();
-        Utils.writeToTag(tag,text);
+        NBTUtils.writeToTag(tag,text);
         buffer.writeNbt(tag);
         buffer.writeBlockPos(notePos);
         buffer.writeBoolean(finalized);

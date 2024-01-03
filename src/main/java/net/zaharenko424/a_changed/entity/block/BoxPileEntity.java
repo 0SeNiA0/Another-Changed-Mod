@@ -3,12 +3,12 @@ package net.zaharenko424.a_changed.entity.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -45,18 +45,18 @@ public class BoxPileEntity extends BlockEntity {
     }
 
     public void dropBoxes(){
-        if(boxes>0) Utils.dropItem(level,worldPosition,new ItemStack(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get(),boxes));
+        if(boxes>0) Block.popResource(level, worldPosition, new ItemStack(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get(), boxes));
     }
 
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        boxes= TransfurManager.modTag(p_155245_).getInt("boxes");
+        boxes= NBTUtils.modTag(p_155245_).getInt("boxes");
     }
 
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        TransfurManager.modTag(p_187471_).putInt("boxes",boxes);
+        NBTUtils.modTag(p_187471_).putInt("boxes",boxes);
     }
 }

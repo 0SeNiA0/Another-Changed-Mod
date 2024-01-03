@@ -17,7 +17,9 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.GasTank;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -67,7 +69,7 @@ public class GasTankEntity extends BlockEntity {
         level.playSound(null,worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
         level.getEntitiesOfClass(LivingEntity.class,ab, TransfurDamageSource::checkTarget).forEach((entity ->{
             if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get())||isFullHazmat(entity)||TransfurManager.isBeingTransfurred(entity)) return;
-            TransfurManager.addTransfurProgress(entity,5, TransfurRegistry.GAS_WOLF_TF.get());
+            TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.GAS_WOLF_TF.get(), 5f);
         }));
         if(isEmpty()) open=false;
     }
@@ -82,7 +84,7 @@ public class GasTankEntity extends BlockEntity {
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag tag=TransfurManager.modTag(p_155245_);
+        CompoundTag tag= NBTUtils.modTag(p_155245_);
         canister=ItemStack.of(tag.getCompound("canister"));
         open=tag.getBoolean("open");
     }
@@ -90,7 +92,7 @@ public class GasTankEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag tag=TransfurManager.modTag(p_187471_);
+        CompoundTag tag= NBTUtils.modTag(p_187471_);
         tag.put("canister",canister.save(new CompoundTag()));
         tag.putBoolean("open",open);
     }

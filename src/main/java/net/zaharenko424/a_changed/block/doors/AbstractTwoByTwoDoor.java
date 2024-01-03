@@ -90,11 +90,4 @@ public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
         };
     }
 
-    protected BlockPos getSecondaryPos(BlockState state, BlockPos pos) {
-        return switch(state.getValue(PART)){
-            case 1,3 -> pos;
-            case 2 -> pos.below();
-            default -> pos.above();
-        };
-    }
 }

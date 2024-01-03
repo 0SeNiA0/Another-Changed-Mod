@@ -11,11 +11,16 @@ import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurResult;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
 
 public class Transfur {
 
@@ -42,10 +47,13 @@ public class Transfur {
         );
     }
 
+    private static final BiConsumer<LivingEntity, AbstractTransfurType> transfurEvent = TransfurEvent
+            .transfur().setResult(TransfurResult.TRANSFUR).build();
+
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
         AbstractTransfurType transfur=TransfurManager.getTransfurType(transfurType);
         if(transfur==null) return 0;
-        TransfurManager.transfur(player,transfur);
+        transfurEvent.accept(player, transfur);
         return Command.SINGLE_SUCCESS;
     }
 }

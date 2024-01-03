@@ -23,7 +23,7 @@ public abstract class MixinIronGolem extends AbstractGolem {
     @Inject(at = @At("TAIL"), method = "registerGoals")
     private void onRegisterGoals(CallbackInfo ci){
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity)->{
-            if(entity instanceof Player player&& TransfurManager.isTransfurred(player)) return true;
+            if(entity instanceof Player player&&TransfurManager.isTransfurred(player)&&!TransfurManager.isOrganic(player)) return true;
             return entity instanceof AbstractLatexBeast latex&&!latex.transfurType.isOrganic();
         }));
     }

@@ -66,8 +66,4 @@ public abstract class HorizontalTwoBlockMultiBlock extends AbstractMultiBlock {
         return state.getValue(PART)==0?pos:pos.relative(state.getValue(FACING).getClockWise());
     }
 
-    @Override
-    protected BlockPos getSecondaryPos(BlockState state, BlockPos pos) {
-        return state.getValue(PART)==1?pos:pos.relative(state.getValue(FACING).getCounterClockWise());
-    }
 }

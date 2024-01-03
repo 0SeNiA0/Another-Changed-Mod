@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 @Mixin(Player.class)
 public abstract class MixinPlayer extends LivingEntity {
+
     public MixinPlayer(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
     }
@@ -27,11 +29,14 @@ public abstract class MixinPlayer extends LivingEntity {
     public boolean hurtProxy(@NotNull Entity instance, DamageSource p_19946_, float p_19947_){
         if(instance.level().isClientSide) return instance.hurt(p_19946_,p_19947_);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
-        if(!(getMainHandItem().isEmpty()&&handler.isTransfurred())) return instance.hurt(p_19946_,p_19947_);
+        if(!getMainHandItem().isEmpty()||!handler.isTransfurred()||handler.getTransfurType().isOrganic()) return instance.hurt(p_19946_,p_19947_);
         p_19947_+=TransfurManager.LATEX_DAMAGE_BONUS;
         if(!TransfurDamageSource.checkTarget(instance)) return instance.hurt(p_19946_,p_19947_);
-        TransfurManager.addTransfurProgress((LivingEntity) instance,5, Objects.requireNonNull(handler.getTransfurType()));
-        return instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_);
+        if(instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_)){
+            TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) instance, Objects.requireNonNull(handler.getTransfurType()), 5f);
+            return true;
+        }
+        return false;
     }
 
     @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)

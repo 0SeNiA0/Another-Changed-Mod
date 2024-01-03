@@ -6,8 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -40,16 +39,16 @@ public class NoteEntity extends BlockEntity {
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag modTag=TransfurManager.modTag(p_155245_);
-        Utils.readFromTag(modTag,text);
+        CompoundTag modTag= NBTUtils.modTag(p_155245_);
+        NBTUtils.readFromTag(modTag,text);
         finalized=modTag.getBoolean("finalized");
     }
 
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag modTag=TransfurManager.modTag(p_187471_);
-        Utils.writeToTag(modTag,text);
+        CompoundTag modTag= NBTUtils.modTag(p_187471_);
+        NBTUtils.writeToTag(modTag,text);
         modTag.putBoolean("finalized",finalized);
     }
 }

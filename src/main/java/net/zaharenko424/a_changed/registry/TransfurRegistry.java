@@ -18,22 +18,23 @@ public final class TransfurRegistry {
     //Transfur types
     public static final DeferredHolder<AbstractTransfurType, BeiFeng> BEI_FENG_TF = TRANSFUR_TYPES
             .register("bei_feng", ()-> new BeiFeng(AbstractTransfurType.Properties
-                    .of(resourceLoc("bei_feng"))));
+                    .of(resourceLoc("bei_feng")).maxHealthModifier(4)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> DARK_LATEX_WOLF_M_TF = TRANSFUR_TYPES
             .register("dark_latex_wolf_male", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("dark_latex_wolf_male"))));
+                    .of(resourceLoc("dark_latex_wolf_male")).maxHealthModifier(4)));
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> DARK_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("dark_latex_wolf_female", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("dark_latex_wolf_female")).gender(false)));
+                    .of(resourceLoc("dark_latex_wolf_female")).gender(false).maxHealthModifier(4)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> GAS_WOLF_TF = TRANSFUR_TYPES
-            .register("gas_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties.of(resourceLoc("gas_wolf"))));
+            .register("gas_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties
+                    .of(resourceLoc("gas_wolf")).organic(true).maxHealthModifier(4)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> WHITE_LATEX_WOLF_M_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_male", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("white_latex_wolf_male"))));
+                    .of(resourceLoc("white_latex_wolf_male")).maxHealthModifier(4)));
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> WHITE_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_female", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("white_latex_wolf_female")).gender(false)));
+                    .of(resourceLoc("white_latex_wolf_female")).gender(false).maxHealthModifier(4)));
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.block.blocks.Keypad;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -63,7 +63,7 @@ public class KeypadEntity extends BlockEntity {
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag tag= TransfurManager.modTag(p_155245_);
+        CompoundTag tag= NBTUtils.modTag(p_155245_);
         code=tag.getIntArray("code");
         open=tag.getBoolean("open");
         if(tag.contains("ticks")) ticksUntilReset=tag.getInt("ticks");
@@ -72,7 +72,7 @@ public class KeypadEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag tag=TransfurManager.modTag(p_187471_);
+        CompoundTag tag= NBTUtils.modTag(p_187471_);
         tag.putIntArray("code",code);
         tag.putBoolean("open",open);
         if(ticksUntilReset!=200) tag.putInt("ticks",ticksUntilReset);

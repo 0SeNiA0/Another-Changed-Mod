@@ -19,7 +19,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.block.VerticalTwoBlockMultiBlock;
 import net.zaharenko424.a_changed.entity.block.GasTankEntity;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +67,7 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
         if(p_60518_.is(p_60515_.getBlock())) return;
         BlockEntity entity=p_60516_.getBlockEntity(p_60517_);
         if(entity instanceof GasTankEntity canister){
-            Utils.dropItem(p_60516_,p_60517_,canister.canister());
+            popResource(p_60516_,p_60517_,canister.canister());
         }
         super.onRemove(p_60515_,p_60516_,p_60517_,p_60518_,p_60519_);
     }

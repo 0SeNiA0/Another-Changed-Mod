@@ -6,10 +6,11 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.TransfurSource;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.Latex;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -29,12 +30,15 @@ public class LatexItem extends Item {
         return type;
     }
 
+    private static TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR;
+
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
         Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            TransfurManager.addTransfurProgress(player,10,transfurType.get(), TransfurSource.GENERIC,false);
+            if(ADD_TRANSFUR == null) ADD_TRANSFUR = TransfurEvent.addTransfurProgress().checkResistance(false).build();
+            ADD_TRANSFUR.accept(player, transfurType.get(), 10f);
         }
         if(!player.getAbilities().instabuild) p_41409_.shrink(1);
         return p_41409_;

@@ -13,8 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +60,7 @@ public class BookStackEntity extends BlockEntity {
     }
 
     public void dropBooks(){
-        books.forEach(book->Utils.dropItem(level,getBlockPos(),book));
+        books.forEach(book->Block.popResource(level,getBlockPos(),book));
     }
 
     @Nullable
@@ -107,7 +106,7 @@ public class BookStackEntity extends BlockEntity {
     @Override
     public void load(@NotNull CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag tag=TransfurManager.modTag(p_155245_);
+        CompoundTag tag= NBTUtils.modTag(p_155245_);
         int size=tag.getInt("Size");
         ItemStack book;
         float rotation;
@@ -124,7 +123,7 @@ public class BookStackEntity extends BlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag tag=TransfurManager.modTag(p_187471_);
+        CompoundTag tag= NBTUtils.modTag(p_187471_);
         tag.putInt("Size",books1.size());
         Book book;
         for(int i=0;i<books1.size();i++){

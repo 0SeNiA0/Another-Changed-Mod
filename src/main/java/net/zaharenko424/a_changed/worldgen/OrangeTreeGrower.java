@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class OrangeTreeGrower extends AbstractTreeGrower {
 
-    public static ResourceKey<ConfiguredFeature<?,?>> TREE = Utils.featureKey(Registries.CONFIGURED_FEATURE,"orange_tree");
-    public static ResourceKey<PlacedFeature> TREE_PLACED = Utils.featureKey(Registries.PLACED_FEATURE,"orange_tree_placed");
+    public static ResourceKey<ConfiguredFeature<?,?>> TREE = Utils.resourceKey(Registries.CONFIGURED_FEATURE,"orange_tree");
+    public static ResourceKey<PlacedFeature> TREE_PLACED = Utils.resourceKey(Registries.PLACED_FEATURE,"orange_tree_placed");
 
     @Nullable
     @Override

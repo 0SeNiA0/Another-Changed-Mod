@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.block.ISeatBlock;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SeatEntity extends Entity {
@@ -72,11 +72,11 @@ public class SeatEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(@NotNull CompoundTag p_20052_) {
-        entityData.set(RENDER_PLAYER,TransfurManager.modTag(p_20052_).getBoolean("renderPlayer"));
+        entityData.set(RENDER_PLAYER, NBTUtils.modTag(p_20052_).getBoolean("renderPlayer"));
     }
 
     @Override
     protected void addAdditionalSaveData(@NotNull CompoundTag p_20139_) {
-        TransfurManager.modTag(p_20139_).putBoolean("renderPlayer",entityData.get(RENDER_PLAYER));
+        NBTUtils.modTag(p_20139_).putBoolean("renderPlayer",entityData.get(RENDER_PLAYER));
     }
 }

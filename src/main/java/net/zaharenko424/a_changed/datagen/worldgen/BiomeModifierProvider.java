@@ -20,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BiomeModifierProvider {
 
-    public static final ResourceKey<BiomeModifier> ADD_ORANGE_TREE = Utils.featureKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS,"add_orange_tree");
+    public static final ResourceKey<BiomeModifier> ADD_ORANGE_TREE = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS,"add_orange_tree");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context){
         HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
