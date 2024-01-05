@@ -15,8 +15,9 @@ import net.zaharenko424.a_changed.datagen.worldgen.BiomeModifierProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.ConfiguredFeatureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.PlacedFeatureProvider;
 import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
-import net.zaharenko424.a_changed.worldgen.biome.DarkLatexBiome;
-import net.zaharenko424.a_changed.worldgen.biome.WhiteLatexBiome;
+import net.zaharenko424.a_changed.worldgen.Biomes;
+import net.zaharenko424.a_changed.datagen.worldgen.biome.DarkLatexBiome;
+import net.zaharenko424.a_changed.datagen.worldgen.biome.WhiteLatexBiome;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
     }
 
     private static void biome(BootstapContext<Biome> context){
-        context.register(DarkLatexBiome.KEY, DarkLatexBiome.biome(context));
-        context.register(WhiteLatexBiome.KEY, WhiteLatexBiome.biome(context));
+        context.register(Biomes.DARK_LATEX_BIOME, DarkLatexBiome.biome(context));
+        context.register(Biomes.WHITE_LATEX_BIOME, WhiteLatexBiome.biome(context));
     }
 }

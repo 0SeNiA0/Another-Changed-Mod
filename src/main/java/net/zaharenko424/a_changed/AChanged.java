@@ -102,6 +102,10 @@ public class AChanged {
                 output.accept(CARDBOARD_BOX);
                 output.accept(CHAIR_ITEM);
                 output.accept(COMPUTER_ITEM);
+                output.accept(DARK_LATEX_CRYSTAL_ITEM);
+                output.accept(DARK_LATEX_CRYSTAL_SHARD);
+                output.accept(GREEN_CRYSTAL_ITEM);
+                output.accept(GREEN_CRYSTAL_SHARD);
                 output.accept(GAS_TANK_ITEM);
                 output.accept(KEYPAD_ITEM);
                 output.accept(LAB_DOOR_ITEM);

@@ -42,7 +42,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(COMPUTER);
         connectedTextureWithItem(CONNECTED_BLUE_LAB_TILE,"blue_lab_tile");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
-        crossWithItem(CRYSTAL);
+        crossWithItem(DARK_LATEX_CRYSTAL);
         blockWithItem(DARK_LATEX_BLOCK);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");

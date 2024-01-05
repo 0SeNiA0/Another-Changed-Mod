@@ -5,13 +5,20 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.zaharenko424.a_changed.block.blocks.Crystal;
+import net.zaharenko424.a_changed.block.blocks.TallCrystal;
 import net.zaharenko424.a_changed.block.doors.AbstractTwoByTwoDoor;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
@@ -41,6 +48,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(CONNECTED_BLUE_LAB_TILE.get());
         dropSelf(CONNECTED_LAB_TILE.get());
         dropSelf(DARK_LATEX_BLOCK.get());
+        crystalDrops(DARK_LATEX_CRYSTAL.get(), ItemRegistry.DARK_LATEX_CRYSTAL_SHARD);
+        doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
         dropSelf(HAZARD_BLOCK.get());
         dropSelf(HAZARD_LAB_BLOCK.get());
         dropSelf(KEYPAD.get());
@@ -71,7 +80,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
 
     private void createOrangeLeavesDrops(){
         Block leaves=ORANGE_LEAVES.get();
-        add(leaves,createLeavesDrops(leaves,ORANGE_SAPLING.get(),NORMAL_LEAVES_SAPLING_CHANCES)
+        add(leaves, createLeavesDrops(leaves,ORANGE_SAPLING.get(),NORMAL_LEAVES_SAPLING_CHANCES)
         .withPool(
             LootPool.lootPool().when(HAS_SHEARS.invert().and(HAS_NO_SILK_TOUCH))
                 .add(
@@ -81,6 +90,12 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         ));
     }
 
+    private void crystalDrops(Crystal crystal, ItemLike shard){
+        add(crystal, createSilkTouchDispatchTable(crystal, LootItem.lootTableItem(shard)
+                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))
+                .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
+    }
+
     private void doublePartBlockDrops(Block block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
@@ -88,6 +103,17 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                 .add(
                         applyExplosionCondition(block,LootItem.lootTableItem(block))
                 )));
+    }
+
+    private void doublePartCrystal(TallCrystal crystal, ItemLike shard){
+        add(crystal, LootTable.lootTable().withPool(LootPool.lootPool()
+                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(crystal)
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART2,0)))
+                        .add(applyExplosionCondition(crystal, LootItem.lootTableItem(crystal).when(HAS_SILK_TOUCH)
+                                .otherwise(LootItem.lootTableItem(shard)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1,2)))
+                                        .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))))
+                ));
     }
 
     private void twoByTwoDoorDrops(AbstractTwoByTwoDoor block){

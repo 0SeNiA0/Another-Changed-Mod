@@ -6,8 +6,7 @@ import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.worldgen.biome.DarkLatexBiome;
-import net.zaharenko424.a_changed.worldgen.biome.WhiteLatexBiome;
+import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,6 +20,6 @@ public class BiomeTagProvider extends BiomeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider p_256485_) {
-        tag(BiomeTags.IS_OVERWORLD).add(DarkLatexBiome.KEY, WhiteLatexBiome.KEY);
+        tag(BiomeTags.IS_OVERWORLD).add(Biomes.DARK_LATEX_BIOME, Biomes.WHITE_LATEX_BIOME);
     }
 }

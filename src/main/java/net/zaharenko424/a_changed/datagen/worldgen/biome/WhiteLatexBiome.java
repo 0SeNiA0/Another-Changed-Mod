@@ -1,12 +1,10 @@
-package net.zaharenko424.a_changed.worldgen.biome;
+package net.zaharenko424.a_changed.datagen.worldgen.biome;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.*;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class WhiteLatexBiome {
-
-    public static final ResourceKey<Biome> KEY = ResourceKey.create(Registries.BIOME, AChanged.resourceLoc("white_latex_biome"));
 
     public static @NotNull Biome biome(BootstapContext<Biome> context){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
@@ -45,5 +41,4 @@ public class WhiteLatexBiome {
                         .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS).build())
                 .build();
     }
-
 }

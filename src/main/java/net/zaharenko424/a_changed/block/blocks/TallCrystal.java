@@ -30,8 +30,12 @@ import java.util.function.Supplier;
 @SuppressWarnings("deprecation")
 public class TallCrystal extends AbstractMultiBlock {
 
-    private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,1,.625);
-    private static final AABB aabb = SHAPE.bounds();
+    private static final VoxelShape SHAPE0 = Shapes.or(
+            Shapes.box(0.25, 0, 0.25, 0.75, 1, 0.75),
+            Shapes.box(0.375, 1, 0.375, 0.625, 2, 0.625));
+    private static final VoxelShape SHAPE1 = SHAPE0.move(0,-1,0);
+    private static final AABB aabb0 = SHAPE0.bounds();
+    private static final AABB aabb1 = SHAPE1.bounds();
     private final Supplier<? extends AbstractTransfurType> transfurType;
     public static IntegerProperty PART = StateProperties.PART2;
 
@@ -49,13 +53,14 @@ public class TallCrystal extends AbstractMultiBlock {
     @Override
     public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
         if(p_60496_.isClientSide||p_60498_.tickCount%10!=0) return;
-        if(p_60498_.getBoundingBox().intersects(aabb.move(p_60497_))&&TransfurDamageSource.checkTarget(p_60498_)&&!TransfurManager.isBeingTransfurred((LivingEntity) p_60498_))
+        if(p_60498_.getBoundingBox().intersects((p_60495_.getValue(PART) == 0 ? aabb0 : aabb1).move(p_60497_))
+                && TransfurDamageSource.checkTarget(p_60498_) &&! TransfurManager.isBeingTransfurred((LivingEntity) p_60498_))
             TransfurEvent.ADD_TRANSFUR_CRYSTAL.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
     }
 
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return SHAPE;
+        return p_60555_.getValue(PART) == 0 ? SHAPE0 : SHAPE1;
     }
 
     @Override

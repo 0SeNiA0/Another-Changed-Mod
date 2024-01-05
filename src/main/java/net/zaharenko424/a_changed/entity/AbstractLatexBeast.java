@@ -25,8 +25,7 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
-import net.zaharenko424.a_changed.worldgen.biome.DarkLatexBiome;
-import net.zaharenko424.a_changed.worldgen.biome.WhiteLatexBiome;
+import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -86,8 +85,8 @@ public abstract class AbstractLatexBeast extends Monster {
         return p_219015_.getDifficulty() != Difficulty.PEACEFUL
                 && (
                         isDarkEnoughToSpawn(p_219015_, p_219017_, p_219018_)
-                        || ((p_219015_.getBiome(p_219017_).is(DarkLatexBiome.KEY)&&(p_219014_==EntityRegistry.DARK_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.DARK_LATEX_WOLF_MALE.get()))
-                                ||(p_219015_.getBiome(p_219017_).is(WhiteLatexBiome.KEY)&&(p_219014_==EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.WHITE_LATEX_WOLF_MALE.get())))
+                        || ((p_219015_.getBiome(p_219017_).is(Biomes.DARK_LATEX_BIOME)&&(p_219014_==EntityRegistry.DARK_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.DARK_LATEX_WOLF_MALE.get()))
+                                ||(p_219015_.getBiome(p_219017_).is(Biomes.WHITE_LATEX_BIOME)&&(p_219014_==EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.WHITE_LATEX_WOLF_MALE.get())))
                 )
                 && checkMobSpawnRules(p_219014_, p_219015_, p_219016_, p_219017_, p_219018_);
     }

@@ -27,15 +27,18 @@ public abstract class AbstractMultiBlock extends Block {
 
     @Override
     public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return canSurvive(p_60541_,p_60544_,p_60545_)?p_60541_:Blocks.AIR.defaultBlockState();
+        return canSurvive(p_60541_,p_60544_,p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
     }
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         if(!super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)) return false;
-        if(!level.isClientSide){
-            BlockPos mainPos=getMainPos(state,pos);
-            if(mainPos!=pos) level.destroyBlock(mainPos, willHarvest, player);
+        if(level.isClientSide) return true;
+        BlockPos mainPos = getMainPos(state, pos);
+        BlockState mainState = level.getBlockState(mainPos);
+        if(!mainState.isAir() && mainPos != pos) {
+            if(level.destroyBlock(mainPos, false, player)&&willHarvest)
+                Block.dropResources(mainState,level,mainPos,null,player,player.getMainHandItem());
         }
         return true;
     }

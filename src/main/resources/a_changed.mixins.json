@@ -11,6 +11,7 @@
     "MixinIronGolem",
     "MixinLivingEntity",
     "MixinPlayer",
+    "MixinSimpleBlockFeature",
     "MixinVillagerHostileSensor"
   ],
   "client": [

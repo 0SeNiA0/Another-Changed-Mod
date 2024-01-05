@@ -6,8 +6,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -26,7 +28,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("deprecation")
 public class Crystal extends Block {
 
-    private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.875,.625);
+    private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.75,.625);
     private static final AABB aabb=SHAPE.bounds();
     private final Supplier<? extends AbstractTransfurType> transfurType;
 
@@ -45,6 +47,11 @@ public class Crystal extends Block {
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
         return SHAPE;
+    }
+
+    @Override
+    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
+        return canSurvive(p_60541_,p_60544_,p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
     }
 
     @Override

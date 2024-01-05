@@ -54,6 +54,10 @@ public class TransfurEvent {
         return new Recalculate();
     }
 
+    static void platformCheck(@NotNull LivingEntity target){
+        if(target.level().isClientSide) throw new IllegalStateException("Cannot run serverside only methods on client!");
+    }
+
     public static class AddTransfurProgress {
 
         final Transfur transfur;
@@ -81,6 +85,7 @@ public class TransfurEvent {
 
         public TriConsumer<LivingEntity, AbstractTransfurType, Float> build() {
             return  (target, transfurType, amount) -> target.getCapability(TransfurCapability.CAPABILITY).ifPresent((handler) -> {
+                platformCheck(target);
                 if (handler.isBeingTransfurred()) return;
                 if (sound != null) target.level().playSound(null, target.blockPosition(), sound, SoundSource.PLAYERS);
                 float finalAmount = amount;
@@ -116,6 +121,7 @@ public class TransfurEvent {
             return this;
         }
 
+        //Essentially == setResult(TRANSFUR) so not sure if this is needed
         public Transfur ignoreGameRules(boolean b){
             ignoreGameRules = b;
             return this;
@@ -132,6 +138,7 @@ public class TransfurEvent {
         }
 
         void transfur(LivingEntity target, AbstractTransfurType transfurType) {
+            platformCheck(target);
             target.getCapability(TransfurCapability.CAPABILITY).ifPresent(handler -> {
                 Level level = target.level();
                 if (target instanceof ServerPlayer player) {
@@ -185,6 +192,7 @@ public class TransfurEvent {
 
         public Consumer<ServerPlayer> build() {
             return player -> player.getCapability(TransfurCapability.CAPABILITY).ifPresent(handler -> {
+                platformCheck(player);
                 if(sound != null) player.level().playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS);
                 handler.unTransfur();
                 updatePlayer(player, handler);
@@ -196,6 +204,7 @@ public class TransfurEvent {
 
         public Consumer<LivingEntity> build() {
             return target -> target.getCapability(TransfurCapability.CAPABILITY).ifPresent(handler -> {
+                platformCheck(target);
                 if(handler.isTransfurred()||handler.isBeingTransfurred()) return;
                 if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
                     new Transfur(false).build().accept(target, handler.getTransfurType());
