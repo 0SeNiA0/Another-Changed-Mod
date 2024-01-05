@@ -12,7 +12,6 @@ public class LatexWolf extends AbstractGenderedTransfurType {
 
     public LatexWolf(@NotNull Properties properties){
         super(properties.eyeHeight(1.75f,1.5f));
-
     }
 
     @Override

@@ -41,13 +41,11 @@ public abstract class MixinPlayer extends LivingEntity {
 
     @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)
     private void onGetDimensions(Pose p_36166_, CallbackInfoReturnable<EntityDimensions> ci) {
-        if(p_36166_==Pose.STANDING){
-            getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
-                if(!handler.isTransfurred()) return;
-                ci.cancel();
-                ci.setReturnValue(EntityDimensions.scalable(.6f,2));
-            });
-        }
+        getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
+            if(!handler.isTransfurred()) return;
+            ci.cancel();
+            ci.setReturnValue(handler.getTransfurType().getPoseDimensions(p_36166_));
+        });
     }
 
     @Inject(at = @At("HEAD"), method = "getStandingEyeHeight", cancellable = true)

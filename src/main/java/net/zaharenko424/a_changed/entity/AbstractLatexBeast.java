@@ -41,6 +41,7 @@ public abstract class AbstractLatexBeast extends Monster {
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, AbstractTransfurType transfurType) {
         super(entityType, level);
         this.transfurType=transfurType;
+        dimensions = transfurType.getPoseDimensions(Pose.STANDING);
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
         registerLatexGoals();
         AttributeMap map = getAttributes();

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BeiFeng extends AbstractTransfurType{
     public BeiFeng(@NotNull Properties properties) {
-        super(properties);
+        super(properties.eyeHeight(1.75f,1.5f));
     }
 
     @Override

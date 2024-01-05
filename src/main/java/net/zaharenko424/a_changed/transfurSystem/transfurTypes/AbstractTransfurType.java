@@ -1,7 +1,9 @@
 package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.neoforged.api.distmarker.Dist;
@@ -10,6 +12,9 @@ import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class AbstractTransfurType {
 
     public final ResourceLocation id;
@@ -17,6 +22,7 @@ public abstract class AbstractTransfurType {
     protected final float eyeHeightStanding;
     protected final float eyeHeightCrouching;
     protected final float eyeHeightSwimming;
+    protected final ImmutableMap<Pose, EntityDimensions> dimensions;
     public final float airReductionModifier;
     public final int maxHealthModifier;
     public final float swimSpeedModifier;
@@ -28,6 +34,7 @@ public abstract class AbstractTransfurType {
         eyeHeightStanding = properties.eyeHeightStanding;
         eyeHeightCrouching = properties.eyeHeightCrouching;
         eyeHeightSwimming = properties.eyeHeightSwimming;
+        dimensions = ImmutableMap.copyOf(properties.dimensions);
         airReductionModifier = properties.airReductionModifier;
         maxHealthModifier = properties.maxHealthModifier;
         swimSpeedModifier = properties.swimSpeedModifier;
@@ -46,6 +53,11 @@ public abstract class AbstractTransfurType {
         };
     }
 
+    public EntityDimensions getPoseDimensions(Pose pose){
+        if(dimensions == null || dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 2);
+        return dimensions.get(pose);
+    }
+
     public boolean isOrganic(){
         return organic;
     }
@@ -59,6 +71,15 @@ public abstract class AbstractTransfurType {
         float eyeHeightStanding = 1.62f;
         float eyeHeightCrouching = 1.27f;
         float eyeHeightSwimming = .4f;
+        Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
+                Pose.STANDING, EntityDimensions.scalable(.6f,1.9f),
+                Pose.SLEEPING, EntityDimensions.fixed(0.2f, 0.2f),
+                Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f),
+                Pose.SWIMMING, EntityDimensions.scalable(0.6f, 0.6f),
+                Pose.SPIN_ATTACK, EntityDimensions.scalable(0.6f, 0.6f),
+                Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f),
+                Pose.DYING, EntityDimensions.scalable(.2f,.2f)
+        ));
         float airReductionModifier = 0;
         int maxHealthModifier = 0;
         float swimSpeedModifier = 0;
@@ -89,6 +110,16 @@ public abstract class AbstractTransfurType {
             eyeHeightStanding=standing;
             eyeHeightCrouching=crouching;
             eyeHeightSwimming=swimming;
+            return this;
+        }
+
+        public Properties poseSize(Pose pose, EntityDimensions size){
+            dimensions.put(pose, size);
+            return this;
+        }
+
+        public Properties poseSize(Map<Pose, EntityDimensions> map){
+            dimensions.putAll(map);
             return this;
         }
 

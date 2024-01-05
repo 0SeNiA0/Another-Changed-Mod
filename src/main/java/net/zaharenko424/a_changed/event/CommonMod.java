@@ -20,7 +20,7 @@ import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
-class CommonMod {
+public class CommonMod {
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {

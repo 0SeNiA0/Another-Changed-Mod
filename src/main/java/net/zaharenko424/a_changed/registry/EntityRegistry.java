@@ -26,23 +26,22 @@ public final class EntityRegistry {
             new LatexBeast(a,b, BEI_FENG_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_MALE =
-            registerLatex("dark_latex_wolf_male", EntityType.Builder.<LatexBeast>of((a, b) ->
-            new LatexBeast(a,b, DARK_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
+            registerLatex("dark_latex_wolf_male", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a,b, DARK_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER));
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_FEMALE =
-            registerLatex("dark_latex_wolf_female", EntityType.Builder.<LatexBeast>of((a, b) ->
-            new LatexBeast(a,b, DARK_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
+            registerLatex("dark_latex_wolf_female", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a,b, DARK_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
 
     public static final DeferredHolder<EntityType<?>,EntityType<LatexBeast>> GAS_WOLF =
-            registerLatex("gas_wolf", EntityType.Builder.<LatexBeast>of((a, b) ->
-            new LatexBeast(a,b, GAS_WOLF_TF.get()), MobCategory.MONSTER).sized(.6f,1.85f));
+            registerLatex("gas_wolf", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a,b, GAS_WOLF_TF.get()), MobCategory.MONSTER));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_MALE =
-            registerLatex("white_latex_wolf_male", EntityType.Builder.<LatexBeast>of((a, b) ->
-            new LatexBeast(a,b, WHITE_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
+            registerLatex("white_latex_wolf_male", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a,b, WHITE_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER));
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_FEMALE =
-            registerLatex("white_latex_wolf_female", EntityType.Builder.<LatexBeast>of((a, b) ->
-            new LatexBeast(a,b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
-
+            registerLatex("white_latex_wolf_female", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a,b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
 
     private static <T extends AbstractLatexBeast> @NotNull DeferredHolder<EntityType<?>,EntityType<T>> registerLatex(@NotNull String id, @NotNull EntityType.Builder<T> builder){
         return ENTITIES.register(id,()-> builder.build(id));
