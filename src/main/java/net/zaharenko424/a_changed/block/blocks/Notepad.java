@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -50,6 +51,11 @@ public class Notepad extends AbstractNote {
             case WEST -> SHAPE_WEST;
             default -> SHAPE_NORTH;
         };
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
+        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
     }
 
     @Override

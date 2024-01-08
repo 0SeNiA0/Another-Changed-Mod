@@ -47,8 +47,6 @@ public class AirConditioner extends HorizontalTwoBlockMultiBlock implements Enti
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide?null:(a,b,c,d)->{
-            if(d instanceof AirConditionerEntity conditioner) conditioner.tick();
-        };
+        return p_153212_.isClientSide ? null : (a,b,c,conditioner) -> ((AirConditionerEntity)conditioner).tick();
     }
 }

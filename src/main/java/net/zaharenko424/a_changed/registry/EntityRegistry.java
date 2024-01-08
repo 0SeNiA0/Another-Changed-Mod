@@ -22,8 +22,12 @@ public final class EntityRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> CHAIR_ENTITY = ENTITIES.register("chair_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) -> new SeatEntity(b), MobCategory.MISC).sized(.1f, .1f).build(resourceLoc("chair_entity").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> BEI_FENG =
-            registerLatex("bei_feng", EntityType.Builder.<LatexBeast>of((a,b) ->
-            new LatexBeast(a,b, BEI_FENG_TF.get()), MobCategory.MONSTER).sized(.6f,1.9f));
+            registerLatex("bei_feng", EntityType.Builder.of((a,b) ->
+            new LatexBeast(a,b, BEI_FENG_TF.get()), MobCategory.MONSTER));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> BENIGN =
+            registerLatex("benign", EntityType.Builder.of((a,b) ->
+            new LatexBeast(a, b, BENIGN_TF.get()), MobCategory.MONSTER));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_MALE =
             registerLatex("dark_latex_wolf_male", EntityType.Builder.of((a, b) ->
@@ -36,6 +40,9 @@ public final class EntityRegistry {
             registerLatex("gas_wolf", EntityType.Builder.of((a, b) ->
             new LatexBeast(a,b, GAS_WOLF_TF.get()), MobCategory.MONSTER));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> PURE_WHITE_LATEX_WOLF =
+            registerLatex("pure_white_latex_wolf", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a, b, PURE_WHITE_LATEX_WOLF_TF.get()), MobCategory.MONSTER));
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_MALE =
             registerLatex("white_latex_wolf_male", EntityType.Builder.of((a, b) ->
             new LatexBeast(a,b, WHITE_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER));

@@ -121,7 +121,7 @@ public class CommonEvent {
             }
             if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
                 if(entity.hurt(TransfurDamageSource.transfur(entity,null),0.1f))
-                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get(), 4f);
+                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
                 return;
             }
         }

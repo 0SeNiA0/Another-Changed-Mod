@@ -177,6 +177,7 @@ public class TransfurEvent {
 
         void actuallyTransfurPlayer(ServerPlayer player, ITransfurHandler handler, AbstractTransfurType transfurType){
             handler.transfur(transfurType);
+            transfurType.onTransfur(player);
             updatePlayer(player,handler);
         }
     }
@@ -194,6 +195,7 @@ public class TransfurEvent {
             return player -> player.getCapability(TransfurCapability.CAPABILITY).ifPresent(handler -> {
                 platformCheck(player);
                 if(sound != null) player.level().playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS);
+                if(handler.isTransfurred()) handler.getTransfurType().onUnTransfur(player);
                 handler.unTransfur();
                 updatePlayer(player, handler);
             });

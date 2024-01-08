@@ -139,9 +139,9 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         body.xRot -= 0.5f;
         body.z += 5;
         rightArm.xRot -= 0.4f;
-        rightArm.y -= 3;
+        rightArm.y -= 2;
         leftArm.xRot -= 0.4f;
-        leftArm.y -= 3;
+        leftArm.y -= 2;
         rightLeg.z += 4;
         leftLeg.z += 4;
         rightLeg.y += .2F;

@@ -32,6 +32,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(COMPUTER);
     public static final DeferredItem<BlockItem> CONNECTED_BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(CONNECTED_BLUE_LAB_TILE);
     public static final DeferredItem<BlockItem> CONNECTED_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(CONNECTED_LAB_TILE);
+    public static final DeferredItem<BlockItem> DANGER_SIGN_ITEM = ITEMS.registerSimpleBlockItem(DANGER_SIGN);
     public static final DeferredItem<BlockItem> DARK_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_BLOCK);
     public static final DeferredItem<BlockItem> DARK_LATEX_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL);
     public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(),new Item.Properties()));
@@ -42,6 +43,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(LAB_BLOCK);
     public static final DeferredItem<BlockItem> LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LAB_DOOR);
     public static final DeferredItem<BlockItem> LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(LAB_TILE);
+    public static final DeferredItem<BlockItem> LASER_EMITTER_ITEM = ITEMS.registerSimpleBlockItem(LASER_EMITTER);
     public static final DeferredItem<BlockItem> LATEX_CONTAINER_ITEM = ITEMS.registerSimpleBlockItem(LATEX_CONTAINER);
     public static final DeferredItem<BlockItem> LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LIBRARY_DOOR);
     public static final DeferredItem<BlockItem> MAINTENANCE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(MAINTENANCE_DOOR);
@@ -62,9 +64,12 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> VENT_ITEM = ITEMS.registerSimpleBlockItem(VENT);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);
     public static final DeferredItem<BlockItem> WHITE_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_BLOCK);
+    public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_F);
+    public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_M);
     public static final DeferredItem<BlockItem> YELLOW_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(YELLOW_LAB_BLOCK);
 
     //Items
+    public static final DeferredItem<ArmorItem> BLACK_LATEX_SHORTS = ITEMS.register("black_latex_shorts", ()-> new ArmorItem(ArmorMaterials.LATEX, ArmorItem.Type.LEGGINGS, new Item.Properties().setNoRepair()));
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
     public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF, Latex.DARK));

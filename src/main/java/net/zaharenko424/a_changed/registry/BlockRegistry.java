@@ -31,6 +31,7 @@ public class BlockRegistry {
     public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
 
     //public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
+
     //Blocks
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
     public static final DeferredBlock<Block> BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
@@ -44,6 +45,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Computer> COMPUTER = BLOCKS.register("computer", ()-> new Computer(decorProperties()));
     public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_BLUE_LAB_TILE = BLOCKS.register("connected_blue_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.LIGHT_BLUE)));
     public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_LAB_TILE = BLOCKS.register("connected_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.WHITE)));
+    public static final DeferredBlock<DangerSign> DANGER_SIGN = BLOCKS.register("danger_sign", ()-> new DangerSign(decorProperties()));
     public static final DeferredBlock<Block> DARK_LATEX_BLOCK = BLOCKS.registerSimpleBlock("dark_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
     public static final DeferredBlock<Crystal> DARK_LATEX_CRYSTAL = BLOCKS.register("dark_latex_crystal", ()-> new Crystal(decorProperties(),TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(decorProperties().noLootTable().pushReaction(PushReaction.DESTROY)));
@@ -54,6 +56,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> LAB_BLOCK = BLOCKS.registerSimpleBlock("lab_block", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<LabDoor> LAB_DOOR = BLOCKS.register("lab_door", ()-> new LabDoor(doorProperties()));
     public static final DeferredBlock<Block> LAB_TILE = BLOCKS.registerSimpleBlock("lab_tile", decorProperties().mapColor(DyeColor.WHITE));
+    public static final DeferredBlock<LaserEmitter> LASER_EMITTER = BLOCKS.register("laser_emitter", ()-> new LaserEmitter(decorProperties()));
     public static final DeferredBlock<LatexContainer> LATEX_CONTAINER = BLOCKS.register("latex_container", ()-> new LatexContainer(decorProperties().pushReaction(PushReaction.BLOCK)));
     public static final DeferredBlock<AbstractTwoByTwoDoor> LIBRARY_DOOR = BLOCKS.register("library_door", ()-> new LibraryDoor(doorProperties().noOcclusion()));
     public static final DeferredBlock<MaintenanceDoor> MAINTENANCE_DOOR = BLOCKS.register("maintenance_door", ()-> new MaintenanceDoor(doorProperties()));
@@ -74,6 +77,8 @@ public class BlockRegistry {
     public static final DeferredBlock<TrapDoorBlock> VENT = BLOCKS.register("vent", ()-> new TrapDoorBlock(decorProperties().noOcclusion(), BlockSetType.STONE));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<Block> WHITE_LATEX_BLOCK = BLOCKS.registerSimpleBlock("white_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
+    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_F_TF));
+    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_M = BLOCKS.register("white_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> YELLOW_LAB_BLOCK = BLOCKS.registerSimpleBlock("yellow_lab_block", decorProperties().mapColor(DyeColor.YELLOW));
 
     private static BlockBehaviour.@NotNull Properties liquidProperties(){

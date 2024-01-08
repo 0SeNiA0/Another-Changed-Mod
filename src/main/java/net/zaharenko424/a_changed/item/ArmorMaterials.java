@@ -14,8 +14,10 @@ import java.util.function.Supplier;
 @ParametersAreNonnullByDefault
 public enum ArmorMaterials implements ArmorMaterial {
 
-    HAZMAT("hazmat",20,new int[]{2, 4, 3, 2},new float[]{.15f,.25f,.2f,.15f},15, SoundEvents.ARMOR_EQUIP_LEATHER,1,
-            .1f, ()->Ingredient.EMPTY);
+    HAZMAT("hazmat", 20, new int[]{2, 4, 3, 2}, new float[]{.15f,.25f,.2f,.15f},15, SoundEvents.ARMOR_EQUIP_LEATHER,1,
+            .1f, ()->Ingredient.EMPTY),
+    LATEX("latex", 12, new int[]{1, 2, 2, 1}, new float[]{0, 0, 0, 0}, 10, SoundEvents.ARMOR_EQUIP_LEATHER, 0,
+            0, ()->Ingredient.EMPTY);
 
     private final String name;
     private final int durabilityMultiplier;

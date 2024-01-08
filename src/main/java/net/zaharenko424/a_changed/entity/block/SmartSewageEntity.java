@@ -16,8 +16,8 @@ import java.util.List;
 
 public class SmartSewageEntity extends BlockEntity {
 
-    int tick=0;
     LivingEntity entity;
+    int tick=0;
 
     public SmartSewageEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.SMART_SEWAGE_ENTITY.get(), p_155229_, p_155230_);

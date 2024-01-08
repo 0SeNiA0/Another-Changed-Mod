@@ -49,6 +49,7 @@ public abstract class AbstractLatexBeast extends Monster {
         if(!map.hasModifier(Attributes.MAX_HEALTH,healthModifier)&&transfurType.maxHealthModifier!=0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a",transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
         if(!map.hasModifier(NeoForgeMod.SWIM_SPEED,swimSpeed)&&transfurType.swimSpeedModifier!=0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a",transfurType.swimSpeedModifier, AttributeModifier.Operation.ADDITION));
         addModifiers(map);
+        transfurType.onTransfur(this);
     }
 
     protected void addModifiers(AttributeMap map){}

@@ -27,6 +27,8 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
     public void generate() {
         add(BEI_FENG.get(), new LootTable.Builder());
 
+        add(BENIGN.get(), new LootTable.Builder());
+
         add(DARK_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));//TODO finish loot tables
@@ -39,6 +41,9 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                         .add(LootItem.lootTableItem(ItemRegistry.ORANGE_ITEM)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2))))));
 
+        add(PURE_WHITE_LATEX_WOLF.get(), new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(latex(true))));
         add(WHITE_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));

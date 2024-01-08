@@ -6,6 +6,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.zaharenko424.a_changed.client.model.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
+import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -30,11 +31,13 @@ public final class ModelCache implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(ResourceManager p_10758_) {
         HashMap<ModelLayerLocation, ModelDefinition> map=new HashMap<>();
-        map.put(DummyModel.bodyLayer,DummyModel.bodyLayer());
+        map.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
 
-        map.put(BeiFengModel.bodyLayer,BeiFengModel.bodyLayer());
-        map.put(LatexWolfFemaleModel.bodyLayer,LatexWolfFemaleModel.bodyLayer());
-        map.put(LatexWolfMaleModel.bodyLayer,LatexWolfMaleModel.bodyLayer());
+        map.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
+
+        map.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());
+        map.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
+        map.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
 
         modelCache = ImmutableMap.copyOf(map);
     }

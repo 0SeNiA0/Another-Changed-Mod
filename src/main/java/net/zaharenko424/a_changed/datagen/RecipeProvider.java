@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.zaharenko424.a_changed.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -71,6 +72,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('B',Items.IRON_BARS)
                 .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,CHAIR_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,DANGER_SIGN_ITEM,3)
+                .pattern(" B ")
+                .pattern("BYB")
+                .define('Y', Items.YELLOW_CONCRETE)
+                .define('B', Items.BLACK_CONCRETE)
+                .unlockedBy(getHasName(Items.YELLOW_CONCRETE),has(Items.YELLOW_CONCRETE))
+                .save(p_301172_,DANGER_SIGN_ITEM.getId());
+
+        //TODO gas tank
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,HAZARD_BLOCK_ITEM,9)
                 .pattern("OOB")
@@ -169,6 +180,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,ORANGE_LAB_BLOCK_ITEM.getId());
 
+        stonecutting(ORANGE_LAB_BLOCK_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{STRIPED_ORANGE_LAB_BLOCK_ITEM}, has(ORANGE_LAB_BLOCK_ITEM), p_301172_);
+        stonecutting(STRIPED_ORANGE_LAB_BLOCK_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{ORANGE_LAB_BLOCK_ITEM}, has(STRIPED_ORANGE_LAB_BLOCK_ITEM), p_301172_);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD,ORANGE_JUICE_ITEM)
                 .requires(ORANGE_ITEM,4)
                 .requires(Items.GLASS_BOTTLE)
@@ -212,7 +226,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,TRAFFIC_CONE_ITEM,3)
                 .pattern(" O ")
-                .pattern("B B")
+                .pattern("BOB")
                 .define('O', Items.ORANGE_CONCRETE)
                 .define('B', Items.BLACK_CONCRETE)
                 .unlockedBy(getHasName(Items.ORANGE_CONCRETE),has(Items.ORANGE_CONCRETE))
@@ -224,6 +238,27 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('B',Items.IRON_BARS)
                 .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,VENT_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_F,2)
+                .pattern("LL ")
+                .define('L', WHITE_LATEX_ITEM)
+                .unlockedBy(getHasName(WHITE_LATEX_ITEM),has(WHITE_LATEX_ITEM))
+                .save(p_301172_,WHITE_LATEX_PUDDLE_F_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_M,2)
+                .pattern(" LL")
+                .define('L', WHITE_LATEX_ITEM)
+                .unlockedBy(getHasName(WHITE_LATEX_ITEM),has(WHITE_LATEX_ITEM))
+                .save(p_301172_,WHITE_LATEX_PUDDLE_M_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, YELLOW_LAB_BLOCK_ITEM,24)
+                .pattern("CIC")
+                .pattern("ICI")
+                .pattern("CIC")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('C', Items.YELLOW_CONCRETE)
+                .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
+                .save(p_301172_,YELLOW_LAB_BLOCK_ITEM.getId());
     }
 
     private void stonecutting(DeferredItem<?> material, RecipeCategory category, DeferredItem<?> @NotNull [] results, Criterion<?> criterion, RecipeOutput out){
@@ -239,11 +274,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("LL")
                 .pattern("LL")
                 .define('L',latex)
-                .unlockedBy("has"+(white?"White":"Dark")+"Latex",has(latex))
+                .unlockedBy(getHasName(latex),has(latex))
                 .save(out,block.getId());
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,latex,4)
                 .requires(block)
-                .unlockedBy("has"+(white?"White":"Dark")+"LatexBlock",has(block))
+                .unlockedBy(getHasName(block),has(block))
                 .save(out,latex.getId());
     }
 }

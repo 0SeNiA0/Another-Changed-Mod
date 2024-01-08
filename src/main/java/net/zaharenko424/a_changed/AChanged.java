@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -58,6 +59,7 @@ public class AChanged {
     public static final DeferredHolder<ParticleType<?>,SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
     //Tags
+    public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
     public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
     public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
 
@@ -102,6 +104,7 @@ public class AChanged {
                 output.accept(CARDBOARD_BOX);
                 output.accept(CHAIR_ITEM);
                 output.accept(COMPUTER_ITEM);
+                output.accept(DANGER_SIGN_ITEM);
                 output.accept(DARK_LATEX_CRYSTAL_ITEM);
                 output.accept(DARK_LATEX_CRYSTAL_SHARD);
                 output.accept(GREEN_CRYSTAL_ITEM);
@@ -109,6 +112,7 @@ public class AChanged {
                 output.accept(GAS_TANK_ITEM);
                 output.accept(KEYPAD_ITEM);
                 output.accept(LAB_DOOR_ITEM);
+                output.accept(LASER_EMITTER_ITEM);
                 output.accept(LATEX_CONTAINER_ITEM);
                 output.accept(LIBRARY_DOOR_ITEM);
                 output.accept(MAINTENANCE_DOOR_ITEM);
@@ -120,8 +124,11 @@ public class AChanged {
                 output.accept(TABLE_ITEM);
                 output.accept(TALL_CARDBOARD_BOX_ITEM);
                 output.accept(TRAFFIC_CONE);
+                output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
+                output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
                 output.accept(VENT_ITEM);
 
+                output.accept(BLACK_LATEX_SHORTS);
                 output.accept(HAZMAT_HELMET);
                 output.accept(HAZMAT_CHESTPLATE);
                 output.accept(HAZMAT_LEGGINGS);

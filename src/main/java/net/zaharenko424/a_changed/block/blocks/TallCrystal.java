@@ -65,7 +65,9 @@ public class TallCrystal extends AbstractMultiBlock {
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        return (p_60525_.getValue(PART) == 0&&canSupportCenter(p_60526_,p_60527_.below(),Direction.UP)) || p_60526_.getBlockState(p_60527_.below()).is(this);
+        BlockPos pos = p_60527_.below();
+        BlockState below = p_60526_.getBlockState(pos);
+        return (p_60525_.getValue(PART) == 0 && below.isFaceSturdy(p_60526_, pos, Direction.UP)) || below.is(this);
     }
 
     @Override
@@ -77,5 +79,4 @@ public class TallCrystal extends AbstractMultiBlock {
     protected BlockPos getMainPos(BlockState state, BlockPos pos) {
         return state.getValue(PART)==0?pos:pos.below();
     }
-
 }

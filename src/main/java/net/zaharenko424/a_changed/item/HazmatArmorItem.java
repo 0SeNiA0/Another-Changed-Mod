@@ -28,21 +28,16 @@ public class HazmatArmorItem extends ArmorItem {
     });
 
     public HazmatArmorItem(Type p_266831_, Properties p_40388_) {
-        super(ArmorMaterials.HAZMAT, p_266831_, p_40388_.rarity(Rarity.UNCOMMON));
+        super(ArmorMaterials.HAZMAT, p_266831_, p_40388_.rarity(Rarity.UNCOMMON).setNoRepair());
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        if(this.type.getSlot()==slot){
+        if(type.getSlot()==slot && ((ArmorMaterials)material).getLatexProtection(type) != 0){
             HashMultimap<Attribute, AttributeModifier> map= HashMultimap.create(super.getAttributeModifiers(slot,stack));
             map.put(LATEX_RESISTANCE.get(),new AttributeModifier(UUIDS.get(type),"Latex Resistance",((ArmorMaterials)material).getLatexProtection(type), AttributeModifier.Operation.ADDITION));
             return ImmutableMultimap.copyOf(map);
         }
         return super.getAttributeModifiers(slot, stack);
-    }
-
-    @Override
-    public boolean isRepairable(ItemStack stack) {
-        return false;
     }
 }

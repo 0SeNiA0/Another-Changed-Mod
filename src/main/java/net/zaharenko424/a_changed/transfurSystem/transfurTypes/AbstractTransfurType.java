@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class AbstractTransfurType {
 
@@ -28,6 +29,8 @@ public abstract class AbstractTransfurType {
     public final float swimSpeedModifier;
     protected final boolean male;
     protected final boolean organic;
+    protected final Consumer<LivingEntity> onTransfur;
+    protected final Consumer<LivingEntity> onUnTransfur;
 
     public AbstractTransfurType(@NotNull Properties properties){
         id = properties.location;
@@ -40,6 +43,8 @@ public abstract class AbstractTransfurType {
         swimSpeedModifier = properties.swimSpeedModifier;
         male = properties.male;
         organic = properties.organic;
+        onTransfur = properties.onTransfur;
+        onUnTransfur = properties.onUnTransfur;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -60,6 +65,14 @@ public abstract class AbstractTransfurType {
 
     public boolean isOrganic(){
         return organic;
+    }
+
+    public void onTransfur(LivingEntity entity){
+        if(onTransfur != null) onTransfur.accept(entity);
+    }
+
+    public void onUnTransfur(LivingEntity entity){
+        if(onUnTransfur != null) onUnTransfur.accept(entity);
     }
 
     public Component fancyName(){
@@ -85,6 +98,8 @@ public abstract class AbstractTransfurType {
         float swimSpeedModifier = 0;
         boolean male = true;
         boolean organic = false;
+        Consumer<LivingEntity> onTransfur;
+        Consumer<LivingEntity> onUnTransfur;
 
         protected Properties(ResourceLocation resourceLocation){
             location=resourceLocation;
@@ -145,6 +160,16 @@ public abstract class AbstractTransfurType {
 
         public Properties organic(boolean organic){
             this.organic=organic;
+            return this;
+        }
+
+        public Properties onTransfur(Consumer<LivingEntity> onTransfur){
+            this.onTransfur = onTransfur;
+            return this;
+        }
+
+        public Properties onUnTransfur(Consumer<LivingEntity> onUnTransfur){
+            this.onUnTransfur = onUnTransfur;
             return this;
         }
     }

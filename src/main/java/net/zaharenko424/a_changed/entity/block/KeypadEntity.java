@@ -5,13 +5,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.block.blocks.Keypad;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+
+import static net.zaharenko424.a_changed.util.StateProperties.UNLOCKED;
 
 @ParametersAreNonnullByDefault
 public class KeypadEntity extends BlockEntity {
@@ -36,7 +37,7 @@ public class KeypadEntity extends BlockEntity {
         if(open) return;
         level.playSound(null,worldPosition, SoundRegistry.BUTTON_PRESSED.get(), SoundSource.BLOCKS);
         if(Arrays.equals(code,attempt)){
-            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(Keypad.UNLOCKED,true));
+            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(UNLOCKED,true));
             open=true;
             level.playSound(null,worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
             return;
@@ -56,7 +57,7 @@ public class KeypadEntity extends BlockEntity {
         if(ticksUntilReset==0){
             ticksUntilReset=200;
             open=false;
-            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(Keypad.UNLOCKED,false));
+            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(UNLOCKED,false));
         }
     }
 

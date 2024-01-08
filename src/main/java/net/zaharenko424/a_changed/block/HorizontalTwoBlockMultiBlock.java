@@ -39,7 +39,8 @@ public abstract class HorizontalTwoBlockMultiBlock extends AbstractMultiBlock {
     public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
         BlockPos blockpos = p_49820_.getClickedPos();
         Level level = p_49820_.getLevel();
-        Direction direction=p_49820_.getHorizontalDirection().getOpposite();
+        Direction direction=p_49820_.getClickedFace();
+        if(direction.getAxis() == Direction.Axis.Y) direction = p_49820_.getHorizontalDirection().getOpposite();
         BlockPos pos2=blockpos.relative(direction.getCounterClockWise());
         if (blockpos.getY() < level.getMaxBuildHeight() && level.getBlockState(pos2).canBeReplaced(p_49820_)){
             return defaultBlockState().setValue(FACING,direction);

@@ -19,15 +19,17 @@ public abstract class HorizontalDirectionalBlock extends net.minecraft.world.lev
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        Direction direction=p_60525_.getValue(FACING).getOpposite();
-        BlockPos pos=p_60527_.relative(direction);
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_,pos,direction);
+        Direction direction = p_60525_.getValue(FACING).getOpposite();
+        BlockPos pos = p_60527_.relative(direction);
+        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, direction);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
+        Direction direction = p_49820_.getClickedFace();
+        if(direction.getAxis() == Direction.Axis.Y) direction = p_49820_.getNearestLookingDirection().getOpposite();
+        return defaultBlockState().setValue(FACING, direction);
     }
 
     @Override

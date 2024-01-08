@@ -31,8 +31,8 @@ public class GasTankEntity extends BlockEntity {
     private final Vec3 pos=worldPosition.above().getCenter();
     private final BlockPos target=new BlockPos(0,0,0).relative(getBlockState().getValue(HorizontalDirectionalBlock.FACING));
     private ItemStack canister=new ItemStack(ItemRegistry.GAS_TANK_ITEM.get());
-    private int tick=0;
     private boolean open=false;
+    private int tick=0;
 
     public GasTankEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.GAS_TANK_ENTITY.get(), p_155229_, p_155230_);

@@ -55,8 +55,7 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if(p_60504_.isClientSide||p_60507_!=InteractionHand.MAIN_HAND) return InteractionResult.SUCCESS;
-        BlockEntity entity=p_60504_.getBlockEntity(getMainPos(p_60503_,p_60505_));
-        if(entity instanceof GasTankEntity canister){
+        if(p_60504_.getBlockEntity(getMainPos(p_60503_,p_60505_)) instanceof GasTankEntity canister){
             canister.setOpenClose();//TODO make better sound
         }
         return InteractionResult.SUCCESS;

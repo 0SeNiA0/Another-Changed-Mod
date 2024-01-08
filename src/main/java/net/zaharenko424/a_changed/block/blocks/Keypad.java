@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -31,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static net.zaharenko424.a_changed.util.StateProperties.UNLOCKED;
+
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
 public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
@@ -39,7 +40,6 @@ public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SHAPE_EAST = Utils.rotateShape(Direction.EAST,SHAPE_NORTH);
     private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH,SHAPE_NORTH);
     private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST,SHAPE_NORTH);
-    public static final BooleanProperty UNLOCKED = BooleanProperty.create("unlocked");
 
     public Keypad(Properties p_54120_) {
         super(p_54120_);

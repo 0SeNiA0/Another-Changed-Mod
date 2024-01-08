@@ -13,8 +13,8 @@ public class TransfurOverlay {
 //TODO make better looking overlay texture
     public static final IGuiOverlay OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         Player player=gui.getMinecraft().player;
-        if(player==null||player.isDeadOrDying()) return;
-        if(TransfurManager.isTransfurred(player)||TransfurManager.getTransfurProgress(player)==0) return;
+        if(player==null || player.isDeadOrDying()) return;
+        if(TransfurManager.isTransfurred(player) || TransfurManager.getTransfurProgress(player)==0) return;
         float progress=TransfurManager.getTransfurProgress(player);
         guiGraphics.drawString(gui.getFont(),"Transfur progress: "+progress,10,10,16777215);
         RenderSystem.disableDepthTest();

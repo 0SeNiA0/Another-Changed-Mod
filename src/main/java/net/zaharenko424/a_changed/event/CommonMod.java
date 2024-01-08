@@ -40,9 +40,11 @@ public class CommonMod {
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
         event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
+        event.put(BENIGN.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
         event.put(GAS_WOLF.get(), LatexBeast.createAttributes().build());
+        event.put(PURE_WHITE_LATEX_WOLF.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
     }
@@ -53,6 +55,7 @@ public class CommonMod {
         event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(GAS_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }

@@ -12,6 +12,7 @@
   "block.a_changed.computer": "Computer",
   "block.a_changed.connected_blue_lab_tile": "Connected blue lab tile",
   "block.a_changed.connected_lab_tile": "Connected lab tile",
+  "block.a_changed.danger_sign": "Danger sign",
   "block.a_changed.dark_latex_block": "Dark latex block",
   "block.a_changed.dark_latex_crystal": "Dark latex crystal",
   "block.a_changed.gas_tank": "Red gas tank",
@@ -22,6 +23,7 @@
   "block.a_changed.lab_block": "Lab block",
   "block.a_changed.lab_door": "Lab door",
   "block.a_changed.lab_tile": "Lab tile",
+  "block.a_changed.laser_emitter": "Laser emitter",
   "block.a_changed.latex_container": "Latex container",
   "block.a_changed.library_door": "Library door",
   "block.a_changed.maintenance_door": "Maintenance door",
@@ -42,6 +44,8 @@
   "block.a_changed.vent": "Vent",
   "block.a_changed.vent_wall": "Vent wall",
   "block.a_changed.white_latex_block": "White latex block",
+  "block.a_changed.white_latex_puddle_f": "White latex puddle (f)",
+  "block.a_changed.white_latex_puddle_m": "White latex puddle (m)",
   "block.a_changed.yellow_lab_block": "Yellow lab block",
 
   "command.transfur_tolerance.get": "Transfur tolerance is ",
@@ -56,9 +60,11 @@
   "effect.a_changed.latex_solvent": "Latex solvent",
 
   "entity.a_changed.bei_feng": "Bei Feng",
+  "entity.a_changed.benign": "Benign",
   "entity.a_changed.dark_latex_wolf_female": "Dark Latex Wolf",
   "entity.a_changed.dark_latex_wolf_male": "Dark Latex Wolf",
   "entity.a_changed.gas_wolf": "Gas Wolf",
+  "entity.a_changed.pure_white_latex_wolf": "Pure White Latex Wolf",
   "entity.a_changed.white_latex_wolf_female": "White Latex Wolf",
   "entity.a_changed.white_latex_wolf_male": "White Latex Wolf",
 
@@ -66,6 +72,7 @@
   "gamerule.keepTransfurOnDeath": "Keep transfur on death",
   "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
 
+  "item.a_changed.black_latex_shorts": "Black latex shorts",
   "item.a_changed.cardboard": "Cardboard",
   "item.a_changed.dark_latex": "Dark latex",
   "item.a_changed.dark_latex_bucket": "Dark latex bucket",
@@ -94,16 +101,19 @@
 
   "sounds.a_changed.button_pressed": "Button pressed",
   "sounds.a_changed.door_locked": "Door is locked",
-  "sounds.a_changed.door_open": "Door opened/closed",
+  "sounds.a_changed.door_open": "Door opened / closed",
   "sounds.a_changed.keypad_unlocked": "Keypad unlocked",
   "sounds.a_changed.keypad_wrong_password": "Wrong password entered",
+  "sounds.a_changed.laser": "Laser activated / deactivated",
   "sounds.a_changed.save": "Checkpoint saved",
   "sounds.a_changed.smart_sewage_absorb": "Smart sewage absorbed something",
 
   "transfur.a_changed.bei_feng": "bei feng",
-  "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
-  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male",
-  "transfur.a_changed.gas_wolf": "gas wolf",
+  "transfur.a_changed.benign": "benign",
   "transfur.a_changed.dark_latex_wolf_female": "dark latex wolf female",
-  "transfur.a_changed.dark_latex_wolf_male": "dark latex wolf male"
+  "transfur.a_changed.dark_latex_wolf_male": "dark latex wolf male",
+  "transfur.a_changed.gas_wolf": "gas wolf",
+  "transfur.a_changed.pure_white_latex_wolf": "pure white latex wolf",
+  "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
+  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male"
 }

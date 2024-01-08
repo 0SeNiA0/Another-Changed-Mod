@@ -36,6 +36,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
         addSimpleSound(GAS_LEAK);
         addSimpleSound(KEYPAD_UNLOCKED);
         addSimpleSound(KEYPAD_WRONG_PASSWORD);
+        addSimpleSound(LASER);
         addSimpleSound(SAVE);
         add(SMART_SEWAGE_CONSUME, definition()
                 .subtitle(subtitle("smart_sewage_absorb"))
