@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.61'
-    id 'net.neoforged.gradle.mixin' version '7.0.61'
+    id 'net.neoforged.gradle.userdev' version '7.0.80'
+    id 'net.neoforged.gradle.mixin' version '7.0.80'
 }
 
 mixin {
@@ -11,10 +11,6 @@ mixin {
 }
 
 minecraft {
-    mappings {
-        channel = official()
-        version.put "minecraft", minecraft_version
-    }
     accessTransformers {
         file('src/main/resources/accesstransformer.cfg')
     }

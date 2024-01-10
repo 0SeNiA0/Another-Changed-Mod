@@ -36,7 +36,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
-        if(!pLevel.isClientSide) TransfurEvent.transfur().build().accept(player, TransfurManager.getTransfurType(new ResourceLocation(NBTUtils.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY))));
+        if(!pLevel.isClientSide) TransfurEvent.TRANSFUR_DEF.accept(player, TransfurManager.getTransfurType(new ResourceLocation(NBTUtils.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY))));
         return onUse(pStack,new ItemStack(ItemRegistry.SYRINGE_ITEM.get()),player);
     }
 

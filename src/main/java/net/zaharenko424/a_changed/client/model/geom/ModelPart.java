@@ -107,6 +107,10 @@ public class ModelPart {
         return this.children.containsKey(p_233563_);
     }
 
+    public boolean hasChildren(){
+        return !children.isEmpty();
+    }
+
     public ModelPart getChild(String p_171325_) {
         ModelPart modelpart = children.get(p_171325_);
         if (modelpart == null) {

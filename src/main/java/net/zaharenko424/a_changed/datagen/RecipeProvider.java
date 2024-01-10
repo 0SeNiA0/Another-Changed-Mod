@@ -81,6 +81,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.YELLOW_CONCRETE),has(Items.YELLOW_CONCRETE))
                 .save(p_301172_,DANGER_SIGN_ITEM.getId());
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, DARK_LATEX_ICE_ITEM, 4)
+                .pattern("SS")
+                .pattern("SS")
+                .define('S', DARK_LATEX_CRYSTAL_SHARD)
+                .unlockedBy(getHasName(DARK_LATEX_CRYSTAL_SHARD), has(DARK_LATEX_CRYSTAL_SHARD))
+                .save(p_301172_, DARK_LATEX_ICE_ITEM.getId());
+
         //TODO gas tank
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,HAZARD_BLOCK_ITEM,9)

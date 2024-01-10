@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.client.renderer;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -105,13 +104,9 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         if (!shouldSit && entity.isAlive()) {
             f8 = entity.walkAnimation.speed(ticks);
             f4 = entity.walkAnimation.position(ticks);
-            if (entity.isBaby()) {
-                f4 *= 3.0F;
-            }
+            if (entity.isBaby()) f4 *= 3.0F;
 
-            if (f8 > 1.0F) {
-                f8 = 1.0F;
-            }
+            if (f8 > 1.0F) f8 = 1.0F;
         }
 
         model.prepareMobModel(entity, f4, f8, ticks);
@@ -119,12 +114,10 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         Minecraft minecraft = Minecraft.getInstance();
         boolean flag = isBodyVisible(entity);
         boolean flag1 = !flag && !entity.isInvisibleTo(minecraft.player);
-        boolean flag2 = minecraft.shouldEntityAppearGlowing(entity);
-        RenderType rendertype = getRenderType(entity, flag, flag1, flag2);
+        RenderType rendertype = getRenderType(entity, flag, flag1, minecraft.shouldEntityAppearGlowing(entity));
         if (rendertype != null) {
-            VertexConsumer vertexconsumer = buffer.getBuffer(rendertype);
-            int i = getOverlayCoords(entity, getWhiteOverlayProgress(entity, ticks));
-            model.renderToBuffer(poseStack, vertexconsumer, light, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
+            int overlay = getOverlayCoords(entity, getWhiteOverlayProgress(entity, ticks));
+            model.renderToBuffer(poseStack, buffer.getBuffer(rendertype), light, overlay, 1, 1, 1, flag1 ? .15f : 1);
         }
 
         if (!entity.isSpectator()) {
@@ -138,15 +131,11 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
     }
 
     @Nullable
-    protected RenderType getRenderType(E entity, boolean p_115323_, boolean p_115324_, boolean p_115325_) {
+    protected RenderType getRenderType(E entity, boolean bodyVisible, boolean translucent, boolean glowOutline) {
         ResourceLocation resourcelocation = getTextureLocation(entity);
-        if (p_115324_) {
-            return RenderType.itemEntityTranslucentCull(resourcelocation);
-        } else if (p_115323_) {
-            return model.renderType(resourcelocation);
-        } else {
-            return p_115325_ ? RenderType.outline(resourcelocation) : null;
-        }
+        if(translucent) return RenderType.itemEntityTranslucentCull(resourcelocation);
+        if(bodyVisible) return model.renderType(resourcelocation);
+        return glowOutline ? RenderType.outline(resourcelocation) : null;
     }
 
     protected boolean isBodyVisible(E p_115341_) {

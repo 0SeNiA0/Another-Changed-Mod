@@ -163,11 +163,17 @@ public abstract class AbstractTransfurType {
             return this;
         }
 
+        /**
+         * Executed right after player was transfurred & in latex beast constructor
+         */
         public Properties onTransfur(Consumer<LivingEntity> onTransfur){
             this.onTransfur = onTransfur;
             return this;
         }
 
+        /**
+         * Executed right before player is untransfurred
+         */
         public Properties onUnTransfur(Consumer<LivingEntity> onUnTransfur){
             this.onUnTransfur = onUnTransfur;
             return this;

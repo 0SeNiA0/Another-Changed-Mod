@@ -50,6 +50,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(DANGER_SIGN.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         crystalDrops(DARK_LATEX_CRYSTAL.get(), ItemRegistry.DARK_LATEX_CRYSTAL_SHARD);
+        dropWhenSilkTouch(DARK_LATEX_CRYSTAL_ICE.get());
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
         dropSelf(HAZARD_BLOCK.get());
         dropSelf(HAZARD_LAB_BLOCK.get());

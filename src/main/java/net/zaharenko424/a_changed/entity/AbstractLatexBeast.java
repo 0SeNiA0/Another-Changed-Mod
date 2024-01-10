@@ -29,6 +29,7 @@ import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Arrays;
 import java.util.UUID;
 
 @ParametersAreNonnullByDefault
@@ -40,14 +41,14 @@ public abstract class AbstractLatexBeast extends Monster {
 
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, AbstractTransfurType transfurType) {
         super(entityType, level);
-        this.transfurType=transfurType;
+        this.transfurType = transfurType;
         dimensions = transfurType.getPoseDimensions(Pose.STANDING);
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
         registerLatexGoals();
         AttributeMap map = getAttributes();
-        if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED,airDecreaseSpeed)&&transfurType.airReductionModifier!=0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a",transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(Attributes.MAX_HEALTH,healthModifier)&&transfurType.maxHealthModifier!=0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a",transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(NeoForgeMod.SWIM_SPEED,swimSpeed)&&transfurType.swimSpeedModifier!=0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a",transfurType.swimSpeedModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED,airDecreaseSpeed) && transfurType.airReductionModifier != 0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(Attributes.MAX_HEALTH,healthModifier) && transfurType.maxHealthModifier != 0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a", transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(NeoForgeMod.SWIM_SPEED,swimSpeed) && transfurType.swimSpeedModifier != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", transfurType.swimSpeedModifier, AttributeModifier.Operation.ADDITION));
         addModifiers(map);
         transfurType.onTransfur(this);
     }
@@ -95,7 +96,7 @@ public abstract class AbstractLatexBeast extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity p_21372_) {
-        if(level().isClientSide||!(getMainHandItem().isEmpty()&&TransfurDamageSource.checkTarget(p_21372_))) return super.doHurtTarget(p_21372_);
+        if(level().isClientSide || !TransfurDamageSource.checkTarget(p_21372_)) return super.doHurtTarget(p_21372_);
 
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) p_21372_.setSecondsOnFire(i * 4);
@@ -105,5 +106,14 @@ public abstract class AbstractLatexBeast extends Monster {
         setLastHurtMob(p_21372_);
         TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);
         return true;
+    }
+
+    public void copyEquipment(LivingEntity copyFrom){
+        if(copyFrom instanceof Player) return;
+        for(EquipmentSlot slot : EquipmentSlot.values()){
+            if(copyFrom.hasItemInSlot(slot)) setItemSlot(slot, copyFrom.getItemBySlot(slot));
+        }
+        Arrays.fill(this.armorDropChances, 0.1f);
+        Arrays.fill(this.handDropChances, 0.1f);
     }
 }

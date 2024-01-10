@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.client.model;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.Mth;
@@ -53,15 +52,11 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-        super.renderToBuffer(poseStack, consumer, light, overlay, r, g, b, alpha);
-    }
-
-    @Override
     public void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
         root.getChildren().forEach((name,part)->{
             if(name.startsWith("armor_")) part.visible=false;
         });
+        setAllDraw(true);
         root.getAllParts().forEach(ModelPart::resetPose);
         boolean flag = entity.getFallFlyingTicks() > 4;
         boolean flag1 = entity.isVisuallySwimming();
@@ -258,6 +253,14 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
 
     public ModelPart getRandomModelPart(RandomSource p_233439_) {
         return bodyParts.get(p_233439_.nextInt(bodyParts.size()));
+    }
+
+    public void setAllDraw(boolean b){
+        setAllDraw(root, b);
+    }
+
+    public void setAllDraw(ModelPart part, boolean b){
+        part.getAllParts().forEach(part0 -> part0.skipDraw = !b);
     }
 
     public void setAllVisible(boolean b){

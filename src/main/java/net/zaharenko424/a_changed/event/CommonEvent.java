@@ -68,7 +68,7 @@ public class CommonEvent {
         ServerPlayer player= (ServerPlayer) event.getEntity();
         TransfurEvent.RECALCULATE_PROGRESS.accept(player);
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundTransfurToleranceUpdatePacket());
-        TransfurManager.updatePlayer(player);
+        TransfurEvent.updatePlayer(player);
         player.refreshDimensions();
     }
 
@@ -165,7 +165,7 @@ public class CommonEvent {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(isBeingTransfurred) TransfurEvent.UNTRANSFUR.accept(player); else TransfurManager.updatePlayer(player);
+                if(isBeingTransfurred) TransfurEvent.UNTRANSFUR.accept(player); else TransfurEvent.updatePlayer(player);
             }
         },25);
     }

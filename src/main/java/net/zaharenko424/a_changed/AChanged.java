@@ -105,6 +105,7 @@ public class AChanged {
                 output.accept(CHAIR_ITEM);
                 output.accept(COMPUTER_ITEM);
                 output.accept(DANGER_SIGN_ITEM);
+                output.accept(DARK_LATEX_ICE_ITEM);
                 output.accept(DARK_LATEX_CRYSTAL_ITEM);
                 output.accept(DARK_LATEX_CRYSTAL_SHARD);
                 output.accept(GREEN_CRYSTAL_ITEM);

@@ -13,6 +13,7 @@ import net.neoforged.neoforge.common.capabilities.*;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.common.util.NonNullSupplier;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.Contract;
@@ -187,7 +188,7 @@ public class TransfurCapability {
             }
             if(entity.tickCount%ticksBetweenTFProgressDecrease!=0) return;
             transfurProgress--;
-            if(entity instanceof ServerPlayer player) TransfurManager.updatePlayer(player);
+            if(entity instanceof ServerPlayer player) TransfurEvent.updatePlayer(player);
         }
     }
 }
