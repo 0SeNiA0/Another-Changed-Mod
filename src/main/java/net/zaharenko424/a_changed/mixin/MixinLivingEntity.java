@@ -11,12 +11,16 @@ import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements ILivingEntityExtension {
+
+    @Unique
+    protected float mod$airDecreaseDecimals = 0;
 
     @Shadow public abstract double getAttributeValue(Holder<Attribute> p_251296_);
 
@@ -26,9 +30,22 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
 
     @Inject(at = @At("RETURN"), method = "decreaseAirSupply", cancellable = true)
     private void onDecreaseAirSupply(int p_21303_, CallbackInfoReturnable<Integer> cir){
-        int airDecrease = (int) getAttributeValue(AChanged.AIR_DECREASE_SPEED);
-        if(airDecrease==1) return;
+        float airDecrease = (float) getAttributeValue(AChanged.AIR_DECREASE_SPEED);
+        if(airDecrease == 1) return;
         int i = EnchantmentHelper.getRespiration(self());
-        cir.setReturnValue(i > 0 && this.random.nextInt(i + 1) > 0 ? p_21303_ : p_21303_ - airDecrease);
+        if(airDecrease == 0 || (i > 0 && random.nextInt(i + 1) > 0)){
+            cir.setReturnValue(p_21303_);
+            return;
+        }
+
+        int airReduction = (int) airDecrease;
+        float decimals = airDecrease % 1;
+        if(decimals > .01) mod$airDecreaseDecimals += decimals;
+        if(mod$airDecreaseDecimals > 1){
+            mod$airDecreaseDecimals--;
+            airReduction++;
+        }
+
+        cir.setReturnValue(p_21303_ - airReduction);
     }
 }

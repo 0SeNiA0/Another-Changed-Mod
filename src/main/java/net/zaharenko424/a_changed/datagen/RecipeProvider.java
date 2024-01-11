@@ -246,14 +246,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT),has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_,VENT_ITEM.getId());
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_F,2)
-                .pattern("LL ")
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_F,3)
+                .pattern("L L")
+                .pattern(" L ")
                 .define('L', WHITE_LATEX_ITEM)
                 .unlockedBy(getHasName(WHITE_LATEX_ITEM),has(WHITE_LATEX_ITEM))
                 .save(p_301172_,WHITE_LATEX_PUDDLE_F_ITEM.getId());
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_M,2)
-                .pattern(" LL")
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_M,3)
+                .pattern(" L ")
+                .pattern("L L")
                 .define('L', WHITE_LATEX_ITEM)
                 .unlockedBy(getHasName(WHITE_LATEX_ITEM),has(WHITE_LATEX_ITEM))
                 .save(p_301172_,WHITE_LATEX_PUDDLE_M_ITEM.getId());

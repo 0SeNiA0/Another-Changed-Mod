@@ -6,7 +6,7 @@ import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +19,6 @@ public class DamageTypeTagProvider extends DamageTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_270108_) {
-        tag(DamageTypeTags.NO_KNOCKBACK).add(TransfurDamageSource.transfur);
+        tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.transfur);
     }
 }

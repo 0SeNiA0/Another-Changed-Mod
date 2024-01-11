@@ -58,6 +58,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         });
         setAllDraw(true);
         root.getAllParts().forEach(ModelPart::resetPose);
+
         boolean flag = entity.getFallFlyingTicks() > 4;
         boolean flag1 = entity.isVisuallySwimming();
         head.yRot = headYaw * Mth.DEG_TO_RAD;
@@ -211,7 +212,8 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
             case HEAD -> setupArmorPart("armor_head",head);
             case CHEST -> {
                 setupArmorPart("armor_body",body);
-                if(body.hasChild("tail")) setAllVisible(body.getChild("tail"),false);
+                ModelPart armorBody = root.getChild("armor_body");
+                if(armorBody.hasChild("ar_tail")) setAllVisible(armorBody.getChild("ar_tail"),false);
                 setupArmorPart("armor_right_arm",rightArm);
                 setupArmorPart("armor_left_arm",leftArm);
             }
@@ -279,7 +281,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 rightArm.yRot = (float) Math.PI / 6;
             }
             case ITEM -> {
-                rightArm.xRot = rightArm.xRot * -0.5F + (float) (Math.PI / 10);
+                rightArm.xRot = rightArm.xRot * 0.5F + (float) (Math.PI / 10);
                 rightArm.yRot = 0.0F;
             }
             case THROW_SPEAR -> {
@@ -319,7 +321,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 leftArm.yRot = (float) -Math.PI / 6;
                 break;
             case ITEM:
-                leftArm.xRot = leftArm.xRot * -0.5F + (float) (Math.PI / 10);
+                leftArm.xRot = leftArm.xRot * 0.5F + (float) (Math.PI / 10);
                 leftArm.yRot = 0.0F;
                 break;
             case THROW_SPEAR:

@@ -1,8 +1,11 @@
 package net.zaharenko424.a_changed.datagen;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
 
@@ -32,5 +35,18 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(UNTRANSFUR_SYRINGE_ITEM.getId());
         basicItem(WHITE_LATEX_ITEM.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
+
+        spawnEgg(BEI_FENG_EGG);
+        spawnEgg(BENIGN_EGG);
+        spawnEgg(DARK_LATEX_WOLF_F_EGG);
+        spawnEgg(DARK_LATEX_WOLF_M_EGG);
+        spawnEgg(GAS_WOLF_EGG);
+        spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
+        spawnEgg(WHITE_LATEX_WOLF_F_EGG);
+        spawnEgg(WHITE_LATEX_WOLF_M_EGG);
+    }
+
+    protected void spawnEgg(@NotNull DeferredItem<SpawnEggItem> egg){
+        withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 }

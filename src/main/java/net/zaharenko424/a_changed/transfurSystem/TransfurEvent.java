@@ -32,10 +32,7 @@ import static net.zaharenko424.a_changed.registry.EntityRegistry.WHITE_LATEX_WOL
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TOLERANCE;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.getTransfurEntity;
 
-/**
- * Serverside use only!
- */
-@ParametersAreNonnullByDefault
+
 public class TransfurEvent {
 
     public static final TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR_DEF = addTransfurProgress().build();
@@ -65,19 +62,19 @@ public class TransfurEvent {
         return new Recalculate();
     }
 
-    static void platformCheck(LivingEntity target){
+    static void platformCheck(@NotNull LivingEntity target){
         if(target.level().isClientSide) throw new IllegalStateException("Cannot run serverside only methods on client!");
     }
 
-    public static AbstractLatexBeast spawnLatex(AbstractTransfurType transfurType, ServerLevel level, BlockPos pos){
+    public static AbstractLatexBeast spawnLatex(@NotNull AbstractTransfurType transfurType,@NotNull ServerLevel level,@NotNull BlockPos pos){
         return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level,pos, MobSpawnType.CONVERSION);
     }
 
-    public static void updatePlayer(ServerPlayer player){
+    public static void updatePlayer(@NotNull ServerPlayer player){
         updatePlayer(player,player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC));
     }
 
-    public static void updatePlayer(ServerPlayer player, ITransfurHandler handler){
+    public static void updatePlayer(@NotNull ServerPlayer player,@NotNull ITransfurHandler handler){
         player.refreshDimensions();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundPlayerTransfurUpdatePacket(handler));
         PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(()->player),new ClientboundRemotePlayerTransfurUpdatePacket(handler,player.getUUID()));
@@ -111,7 +108,7 @@ public class TransfurEvent {
         public TriConsumer<LivingEntity, AbstractTransfurType, Float> build() {
             return  (target, transfurType, amount) -> target.getCapability(TransfurCapability.CAPABILITY).ifPresent((handler) -> {
                 platformCheck(target);
-                if (handler.isBeingTransfurred()) return;
+                if (handler.isBeingTransfurred() || handler.isTransfurred()) return;
                 if (sound != null) target.level().playSound(null, target.blockPosition(), sound, SoundSource.PLAYERS);
                 float finalAmount = amount;
                 if (checkResistance) {
@@ -161,12 +158,12 @@ public class TransfurEvent {
             target.getCapability(TransfurCapability.CAPABILITY).ifPresent(handler -> {
                 ServerLevel level = (ServerLevel) target.level();
                 if (target instanceof ServerPlayer player) {
-                    level.playSound(null, player, sound, SoundSource.PLAYERS,1,1);
+                    if(sound != null) level.playSound(null, player, sound, SoundSource.PLAYERS,1,1);
                     transfurPlayer(player, handler, transfurType, level);
                     return;
                 }
                 spawnLatex(transfurType, level, target.blockPosition()).copyEquipment(target);
-                target.playSound(sound);
+                if(sound != null) target.playSound(sound);
                 target.discard();
             });
         }
@@ -183,11 +180,12 @@ public class TransfurEvent {
                 case DEATH -> {
                     handler.unTransfur();
                     updatePlayer(player, handler);
-                    player.hurt(TransfurDamageSource.transfur(player, player.getLastHurtByMob()), Float.MAX_VALUE);
+                    player.hurt(DamageSources.transfur(player, player.getLastHurtByMob()), Float.MAX_VALUE);
                     spawnLatex(transfurType, level, player.blockPosition());
                 }
                 case PROMPT -> {
                     handler.setBeingTransfurred(true);
+                    handler.setTransfurType(transfurType);
                     PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player), new ClientboundOpenTransfurScreenPacket());
                 }
                 case TRANSFUR -> actuallyTransfurPlayer(player, handler, transfurType);
@@ -195,6 +193,7 @@ public class TransfurEvent {
         }
 
         void actuallyTransfurPlayer(ServerPlayer player, ITransfurHandler handler, AbstractTransfurType transfurType){
+            if(handler.isTransfurred()) handler.getTransfurType().onUnTransfur(player);
             handler.transfur(transfurType);
             transfurType.onTransfur(player);
             updatePlayer(player, handler);
@@ -203,7 +202,7 @@ public class TransfurEvent {
 
     public static class UnTransfur {
 
-        SoundEvent sound;
+        SoundEvent sound = SoundRegistry.TRANSFUR.get();
 
         public UnTransfur withSound(SoundEvent sound){
             this.sound = sound;

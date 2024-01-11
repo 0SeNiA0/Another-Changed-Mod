@@ -14,10 +14,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface TransfurDamageSource {
+public interface DamageSources {
 
-    ResourceKey<DamageType> transfur=ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(AChanged.MODID,"transfur"));
-    ResourceKey<DamageType> solvent=ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(AChanged.MODID,"latex_solvent"));
+    ResourceKey<DamageType> transfur = ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(AChanged.MODID,"transfur"));
+    ResourceKey<DamageType> solvent = ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation(AChanged.MODID,"latex_solvent"));
 
     @Contract("_, _ -> new")
     static <T extends Entity,E extends LivingEntity> @NotNull DamageSource transfur(@NotNull T target, @Nullable E entity){
@@ -30,6 +30,7 @@ public interface TransfurDamageSource {
     }
 
     static boolean checkTarget(Entity target){
-        return target instanceof LivingEntity entity&&entity.getCapability(TransfurCapability.CAPABILITY).isPresent()&&(!(target instanceof Player player)||!TransfurManager.isTransfurred(player));
+        return target instanceof LivingEntity entity && entity.getCapability(TransfurCapability.CAPABILITY).isPresent()
+                && (!(target instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player)));
     }
 }

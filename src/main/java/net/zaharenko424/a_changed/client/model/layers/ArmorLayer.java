@@ -48,7 +48,7 @@ public class ArmorLayer<E extends LivingEntity,M extends HierarchicalHumanoidMod
 
     private void renderArmorPiece(PoseStack poseStack, MultiBufferSource buffer, E entity, EquipmentSlot slot, int light) {
         ItemStack itemstack = entity.getItemBySlot(slot);
-        if(!(itemstack.getItem() instanceof ArmorItem armoritem)||armoritem.getEquipmentSlot() != slot) return;
+        if(!(itemstack.getItem() instanceof ArmorItem armoritem) || armoritem.getEquipmentSlot() != slot) return;
         renderer.getModel().setupArmorPart(slot);
         if(armoritem instanceof net.minecraft.world.item.DyeableLeatherItem) {
             int i = ((net.minecraft.world.item.DyeableLeatherItem)armoritem).getColor(itemstack);

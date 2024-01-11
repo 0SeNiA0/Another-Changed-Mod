@@ -25,4 +25,8 @@ public abstract class AbstractLatexEntityModel<E extends LivingEntity> extends H
         }
         poseStack.scale(-1,-1,1);
     }
+
+    public boolean hasGlowParts(){
+        return false;
+    }
 }

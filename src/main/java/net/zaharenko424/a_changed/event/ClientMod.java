@@ -1,13 +1,11 @@
 package net.zaharenko424.a_changed.event;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
@@ -27,18 +25,13 @@ import net.zaharenko424.a_changed.registry.BlockRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static net.zaharenko424.a_changed.AChanged.*;
+import static net.zaharenko424.a_changed.AChanged.BLUE_GAS_PARTICLE;
+import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientMod {
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        LOGGER.info("HELLO FROM CLIENT SETUP");
-        LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-    }
 
     @SubscribeEvent
     public static void onRegisterGui(RegisterGuiOverlaysEvent event){

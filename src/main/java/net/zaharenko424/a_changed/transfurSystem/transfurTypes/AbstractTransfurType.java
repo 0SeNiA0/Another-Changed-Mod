@@ -138,7 +138,7 @@ public abstract class AbstractTransfurType {
             return this;
         }
 
-        public Properties airReductionModifier(int airReductionModifier){
+        public Properties airReductionModifier(float airReductionModifier){
             this.airReductionModifier = airReductionModifier;
             return this;
         }

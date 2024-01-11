@@ -18,9 +18,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
@@ -117,8 +116,7 @@ public class LatexPuddle extends Block {
 
     @Override
     public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
-        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0
-                || !TransfurDamageSource.checkTarget(p_60498_) || TransfurManager.isBeingTransfurred((LivingEntity) p_60498_)) return;
+        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0 || !DamageSources.checkTarget(p_60498_)) return;
         if(p_60498_.getBoundingBox().intersects(AABB_CACHE.computeIfAbsent(getShape(p_60495_, p_60496_,p_60497_, CollisionContext.empty()), shape -> shape.bounds().expandTowards(0, .1, 0)).move(p_60497_)))
             TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
     }

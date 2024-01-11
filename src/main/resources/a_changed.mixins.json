@@ -8,6 +8,7 @@
   },
   "mixins": [
     "MixinEntity",
+    "MixinHurtByTargetGoal",
     "MixinIronGolem",
     "MixinLivingEntity",
     "MixinPlayer",

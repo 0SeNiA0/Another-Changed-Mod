@@ -24,10 +24,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
 import net.zaharenko424.a_changed.client.model.DummyModel;
-import net.zaharenko424.a_changed.client.model.layers.ArmorLayer;
-import net.zaharenko424.a_changed.client.model.layers.ArrowLayer;
-import net.zaharenko424.a_changed.client.model.layers.ElytraLayerFix;
-import net.zaharenko424.a_changed.client.model.layers.SpinAttackEffect;
+import net.zaharenko424.a_changed.client.model.layers.*;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +42,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         super(context,model,.5f);
         this.context = context;
         addLayers();
+        addLayer(new GlowLayer<>(this));
     }
 
     /**
@@ -64,7 +62,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         addLayer(new ItemInHandLayer<>(this, this.context.getItemInHandRenderer()));
         addLayer(new ElytraLayerFix<>(this, this.context.getModelSet()));
         addLayer(new SpinAttackEffect<>(this,context.getModelSet()));
-        addLayer(new ArrowLayer<>(context.getEntityRenderDispatcher(), this));//kinda works
+        addLayer(new ArrowLayer<>(context.getEntityRenderDispatcher(), this));
         //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
     }
 
@@ -73,9 +71,9 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     }
 
     public void updateTransfurType(@Nullable AbstractTransfurType transfurType){
-        if(transfurType==this.transfurType) return;
-        this.transfurType=transfurType;
-        if(transfurType!=null) {
+        if(transfurType == this.transfurType) return;
+        this.transfurType = transfurType;
+        if(transfurType != null) {
             model = transfurType.getModel();
         }
     }
@@ -105,14 +103,12 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     private void setModelProperties(E entity){
         model.crouching=entity.isCrouching();
         model.attackTime=entity.attackAnim;
-        if(entity instanceof Player player){
-            if(player.isSpectator()){
-                model.setAllVisible(false);
-                model.setAllVisible(model.head,true);
-            } else {
-                model.setAllVisible(true);
-            }
-        }
+
+        if(entity instanceof Player player && player.isSpectator()){
+            model.setAllVisible(false);
+            model.setAllVisible(model.head,true);
+        } else model.setAllVisible(true);
+
         HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(entity, InteractionHand.MAIN_HAND);
         HumanoidModel.ArmPose humanoidmodel$armpose1 = getArmPose(entity, InteractionHand.OFF_HAND);
         if (humanoidmodel$armpose.isTwoHanded()) {
@@ -211,7 +207,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(E entity) {
+    public @NotNull ResourceLocation getTextureLocation(@Nullable E entity) {
         return transfurType!=null ? AChanged.textureLoc(transfurType.id.withPrefix("entity/")) : AChanged.textureLoc("entity/dummy");
     }
 }

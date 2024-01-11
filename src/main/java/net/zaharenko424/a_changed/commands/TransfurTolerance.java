@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundTransfurToleranceUpdatePacket;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class TransfurTolerance {
                                                 context->get(context.getSource())
                                         )
                         )
-                        .requires(source->source.hasPermission(Commands.LEVEL_ADMINS))
+                        .requires(UnTransfur::check)
                         .then(
                                 Commands.literal("set")
                                         .then(
@@ -59,7 +59,7 @@ public class TransfurTolerance {
         if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set").append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to "+tolerance);
         source.getLevel().getServer().getAllLevels().forEach(level->level.getAllEntities().forEach(entity->{
-            if(TransfurDamageSource.checkTarget(entity)) TransfurEvent.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
+            if(DamageSources.checkTarget(entity)) TransfurEvent.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),new ClientboundTransfurToleranceUpdatePacket());
         return Command.SINGLE_SUCCESS;

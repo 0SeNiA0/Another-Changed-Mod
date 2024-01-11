@@ -5,7 +5,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class LatexSolventEffect extends MobEffect {
     @Override
     public void applyEffectTick(@NotNull LivingEntity p_19467_, int p_19468_) {
         if(p_19467_ instanceof AbstractLatexBeast||(p_19467_ instanceof Player player&& TransfurManager.isTransfurred(player))){
-            p_19467_.hurt(TransfurDamageSource.latexSolvent(p_19467_),2f);
+            p_19467_.hurt(DamageSources.latexSolvent(p_19467_),2f);
         }
     }
 }

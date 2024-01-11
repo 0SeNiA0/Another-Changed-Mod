@@ -31,7 +31,7 @@ public class Transfur {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
                 Commands.literal("transfur")
-                        .requires(source->source.hasPermission(Commands.LEVEL_ADMINS))
+                        .requires(UnTransfur::check)
                         .then(
                                 Commands.argument("transfurType", ResourceLocationArgument.id())
                                         .suggests(suggestions)

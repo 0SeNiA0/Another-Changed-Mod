@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.block.blocks.LaserEmitter;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import net.zaharenko424.a_changed.util.StateProperties;
@@ -100,7 +100,7 @@ public class LaserEmitterEntity extends BlockEntity {
     }
 
     protected void transfurEntities(){
-        level.getEntitiesOfClass(LivingEntity.class, aabbCache, TransfurDamageSource::checkTarget).forEach(entity -> {
+        level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTarget).forEach(entity -> {
             if(!entity.getItemBySlot(EquipmentSlot.LEGS).is(ItemRegistry.BLACK_LATEX_SHORTS.get())) return;
             TransfurEvent.TRANSFUR_DEF.accept(entity, TransfurRegistry.BENIGN_TF.get());
         });

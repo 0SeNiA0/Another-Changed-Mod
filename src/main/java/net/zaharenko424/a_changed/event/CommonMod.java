@@ -24,8 +24,6 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
         PacketHandler.init();
     }
 

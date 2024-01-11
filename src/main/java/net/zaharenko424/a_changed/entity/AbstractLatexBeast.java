@@ -1,8 +1,10 @@
 package net.zaharenko424.a_changed.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -19,14 +21,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.ai.LatexAttackGoal;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -68,17 +70,15 @@ public abstract class AbstractLatexBeast extends Monster {
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(1, new OpenDoorGoal(this,false));
-        goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, .8));
-        goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, .8));
+        goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
         targetSelector.addGoal(0, new HurtByTargetGoal(this));
     }
 
     protected void registerLatexGoals(){
-        if(transfurType.isOrganic()){
-            goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        } else {
-            goalSelector.addGoal(2, new LatexAttackGoal(this, 1.0, false));
+        if(!transfurType.isOrganic()){
             targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred(player)));
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
         }
@@ -96,12 +96,12 @@ public abstract class AbstractLatexBeast extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity p_21372_) {
-        if(level().isClientSide || !TransfurDamageSource.checkTarget(p_21372_)) return super.doHurtTarget(p_21372_);
+        if(level().isClientSide || !DamageSources.checkTarget(p_21372_)) return super.doHurtTarget(p_21372_);
 
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) p_21372_.setSecondsOnFire(i * 4);
 
-        if(!p_21372_.hurt(TransfurDamageSource.transfur(p_21372_,this), 0.1F)) return false;
+        if(!p_21372_.hurt(DamageSources.transfur(p_21372_,this), 0.1F)) return false;
         doEnchantDamageEffects(this, p_21372_);
         setLastHurtMob(p_21372_);
         TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);
@@ -115,5 +115,16 @@ public abstract class AbstractLatexBeast extends Monster {
         }
         Arrays.fill(this.armorDropChances, 0.1f);
         Arrays.fill(this.handDropChances, 0.1f);
+    }
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        onFinalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+    }
+
+    protected void onFinalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag tag){
+        setCanPickUpLoot(level.getRandom().nextFloat() < 0.55F * difficulty.getSpecialMultiplier());
     }
 }

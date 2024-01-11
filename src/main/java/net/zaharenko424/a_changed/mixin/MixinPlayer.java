@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.transfurSystem.TransfurDamageSource;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +29,10 @@ public abstract class MixinPlayer extends LivingEntity {
     public boolean hurtProxy(@NotNull Entity instance, DamageSource p_19946_, float p_19947_){
         if(instance.level().isClientSide) return instance.hurt(p_19946_,p_19947_);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
-        if(!getMainHandItem().isEmpty()||!handler.isTransfurred()||handler.getTransfurType().isOrganic()) return instance.hurt(p_19946_,p_19947_);
-        p_19947_+=TransfurManager.LATEX_DAMAGE_BONUS;
-        if(!TransfurDamageSource.checkTarget(instance)) return instance.hurt(p_19946_,p_19947_);
-        if(instance.hurt(TransfurDamageSource.transfur(instance, this),p_19947_)){
+        if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return instance.hurt(p_19946_,p_19947_);
+        p_19947_ += TransfurManager.LATEX_DAMAGE_BONUS;
+        if(!DamageSources.checkTarget(instance)) return instance.hurt(p_19946_,p_19947_);
+        if(instance.hurt(DamageSources.transfur(instance, this),p_19947_)){
             TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) instance, Objects.requireNonNull(handler.getTransfurType()), 5f);
             return true;
         }

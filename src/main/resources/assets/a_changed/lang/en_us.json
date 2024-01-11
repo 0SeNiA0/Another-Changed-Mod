@@ -93,6 +93,15 @@
   "item.a_changed.white_latex": "White latex",
   "item.a_changed.white_latex_bucket": "White latex bucket",
 
+  "item.a_changed.bei_feng_spawn_egg": "Bei Feng Spawn Egg",
+  "item.a_changed.benign_spawn_egg": "Benign Spawn Egg",
+  "item.a_changed.dark_latex_wolf_female_spawn_egg": "Dark Latex Wolf Female Spawn Egg",
+  "item.a_changed.dark_latex_wolf_male_spawn_egg": "Dark Latex Wolf Male Spawn Egg",
+  "item.a_changed.gas_wolf_spawn_egg": "Gas Wolf Spawn Egg",
+  "item.a_changed.pure_white_latex_wolf_spawn_egg": "Pure White Latex Wolf Spawn Egg",
+  "item.a_changed.white_latex_wolf_female_spawn_egg": "White Latex Wolf Female Spawn Egg",
+  "item.a_changed.white_latex_wolf_male_spawn_egg": "White Latex Wolf Male Spawn Egg",
+
   "itemGroup.a_changed.item_tab": "Item tab",
 
   "misc.a_changed.keypad_attempt": "Try",
