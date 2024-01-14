@@ -35,6 +35,7 @@
   "block.a_changed.orange_leaves": "Orange tree leaves",
   "block.a_changed.orange_sapling": "Orange sapling",
   "block.a_changed.orange_tree_log": "Orange tree log",
+  "block.a_changed.pipe": "Pipe",
   "block.a_changed.scanner": "Scanner",
   "block.a_changed.small_cardboard_box": "Small cardboard box",
   "block.a_changed.smart_sewage_system": "Smart sewage system",
@@ -110,11 +111,13 @@
   "misc.a_changed.transfur_die": "Die",
 
   "sounds.a_changed.button_pressed": "Button pressed",
+  "sounds.a_changed.door_close": "Door closed",
   "sounds.a_changed.door_locked": "Door is locked",
-  "sounds.a_changed.door_open": "Door opened / closed",
+  "sounds.a_changed.door_open": "Door opened",
   "sounds.a_changed.keypad_unlocked": "Keypad unlocked",
   "sounds.a_changed.keypad_wrong_password": "Wrong password entered",
   "sounds.a_changed.laser": "Laser activated / deactivated",
+  "sounds.a_changed.push": "Box pushed",
   "sounds.a_changed.save": "Checkpoint saved",
   "sounds.a_changed.smart_sewage_absorb": "Smart sewage absorbed something",
 

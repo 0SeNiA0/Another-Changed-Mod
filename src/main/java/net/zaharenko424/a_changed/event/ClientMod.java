@@ -15,11 +15,11 @@ import net.zaharenko424.a_changed.client.overlay.HazmatOverlay;
 import net.zaharenko424.a_changed.client.overlay.PureWhiteLatexOverlay;
 import net.zaharenko424.a_changed.client.overlay.TransfurOverlay;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
-import net.zaharenko424.a_changed.client.renderer.ChairRenderer;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
+import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 
@@ -65,7 +65,7 @@ public class ClientMod {
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
 
-        event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);//Dummy renderer
+        event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new LatexEntityRenderer<>(a, BEI_FENG_TF));
 

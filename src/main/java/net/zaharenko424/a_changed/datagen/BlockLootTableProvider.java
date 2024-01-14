@@ -69,6 +69,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         createOrangeLeavesDrops();
         dropSelf(ORANGE_SAPLING.get());
         dropSelf(ORANGE_TREE_LOG.get());
+        dropSelf(PIPE.get());
         dropSelf(SCANNER.get());
         dropSelf(SMART_SEWAGE_SYSTEM.get());
         dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());

@@ -19,7 +19,9 @@ public final class EntityRegistry {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MODID);
 
     //Entities
-    public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> CHAIR_ENTITY = ENTITIES.register("chair_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) -> new SeatEntity(b), MobCategory.MISC).sized(.1f, .1f).build(resourceLoc("chair_entity").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> SEAT_ENTITY =
+            ENTITIES.register("seat_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) ->
+            new SeatEntity(b), MobCategory.MISC).sized(.1f, .1f).build(resourceLoc("chair_entity").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> BEI_FENG =
             registerLatex("bei_feng", EntityType.Builder.of((a,b) ->

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.renderer;
+package net.zaharenko424.a_changed.client.renderer.misc;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

@@ -15,6 +15,8 @@ import net.zaharenko424.a_changed.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
@@ -53,10 +55,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
 
     @Override
     public void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
-        root.getChildren().forEach((name,part)->{
-            if(name.startsWith("armor_")) part.visible=false;
-        });
-        setAllDraw(true);
+        setMatchingVisible(false, name -> name.startsWith("armor_") || name.startsWith("glow_"));
         root.getAllParts().forEach(ModelPart::resetPose);
 
         boolean flag = entity.getFallFlyingTicks() > 4;
@@ -186,14 +185,14 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
             HumanoidArm humanoidarm = getAttackArm(entity);
             ModelPart arm = getArm(humanoidarm);
             float f = attackTime;
-            body.yRot = Mth.sin(Mth.sqrt(f) * (float) (Math.PI * 2)) * 0.2F;
+            body.yRot -= Mth.sin(Mth.sqrt(f) * (float) (Math.PI * 2)) * 0.2F;
             if (humanoidarm == HumanoidArm.LEFT) {
                 body.yRot *= -1.0F;
             }
 
-            rightArm.yRot -= body.yRot;
-            leftArm.yRot -= body.yRot;
-            leftArm.xRot -= body.yRot;
+            rightArm.yRot += body.yRot;
+            leftArm.yRot += body.yRot;
+            leftArm.xRot += body.yRot;
             f = 1.0F - attackTime;
             f *= f;
             f *= f;
@@ -201,47 +200,47 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
             float f1 = Mth.sin(f * (float) Math.PI);
             float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.xRot + 0.7F) * 0.75F;
             arm.xRot += f1 * 1.2F + f2;
-            arm.yRot -= body.yRot * 2.0F;
+            arm.yRot += body.yRot * 2.0F;
             arm.zRot += Mth.sin(attackTime * (float) Math.PI) * -0.4F;
         }
     }
 
     public void setupArmorPart(EquipmentSlot slot){
-        setAllVisible(false);
+        setDrawAll(false);
         switch(slot){
-            case HEAD -> setupArmorPart("armor_head",head);
+            case HEAD -> setupArmorPartsIn(head);
             case CHEST -> {
-                setupArmorPart("armor_body",body);
-                ModelPart armorBody = root.getChild("armor_body");
-                if(armorBody.hasChild("ar_tail")) setAllVisible(armorBody.getChild("ar_tail"),false);
-                setupArmorPart("armor_right_arm",rightArm);
-                setupArmorPart("armor_left_arm",leftArm);
+                setupArmorPartsIn(body);
+                setupArmorPartsIn(rightArm);
+                setupArmorPartsIn(leftArm);
+                if(body.hasChild("tail")) setDrawAll(false, body.getChild("tail"));
             }
             case LEGS -> {
-                setupArmorPart("armor_body",body);
-                setupArmorPart("armor_right_leg",rightLeg);
-                setupArmorPart("armor_left_leg",leftLeg);
+                setupArmorPartsIn(body);
+                setupArmorPartsIn(rightLeg);
+                setupArmorPartsIn(leftLeg);
             }
             case FEET -> {
-                setupArmorPart("armor_right_foot",rightLeg,"arf_");
-                setupArmorPart("armor_left_foot",leftLeg,"arf_");
+                setupArmorPartsIn("right_leg_");
+                setupArmorPartsIn("left_leg_");
             }
         }
     }
 
-    protected void setupArmorPart(String name, ModelPart bodyPart){
-        setupArmorPart(name,bodyPart,"ar_");
+    protected void setupArmorPartsIn(ModelPart bodyPart){
+        setDrawAllAfterMatching(true, name -> name.startsWith("armor_"), bodyPart);
     }
 
-    protected void setupArmorPart(String name, ModelPart bodyPart, String armorPrefix){
-        ModelPart armor0 = root.getChild(name);
-        setAllVisible(armor0,true);
-        armor0.copyFromWChildrenRemapped(bodyPart,armorPrefix);
+    protected void setupArmorPartsIn(String name){
+        Optional<ModelPart> part = getAnyDescendantWithName(name);
+        if(part.isEmpty()) return;
+        setupArmorPartsIn(part.get());
     }
 
     @Override
     public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
         getArm(arm).translateAndRotate(poseStack);
+        poseStack.scale(-1,-1,1);
     }
 
     protected HumanoidArm getAttackArm(E entity) {
@@ -257,20 +256,55 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         return bodyParts.get(p_233439_.nextInt(bodyParts.size()));
     }
 
-    public void setAllDraw(boolean b){
-        setAllDraw(root, b);
+    /**
+     * Sets whether to draw all parts of the model
+     */
+    public void setDrawAll(boolean b){
+        setDrawAll(b, root);
     }
 
-    public void setAllDraw(ModelPart part, boolean b){
+    /**
+     * Sets whether to draw all parts after provided part (including it)
+     * @param part starting ModelPart
+     */
+    public void setDrawAll(boolean b, ModelPart part){
         part.getAllParts().forEach(part0 -> part0.skipDraw = !b);
     }
 
-    public void setAllVisible(boolean b){
-        root().getAllParts().filter((part)->part!=root()).forEach((child->child.visible=b));
+    /**
+     * Sets whether to draw the matching modelParts and all their children.
+     * Starts at the root of the model
+     */
+    public void setDrawAllAfterMatching(boolean b, Predicate<String> predicate){
+        setDrawAllAfterMatching(b, predicate, root);
     }
 
-    public void setAllVisible(ModelPart part, boolean b){
+    /**
+     * Sets whether to draw the matching modelParts and all their children
+     * @param part starting modelPart
+     */
+    public void setDrawAllAfterMatching(boolean b, Predicate<String> predicate, ModelPart part){
+        part.getChildren().forEach((name, part1) -> {
+            if(predicate.test(name)) setDrawAll(b, part1); else setDrawAllAfterMatching(b, predicate, part1);
+        });
+    }
+
+    public void setAllVisible(boolean b){
+        root().getAllParts().filter((part)->part!=root()).forEach(child -> child.visible=b);
+    }
+
+    public void setAllVisible(boolean b, ModelPart part){
         part.getAllParts().forEach((child)->child.visible=b);
+    }
+
+    public void setMatchingVisible(boolean b, Predicate<String> predicate){
+        setMatchingVisible(b, predicate, root);
+    }
+
+    private void setMatchingVisible(boolean b, Predicate<String> predicate, ModelPart part){
+        part.getChildren().forEach((name, part1) -> {
+            if(predicate.test(name)) part1.visible = b; else setMatchingVisible(b, predicate, part1);
+        });
     }
 
     private void poseRightArm(E entity) {

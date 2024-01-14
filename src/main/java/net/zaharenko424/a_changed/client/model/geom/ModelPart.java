@@ -76,21 +76,6 @@ public class ModelPart {
         z = from.z;
     }
 
-    public void copyFromWChildren(ModelPart from){
-        copyFrom(from);
-        children.forEach((name,p) -> {
-            if(from.children.containsKey(name)) p.copyFromWChildren(from.getChild(name));
-        });
-    }
-
-    public void copyFromWChildrenRemapped(ModelPart from, String remappingPrefix){
-        copyFrom(from);
-        children.forEach((name,p) -> {
-            String trimName = name.replace(remappingPrefix,"");
-            if(from.children.containsKey(trimName)) p.copyFromWChildren(from.getChild(trimName));
-        });
-    }
-
     public void copyFrom(net.minecraft.client.model.geom.ModelPart part) {
         xScale = part.xScale;
         yScale = part.yScale;

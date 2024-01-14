@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectedTextureBlock extends Block {
+
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
@@ -20,7 +21,7 @@ public class ConnectedTextureBlock extends Block {
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
     public static final ImmutableMap<Direction,BooleanProperty> propByDirection=ImmutableMap.of(
-            Direction.UP,UP,Direction.DOWN,DOWN,Direction.NORTH,NORTH,Direction.EAST,EAST,Direction.SOUTH,SOUTH,Direction.WEST,WEST);
+            Direction.UP, UP, Direction.DOWN, DOWN, Direction.NORTH, NORTH, Direction.EAST, EAST, Direction.SOUTH, SOUTH, Direction.WEST, WEST);
 
     public ConnectedTextureBlock(Properties p_49795_) {
         super(p_49795_);
@@ -35,22 +36,22 @@ public class ConnectedTextureBlock extends Block {
 
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return p_60541_.setValue(propByDirection.get(p_60542_),p_60543_.is(this));
+        return p_60541_.setValue(propByDirection.get(p_60542_), p_60543_.is(this));
     }
 
     @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        BlockPos.MutableBlockPos blockPos=new BlockPos.MutableBlockPos();
-        BlockState state=defaultBlockState();
-        for(Direction direction: Direction.values()){
-            blockPos.setWithOffset(p_49820_.getClickedPos(),direction);
-            if(p_49820_.getLevel().getBlockState(blockPos).is(this)) state=state.setValue(propByDirection.get(direction),true);
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        BlockState state = defaultBlockState();
+        for(Direction direction : Direction.values()){
+            blockPos.setWithOffset(p_49820_.getClickedPos(), direction);
+            if(p_49820_.getLevel().getBlockState(blockPos).is(this)) state = state.setValue(propByDirection.get(direction),true);
         }
         return state;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(UP,DOWN,NORTH,EAST,SOUTH,WEST);
+        p_49915_.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
     }
 }

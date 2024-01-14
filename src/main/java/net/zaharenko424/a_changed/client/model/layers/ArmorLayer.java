@@ -40,6 +40,7 @@ public class ArmorLayer<E extends LivingEntity,M extends HierarchicalHumanoidMod
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int light, E entity, float p_117353_, float p_117354_, float p_117355_, float p_117356_, float p_117357_, float p_117358_) {
         model = renderer.getModel();
+        model.setAllVisible(true);
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.HEAD,light);
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.CHEST,light);
         renderArmorPiece(poseStack,buffer,entity,EquipmentSlot.LEGS,light);

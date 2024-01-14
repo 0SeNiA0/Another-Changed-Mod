@@ -16,14 +16,8 @@ public abstract class AbstractLatexEntityModel<E extends LivingEntity> extends H
 
     @Override
     public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
-        if(arm==HumanoidArm.RIGHT) {
-            rightArm.x+=1;
-            rightArm.translateAndRotate(poseStack);
-        } else {
-            leftArm.x-=1;
-            leftArm.translateAndRotate(poseStack);
-        }
-        poseStack.scale(-1,-1,1);
+        if(arm == HumanoidArm.RIGHT) rightArm.x += 1;else leftArm.x -= 1;
+        super.translateToHand(arm, poseStack);
     }
 
     public boolean hasGlowParts(){

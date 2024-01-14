@@ -105,11 +105,11 @@ public class LatexPuddle extends Block {
 
     @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        BlockPos.MutableBlockPos blockPos=new BlockPos.MutableBlockPos();
+        BlockPos pos = p_49820_.getClickedPos();
         BlockState state=defaultBlockState();
         for(Direction direction: Direction.Plane.HORIZONTAL){
-            blockPos.setWithOffset(p_49820_.getClickedPos(),direction);
-            if(p_49820_.getLevel().getBlockState(blockPos).is(this)) state=state.setValue(propByDirection.get(direction),true);
+            if(p_49820_.getLevel().getBlockState(pos.relative(direction)).is(this))
+                state = state.setValue(propByDirection.get(direction),true);
         }
         return state;
     }

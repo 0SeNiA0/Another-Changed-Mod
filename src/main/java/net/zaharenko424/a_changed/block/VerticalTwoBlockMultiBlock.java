@@ -61,7 +61,6 @@ public abstract class VerticalTwoBlockMultiBlock extends AbstractMultiBlock{
 
     @Override
     protected BlockPos getMainPos(BlockState state, BlockPos pos) {
-        return state.getValue(PART)==0?pos:pos.below();
+        return state.getValue(PART) == 0 ? pos : pos.below();
     }
-
 }

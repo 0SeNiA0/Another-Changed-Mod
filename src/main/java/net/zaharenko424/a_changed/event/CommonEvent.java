@@ -80,7 +80,7 @@ public class CommonEvent {
                 if(!level.getBlockState(pos).canBeReplaced()) return;
             }
             if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item, (int) -player.yHeadRot,!player.isCreative())));
+            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity->entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
             denyEvent(event);
             return;
         }

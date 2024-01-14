@@ -71,6 +71,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         leavesWithItem(ORANGE_LEAVES);
         crossWithItem(ORANGE_SAPLING);
         logWithItem(ORANGE_TREE_LOG);
+        pipe();
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
@@ -85,6 +86,34 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         whiteLatexPuddleWithItem(WHITE_LATEX_PUDDLE_F);
         whiteLatexPuddleWithItem(WHITE_LATEX_PUDDLE_M);
         blockWithItem(YELLOW_LAB_BLOCK);
+    }
+
+    private void pipe(){
+        ResourceLocation id = PIPE.getId();
+        ResourceLocation blockLoc = blockLoc(id.withPrefix("pipe/"));
+        ModelFile pipe_n = models().getExistingFile(blockLoc.withSuffix("_n"));
+        ModelFile pipe_ne = models().getExistingFile(blockLoc.withSuffix("_ne"));
+        ModelFile pipe_ns = models().getExistingFile(blockLoc.withSuffix("_ns"));
+        getVariantBuilder(PIPE.get()).forAllStates(state -> {
+            boolean n = state.getValue(NORTH);
+            boolean e = state.getValue(EAST);
+            boolean s = state.getValue(SOUTH);
+            boolean w = state.getValue(WEST);
+
+            if(n && !e && !s && !w) return new ConfiguredModel[]{new ConfiguredModel(pipe_n)};
+            if(!n && e && !s && !w) return horizontalRotatedModel(pipe_n, Direction.EAST);
+            if(!n && !e && s && !w) return horizontalRotatedModel(pipe_n, Direction.SOUTH);
+            if(!n && !e && !s && w) return horizontalRotatedModel(pipe_n, Direction.WEST);
+
+            if(n && e && !s && !w) return new ConfiguredModel[]{new ConfiguredModel(pipe_ne)};
+            if(!n && e && s && !w) return horizontalRotatedModel(pipe_ne, Direction.EAST);
+            if(!n && !e && s) return horizontalRotatedModel(pipe_ne, Direction.SOUTH);
+            if(n && !e && !s) return horizontalRotatedModel(pipe_ne, Direction.WEST);
+
+            if(!n && e && !s) return horizontalRotatedModel(pipe_ns, Direction.EAST);
+            return new ConfiguredModel[]{new ConfiguredModel(pipe_ns)};
+        });
+        itemModels().getBuilder(id.getPath()).parent(pipe_n);
     }
 
     private final ResourceLocation WIDE_CROSS = blockLoc(AChanged.resourceLoc("wide_cross"));
@@ -104,12 +133,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void doublePartCrossWithItem(DeferredBlock<?> block){
-        ResourceLocation id=block.getId();
-        ModelFile part0= wideCross(id.getPath()+"_0",blockLoc(id).withSuffix("_0"));
-        ModelFile part1= wideCross(id.getPath()+"_1",blockLoc(id).withSuffix("_1"));
+        ResourceLocation id = block.getId();
+        ResourceLocation blockLoc = blockLoc(id);
+        ModelFile part0 = wideCross(id.getPath()+"_0",blockLoc.withSuffix("_0"));
+        ModelFile part1 = wideCross(id.getPath()+"_1",blockLoc.withSuffix("_1"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 state.getValue(StateProperties.PART2)==0?new ConfiguredModel[]{new ConfiguredModel(part0)}:new ConfiguredModel[]{new ConfiguredModel(part1)});
-        simpleItem(id,blockLoc(id).withSuffix("_1"));
+        simpleItem(id,blockLoc.withSuffix("_1"));
     }
 
     private ModelFile cube(ResourceLocation textureLoc,String modelId, String str0, String str1, String str2, String str3, String str5, String str4){

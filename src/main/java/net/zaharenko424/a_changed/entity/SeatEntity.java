@@ -19,12 +19,12 @@ public class SeatEntity extends Entity {
     private static final EntityDataAccessor<Boolean> RENDER_PLAYER = SynchedEntityData.defineId(SeatEntity.class, EntityDataSerializers.BOOLEAN);
 
     public SeatEntity(@NotNull Level p_19871_) {
-        super(EntityRegistry.CHAIR_ENTITY.get(), p_19871_);
+        super(EntityRegistry.SEAT_ENTITY.get(), p_19871_);
         noPhysics=true;
     }
 
     public SeatEntity(@NotNull Level level, @NotNull BlockPos pos, boolean renderPlayer){
-        super(EntityRegistry.CHAIR_ENTITY.get(),level);
+        super(EntityRegistry.SEAT_ENTITY.get(),level);
         setPos(pos.getCenter());
         entityData.set(RENDER_PLAYER,renderPlayer);
         noPhysics=true;

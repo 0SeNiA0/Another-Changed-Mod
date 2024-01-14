@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.entity.ai.LatexTargetPlayerGoal;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
@@ -79,7 +80,7 @@ public abstract class AbstractLatexBeast extends Monster {
 
     protected void registerLatexGoals(){
         if(!transfurType.isOrganic()){
-            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred(player)));
+            targetSelector.addGoal(1, new LatexTargetPlayerGoal(this, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred(player)));
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
         }
     }

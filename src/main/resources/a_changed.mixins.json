@@ -16,6 +16,7 @@
     "MixinVillagerHostileSensor"
   ],
   "client": [
+    "client.MixinFallingBlockRenderer",
     "client.MixinPlayerRenderer"
   ]
 }

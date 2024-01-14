@@ -81,17 +81,17 @@ public class BookStack extends Block implements EntityBlock {
             BlockState stateAbove=p_60504_.getBlockState(above);
             if(item.is(ItemTags.BOOKSHELF_BOOKS)){
                 if(bookStack.hasSpace()) {
-                    bookStack.addBook(item, (int) -p_60506_.yHeadRot, !p_60506_.getAbilities().instabuild);
+                    bookStack.addBook(item, (int) p_60506_.yHeadRot, !p_60506_.isCreative());
                     return InteractionResult.CONSUME;
                 }
-                if(stateAbove.is(this)) return use(stateAbove,p_60504_,above,p_60506_,p_60507_,p_60508_);
+                if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
                 if(stateAbove.canBeReplaced()){
                     p_60504_.setBlockAndUpdate(above,defaultBlockState());
-                    return use(p_60504_.getBlockState(above),p_60504_,above,p_60506_,p_60507_,p_60508_);
+                    return use(p_60504_.getBlockState(above), p_60504_, above, p_60506_, p_60507_, p_60508_);
                 }
             }
             if(item.isEmpty()){
-                if(stateAbove.is(this)) return use(stateAbove,p_60504_,above,p_60506_,p_60507_,p_60508_);
+                if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
                 Utils.addItemOrDrop(p_60506_,bookStack.removeBook());
                 if(bookStack.isEmpty()) {
                     p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);

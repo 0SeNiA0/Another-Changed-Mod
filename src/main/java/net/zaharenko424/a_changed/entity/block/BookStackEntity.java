@@ -23,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BookStackEntity extends BlockEntity {
     private final NonNullList<ItemStack> books=NonNullList.create();
-    private final NonNullList<Book> books1=NonNullList.create();
+    private final NonNullList<BookData> books1=NonNullList.create();
 
     public BookStackEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), p_155229_, p_155230_);
@@ -41,26 +41,26 @@ public class BookStackEntity extends BlockEntity {
         return books1.size();
     }
 
-    public NonNullList<Book> getBooks(){
+    public NonNullList<BookData> getBooks(){
         return books1;
     }
 
-    public void addBook(@NotNull ItemStack book, int rotation, boolean shrink){
+    public void addBook(@NotNull ItemStack book, int headRot, boolean shrink){
         books.add(book.copyWithCount(1));
-        books1.add(new Book(Mth.DEG_TO_RAD*rotation,level.random.nextInt(0,4)));
+        books1.add(new BookData(Mth.DEG_TO_RAD * (-headRot + 180), level.random.nextInt(0,4)));
         if(shrink) book.shrink(1);
-        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(), Block.UPDATE_ALL);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     public ItemStack removeBook(){
-        int i=books.size()-1;
+        int i = books.size()-1;
         books1.remove(i);
-        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(), Block.UPDATE_ALL);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         return books.remove(i);
     }
 
     public void dropBooks(){
-        books.forEach(book->Block.popResource(level,getBlockPos(),book));
+        books.forEach(book->Block.popResource(level, getBlockPos(), book));
     }
 
     @Nullable
@@ -71,14 +71,14 @@ public class BookStackEntity extends BlockEntity {
 
     @Override
     public @NotNull CompoundTag getUpdateTag() {
-        CompoundTag tag=new CompoundTag();
+        CompoundTag tag = new CompoundTag();
         if(books1.isEmpty()) return tag;
-        tag.putInt("Size",books1.size());
-        Book book;
+        tag.putInt("Size", books1.size());
+        BookData book;
         for(int i=0;i<books1.size();i++){
-            book=books1.get(i);
-            tag.putFloat("rotation"+i,book.rotation);
-            tag.putInt("modelId"+i,book.modelId);
+            book = books1.get(i);
+            tag.putFloat("rotation"+i, book.rotation);
+            tag.putInt("modelId"+i, book.modelId);
         }
         return tag;
     }
@@ -92,13 +92,13 @@ public class BookStackEntity extends BlockEntity {
     public void handleUpdateTag(CompoundTag tag) {
         books1.clear();
         if(!tag.contains("Size")) return;
-        int size=tag.getInt("Size");
+        int size = tag.getInt("Size");
         float rotation;
         int modelId;
         for(int i=0;i<size;i++){
-            rotation=tag.getFloat("rotation"+i);
-            modelId=tag.getInt("modelId"+i);
-            books1.add(new Book(rotation,modelId));
+            rotation = tag.getFloat("rotation"+i);
+            modelId = tag.getInt("modelId"+i);
+            books1.add(new BookData(rotation, modelId));
         }
         super.handleUpdateTag(tag);
     }
@@ -106,33 +106,33 @@ public class BookStackEntity extends BlockEntity {
     @Override
     public void load(@NotNull CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag tag= NBTUtils.modTag(p_155245_);
-        int size=tag.getInt("Size");
+        CompoundTag tag = NBTUtils.modTag(p_155245_);
+        int size = tag.getInt("Size");
         ItemStack book;
         float rotation;
         int modelId;
         for(int i=0;i<size;i++){
             book=ItemStack.of(tag.getCompound("book"+i));
-            rotation=tag.getFloat("rotation"+i);
-            modelId=tag.getInt("modelId"+i);
+            rotation = tag.getFloat("rotation"+i);
+            modelId = tag.getInt("modelId"+i);
             books.add(book);
-            books1.add(new Book(rotation,modelId));
+            books1.add(new BookData(rotation, modelId));
         }
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag tag= NBTUtils.modTag(p_187471_);
-        tag.putInt("Size",books1.size());
-        Book book;
+        CompoundTag tag = NBTUtils.modTag(p_187471_);
+        tag.putInt("Size", books1.size());
+        BookData book;
         for(int i=0;i<books1.size();i++){
-            book=books1.get(i);
-            tag.put("book"+i,books.get(i).save(new CompoundTag()));
-            tag.putFloat("rotation"+i,book.rotation);
-            tag.putInt("modelId"+i,book.modelId);
+            book = books1.get(i);
+            tag.put("book"+i, books.get(i).save(new CompoundTag()));
+            tag.putFloat("rotation"+i, book.rotation);
+            tag.putInt("modelId"+i, book.modelId);
         }
     }
     @ApiStatus.Internal
-    public record Book(float rotation, int modelId) {}
+    public record BookData(float rotation, int modelId) {}
 }

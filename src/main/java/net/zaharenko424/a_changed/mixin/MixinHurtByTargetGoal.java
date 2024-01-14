@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.mixin;
 
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
@@ -24,8 +23,7 @@ public abstract class MixinHurtByTargetGoal extends TargetGoal {
 
     @Inject(at = @At("HEAD"), method = "start")
     private void onStart(CallbackInfo ci){
-        LivingEntity entity = mob.getLastHurtByMob();
-        if(entity instanceof Player player && TransfurManager.isTransfurred(player)) mod$wasTransfurred = true;
+        if(mob.getLastHurtByMob() instanceof Player player) mod$wasTransfurred = TransfurManager.isTransfurred(player);
     }
 
     @Override

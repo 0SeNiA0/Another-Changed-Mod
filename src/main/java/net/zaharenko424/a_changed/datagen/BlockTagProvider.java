@@ -28,8 +28,8 @@ public class BlockTagProvider extends BlockTagsProvider {
                 CONNECTED_LAB_TILE.get(), DARK_LATEX_CRYSTAL.get(), DARK_LATEX_CRYSTAL_ICE.get(), GAS_TANK.get(), GREEN_CRYSTAL.get(),
                 HAZARD_BLOCK.get(), HAZARD_LAB_BLOCK.get(), KEYPAD.get(), LAB_BLOCK.get(), LAB_DOOR.get(), LAB_TILE.get(),
                 LASER_EMITTER.get(), LATEX_CONTAINER.get(), LIBRARY_DOOR.get(), MAINTENANCE_DOOR.get(), METAL_BOX.get(),
-                ORANGE_LAB_BLOCK.get(), SCANNER.get(), SMART_SEWAGE_SYSTEM.get(), STRIPED_ORANGE_LAB_BLOCK.get(), TABLE.get(),
-                VENT.get() ,VENT_WALL.get(), YELLOW_LAB_BLOCK.get());
+                ORANGE_LAB_BLOCK.get(), PIPE.get(), SCANNER.get(), SMART_SEWAGE_SYSTEM.get(), STRIPED_ORANGE_LAB_BLOCK.get(),
+                TABLE.get(), VENT.get() ,VENT_WALL.get(), YELLOW_LAB_BLOCK.get());
         tag(AChanged.LASER_TRANSPARENT).addTags(BlockTags.REPLACEABLE, Tags.Blocks.GLASS, Tags.Blocks.GLASS_PANES, BlockTags.BUTTONS)
                 .add(DANGER_SIGN.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
         tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());

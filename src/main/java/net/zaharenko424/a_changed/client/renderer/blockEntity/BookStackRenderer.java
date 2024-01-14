@@ -47,10 +47,10 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
 
     @Override
     public void render(BookStackEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
-        NonNullList<BookStackEntity.Book> list=p_112307_.getBooks();
+        NonNullList<BookStackEntity.BookData> list=p_112307_.getBooks();
         if(list.isEmpty()) return;
         p_112309_.translate(.5,0,.5);
-        BookStackEntity.Book book;
+        BookStackEntity.BookData book;
         for(int i=0;i<list.size();i++){
             this.book.resetPose();
             this.book.xScale=.5f;

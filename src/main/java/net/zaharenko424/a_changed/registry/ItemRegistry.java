@@ -18,8 +18,6 @@ public final class ItemRegistry {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
 
-    //public static final DeferredItem<BlockItem> PIPE_ITEM = ITEMS.registerSimpleBlockItem(PIPE);
-
     //BlockItems
     public static final DeferredItem<BlockItem> AIR_CONDITIONER_ITEM = ITEMS.registerSimpleBlockItem(AIR_CONDITIONER);
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE);
@@ -55,6 +53,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> ORANGE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_LEAVES);
     public static final DeferredItem<BlockItem> ORANGE_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_SAPLING);
     public static final DeferredItem<BlockItem> ORANGE_TREE_LOG_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_TREE_LOG);
+    public static final DeferredItem<BlockItem> PIPE_ITEM = ITEMS.registerSimpleBlockItem(PIPE);
     public static final DeferredItem<BlockItem> SCANNER_ITEM = ITEMS.registerSimpleBlockItem(SCANNER);
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(SMALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> SMART_SEWAGE_SYSTEM_ITEM = ITEMS.registerSimpleBlockItem(SMART_SEWAGE_SYSTEM);

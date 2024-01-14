@@ -31,8 +31,6 @@ public class BlockRegistry {
     public static final DeferredBlock<LiquidBlock> LATEX_SOLVENT_BLOCK = BLOCKS.register("latex_solvent", ()-> new LiquidBlock(FluidRegistry.LATEX_SOLVENT_STILL, liquidProperties()));
     public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
 
-    //public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
-
     //Blocks
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
     public static final DeferredBlock<Block> BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
@@ -69,6 +67,7 @@ public class BlockRegistry {
     public static final DeferredBlock<LeavesBlock> ORANGE_LEAVES = BLOCKS.register("orange_leaves", ()-> new LeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)));
     public static final DeferredBlock<SaplingBlock> ORANGE_SAPLING = BLOCKS.register("orange_sapling", ()-> new SaplingBlock(new OrangeTreeGrower(),BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
     public static final DeferredBlock<RotatedPillarBlock> ORANGE_TREE_LOG = BLOCKS.register("orange_tree_log", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)));
+    public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<SmallCardboardBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", ()-> new SmallCardboardBox(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY).noLootTable()));
     public static final DeferredBlock<SmartSewageSystem> SMART_SEWAGE_SYSTEM = BLOCKS.register("smart_sewage_system", ()-> new SmartSewageSystem(decorProperties()));

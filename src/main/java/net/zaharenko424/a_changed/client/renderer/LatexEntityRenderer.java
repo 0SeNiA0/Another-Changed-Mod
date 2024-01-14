@@ -90,12 +90,16 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
             model.rightArm.x=3; //rotation
             model.rightArm.z=12;//<- ->
             model.rightArm.offsetScale(new Vector3f(.9f));
+            model.setDrawAll(true, model.rightArm);
+            model.setDrawAllAfterMatching(false, name -> name.startsWith("armor_"), model.rightArm);
             model.rightArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         } else {
             model.leftArm.resetPose();
             model.leftArm.x=-1;
             model.leftArm.z=12;
             model.leftArm.offsetScale(new Vector3f(.9f));
+            model.setDrawAll(true, model.leftArm);
+            model.setDrawAllAfterMatching(false, name -> name.startsWith("armor_"), model.leftArm);
             model.leftArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         }
     }
@@ -106,8 +110,9 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
 
         if(entity instanceof Player player && player.isSpectator()){
             model.setAllVisible(false);
-            model.setAllVisible(model.head,true);
+            model.setAllVisible(true, model.head);
         } else model.setAllVisible(true);
+        model.setDrawAll(true);
 
         HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(entity, InteractionHand.MAIN_HAND);
         HumanoidModel.ArmPose humanoidmodel$armpose1 = getArmPose(entity, InteractionHand.OFF_HAND);

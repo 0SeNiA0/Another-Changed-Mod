@@ -65,6 +65,7 @@ public class CreativeTabs {
                     output.accept(METAL_BOX_ITEM);
                     output.accept(NOTE_ITEM);
                     output.accept(NOTEPAD_ITEM);
+                    output.accept(PIPE_ITEM);
                     output.accept(SCANNER_ITEM);
                     output.accept(SMALL_CARDBOARD_BOX_ITEM);
                     output.accept(TABLE_ITEM);
