@@ -6,15 +6,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -23,6 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.entity.block.BoxPileEntity;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.Utils;
@@ -34,7 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class SmallCardboardBox extends HorizontalDirectionalBlock implements EntityBlock {
+public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
 
     private static final VoxelShape ONE_BOX = Shapes.box(0.1875, 0, 0.0625, 0.8125, 0.625, 0.9375);
     private static final VoxelShape TWO_BOXES = Shapes.or(Shapes.box(-0.1875, 0, 0.0625, 0.4375, 0.625, 0.9375)
@@ -47,7 +44,7 @@ public class SmallCardboardBox extends HorizontalDirectionalBlock implements Ent
 
     public SmallCardboardBox(Properties p_54120_) {
         super(p_54120_);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(BOX_AMOUNT,1));
+        registerDefaultState(defaultBlockState().setValue(BOX_AMOUNT, 1));
     }
 
     @Nullable
@@ -64,11 +61,6 @@ public class SmallCardboardBox extends HorizontalDirectionalBlock implements Ent
             case 2 -> CACHE.getShape(direction,2,TWO_BOXES);
             case 3 -> CACHE.getShape(direction,3,THREE_BOXES);
         };
-    }
-
-    @Override
-    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return !canSurvive(p_60541_,p_60544_,p_60545_)? Blocks.AIR.defaultBlockState():super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
     }
 
     @Override
@@ -92,7 +84,7 @@ public class SmallCardboardBox extends HorizontalDirectionalBlock implements Ent
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -105,19 +97,7 @@ public class SmallCardboardBox extends HorizontalDirectionalBlock implements Ent
     }
 
     @Override
-    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        BlockPos pos=p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_,pos,Direction.UP);
-    }
-
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(FACING,BOX_AMOUNT);
+        super.createBlockStateDefinition(p_49915_.add(BOX_AMOUNT));
     }
 }

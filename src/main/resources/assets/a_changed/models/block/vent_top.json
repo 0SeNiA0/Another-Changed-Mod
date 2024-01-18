@@ -1,7 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "a_changed:block/vent",
+		"1": "a_changed:block/vent_trapdoor",
 		"particle": "#1"
 	},
 	"elements": [

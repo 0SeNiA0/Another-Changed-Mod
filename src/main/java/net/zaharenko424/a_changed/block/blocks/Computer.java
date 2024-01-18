@@ -28,9 +28,9 @@ public class Computer extends HorizontalDirectionalBlock {
             Shapes.box(0.0625, 0, 0.1875, 0.1875, 0.0625, 0.375),
             Shapes.box(0.3125, 0, 0.625, 0.6875, 0.0625, 0.875),
             Shapes.box(0.4375, 0.1875, 0.75, 0.5625, 0.3125, 0.8125));
-    private static final VoxelShape SHAPE_EAST = Utils.rotateShape(Direction.EAST,SHAPE_NORTH);
-    private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH,SHAPE_NORTH);
-    private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST,SHAPE_NORTH);
+    private static final VoxelShape SHAPE_EAST = Utils.rotateShape(Direction.EAST, SHAPE_NORTH);
+    private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH, SHAPE_NORTH);
+    private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST, SHAPE_NORTH);
 
     public Computer(Properties p_49795_) {
         super(p_49795_);
@@ -50,7 +50,7 @@ public class Computer extends HorizontalDirectionalBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, p_49820_.getHorizontalDirection().getOpposite());
     }
 
     @Override

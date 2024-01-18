@@ -60,7 +60,7 @@ public class BookStackEntity extends BlockEntity {
     }
 
     public void dropBooks(){
-        books.forEach(book->Block.popResource(level, getBlockPos(), book));
+        books.forEach(book -> Block.popResource(level, getBlockPos(), book));
     }
 
     @Nullable

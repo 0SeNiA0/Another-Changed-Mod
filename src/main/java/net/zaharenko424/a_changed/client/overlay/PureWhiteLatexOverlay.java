@@ -14,7 +14,6 @@ public class PureWhiteLatexOverlay {
 
     public static final IGuiOverlay OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         Player player=gui.getMinecraft().player;
-        if(player == null) return;
         if(!player.isDeadOrDying()){
             if(!TransfurManager.isTransfurred(player) || TransfurManager.getTransfurType(player) != TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get()) {
                 applyOverlay = false;

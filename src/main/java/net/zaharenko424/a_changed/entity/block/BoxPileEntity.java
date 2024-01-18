@@ -16,18 +16,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BoxPileEntity extends BlockEntity {
 
-    private int boxes=1;
+    private int boxes = 1;
 
     public BoxPileEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.BOX_PILE_ENTITY.get(), p_155229_, p_155230_);
     }
 
     public boolean hasSpace(){
-        return boxes<3;
+        return boxes < 3;
     }
 
     public boolean isEmpty(){
-        return boxes==0;
+        return boxes == 0;
     }
 
     public int boxAmount(){
@@ -45,13 +45,13 @@ public class BoxPileEntity extends BlockEntity {
     }
 
     public void dropBoxes(){
-        if(boxes>0) Block.popResource(level, worldPosition, new ItemStack(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get(), boxes));
+        if(boxes > 0) Block.popResource(level, worldPosition, new ItemStack(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get(), boxes));
     }
 
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        boxes= NBTUtils.modTag(p_155245_).getInt("boxes");
+        boxes = NBTUtils.modTag(p_155245_).getInt("boxes");
     }
 
     @Override

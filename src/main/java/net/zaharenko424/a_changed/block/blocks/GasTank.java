@@ -44,18 +44,18 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return p_153216_.getValue(PART)==1?null:new GasTankEntity(p_153215_,p_153216_);
+        return p_153216_.getValue(PART) == 1 ? null : new GasTankEntity(p_153215_, p_153216_);
     }
 
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return p_60555_.getValue(PART)==0?SHAPE_0:SHAPE_1;
+        return p_60555_.getValue(PART) == 0 ? SHAPE_0 : SHAPE_1;
     }
 
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide||p_60507_!=InteractionHand.MAIN_HAND) return InteractionResult.SUCCESS;
-        if(p_60504_.getBlockEntity(getMainPos(p_60503_,p_60505_)) instanceof GasTankEntity canister){
+        if(p_60504_.isClientSide || p_60507_ != InteractionHand.MAIN_HAND) return InteractionResult.CONSUME_PARTIAL;
+        if(p_60504_.getBlockEntity(getMainPos(p_60503_, p_60505_)) instanceof GasTankEntity canister){
             canister.setOpenClose();//TODO make better sound
         }
         return InteractionResult.SUCCESS;
@@ -63,25 +63,22 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
 
     @Override
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
-        if(p_60518_.is(p_60515_.getBlock())) return;
-        BlockEntity entity=p_60516_.getBlockEntity(p_60517_);
-        if(entity instanceof GasTankEntity canister){
-            popResource(p_60516_,p_60517_,canister.canister());
+        if(!p_60518_.is(p_60515_.getBlock()) && p_60516_.getBlockEntity(p_60517_) instanceof GasTankEntity canister){
+            popResource(p_60516_, p_60517_, canister.canister());
         }
-        super.onRemove(p_60515_,p_60516_,p_60517_,p_60518_,p_60519_);
+        super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
     }
 
     @Override
     public void setPlacedBy(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
-        BlockEntity entity=p_49847_.getBlockEntity(p_49848_);
-        if(entity instanceof GasTankEntity canister)canister.setCanister(p_49851_);
+        if(p_49847_.getBlockEntity(p_49848_) instanceof GasTankEntity canister) canister.setCanister(p_49851_);
         super.setPlacedBy(p_49847_, p_49848_, p_49849_, p_49850_, p_49851_);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide||p_153213_.getValue(PART)==1? null:(a,b,c,d)->{
+        return p_153212_.isClientSide || p_153213_.getValue(PART) == 1 ? null:(a, b, c, d) -> {
             if(d instanceof GasTankEntity canister) canister.tick();
         };
     }

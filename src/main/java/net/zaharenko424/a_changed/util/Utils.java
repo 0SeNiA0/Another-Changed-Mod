@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @ParametersAreNonnullByDefault
 public class Utils {
 
+    public static final VoxelShape EMPTY_SHAPE = Shapes.empty();
+
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
     }

@@ -17,6 +17,8 @@ public class BlockEntityRegistry {
             .register("book_stack", () -> BlockEntityType.Builder.of(BookStackEntity::new, BlockRegistry.BOOK_STACK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<BoxPileEntity>> BOX_PILE_ENTITY = BLOCK_ENTITIES
             .register("box_pile", () -> BlockEntityType.Builder.of(BoxPileEntity::new, BlockRegistry.SMALL_CARDBOARD_BOX.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CryoChamberEntity>> CRYO_CHAMBER_ENTITY = BLOCK_ENTITIES
+            .register("cryo_chamber", ()-> BlockEntityType.Builder.of(CryoChamberEntity::new, BlockRegistry.CRYO_CHAMBER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<GasTankEntity>> GAS_TANK_ENTITY = BLOCK_ENTITIES
             .register("gas_canister", () -> BlockEntityType.Builder.of(GasTankEntity::new, BlockRegistry.GAS_TANK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<KeypadEntity>> KEYPAD_ENTITY = BLOCK_ENTITIES

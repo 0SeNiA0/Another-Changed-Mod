@@ -73,6 +73,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_, CHAIR_ITEM.getId());
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, CUP_ITEM, 2)
+                .pattern("C C")
+                .pattern(" C ")
+                .define('C', Items.CLAY_BALL)
+                .unlockedBy(getHasName(Items.CLAY_BALL), has(Items.CLAY_BALL))
+                .save(p_301172_, CUP_ITEM.getId());
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, DANGER_SIGN_ITEM,3)
                 .pattern(" B ")
                 .pattern("BYB")
@@ -87,6 +94,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('S', DARK_LATEX_CRYSTAL_SHARD)
                 .unlockedBy(getHasName(DARK_LATEX_CRYSTAL_SHARD), has(DARK_LATEX_CRYSTAL_SHARD))
                 .save(p_301172_, DARK_LATEX_ICE_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, FLASK_ITEM, 3)
+                .pattern(" G ")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS)
+                .unlockedBy(getHasName(Items.GLASS), has(Tags.Items.GLASS))
+                .save(p_301172_, FLASK_ITEM.getId());
 
         //TODO gas tank
 
@@ -107,6 +121,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('O', ORANGE_LAB_BLOCK_ITEM)
                 .unlockedBy(getHasName(LAB_BLOCK_ITEM), has(LAB_BLOCK_ITEM))
                 .save(p_301172_, HAZARD_LAB_BLOCK_ITEM.getId());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IV_RACK_ITEM, 3)
+                .pattern("BBB")
+                .pattern(" B ")
+                .pattern("III")
+                .define('B', Items.IRON_BARS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .save(p_301172_, IV_RACK_ITEM.getId());
 
         //TODO keypad, hazmat armor
 

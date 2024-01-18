@@ -23,6 +23,8 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE);
     public static final DeferredItem<BlockItem> BOLTED_BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BOLTED_BLUE_LAB_TILE);
     public static final DeferredItem<BlockItem> BOLTED_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BOLTED_LAB_TILE);
+    public static final DeferredItem<BlockItem> BROKEN_CUP_ITEM = ITEMS.registerSimpleBlockItem(BROKEN_CUP);
+    public static final DeferredItem<BlockItem> BROKEN_FLASK_ITEM = ITEMS.registerSimpleBlockItem(BROKEN_FLASK);
     public static final DeferredItem<BlockItem> BROWN_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(BROWN_LAB_BLOCK);
     public static final DeferredItem<BlockItem> CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> CARPET_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CARPET_BLOCK);
@@ -30,14 +32,18 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(COMPUTER);
     public static final DeferredItem<BlockItem> CONNECTED_BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(CONNECTED_BLUE_LAB_TILE);
     public static final DeferredItem<BlockItem> CONNECTED_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(CONNECTED_LAB_TILE);
+    public static final DeferredItem<BlockItem> CRYO_CHAMBER_ITEM = ITEMS.registerSimpleBlockItem(CRYO_CHAMBER);
+    public static final DeferredItem<BlockItem> CUP_ITEM = ITEMS.registerSimpleBlockItem(CUP);
     public static final DeferredItem<BlockItem> DANGER_SIGN_ITEM = ITEMS.registerSimpleBlockItem(DANGER_SIGN);
     public static final DeferredItem<BlockItem> DARK_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_BLOCK);
     public static final DeferredItem<BlockItem> DARK_LATEX_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL);
     public static final DeferredItem<BlockItem> DARK_LATEX_ICE_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL_ICE);
+    public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
     public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(),new Item.Properties()));
     public static final DeferredItem<BlockItem> GREEN_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(GREEN_CRYSTAL);
     public static final DeferredItem<BlockItem> HAZARD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_BLOCK);
     public static final DeferredItem<BlockItem> HAZARD_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_LAB_BLOCK);
+    public static final DeferredItem<BlockItem> IV_RACK_ITEM = ITEMS.registerSimpleBlockItem(IV_RACK);
     public static final DeferredItem<BlockItem> KEYPAD_ITEM = ITEMS.registerSimpleBlockItem(KEYPAD);
     public static final DeferredItem<BlockItem> LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(LAB_BLOCK);
     public static final DeferredItem<BlockItem> LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LAB_DOOR);
@@ -60,6 +66,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> STRIPED_ORANGE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(STRIPED_ORANGE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> TABLE_ITEM = ITEMS.registerSimpleBlockItem(TABLE);
     public static final DeferredItem<BlockItem> TALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(TALL_CARDBOARD_BOX);
+    public static final DeferredItem<BlockItem> TEST_TUBES_ITEM = ITEMS.registerSimpleBlockItem(TEST_TUBES);
     public static final DeferredItem<BlockItem> TRAFFIC_CONE_ITEM = ITEMS.registerSimpleBlockItem(TRAFFIC_CONE);
     public static final DeferredItem<BlockItem> VENT_ITEM = ITEMS.registerSimpleBlockItem(VENT);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);

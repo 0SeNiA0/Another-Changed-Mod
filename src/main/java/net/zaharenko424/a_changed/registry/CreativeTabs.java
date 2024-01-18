@@ -46,16 +46,21 @@ public class CreativeTabs {
                     output.accept(YELLOW_LAB_BLOCK_ITEM);
 
                     output.accept(AIR_CONDITIONER_ITEM);
+                    output.accept(BROKEN_CUP_ITEM);
+                    output.accept(BROKEN_FLASK_ITEM);
                     output.accept(CARDBOARD_BOX_ITEM);
                     output.accept(CHAIR_ITEM);
                     output.accept(COMPUTER_ITEM);
+                    output.accept(CUP_ITEM);
                     output.accept(DANGER_SIGN_ITEM);
                     output.accept(DARK_LATEX_ICE_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_SHARD);
+                    output.accept(FLASK_ITEM);
                     output.accept(GREEN_CRYSTAL_ITEM);
                     output.accept(GREEN_CRYSTAL_SHARD);
                     output.accept(GAS_TANK_ITEM);
+                    output.accept(IV_RACK_ITEM);
                     output.accept(KEYPAD_ITEM);
                     output.accept(LAB_DOOR_ITEM);
                     output.accept(LASER_EMITTER_ITEM);
@@ -70,6 +75,7 @@ public class CreativeTabs {
                     output.accept(SMALL_CARDBOARD_BOX_ITEM);
                     output.accept(TABLE_ITEM);
                     output.accept(TALL_CARDBOARD_BOX_ITEM);
+                    output.accept(TEST_TUBES_ITEM);
                     output.accept(TRAFFIC_CONE_ITEM);
                     output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
                     output.accept(WHITE_LATEX_PUDDLE_M_ITEM);

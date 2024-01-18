@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -17,6 +18,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
+import net.zaharenko424.a_changed.block.blocks.CryoChamber;
+import net.zaharenko424.a_changed.block.blocks.Flask;
+import net.zaharenko424.a_changed.block.blocks.TestTubes;
 import net.zaharenko424.a_changed.block.doors.LibraryDoor;
 import net.zaharenko424.a_changed.client.model.ModelCache;
 
@@ -37,7 +42,12 @@ public class ClientEvent {
         BlockPos pos=event.getTarget().getBlockPos();
         Vec3 cameraPos=event.getCamera().getPosition();
         BlockState state=level.getBlockState(pos);
-        if(!(state.getBlock() instanceof LibraryDoor)||!level.getWorldBorder().isWithinBounds(pos)) return;
+        Block block = state.getBlock();
+        if(block instanceof CryoChamber || block instanceof Flask || block instanceof BrokenFlask || block instanceof TestTubes){
+            event.setCanceled(true);
+            return;
+        }
+        if(!(block instanceof LibraryDoor) || !level.getWorldBorder().isWithinBounds(pos)) return;
         renderShape(
                 event.getPoseStack(),
                 event.getMultiBufferSource().getBuffer(RenderType.LINES),

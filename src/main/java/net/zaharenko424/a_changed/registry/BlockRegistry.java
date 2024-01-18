@@ -37,6 +37,8 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> BOLTED_BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("bolted_blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
     public static final DeferredBlock<Block> BOLTED_LAB_TILE = BLOCKS.registerSimpleBlock("bolted_lab_tile", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<BookStack> BOOK_STACK = BLOCKS.register("book_stack", ()-> new BookStack(BlockBehaviour.Properties.of().noLootTable().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOL)));
+    public static final DeferredBlock<BrokenCup> BROKEN_CUP = BLOCKS.register("broken_cup", ()-> new BrokenCup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.1f)));
+    public static final DeferredBlock<BrokenFlask> BROKEN_FLASK = BLOCKS.register("broken_flask", ()-> new BrokenFlask(BlockBehaviour.Properties.copy(Blocks.GLASS)));
     public static final DeferredBlock<Block> BROWN_LAB_BLOCK = BLOCKS.registerSimpleBlock("brown_lab_block", decorProperties().mapColor(DyeColor.BROWN));
     public static final DeferredBlock<CardboardBox> CARDBOARD_BOX = BLOCKS.register("cardboard_box", ()-> new CardboardBox(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
     public static final DeferredBlock<ConnectedTextureBlock> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new ConnectedTextureBlock(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
@@ -44,14 +46,18 @@ public class BlockRegistry {
     public static final DeferredBlock<Computer> COMPUTER = BLOCKS.register("computer", ()-> new Computer(decorProperties()));
     public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_BLUE_LAB_TILE = BLOCKS.register("connected_blue_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.LIGHT_BLUE)));
     public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_LAB_TILE = BLOCKS.register("connected_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.WHITE)));
+    public static final DeferredBlock<CryoChamber> CRYO_CHAMBER = BLOCKS.register("cryo_chamber", ()-> new CryoChamber(doorProperties()));
+    public static final DeferredBlock<Cup> CUP = BLOCKS.register("cup", ()-> new Cup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.4f)));
     public static final DeferredBlock<DangerSign> DANGER_SIGN = BLOCKS.register("danger_sign", ()-> new DangerSign(decorProperties()));
     public static final DeferredBlock<Block> DARK_LATEX_BLOCK = BLOCKS.registerSimpleBlock("dark_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
     public static final DeferredBlock<Crystal> DARK_LATEX_CRYSTAL = BLOCKS.register("dark_latex_crystal", ()-> new Crystal(decorProperties(),TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
+    public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.copy(Blocks.GLASS)));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(decorProperties().noLootTable().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<TallCrystal> GREEN_CRYSTAL = BLOCKS.register("green_crystal", ()-> new TallCrystal(decorProperties(),TransfurRegistry.BEI_FENG_TF));
     public static final DeferredBlock<Block> HAZARD_BLOCK = BLOCKS.registerSimpleBlock("hazard_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Block> HAZARD_LAB_BLOCK = BLOCKS.registerSimpleBlock("hazard_lab_block", decorProperties().mapColor(DyeColor.WHITE));
+    public static final DeferredBlock<IVRack> IV_RACK = BLOCKS.register("iv_rack", ()-> new IVRack(decorProperties()));
     public static final DeferredBlock<Keypad> KEYPAD = BLOCKS.register("keypad", ()-> new Keypad(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Block> LAB_BLOCK = BLOCKS.registerSimpleBlock("lab_block", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<LabDoor> LAB_DOOR = BLOCKS.register("lab_door", ()-> new LabDoor(doorProperties()));
@@ -74,6 +80,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> STRIPED_ORANGE_LAB_BLOCK = BLOCKS.registerSimpleBlock("striped_orange_lab_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Table> TABLE = BLOCKS.register("table", ()-> new Table(decorProperties()));
     public static final DeferredBlock<TallCardboardBox> TALL_CARDBOARD_BOX = BLOCKS.register("tall_cardboard_box", ()-> new TallCardboardBox(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<TestTubes> TEST_TUBES = BLOCKS.register("test_tubes", ()-> new TestTubes(BlockBehaviour.Properties.copy(Blocks.GLASS)));
     public static final DeferredBlock<TrafficCone> TRAFFIC_CONE = BLOCKS.register("traffic_cone", ()-> new TrafficCone(BlockBehaviour.Properties.of().strength(.75f,3f).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY).mapColor(DyeColor.YELLOW).noOcclusion()));
     public static final DeferredBlock<TrapDoorBlock> VENT = BLOCKS.register("vent", ()-> new TrapDoorBlock(decorProperties().noOcclusion(), BlockSetType.STONE));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));
@@ -91,6 +98,6 @@ public class BlockRegistry {
     }
 
     private static BlockBehaviour.@NotNull Properties doorProperties(){
-        return decorProperties().sound(SoundType.METAL);
+        return decorProperties().sound(SoundType.METAL).pushReaction(PushReaction.BLOCK);
     }
 }

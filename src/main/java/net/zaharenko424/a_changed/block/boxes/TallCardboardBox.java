@@ -10,14 +10,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Fallable;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.zaharenko424.a_changed.block.ISeatBlock;
 import net.zaharenko424.a_changed.entity.SeatEntity;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
+
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 @SuppressWarnings("deprecation")
 public class TallCardboardBox extends TallBox implements ISeatBlock, Fallable {
@@ -40,18 +42,18 @@ public class TallCardboardBox extends TallBox implements ISeatBlock, Fallable {
             BlockState mainState = level.getBlockState(mainPos);
             BlockPos pos = mainPos.relative(p_60506_.getDirection());
             if(level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos.above()).canBeReplaced()){
-                level.setBlockAndUpdate(mainPos, Blocks.AIR.defaultBlockState());
+                level.setBlockAndUpdate(mainPos, getFluidState(mainState).createLegacyBlock());
                 level.playSound(null, mainPos, SoundRegistry.PUSH.get(), SoundSource.BLOCKS);
                 BlockState below = level.getBlockState(pos.below());
                 if(below.isAir() || below.canBeReplaced()) {
                     FallingBlockEntity.fall(level, pos, mainState);
                     return InteractionResult.SUCCESS;
                 }
-                level.setBlockAndUpdate(pos, mainState);
+                level.setBlockAndUpdate(pos, mainState.setValue(WATERLOGGED, level.getFluidState(pos).isSourceOfType(Fluids.WATER)));
                 setPlacedBy(level, pos, p_60503_, null, ItemStack.EMPTY);
                 return InteractionResult.SUCCESS;
             }
-            return InteractionResult.FAIL;
+            return InteractionResult.PASS;
         }
         BlockPos pos = p_60503_.getValue(PART) == 0 ? p_60505_ : p_60505_.below();
         if(sit(level,pos, SHAPE_0.bounds().move(pos),p_60506_,false)) return InteractionResult.SUCCESS;

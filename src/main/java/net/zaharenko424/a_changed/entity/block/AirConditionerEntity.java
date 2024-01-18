@@ -13,9 +13,9 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 
 public class AirConditionerEntity extends BlockEntity {
 
-    private static final AABB aabb=Shapes.block().bounds().inflate(2,2,2);
-    private final AABB ab=aabb.move(worldPosition.above().relative(getBlockState().getValue(GasTank.FACING),2));
-    private int tick=0;
+    private static final AABB aabb = Shapes.block().bounds().inflate(2,2,2);
+    private final AABB ab = aabb.move(worldPosition.above().relative(getBlockState().getValue(GasTank.FACING),2));
+    private int tick = 0;
 
     public AirConditionerEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.AIR_CONDITIONER_ENTITY.get(), p_155229_, p_155230_);
@@ -23,8 +23,8 @@ public class AirConditionerEntity extends BlockEntity {
 
     public void tick(){
         tick++;
-        if(tick<20) return;
-        tick=0;
+        if(tick < 20) return;
+        tick = 0;
         level.getEntitiesOfClass(LivingEntity.class,ab).forEach((entity -> entity.addEffect(new MobEffectInstance(MobEffectRegistry.FRESH_AIR.get(),20,0,false,false))));
     }
 }

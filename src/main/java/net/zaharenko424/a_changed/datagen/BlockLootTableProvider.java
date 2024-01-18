@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.block.blocks.Crystal;
 import net.zaharenko424.a_changed.block.blocks.TallCrystal;
+import net.zaharenko424.a_changed.block.blocks.CryoChamber;
 import net.zaharenko424.a_changed.block.doors.AbstractTwoByTwoDoor;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
@@ -36,10 +37,13 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        twelvePartMultiBlockDrops(CRYO_CHAMBER.get());
         doublePartBlockDrops(AIR_CONDITIONER.get());
         dropSelf(BLUE_LAB_TILE.get());
         dropSelf(BOLTED_BLUE_LAB_TILE.get());
         dropSelf(BOLTED_LAB_TILE.get());
+        dropSelf(BROKEN_CUP.get());
+        dropSelf(BROKEN_FLASK.get());
         dropSelf(BROWN_LAB_BLOCK.get());
         dropSelf(CARDBOARD_BOX.get());
         dropSelf(CARPET_BLOCK.get());
@@ -47,13 +51,16 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(COMPUTER.get());
         dropSelf(CONNECTED_BLUE_LAB_TILE.get());
         dropSelf(CONNECTED_LAB_TILE.get());
+        dropOther(CUP.get(), BROKEN_CUP);
         dropSelf(DANGER_SIGN.get());
         dropSelf(DARK_LATEX_BLOCK.get());
         crystalDrops(DARK_LATEX_CRYSTAL.get(), ItemRegistry.DARK_LATEX_CRYSTAL_SHARD);
         dropWhenSilkTouch(DARK_LATEX_CRYSTAL_ICE.get());
+        dropOther(FLASK.get(), BROKEN_FLASK);
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
         dropSelf(HAZARD_BLOCK.get());
         dropSelf(HAZARD_LAB_BLOCK.get());
+        doublePartBlockDrops(IV_RACK.get());
         dropSelf(KEYPAD.get());
         dropSelf(LAB_BLOCK.get());
         twoByTwoDoorDrops(LAB_DOOR.get());
@@ -75,6 +82,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());
         dropSelf(TABLE.get());
         doublePartBlockDrops(TALL_CARDBOARD_BOX.get());
+        dropSelf(TEST_TUBES.get());
         dropSelf(TRAFFIC_CONE.get());
         dropSelf(VENT.get());
         dropSelf(VENT_WALL.get());
@@ -122,12 +130,21 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                 ));
     }
 
+    private void twelvePartMultiBlockDrops(CryoChamber block){
+        add(block, LootTable.lootTable().withPool(LootPool.lootPool()
+                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART12, 0)))
+                .add(
+                        applyExplosionCondition(block, LootItem.lootTableItem(block))
+                )));
+    }
+
     private void twoByTwoDoorDrops(AbstractTwoByTwoDoor block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(AbstractTwoByTwoDoor.PART,0)))
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART4,0)))
                 .add(
-                        applyExplosionCondition(block,LootItem.lootTableItem(block))
+                        applyExplosionCondition(block, LootItem.lootTableItem(block))
                 )));
     }
 

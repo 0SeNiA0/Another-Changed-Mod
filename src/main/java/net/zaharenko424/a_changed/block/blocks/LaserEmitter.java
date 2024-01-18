@@ -58,7 +58,7 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
         super.createBlockStateDefinition(p_49915_);
-        p_49915_.add(FACING,ACTIVE);
+        p_49915_.add(FACING, ACTIVE);
     }
 
     @Nullable

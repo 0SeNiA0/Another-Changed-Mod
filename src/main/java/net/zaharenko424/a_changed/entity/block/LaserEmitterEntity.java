@@ -74,7 +74,7 @@ public class LaserEmitterEntity extends BlockEntity {
         BlockState state;
         int length = 0;
 
-        while (length<=20){
+        while (length <= 20){
             pos.move(directionCache);
             state = level.getBlockState(pos);
             if(!state.is(AChanged.LASER_TRANSPARENT)) break;

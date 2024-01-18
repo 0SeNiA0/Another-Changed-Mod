@@ -11,12 +11,14 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.overlay.CryoChamberOverlay;
 import net.zaharenko424.a_changed.client.overlay.HazmatOverlay;
 import net.zaharenko424.a_changed.client.overlay.PureWhiteLatexOverlay;
 import net.zaharenko424.a_changed.client.overlay.TransfurOverlay;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
+import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
@@ -38,6 +40,7 @@ public class ClientMod {
         event.registerBelowAll(AChanged.resourceLoc("transfur"), TransfurOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("pure_white_latex"), PureWhiteLatexOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("hazmat"), HazmatOverlay.OVERLAY);
+        event.registerBelowAll(AChanged.resourceLoc("cryo_chamer"), CryoChamberOverlay.OVERLAY);
     }
 
     @SubscribeEvent
@@ -62,6 +65,7 @@ public class ClientMod {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.get(), (a)-> new CryoChamberRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
 
