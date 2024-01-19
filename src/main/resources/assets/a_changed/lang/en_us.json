@@ -114,7 +114,8 @@
   "item.a_changed.white_latex_wolf_female_spawn_egg": "White Latex Wolf Female Spawn Egg",
   "item.a_changed.white_latex_wolf_male_spawn_egg": "White Latex Wolf Male Spawn Egg",
 
-  "itemGroup.a_changed.item_tab": "Another Changed Mod",
+  "itemGroup.a_changed.main": "Another Changed Mod",
+  "itemGroup.a_changed.transfurs": "Transfurs & Equipment",
 
   "misc.a_changed.keypad_attempt": "Try",
   "misc.a_changed.keypad_save_password": "Save password",

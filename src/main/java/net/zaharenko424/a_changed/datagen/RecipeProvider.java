@@ -29,6 +29,24 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         //TODO air conditioner
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_DOOR_ITEM)
+                .requires(LAB_DOOR_ITEM)
+                .requires(LAB_DOOR_ITEM)
+                .unlockedBy(getHasName(LAB_DOOR_ITEM), has(LAB_DOOR_ITEM))
+                .save(p_301172_, BIG_LAB_DOOR_ITEM.getId());
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LIBRARY_DOOR_ITEM)
+                .requires(LIBRARY_DOOR_ITEM)
+                .requires(LIBRARY_DOOR_ITEM)
+                .unlockedBy(getHasName(LIBRARY_DOOR_ITEM), has(LIBRARY_DOOR_ITEM))
+                .save(p_301172_, BIG_LIBRARY_DOOR_ITEM.getId());
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_MAINTENANCE_DOOR_ITEM)
+                .requires(MAINTENANCE_DOOR_ITEM)
+                .requires(MAINTENANCE_DOOR_ITEM)
+                .unlockedBy(getHasName(MAINTENANCE_DOOR_ITEM), has(MAINTENANCE_DOOR_ITEM))
+                .save(p_301172_, BIG_MAINTENANCE_DOOR_ITEM.getId());
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BLUE_LAB_TILE_ITEM,24)
                 .pattern("CIC")
                 .pattern("ICI")
@@ -156,6 +174,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_, LAB_DOOR_ITEM.getId());
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LAB_DOOR_ITEM, 2)
+                .requires(BIG_LAB_DOOR_ITEM)
+                .unlockedBy(getHasName(BIG_LAB_DOOR_ITEM), has(BIG_LAB_DOOR_ITEM))
+                .save(p_301172_, LAB_DOOR_ITEM.getId().withSuffix("_from_big"));
+
         //TODO latex container, replace with something like "latex resistant glass" or "latex resistant coating"
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LATEX_CONTAINER_ITEM)
                 .pattern("III")
@@ -176,6 +199,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_, LIBRARY_DOOR_ITEM.getId());
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LIBRARY_DOOR_ITEM, 2)
+                .requires(BIG_LIBRARY_DOOR_ITEM)
+                .unlockedBy(getHasName(BIG_LIBRARY_DOOR_ITEM), has(BIG_LIBRARY_DOOR_ITEM))
+                .save(p_301172_, LIBRARY_DOOR_ITEM.getId().withSuffix("_from_big"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MAINTENANCE_DOOR_ITEM)
                 .pattern("IPI")
                 .pattern("III")
@@ -184,6 +212,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('P', Blocks.PISTON)
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(p_301172_, MAINTENANCE_DOOR_ITEM.getId());
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, MAINTENANCE_DOOR_ITEM, 2)
+                .requires(BIG_MAINTENANCE_DOOR_ITEM)
+                .unlockedBy(getHasName(BIG_MAINTENANCE_DOOR_ITEM), has(BIG_MAINTENANCE_DOOR_ITEM))
+                .save(p_301172_, MAINTENANCE_DOOR_ITEM.getId().withSuffix("_from_big"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, METAL_BOX_ITEM)
                 .pattern("III")

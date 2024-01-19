@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +61,18 @@ public abstract class AbstractMultiBlock extends Block {
         for(AbstractMultiBlock.Part part : parts().values()){
             pos = part.toSecondaryPos(mainPos, direction);
             if(!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        if(level.isClientSide) return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        BlockPos mainPos = getMainPos(state, pos);
+        BlockState mainState = level.getBlockState(mainPos);
+        if(!super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)) return false;
+        if(!mainState.isAir() && mainPos != pos) {
+            if(willHarvest) Block.dropResources(mainState, level, mainPos,null, player, player.getMainHandItem());
         }
         return true;
     }

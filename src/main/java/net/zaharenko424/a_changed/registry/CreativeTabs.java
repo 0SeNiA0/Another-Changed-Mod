@@ -16,8 +16,8 @@ public class CreativeTabs {
 
     static {
         CREATIVE_MODE_TABS.register("item_tab", () -> CreativeModeTab.builder()
-                .icon(() -> SYRINGE_ITEM.get().getDefaultInstance())
-                .title(Component.translatable("itemGroup.a_changed.item_tab"))
+                .icon(() -> LAB_BLOCK_ITEM.get().getDefaultInstance())
+                .title(Component.translatable("itemGroup.a_changed.main"))
                 .displayItems((parameters, output) -> {
                     output.accept(ORANGE_ITEM);
                     output.accept(ORANGE_JUICE_ITEM);
@@ -85,18 +85,25 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
                     output.accept(VENT_ITEM);
 
-                    output.accept(BLACK_LATEX_SHORTS);
+                    output.accept(LATEX_SOLVENT_BUCKET);
+                    output.accept(WHITE_LATEX_BUCKET);
+                    output.accept(DARK_LATEX_BUCKET);
+                }).build());
+
+        CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()
+                .icon(() -> SYRINGE_ITEM.get().getDefaultInstance())
+                .title(Component.translatable("itemGroup.a_changed.transfurs"))
+                .displayItems((parameters, output) -> {
                     output.accept(HAZMAT_HELMET);
                     output.accept(HAZMAT_CHESTPLATE);
                     output.accept(HAZMAT_LEGGINGS);
                     output.accept(HAZMAT_BOOTS);
 
-                    output.accept(LATEX_SOLVENT_BUCKET);
-                    output.accept(WHITE_LATEX_BUCKET);
-                    output.accept(DARK_LATEX_BUCKET);
+                    output.accept(BLACK_LATEX_SHORTS);
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(UNTRANSFUR_BOTTLE_ITEM);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.id)));
 
