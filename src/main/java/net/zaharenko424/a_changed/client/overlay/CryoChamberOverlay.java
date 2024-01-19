@@ -18,7 +18,7 @@ public class CryoChamberOverlay {
         Player player = Minecraft.getInstance().player;
         Level level = player.level();
         CryoChamberEntity chamberEntity = CryoChamber.getEntity(player.blockPosition(), level);
-        if(chamberEntity == null || !chamberEntity.isActive()
+        if(chamberEntity == null || chamberEntity.isOpen()
                 || chamberEntity.getFluidAmount() * .0625 <= player.getEyeHeight(player.getPose()) + (player.getY() % 1)) return;
         RenderSystem.disableDepthTest();
         RenderSystem.depthMask(false);

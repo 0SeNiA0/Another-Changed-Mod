@@ -36,7 +36,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
             method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             cancellable = true)
     private void onRender(@NotNull AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_, CallbackInfo ci){
-        if(p_117788_.getVehicle() instanceof SeatEntity seat&&!seat.renderPlayer()){
+        if(p_117788_.getVehicle() instanceof SeatEntity seat && !seat.renderPlayer()){
             ci.cancel();
             return;
         }

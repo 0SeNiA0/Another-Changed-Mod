@@ -20,14 +20,14 @@ public class SeatEntity extends Entity {
 
     public SeatEntity(@NotNull Level p_19871_) {
         super(EntityRegistry.SEAT_ENTITY.get(), p_19871_);
-        noPhysics=true;
+        noPhysics = true;
     }
 
     public SeatEntity(@NotNull Level level, @NotNull BlockPos pos, boolean renderPlayer){
         super(EntityRegistry.SEAT_ENTITY.get(),level);
         setPos(pos.getCenter());
         entityData.set(RENDER_PLAYER,renderPlayer);
-        noPhysics=true;
+        noPhysics = true;
     }
 
     public boolean renderPlayer(){
@@ -48,14 +48,14 @@ public class SeatEntity extends Entity {
     @Override
     protected void removePassenger(@NotNull Entity p_20352_) {
         super.removePassenger(p_20352_);
-        if(p_20352_ instanceof LivingEntity entity&&!entity.hasEffect(MobEffects.INVISIBILITY))p_20352_.setInvisible(false);
+        if(p_20352_ instanceof LivingEntity entity && !entity.hasEffect(MobEffects.INVISIBILITY))p_20352_.setInvisible(false);
     }
 
-    private int tick=0;
+    private int tick = 0;
     @Override
     public void tick() {
         tick++;
-        if(tick%20==0){
+        if(tick % 20 == 0){
             if(!(level().getBlockState(blockPosition()).getBlock() instanceof ISeatBlock)){
                 if(isVehicle()) getFirstPassenger().stopRiding();
                 discard();
@@ -77,6 +77,6 @@ public class SeatEntity extends Entity {
 
     @Override
     protected void addAdditionalSaveData(@NotNull CompoundTag p_20139_) {
-        NBTUtils.modTag(p_20139_).putBoolean("renderPlayer",entityData.get(RENDER_PLAYER));
+        NBTUtils.modTag(p_20139_).putBoolean("renderPlayer", entityData.get(RENDER_PLAYER));
     }
 }
