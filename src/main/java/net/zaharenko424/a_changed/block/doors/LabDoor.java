@@ -12,14 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class LabDoor extends AbstractTwoByTwoDoor {
+public class LabDoor extends Abstract2By2Door {
 
-    private static final VoxelShape SHAPE_0 = Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
+    private static final VoxelShape SHAPE = Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
             ,Shapes.box(-1, 1.875, 0, 1, 2, 1)
             ,Shapes.box(0.875, 0.0625, 0, 1, 1.875, 1)
             ,Shapes.box(-1, 0.0625, 0, -0.875, 1.875, 1)
             ,Shapes.box(-0.875, 0.0625, 0.3125, 0.875, 1.875, 0.6875));
-    private static final VoxelShape SHAPE_0_OPEN = Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
+    private static final VoxelShape SHAPE_OPEN = Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
             ,Shapes.box(-1, 1.875, 0, 1, 2, 1)
             ,Shapes.box(0.875, 0.0625, 0, 1, 1.875, 1)
             ,Shapes.box(-1, 0.0625, 0, -0.875, 1.875, 1)
@@ -36,6 +36,6 @@ public class LabDoor extends AbstractTwoByTwoDoor {
         boolean open = p_60555_.getValue(OPEN);
         int partId = p_60555_.getValue(PART);
         return CACHE.getShape(p_60555_.getValue(FACING), partId + (open ? 10 : 0),
-                PARTS.get(partId).alignShape(open ? SHAPE_0_OPEN : SHAPE_0));
+                PARTS.get(partId).alignShape(open ? SHAPE_OPEN : SHAPE));
     }
 }

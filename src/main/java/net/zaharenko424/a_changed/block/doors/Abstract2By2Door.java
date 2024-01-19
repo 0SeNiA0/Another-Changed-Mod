@@ -4,15 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.zaharenko424.a_changed.util.StateProperties;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-public abstract class AbstractTwoByTwoDoor extends AbstractMultiDoor {
+public abstract class Abstract2By2Door extends AbstractMultiDoor {
 
     protected static final ImmutableMap<Integer, Part> PARTS;
     public static final IntegerProperty PART = StateProperties.PART4;
 
-    public AbstractTwoByTwoDoor(Properties p_54120_) {
+    public Abstract2By2Door(Properties p_54120_) {
         super(p_54120_);
     }
 

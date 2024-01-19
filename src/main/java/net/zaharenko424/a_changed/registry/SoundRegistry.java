@@ -22,6 +22,8 @@ public class SoundRegistry {
     public static final DeferredHolder<SoundEvent, SoundEvent> PUSH = registerVariableRange("push");
     public static final DeferredHolder<SoundEvent, SoundEvent> SAVE = registerVariableRange("save");
     public static final DeferredHolder<SoundEvent, SoundEvent> SMART_SEWAGE_CONSUME = registerVariableRange("smart_sewage_absorb");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPACE_DOOR_CLOSE = registerVariableRange("space_door_close");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPACE_DOOR_OPEN = registerVariableRange("space_door_open");
     public static final DeferredHolder<SoundEvent, SoundEvent> TRANSFUR = registerVariableRange("transfur");
     public static final DeferredHolder<SoundEvent, SoundEvent> TRANSFUR_1 = registerVariableRange("transfur_1");
     //SoundType ...

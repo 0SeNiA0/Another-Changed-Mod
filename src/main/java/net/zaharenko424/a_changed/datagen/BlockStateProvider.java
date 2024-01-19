@@ -16,7 +16,8 @@ import net.zaharenko424.a_changed.block.blocks.LatexPuddle;
 import net.zaharenko424.a_changed.block.blocks.Table;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
 import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
-import net.zaharenko424.a_changed.block.doors.AbstractTwoByTwoDoor;
+import net.zaharenko424.a_changed.block.doors.Abstract2By2Door;
+import net.zaharenko424.a_changed.block.doors.Abstract3By3Door;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
 import static net.zaharenko424.a_changed.util.StateProperties.PART4;
+import static net.zaharenko424.a_changed.util.StateProperties.PART9;
 
 @ParametersAreNonnullByDefault
 public class BlockStateProvider extends net.neoforged.neoforge.client.model.generators.BlockStateProvider {
@@ -37,6 +39,9 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     @Override
     protected void registerStatesAndModels() {
         rotatedDoublePartBlockWithItem(AIR_CONDITIONER,"air_conditioner");
+        threeByThreeDoorWithItem(BIG_LAB_DOOR);
+        threeByThreeDoorWithItem(BIG_LIBRARY_DOOR);
+        threeByThreeDoorWithItem(BIG_MAINTENANCE_DOOR);
         blockWithItem(BLUE_LAB_TILE);
         blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
@@ -346,8 +351,15 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                         + (state.getValue(CryoChamber.OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
     }
 
-    private void twoByTwoDoorWithItem(DeferredBlock<? extends AbstractTwoByTwoDoor> block){
-        ResourceLocation id=blockLoc(block.getId().withPrefix(block.getId().getPath()+"/"));
+    private void threeByThreeDoorWithItem(DeferredBlock<? extends Abstract3By3Door> block){
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath()+"/"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModel(models().getExistingFile(id.withSuffix("_"+state.getValue(PART9) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
+
+    }
+
+    private void twoByTwoDoorWithItem(DeferredBlock<? extends Abstract2By2Door> block){
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath()+"/"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 horizontalRotatedModel(models().getExistingFile(id.withSuffix("_"+state.getValue(PART4) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
     }

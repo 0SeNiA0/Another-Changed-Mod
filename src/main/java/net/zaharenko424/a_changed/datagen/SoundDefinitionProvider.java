@@ -43,6 +43,8 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
         add(SMART_SEWAGE_CONSUME, definition()
                 .subtitle(subtitle("smart_sewage_absorb"))
                 .with(sound(AChanged.resourceLoc("water1"))));
+        addSimpleSound(SPACE_DOOR_CLOSE);
+        addSimpleSound(SPACE_DOOR_OPEN);
         addSimpleSound(TRANSFUR);
         addSimpleSound(TRANSFUR_1);
     }

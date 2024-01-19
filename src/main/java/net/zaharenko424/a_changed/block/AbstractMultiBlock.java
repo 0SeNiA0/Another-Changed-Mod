@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -101,6 +103,20 @@ public abstract class AbstractMultiBlock extends Block {
             if(level.hasNeighborSignal(part.toSecondaryPos(mainPos, direction))) return true;
         }
         return false;
+    }
+
+
+    @Override
+    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    /**
+     * By default, mirroring is prohibited. Not possible to reliably detect muliblock
+     */
+    @Override
+    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+        return mirror == Mirror.NONE ? state : Blocks.AIR.defaultBlockState();
     }
 
     public record Part(int x, int y, int z){

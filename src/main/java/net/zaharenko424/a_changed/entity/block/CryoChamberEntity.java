@@ -40,7 +40,7 @@ public class CryoChamberEntity extends BlockEntity {
     public void setOpen(boolean open){
         this.open = open;
         if(open) {
-            if(!level.isClientSide){
+            if(!level.isClientSide && fluidAmount > 0){
                 BlockState state = getBlockState();
                 ((CryoChamber)state.getBlock()).leak(worldPosition, state, level, (int) (fluidAmount / 2.285));
             }

@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.block.blocks;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.entity.block.CryoChamberEntity;
+import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
@@ -92,6 +94,7 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
         BlockPos mainPos = getMainPos(state, pos);
         boolean open = !state.getValue(OPEN);
         setOpen(level.getBlockState(mainPos), mainPos, level, open);
+        level.playSound(null, pos, open ? SoundRegistry.SPACE_DOOR_OPEN.get() : SoundRegistry.SPACE_DOOR_CLOSE.get(), SoundSource.BLOCKS);
         if(level.getBlockEntity(mainPos) instanceof CryoChamberEntity chamber) chamber.setOpen(open);
         return InteractionResult.SUCCESS;
     }

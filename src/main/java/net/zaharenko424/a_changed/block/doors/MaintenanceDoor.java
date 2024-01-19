@@ -11,19 +11,10 @@ import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class MaintenanceDoor extends AbstractTwoByTwoDoor {
+public class MaintenanceDoor extends Abstract2By2Door {
 
-    private static final VoxelShape SHAPE_0= Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
-            ,Shapes.box(-1, 1.875, 0, 1, 2, 1)
-            ,Shapes.box(0.875, 0.0625, 0, 1, 1.875, 1)
-            ,Shapes.box(-1, 0.0625, 0, -0.875, 1.875, 1)
-            ,Shapes.box(-0.875, 0.0625, 0.3125, 0.875, 1.875, 0.6875));
-    private static final VoxelShape SHAPE_0_OPEN= Shapes.or(Shapes.box(-1, 0, 0, 1, 0.0625, 1)
-            ,Shapes.box(-1, 1.875, 0, 1, 2, 1)
-            ,Shapes.box(0.875, 0.0625, 0, 1, 1.875, 1)
-            ,Shapes.box(-1, 0.0625, 0, -0.875, 1.875, 1)
-            ,Shapes.box(-0.875, 1.75, 0.3125, 0.875, 1.875, 0.6875)
-            ,Shapes.box(-0.875, 0.0625, 0.3125, 0.875, 0.1875, 0.6875));
+    private static final VoxelShape SHAPE;
+    private static final VoxelShape SHAPE_OPEN;
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
     public MaintenanceDoor(Properties p_54120_) {
@@ -35,6 +26,23 @@ public class MaintenanceDoor extends AbstractTwoByTwoDoor {
         boolean open = p_60555_.getValue(OPEN);
         int partId = p_60555_.getValue(PART);
         return CACHE.getShape(p_60555_.getValue(FACING), partId + (open ? 10 : 0),
-                PARTS.get(partId).alignShape(open ? SHAPE_0_OPEN : SHAPE_0));
+                PARTS.get(partId).alignShape(open ? SHAPE_OPEN : SHAPE));
+    }
+
+    static {
+        SHAPE = Shapes.or(Shapes.box(-1f, 0f, 0f, 1f, 0.0625f, 1f),
+                Shapes.box(-1f, 1.875f, 0f, 1f, 2f, 1f),
+                Shapes.box(0.875f, 0.0625f, 0f, 1f, 1.875f, 1f),
+                Shapes.box(-1f, 0.0625f, 0f, -0.875f, 1.875f, 1f),
+                Shapes.box(-0.875f, 0.0625f, 0.3125f, 0.875f, 1.875f, 0.6875f),
+                Shapes.box(-0.875f, 0.9062f, 0.25f, 0.875f, 1.0094f, 0.75f),
+                Shapes.box(-0.875f, 0.4688f, 0.2812f, 0.875f, 0.8438f, 0.7188f),
+                Shapes.box(-0.875f, 1.0625f, 0.2812f, 0.875f, 1.4375f, 0.7188f));
+        SHAPE_OPEN = Shapes.or(Shapes.box(-1f, 0f, 0f, 1f, 0.0625f, 1f),
+                Shapes.box(-1f, 1.875f, 0f, 1f, 2f, 1f),
+                Shapes.box(0.875f, 0.0625f, 0f, 1f, 1.875f, 1f),
+                Shapes.box(-1f, 0.0625f, 0f, -0.875f, 1.875f, 1f),
+                Shapes.box(0.8562f, 0.25f, 0.3125f, 0.875f, 1.6875f, 0.6875f),
+                Shapes.box(-0.875f, 0.25f, 0.3125f, -0.8562f, 1.6875f, 0.6875f));
     }
 }

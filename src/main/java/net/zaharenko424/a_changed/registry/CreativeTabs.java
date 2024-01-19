@@ -51,6 +51,7 @@ public class CreativeTabs {
                     output.accept(CARDBOARD_BOX_ITEM);
                     output.accept(CHAIR_ITEM);
                     output.accept(COMPUTER_ITEM);
+                    output.accept(CRYO_CHAMBER_ITEM);
                     output.accept(CUP_ITEM);
                     output.accept(DANGER_SIGN_ITEM);
                     output.accept(DARK_LATEX_ICE_ITEM);
@@ -63,10 +64,13 @@ public class CreativeTabs {
                     output.accept(IV_RACK_ITEM);
                     output.accept(KEYPAD_ITEM);
                     output.accept(LAB_DOOR_ITEM);
+                    output.accept(BIG_LAB_DOOR_ITEM);
                     output.accept(LASER_EMITTER_ITEM);
                     output.accept(LATEX_CONTAINER_ITEM);
                     output.accept(LIBRARY_DOOR_ITEM);
+                    output.accept(BIG_LIBRARY_DOOR_ITEM);
                     output.accept(MAINTENANCE_DOOR_ITEM);
+                    output.accept(BIG_MAINTENANCE_DOOR_ITEM);
                     output.accept(METAL_BOX_ITEM);
                     output.accept(NOTE_ITEM);
                     output.accept(NOTEPAD_ITEM);

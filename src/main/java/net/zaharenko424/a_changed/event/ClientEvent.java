@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -22,10 +21,14 @@ import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
 import net.zaharenko424.a_changed.block.blocks.Flask;
 import net.zaharenko424.a_changed.block.blocks.TestTubes;
+import net.zaharenko424.a_changed.block.doors.BigLabDoor;
+import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
+import net.zaharenko424.a_changed.block.doors.LabDoor;
 import net.zaharenko424.a_changed.block.doors.LibraryDoor;
 import net.zaharenko424.a_changed.client.model.ModelCache;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID,value = Dist.CLIENT)
@@ -36,18 +39,25 @@ public class ClientEvent {
         event.addListener(ModelCache.INSTANCE);
     }
 
+    private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
+            Flask.class, TestTubes.class);
+    private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
+            LabDoor.class, LibraryDoor.class);
+
     @SubscribeEvent
     public static void onRenderBlockHighlight(RenderHighlightEvent.Block event){
-        Level level= Minecraft.getInstance().level;
-        BlockPos pos=event.getTarget().getBlockPos();
-        Vec3 cameraPos=event.getCamera().getPosition();
-        BlockState state=level.getBlockState(pos);
-        Block block = state.getBlock();
-        if(block instanceof CryoChamber || block instanceof Flask || block instanceof BrokenFlask || block instanceof TestTubes){
+        Level level = Minecraft.getInstance().level;
+        BlockPos pos = event.getTarget().getBlockPos();
+        Vec3 cameraPos = event.getCamera().getPosition();
+        Class<? extends Block> clazz = level.getBlockState(pos).getBlock().getClass();
+
+        if(containsClass(clazz, blocksNoOutline)){
             event.setCanceled(true);
             return;
         }
-        if(!(block instanceof LibraryDoor) || !level.getWorldBorder().isWithinBounds(pos)) return;
+
+        if(!level.getWorldBorder().isWithinBounds(pos) || !containsClass(clazz, blocksSolidOutline)) return;
+
         renderShape(
                 event.getPoseStack(),
                 event.getMultiBufferSource().getBuffer(RenderType.LINES),
@@ -61,6 +71,13 @@ public class ClientEvent {
                 1F
         );
         event.setCanceled(true);
+    }
+
+    private static boolean containsClass(Class<? extends Block> clazz, List<Class<? extends Block>> list){
+        for (Class<? extends Block> block : list){
+            if(block.isAssignableFrom(clazz)) return true;
+        }
+        return false;
     }
 
     private static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,

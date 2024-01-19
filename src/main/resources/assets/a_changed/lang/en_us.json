@@ -3,6 +3,9 @@
   "attribute.a_changed.air_decrease_speed": "Air Decrease Speed",
 
   "block.a_changed.air_conditioner": "Air conditioner",
+  "block.a_changed.big_lab_door": "Big lab door",
+  "block.a_changed.big_library_door": "Big library door",
+  "block.a_changed.big_maintenance_door": "Big maintenance door",
   "block.a_changed.blue_lab_tile": "Blue lab tile",
   "block.a_changed.bolted_blue_lab_tile": "Bolted blue lab tile",
   "block.a_changed.bolted_lab_tile": "Bolted lab tile",
@@ -128,6 +131,10 @@
   "sounds.a_changed.push": "Box pushed",
   "sounds.a_changed.save": "Checkpoint saved",
   "sounds.a_changed.smart_sewage_absorb": "Smart sewage absorbed something",
+  "sounds.a_changed.space_door_close": "Cryo chamber closed",
+  "sounds.a_changed.space_door_open": "Cryo chamber opened",
+  "sounds.a_changed.transfur": "Something was transfurred",
+  "sounds.a_changed.transfur1": "Something was transfurred by crystal",
 
   "transfur.a_changed.bei_feng": "bei feng",
   "transfur.a_changed.benign": "benign",

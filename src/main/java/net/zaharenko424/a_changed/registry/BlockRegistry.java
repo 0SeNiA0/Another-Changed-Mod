@@ -13,10 +13,7 @@ import net.zaharenko424.a_changed.block.boxes.CardboardBox;
 import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
 import net.zaharenko424.a_changed.block.boxes.TallBox;
 import net.zaharenko424.a_changed.block.boxes.TallCardboardBox;
-import net.zaharenko424.a_changed.block.doors.AbstractTwoByTwoDoor;
-import net.zaharenko424.a_changed.block.doors.LabDoor;
-import net.zaharenko424.a_changed.block.doors.LibraryDoor;
-import net.zaharenko424.a_changed.block.doors.MaintenanceDoor;
+import net.zaharenko424.a_changed.block.doors.*;
 import net.zaharenko424.a_changed.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +30,9 @@ public class BlockRegistry {
 
     //Blocks
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
+    public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
+    public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(bigDoorProperties()));
+    public static final DeferredBlock<BigMaintenanceDoor> BIG_MAINTENANCE_DOOR = BLOCKS.register("big_maintenance_door", ()-> new BigMaintenanceDoor(bigDoorProperties()));
     public static final DeferredBlock<Block> BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
     public static final DeferredBlock<Block> BOLTED_BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("bolted_blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
     public static final DeferredBlock<Block> BOLTED_LAB_TILE = BLOCKS.registerSimpleBlock("bolted_lab_tile", decorProperties().mapColor(DyeColor.WHITE));
@@ -64,7 +64,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> LAB_TILE = BLOCKS.registerSimpleBlock("lab_tile", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<LaserEmitter> LASER_EMITTER = BLOCKS.register("laser_emitter", ()-> new LaserEmitter(decorProperties()));
     public static final DeferredBlock<LatexContainer> LATEX_CONTAINER = BLOCKS.register("latex_container", ()-> new LatexContainer(decorProperties().pushReaction(PushReaction.BLOCK)));
-    public static final DeferredBlock<AbstractTwoByTwoDoor> LIBRARY_DOOR = BLOCKS.register("library_door", ()-> new LibraryDoor(doorProperties().noOcclusion()));
+    public static final DeferredBlock<Abstract2By2Door> LIBRARY_DOOR = BLOCKS.register("library_door", ()-> new LibraryDoor(doorProperties().noOcclusion()));
     public static final DeferredBlock<MaintenanceDoor> MAINTENANCE_DOOR = BLOCKS.register("maintenance_door", ()-> new MaintenanceDoor(doorProperties()));
     public static final DeferredBlock<TallBox> METAL_BOX = BLOCKS.register("metal_box", ()-> new TallBox(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK)));
     public static final DeferredBlock<Note> NOTE = BLOCKS.register("note", ()-> new Note(BlockBehaviour.Properties.copy(Blocks.ORANGE_WOOL)));
@@ -99,5 +99,9 @@ public class BlockRegistry {
 
     private static BlockBehaviour.@NotNull Properties doorProperties(){
         return decorProperties().sound(SoundType.METAL).pushReaction(PushReaction.BLOCK);
+    }
+
+    private static BlockBehaviour.@NotNull Properties bigDoorProperties(){
+        return doorProperties().strength(2f, 8);
     }
 }
