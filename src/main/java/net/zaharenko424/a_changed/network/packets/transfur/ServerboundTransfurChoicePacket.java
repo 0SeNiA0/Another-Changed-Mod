@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.network.packets;
+package net.zaharenko424.a_changed.network.packets.transfur;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,7 +8,6 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.TransfurResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -40,6 +39,7 @@ public class ServerboundTransfurChoicePacket implements SimpleMessage {
         ITransfurHandler handler = player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
         if(!handler.isBeingTransfurred()) return;
 
-        TransfurEvent.transfur().setResult(becomeTransfur ? TransfurResult.TRANSFUR : TransfurResult.DEATH).build().accept(player, handler.getTransfurType());
+        if(becomeTransfur) TransfurEvent.TRANSFUR_TF.accept(player, handler.getTransfurType());
+        else TransfurEvent.TRANSFUR_DEATH.accept(player, handler.getTransfurType());
     }
 }

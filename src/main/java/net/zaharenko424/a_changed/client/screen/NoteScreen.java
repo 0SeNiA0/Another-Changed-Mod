@@ -72,24 +72,25 @@ public class NoteScreen extends Screen {
             pages.add("");
         }
         switch(guiId){
-            case 0->{
-                imageWidth=96;
-                imageHeight=128;
-                background=new ResourceLocation(AChanged.MODID,"textures/gui/note.png");
-                yOffset=100;
+            case 0 -> {
+                imageWidth = 96;
+                imageHeight = 128;
+
+                background = AChanged.resourceLoc("textures/gui/note.png");
+                yOffset = 100;
             }
-            case 1->{
-                imageWidth=142;
-                imageHeight=196;
-                background=new ResourceLocation(AChanged.MODID,"textures/gui/notepad.png");
-                yOffset=100;
-                pageNumColor=16777215;
+            case 1 -> {
+                imageWidth = 142;
+                imageHeight = 196;
+                background = AChanged.resourceLoc("textures/gui/notepad.png");
+                yOffset = 100;
+                pageNumColor = 16777215;
             }
             default -> {
-                imageWidth=DEF_IMAGE_WIDTH;
-                imageHeight=DEF_IMAGE_HEIGHT;
-                background=BookViewScreen.BOOK_LOCATION;
-                yOffset=0;
+                imageWidth = DEF_IMAGE_WIDTH;
+                imageHeight = DEF_IMAGE_HEIGHT;
+                background = BookViewScreen.BOOK_LOCATION;
+                yOffset = 0;
             }
         }
         textWidth=imageWidth-18;

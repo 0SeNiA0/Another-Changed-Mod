@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.capabilities.*;
 import net.neoforged.neoforge.common.util.LazyOptional;
@@ -28,7 +29,7 @@ import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 public class TransfurCapability {
 
     public static final Capability<ITransfurHandler> CAPABILITY = CapabilityManager.get(new Token());
-    public static final ResourceLocation KEY = new ResourceLocation(AChanged.MODID,"transfur_capability");
+    public static final ResourceLocation KEY = AChanged.resourceLoc("transfur_capability");
     public static final NonNullSupplier<RuntimeException> NO_CAPABILITY_EXC = () -> new RuntimeException("Transfur capability was expected but not found!");
 
     @Contract("_ -> new")
@@ -75,11 +76,13 @@ public class TransfurCapability {
         AbstractTransfurType transfurType = null;
         boolean isTransfurred = false;
 
-        static final int ticksUntilTFProgressDecrease=200;
-        static final int ticksBetweenTFProgressDecrease=20;
+        static final int ticksUntilTFProgressDecrease = 200;
+        static final int ticksBetweenTFProgressDecrease = 20;
         int i0 = 0;
 
         boolean isBeingTransfurred = false;
+        static final int ticksUntilDeathTF = 400;
+        int beingTransfurredTimer;
 
         public TransfurHandler(LivingEntity entity){
             this.entity=entity;
@@ -99,12 +102,12 @@ public class TransfurCapability {
 
         @Override
         public @Nullable AbstractTransfurType getTransfurType() {
-            return transfurType!=null?transfurType:null;
+            return transfurType != null ? transfurType : null;
         }
 
         @Override
         public void setTransfurType(@NotNull AbstractTransfurType transfurType) {
-            this.transfurType=transfurType;
+            this.transfurType = transfurType;
         }
 
         @Override
@@ -117,7 +120,7 @@ public class TransfurCapability {
             transfurProgress = TRANSFUR_TOLERANCE;
             this.transfurType = transfurType;
             isTransfurred = true;
-            isBeingTransfurred = false;
+            setBeingTransfurred(false);
             AttributeMap map = entity.getAttributes();
             removeModifiers(map);
             addModifiers(map);
@@ -127,8 +130,8 @@ public class TransfurCapability {
         public void unTransfur() {
             transfurProgress = 0;
             transfurType = null;
+            setBeingTransfurred(false);
             isTransfurred = false;
-
             if(!entity.level().isClientSide) removeModifiers(entity.getAttributes());
         }
 
@@ -165,13 +168,16 @@ public class TransfurCapability {
 
         @Override
         public void setBeingTransfurred(boolean isBeingTransfurred) {
+            if(!this.isBeingTransfurred && isBeingTransfurred) beingTransfurredTimer = ticksUntilDeathTF;
             this.isBeingTransfurred = isBeingTransfurred;
+            if(!isBeingTransfurred) beingTransfurredTimer = 0;
         }
 
         @Override
-        public void load(CompoundTag tag) {
+        public void load(@NotNull CompoundTag tag) {
             transfurProgress = tag.getFloat(TRANSFUR_PROGRESS_KEY);
             if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType = TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
+            if(entity instanceof Player) setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
             isTransfurred = tag.getBoolean(TRANSFURRED_KEY);
             if(isTransfurred()) addModifiers(entity.getAttributes());
         }
@@ -181,6 +187,7 @@ public class TransfurCapability {
             CompoundTag tag = new CompoundTag();
             tag.putFloat(TRANSFUR_PROGRESS_KEY, transfurProgress);
             if(transfurType != null) tag.putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
+            if(entity instanceof Player) tag.putBoolean(BEING_TRANSFURRED_KEY, isBeingTransfurred);
             tag.putBoolean(TRANSFURRED_KEY, isTransfurred);
             return tag;
         }
@@ -188,6 +195,14 @@ public class TransfurCapability {
         @Override
         public void tick() {
             if(isTransfurred() || transfurProgress <= 0) return;
+
+            if(isBeingTransfurred){
+                if(beingTransfurredTimer > 0){
+                    beingTransfurredTimer--;
+                } else TransfurEvent.TRANSFUR_DEATH.accept(entity, transfurType);
+                return;
+            }
+
             if(i0 > 0) {
                 i0--;
                 return;

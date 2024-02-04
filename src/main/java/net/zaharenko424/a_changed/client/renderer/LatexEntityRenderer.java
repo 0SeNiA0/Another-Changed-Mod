@@ -87,16 +87,16 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
     public void renderHand(PoseStack poseStack, MultiBufferSource source, int i, AbstractClientPlayer player, boolean right){
         if(right) {
             model.rightArm.resetPose();
-            model.rightArm.x=3; //rotation
-            model.rightArm.z=12;//<- ->
+            model.rightArm.x = 3; //rotation
+            model.rightArm.z = 12;//<- ->
             model.rightArm.offsetScale(new Vector3f(.9f));
             model.setDrawAll(true, model.rightArm);
             model.setDrawAllAfterMatching(false, name -> name.startsWith("armor_"), model.rightArm);
             model.rightArm.render(poseStack, source.getBuffer(RenderType.entitySolid(getTextureLocation((E) player))), i, OverlayTexture.NO_OVERLAY);
         } else {
             model.leftArm.resetPose();
-            model.leftArm.x=-1;
-            model.leftArm.z=12;
+            model.leftArm.x = -1;
+            model.leftArm.z = 12;
             model.leftArm.offsetScale(new Vector3f(.9f));
             model.setDrawAll(true, model.leftArm);
             model.setDrawAllAfterMatching(false, name -> name.startsWith("armor_"), model.leftArm);

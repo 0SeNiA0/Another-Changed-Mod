@@ -13,7 +13,7 @@ public class PureWhiteLatexOverlay {
     private static boolean applyOverlay = false;
 
     public static final IGuiOverlay OVERLAY = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        Player player=gui.getMinecraft().player;
+        Player player = gui.getMinecraft().player;
         if(!player.isDeadOrDying()){
             if(!TransfurManager.isTransfurred(player) || TransfurManager.getTransfurType(player) != TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get()) {
                 applyOverlay = false;
@@ -25,7 +25,7 @@ public class PureWhiteLatexOverlay {
         RenderSystem.disableDepthTest();
         RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
-        guiGraphics.blit(LATEX_OVERLAY,0,0,0,0,0,screenWidth,screenHeight,screenWidth,screenHeight);
+        guiGraphics.blit(LATEX_OVERLAY,0,0,0,0,0, screenWidth, screenHeight, screenWidth, screenHeight);
         RenderSystem.disableBlend();
         RenderSystem.depthMask(true);
         RenderSystem.enableDepthTest();

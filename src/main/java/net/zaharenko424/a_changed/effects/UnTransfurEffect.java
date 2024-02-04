@@ -1,14 +1,13 @@
 package net.zaharenko424.a_changed.effects;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
-public class UnTransfurEffect extends MobEffect {
+public class UnTransfurEffect extends UnRemovableEffect {
     public UnTransfurEffect() {
         super(MobEffectCategory.NEUTRAL, 13816530);
     }

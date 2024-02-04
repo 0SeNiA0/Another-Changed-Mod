@@ -19,19 +19,23 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.GrabCapability;
+import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.PacketHandler;
-import net.zaharenko424.a_changed.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
-import net.zaharenko424.a_changed.network.packets.ClientboundTransfurToleranceUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceUpdatePacket;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
@@ -49,7 +53,7 @@ public class CommonEvent {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event){
-        CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         Transfur.register(dispatcher);
         UnTransfur.register(dispatcher);
         TransfurTolerance.register(dispatcher);
@@ -58,11 +62,29 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
-        ServerPlayer player= (ServerPlayer) event.getEntity();
+        ServerPlayer player = (ServerPlayer) event.getEntity();
         TransfurEvent.RECALCULATE_PROGRESS.accept(player);
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundTransfurToleranceUpdatePacket());
         TransfurEvent.updatePlayer(player);
         player.refreshDimensions();
+        if(TransfurManager.isBeingTransfurred(player)) PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player), new ClientboundOpenTransfurScreenPacket());
+        player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).updatePlayer();
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
+        Player player = event.getEntity();
+        if(player.level().isClientSide) return;
+        player.getCapability(GrabCapability.CAPABILITY).ifPresent(handler -> {
+            if(handler.getTarget() != null) handler.drop();
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event){
+        if(!(event.getEntity() instanceof ServerPlayer player)) return;
+        if(TransfurManager.isHoldingEntity(player))
+            player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).drop();
     }
 
     @SubscribeEvent
@@ -104,22 +126,25 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event){
         if(event.getEntity().level().isClientSide) return;
-        LivingEntity entity=event.getEntity();
-        if(DamageSources.checkTarget(entity)){
+        LivingEntity entity = event.getEntity();
+        entity.getCapability(GrabCapability.CAPABILITY).ifPresent(IGrabHandler::tick);
+        if(entity.getCapability(CAPABILITY).isPresent()){
             entity.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).tick();
-            if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
-                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
-                return;
-            }
-            if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
-                    TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
-                return;
+            if(!(entity instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player))){
+                if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
+                    if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
+                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
+                    return;
+                }
+                if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
+                    if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
+                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
+                    return;
+                }
             }
         }
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
-        if(entity instanceof AbstractLatexBeast||(entity instanceof Player player&&TransfurManager.isTransfurred(player)))
+        if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
     }
 
@@ -127,7 +152,8 @@ public class CommonEvent {
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event){
         if(!(event.getObject() instanceof LivingEntity entity)) return;
         if(entity.getType().is(AChanged.TRANSFURRABLE_TAG)){
-            event.addCapability(TransfurCapability.KEY,TransfurCapability.createProvider(entity));
+            event.addCapability(TransfurCapability.KEY, TransfurCapability.createProvider(entity));
+            if(entity instanceof Player player) event.addCapability(GrabCapability.KEY, GrabCapability.createProvider(player));
         }
     }
 
@@ -137,8 +163,10 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
         if(!(event.getTarget() instanceof Player remotePlayer)) return;
-        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) event.getEntity()),
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> player),
                 new ClientboundRemotePlayerTransfurUpdatePacket(remotePlayer.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC),remotePlayer.getUUID()));
+        remotePlayer.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).updateRemotePlayer(player);
     }
 
     /**
@@ -146,18 +174,24 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
-        if(!event.isWasDeath() || !event.getEntity().level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR)) return;
-        ServerPlayer og=(ServerPlayer) event.getOriginal();
-        ServerPlayer player=(ServerPlayer) event.getEntity();
+        if(!event.isWasDeath()) return;
+        boolean keepTf = event.getEntity().level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR);
+        ServerPlayer og = (ServerPlayer) event.getOriginal();
+        ServerPlayer player = (ServerPlayer) event.getEntity();
         og.reviveCaps();
-        player.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC)
+        if(keepTf) player.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC)
                 .load(og.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).save());
-        boolean isBeingTransfurred=TransfurManager.isBeingTransfurred(og);
+        player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC)
+                .load(og.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).save());
         og.invalidateCaps();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(isBeingTransfurred) TransfurEvent.UNTRANSFUR.accept(player); else TransfurEvent.updatePlayer(player);
+                if(keepTf) {
+                    if(!TransfurManager.isTransfurred(player)) TransfurEvent.UNTRANSFUR_SILENT.accept(player);
+                    else TransfurEvent.updatePlayer(player);
+                }
+                player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).updatePlayer();
             }
         },25);
     }

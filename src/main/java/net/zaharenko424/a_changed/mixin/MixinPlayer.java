@@ -1,11 +1,13 @@
 package net.zaharenko424.a_changed.mixin;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -26,14 +28,17 @@ public abstract class MixinPlayer extends LivingEntity {
     }
 
     @Redirect(at=@At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
-    public boolean hurtProxy(@NotNull Entity instance, DamageSource p_19946_, float p_19947_){
-        if(instance.level().isClientSide) return instance.hurt(p_19946_,p_19947_);
+    public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
+        if(target.level().isClientSide) return target.hurt(p_19946_, damage);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
-        if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return instance.hurt(p_19946_,p_19947_);
-        p_19947_ += TransfurManager.LATEX_DAMAGE_BONUS;
-        if(!DamageSources.checkTarget(instance)) return instance.hurt(p_19946_,p_19947_);
-        if(instance.hurt(DamageSources.transfur(instance, this),p_19947_)){
-            TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) instance, Objects.requireNonNull(handler.getTransfurType()), 5f);
+        if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
+        damage += TransfurManager.LATEX_DAMAGE_BONUS;
+        if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);
+        if(target.hurt(DamageSources.transfur(target, this), damage)){
+            float tfProgress = 5f;
+            if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
+            if(hasEffect(MobEffects.DAMAGE_BOOST)) tfProgress += getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() + 1;
+            TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) target, Objects.requireNonNull(handler.getTransfurType()), tfProgress);
             return true;
         }
         return false;

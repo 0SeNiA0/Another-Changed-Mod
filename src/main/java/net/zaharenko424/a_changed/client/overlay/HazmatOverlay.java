@@ -19,6 +19,6 @@ public class HazmatOverlay {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1f,1f,1f,1f);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        guiGraphics.blit(TEXTURE,0,0,0,0,screenWidth,screenHeight,screenWidth,screenHeight);
+        guiGraphics.blit(TEXTURE,0,0,0,0,screenWidth, screenHeight, screenWidth, screenHeight);
     };
 }

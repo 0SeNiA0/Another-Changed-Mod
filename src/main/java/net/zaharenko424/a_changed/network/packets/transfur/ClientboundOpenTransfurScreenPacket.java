@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.network.packets;
+package net.zaharenko424.a_changed.network.packets.transfur;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,8 +21,8 @@ public class ClientboundOpenTransfurScreenPacket implements SimpleMessage {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void handleMainThread(NetworkEvent.Context context) {
-        LocalPlayer player= Minecraft.getInstance().player;
-        if(player==null) return;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player == null) return;
         Minecraft.getInstance().setScreen(new TransfurScreen());
     }
 }

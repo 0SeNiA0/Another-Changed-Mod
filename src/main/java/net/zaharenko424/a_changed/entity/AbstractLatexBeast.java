@@ -80,7 +80,7 @@ public abstract class AbstractLatexBeast extends Monster {
 
     protected void registerLatexGoals(){
         if(!transfurType.isOrganic()){
-            targetSelector.addGoal(1, new LatexTargetPlayerGoal(this, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred(player)));
+            targetSelector.addGoal(1, new LatexTargetPlayerGoal(this, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred((Player) player)));
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
         }
     }

@@ -37,7 +37,7 @@ public class LatexTargetPlayerGoal extends NearestAttackableTargetGoal<Player> {
 
     @Override
     public boolean canContinueToUse() {
-        if(!wasTransfurred && (TransfurManager.isTransfurred((Player) target) || TransfurManager.isBeingTransfurred(target))) return false;
+        if(!wasTransfurred && (TransfurManager.isTransfurred((Player) target) || TransfurManager.isBeingTransfurred((Player) target))) return false;
         return super.canContinueToUse();
     }
 }

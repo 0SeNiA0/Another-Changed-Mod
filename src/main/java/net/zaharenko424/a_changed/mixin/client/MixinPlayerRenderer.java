@@ -61,7 +61,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 
     @Unique
     private boolean mod$check(@NotNull AbstractClientPlayer player){
-        if(!TransfurManager.hasCapability(player)) return !mod$renderer.isTransfurTypeNonNull();
+        if(player.isDeadOrDying()) return !mod$renderer.isTransfurTypeNonNull();
         if(!TransfurManager.isTransfurred(player)) {
             if(mod$renderer.isTransfurTypeNonNull()) mod$renderer.updateTransfurType(null);
             return true;

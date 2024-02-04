@@ -12,6 +12,7 @@
     "MixinIronGolem",
     "MixinLivingEntity",
     "MixinPlayer",
+    "MixinServerGamePacketListenerImpl",
     "MixinSimpleBlockFeature",
     "MixinVillagerHostileSensor"
   ],

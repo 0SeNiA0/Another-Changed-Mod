@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.PacketHandler;
-import net.zaharenko424.a_changed.network.packets.ClientboundTransfurToleranceUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceUpdatePacket;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;

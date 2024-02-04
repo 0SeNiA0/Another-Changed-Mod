@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.network.packets;
+package net.zaharenko424.a_changed.network.packets.transfur;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.network.NetworkEvent;

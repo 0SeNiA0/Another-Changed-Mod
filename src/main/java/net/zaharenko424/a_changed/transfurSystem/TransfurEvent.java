@@ -12,9 +12,9 @@ import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.PacketHandler;
-import net.zaharenko424.a_changed.network.packets.ClientboundOpenTransfurScreenPacket;
-import net.zaharenko424.a_changed.network.packets.ClientboundPlayerTransfurUpdatePacket;
-import net.zaharenko424.a_changed.network.packets.ClientboundRemotePlayerTransfurUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurUpdatePacket;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -39,7 +39,10 @@ public class TransfurEvent {
     public static final TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR_CRYSTAL = addTransfurProgress()
             .onTFToleranceReached(transfur -> transfur.withSound(SoundRegistry.TRANSFUR_1.get())).build();
     public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_DEF = transfur().build();
+    public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_TF = transfur().setResult(TransfurResult.TRANSFUR).build();
+    public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_DEATH = transfur().setResult(TransfurResult.DEATH).build();
     public static final Consumer<ServerPlayer> UNTRANSFUR = unTransfur().build();
+    public static final Consumer<ServerPlayer> UNTRANSFUR_SILENT = unTransfur().withSound(null).build();
     public static final Consumer<LivingEntity> RECALCULATE_PROGRESS = recalculate().build();
 
     @Contract(value = " -> new", pure = true)
@@ -67,14 +70,14 @@ public class TransfurEvent {
     }
 
     public static AbstractLatexBeast spawnLatex(@NotNull AbstractTransfurType transfurType,@NotNull ServerLevel level,@NotNull BlockPos pos){
-        return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level,pos, MobSpawnType.CONVERSION);
+        return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
     }
 
     public static void updatePlayer(@NotNull ServerPlayer player){
         updatePlayer(player,player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC));
     }
 
-    public static void updatePlayer(@NotNull ServerPlayer player,@NotNull ITransfurHandler handler){
+    static void updatePlayer(@NotNull ServerPlayer player,@NotNull ITransfurHandler handler){
         player.refreshDimensions();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->player),new ClientboundPlayerTransfurUpdatePacket(handler));
         PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(()->player),new ClientboundRemotePlayerTransfurUpdatePacket(handler,player.getUUID()));
@@ -100,7 +103,7 @@ public class TransfurEvent {
             return this;
         }
 
-        public AddTransfurProgress onTFToleranceReached(Consumer<Transfur> consumer){
+        public AddTransfurProgress onTFToleranceReached(@NotNull Consumer<Transfur> consumer){
             consumer.accept(transfur);
             return this;
         }

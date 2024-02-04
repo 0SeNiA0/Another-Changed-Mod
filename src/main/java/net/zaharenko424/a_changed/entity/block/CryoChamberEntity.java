@@ -88,7 +88,7 @@ public class CryoChamberEntity extends BlockEntity {
             fluidAmount++;
             update = true;
         }
-        //TODO fill hunger while fluidAmount ~ 30 or smth ?
+
         if(fluidAmount > 24) level.getEntitiesOfClass(LivingEntity.class, insideAABB).forEach(entity -> {
             if(entity instanceof ServerPlayer player) player.getFoodData().eat(1,1);
         });

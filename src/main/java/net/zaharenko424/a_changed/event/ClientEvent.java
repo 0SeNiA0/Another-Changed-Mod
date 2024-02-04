@@ -5,7 +5,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
@@ -14,6 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.zaharenko424.a_changed.AChanged;
@@ -25,18 +29,84 @@ import net.zaharenko424.a_changed.block.doors.BigLabDoor;
 import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
 import net.zaharenko424.a_changed.block.doors.LabDoor;
 import net.zaharenko424.a_changed.block.doors.LibraryDoor;
+import net.zaharenko424.a_changed.capability.GrabMode;
+import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.model.ModelCache;
+import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
+import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
+import net.zaharenko424.a_changed.network.PacketHandler;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
+import net.zaharenko424.a_changed.registry.MobEffectRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = AChanged.MODID,value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = AChanged.MODID, value = Dist.CLIENT)
 public class ClientEvent {
 
     @SubscribeEvent
     public static void onAddReloadListener(AddReloadListenerEvent event){
         event.addListener(ModelCache.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void onKeyPress(InputEvent.Key event){
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        if(Keybindings.GRAB_KEY.consumeClick() && TransfurManager.isTransfurred(player)) {
+            grabLogic(minecraft, player);
+            return;
+        }
+
+        if(Keybindings.GRAB_MODE_KEY.consumeClick() && minecraft.screen == null){
+            if(TransfurManager.isTransfurred(player)) {
+                if(!TransfurManager.isOrganic(player)) minecraft.setScreen(new GrabModeSelectionScreen());
+            } else minecraft.setScreen(new WantToBeGrabbedScreen());
+        }
+    }
+
+    private static void grabLogic(Minecraft minecraft, Player player){
+        if(TransfurManager.isHoldingEntity(player)){
+            if(player.isCrouching()){
+                PacketHandler.INSTANCE.sendToServer(new ServerboundGrabPacket(-10));
+                return;
+            }
+            return;
+        }
+
+        if(TransfurManager.isGrabbed(player)) {
+            player.displayClientMessage(Component.translatable("message.a_changed.grabbed"),true);
+            return;
+        }
+
+        if(!(minecraft.crosshairPickEntity instanceof LivingEntity entity)
+                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG) || player.distanceTo(entity) > 2.5) return;
+
+        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
+            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
+                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+            return;
+        }
+
+        GrabMode mode = TransfurManager.getGrabMode(player);
+        if(!mode.checkTarget(entity)) {
+            player.displayClientMessage(Component.translatable("message.a_changed.only_friendly_grab_players"), true);
+            return;
+        }
+        if(entity instanceof Player player1){
+            if(TransfurManager.isBeingTransfurred(player1) || TransfurManager.isTransfurred(player1)) return;
+            if(TransfurManager.isGrabbed(player1)){
+                player.displayClientMessage(Component.translatable("message.a_changed.player_already_grabbed"), true);
+                return;
+            }
+            if(!mode.givesDebuffToTarget && !TransfurManager.wantsToBeGrabbed(player1)){
+                player.displayClientMessage(Component.translatable("message.a_changed.player_doesnt_want_to_be_grabbed"), true);
+                return;
+            }
+        }
+        PacketHandler.INSTANCE.sendToServer(new ServerboundGrabPacket(entity.getId()));
     }
 
     private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,

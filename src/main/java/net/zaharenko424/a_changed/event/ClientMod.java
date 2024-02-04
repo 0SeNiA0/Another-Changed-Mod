@@ -6,15 +6,10 @@ import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.overlay.CryoChamberOverlay;
-import net.zaharenko424.a_changed.client.overlay.HazmatOverlay;
-import net.zaharenko424.a_changed.client.overlay.PureWhiteLatexOverlay;
-import net.zaharenko424.a_changed.client.overlay.TransfurOverlay;
+import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
@@ -36,7 +31,14 @@ import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 public class ClientMod {
 
     @SubscribeEvent
+    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){
+        event.register(Keybindings.GRAB_KEY);
+        event.register(Keybindings.GRAB_MODE_KEY);
+    }
+
+    @SubscribeEvent
     public static void onRegisterGui(RegisterGuiOverlaysEvent event){
+        event.registerBelowAll(AChanged.resourceLoc("grab_mode"), GrabModeOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("transfur"), TransfurOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("pure_white_latex"), PureWhiteLatexOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("hazmat"), HazmatOverlay.OVERLAY);

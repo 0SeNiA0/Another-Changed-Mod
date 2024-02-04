@@ -5,14 +5,14 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.zaharenko424.a_changed.network.PacketHandler;
-import net.zaharenko424.a_changed.network.packets.ServerboundTransfurChoicePacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class TransfurScreen extends Screen {
 
-    int time=200;
+    int time = 200;
 
     public TransfurScreen() {
         super(Component.empty());
@@ -20,8 +20,8 @@ public class TransfurScreen extends Screen {
 
     @Override
     protected void init() {
-        int centerX=width/2;
-        int centerY=height/2;
+        int centerX = width / 2;
+        int centerY = height / 2;
         addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.transfur"), button ->{
             minecraft.setScreen(null);
             sendPacket(true);
@@ -44,7 +44,7 @@ public class TransfurScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font,"Time left: "+time,width/2,height/2-10,16777215);
+        guiGraphics.drawCenteredString(font,"Time left: "+time,width / 2,height / 2 - 10,16777215);
     }
 
     @Override

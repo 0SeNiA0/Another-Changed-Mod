@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.effects;
 
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +8,7 @@ import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
-public class LatexSolventEffect extends MobEffect {
+public class LatexSolventEffect extends UnRemovableEffect {
     public LatexSolventEffect() {
         super(MobEffectCategory.HARMFUL, 15330485);
     }

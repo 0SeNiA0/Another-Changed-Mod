@@ -64,13 +64,19 @@
   "command.transfur_tolerance.get": "Transfur tolerance is ",
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
 
+  "death.attack.assimilation": "%1$s was assimilated by %2$s",
+  "death.attack.assimilation.player": "%1$s was assimilated by %2$s",
   "death.attack.transfur": "%1$s was transfurred",
   "death.attack.transfur.player": "%1$s was transfurred by %2$s",
   "death.attack.solvent": "%1$s was dissolved",
   "death.attack.solvent.player": "%1$s was dissolved by %2$s",
 
+  "effect.a_changed.assimilation_buff": "Assimilation Buff",
+  "effect.a_changed.friendly_grab": "You are friendly grabbed",
+  "effect.a_changed.grabbed_debuff": "You are grabbed",
+  "effect.a_changed.holding_debuff": "You are holding someone",
+  "effect.a_changed.latex_solvent": "Latex Solvent",
   "effect.a_changed.untransfur": "Untransfur",
-  "effect.a_changed.latex_solvent": "Latex solvent",
 
   "entity.a_changed.bei_feng": "Bei Feng",
   "entity.a_changed.benign": "Benign",
@@ -84,6 +90,10 @@
   "gamerule.chooseTransfurOrDie": "Allow player to choose between being transfurred and dying",
   "gamerule.keepTransfurOnDeath": "Keep transfur on death",
   "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
+
+  "key.a_changed.grab": "Grab key",
+  "key.a_changed.grab_mode": "Grab mode radial menu",
+  "key.a_changed.keyCategory": "Another Changed Mod Keys",
 
   "item.a_changed.black_latex_shorts": "Black latex shorts",
   "item.a_changed.cardboard": "Cardboard",
@@ -116,6 +126,14 @@
 
   "itemGroup.a_changed.main": "Another Changed Mod",
   "itemGroup.a_changed.transfurs": "Transfurs & Equipment",
+
+  "message.a_changed.grab_cooldown": "Grab ability is on cooldown for %1$s s",
+  "message.a_changed.grabbed": "You are already grabbed by someone!",
+  "message.a_changed.grabbed_entity_died": "Grabbed entity died",
+  "message.a_changed.grabbed_player_left": "Grabbed player left",
+  "message.a_changed.only_friendly_grab_players": "You can only friendly grab players!",
+  "message.a_changed.player_already_grabbed": "Player, that you are trying to grab, is already grabbed!",
+  "message.a_changed.player_doesnt_want_to_be_grabbed": "This player doesn't want to be grabbed!",
 
   "misc.a_changed.keypad_attempt": "Try",
   "misc.a_changed.keypad_save_password": "Save password",

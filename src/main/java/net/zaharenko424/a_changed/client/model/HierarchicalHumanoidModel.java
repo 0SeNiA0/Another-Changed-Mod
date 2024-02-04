@@ -10,8 +10,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.model.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -308,6 +311,11 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
     }
 
     private void poseRightArm(E entity) {
+        if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
+            rightArm.xRot = Mth.PI / 1.9f;
+            rightArm.yRot = 0.1F + head.yRot;
+            return;
+        }
         switch(rightArmPose) {
             case EMPTY -> rightArm.yRot = 0.0F;
             case BLOCK -> {
@@ -345,7 +353,12 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         }
     }
 
-    private void poseLeftArm(E entity) {
+    private void poseLeftArm(E entity) {//TODO for some reason doesn't work for remote players ...
+        if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
+            leftArm.xRot = Mth.PI / 1.9f;
+            leftArm.yRot = -0.1F + head.yRot;
+            return;
+        }
         switch(leftArmPose) {
             case EMPTY:
                 leftArm.yRot = 0.0F;
