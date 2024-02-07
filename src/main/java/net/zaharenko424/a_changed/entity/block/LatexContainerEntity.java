@@ -52,15 +52,15 @@ public class LatexContainerEntity extends BlockEntity {
     }
 
     public boolean hasSpace(Item item){
-        return handler.getStackInSlot(0).isEmpty()||(handler.getStackInSlot(0).getCount()<16&&isSameLatexType(item));
+        return handler.getStackInSlot(0).isEmpty() || (handler.getStackInSlot(0).getCount() < 16 && isSameItem(item));
     }
 
     public boolean isEmpty(){
         return handler.getStackInSlot(0).isEmpty();
     }
 
-    public boolean isSameLatexType(Item item){
-        return handler.getStackInSlot(0).getItem()==item;
+    public boolean isSameItem(Item item){
+        return handler.getStackInSlot(0).getItem() == item;
     }
 
     public int getLatexAmount(){
@@ -86,7 +86,7 @@ public class LatexContainerEntity extends BlockEntity {
 
     public void onRemove(){
         if(getLatexAmount()>=8){
-            BlockState state= isSameLatexType(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
+            BlockState state= isSameItem(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
             level.setBlockAndUpdate(getBlockPos(),state);
         }
     }

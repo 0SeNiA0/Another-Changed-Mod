@@ -6,6 +6,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * ItemStackHandler wrapper
+ */
 public class ItemHandlerContainer implements Container {
 
     private final IItemHandlerModifiable handler;

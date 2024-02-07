@@ -20,6 +20,7 @@ import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRender
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
 import net.zaharenko424.a_changed.client.screen.GeneratorScreen;
+import net.zaharenko424.a_changed.client.screen.LatexPurifierScreen;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 
@@ -35,7 +36,10 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
-        event.enqueueWork(() -> MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new));
+        event.enqueueWork(() -> {
+            MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new);
+            MenuScreens.register(AChanged.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
+        });
     }
 
     @SubscribeEvent

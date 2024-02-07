@@ -14,6 +14,7 @@ import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
 import net.zaharenko424.a_changed.block.boxes.TallBox;
 import net.zaharenko424.a_changed.block.boxes.TallCardboardBox;
 import net.zaharenko424.a_changed.block.doors.*;
+import net.zaharenko424.a_changed.block.machines.*;
 import net.zaharenko424.a_changed.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,11 @@ public class BlockRegistry {
     public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
 
     //Blocks
+    public static final DeferredBlock<DNAExtractor> DNA_EXTRACTOR = BLOCKS.register("dna_extractor", ()-> new DNAExtractor(decorProperties()));
+    public static final DeferredBlock<LatexEncoder> LATEX_ENCODER = BLOCKS.register("latex_encoder", ()-> new LatexEncoder(decorProperties().noOcclusion()));
+    public static final DeferredBlock<LatexPurifier> LATEX_PURIFIER = BLOCKS.register("latex_purifier", ()-> new LatexPurifier(decorProperties()));
+    public static final DeferredBlock<Compressor> COMPRESSOR = BLOCKS.register("compressor", ()-> new Compressor(decorProperties()));
+
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
     public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
     public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(bigDoorProperties()));

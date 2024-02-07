@@ -18,7 +18,7 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
     public GeneratorScreen(GeneratorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        generatorEntity = pMenu.getGeneratorEntity();
+        generatorEntity = pMenu.getEntity();
     }
 
     @Override

@@ -4,7 +4,7 @@
 	"textures": {
 		"1": "a_changed:block/generator",
 		"2": "a_changed:block/generator_anim",
-		"particle": "a_changed:block/generator_anim"
+		"particle": "#1"
 	},
 	"elements": [
 		{

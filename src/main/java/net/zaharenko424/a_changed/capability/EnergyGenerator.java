@@ -23,6 +23,7 @@ public class EnergyGenerator extends ExtendedEnergyStorage {
      * @param amount amount of energy to generate
      */
     public void generateEnergy(int amount){
+        if(amount < 0) return;
         energy += Math.min(capacity - energy, amount);
     }
 }

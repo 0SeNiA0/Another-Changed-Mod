@@ -17,8 +17,13 @@ import static net.zaharenko424.a_changed.registry.FluidRegistry.*;
 public final class ItemRegistry {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-    public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));
+
     //BlockItems
+    public static final DeferredItem<BlockItem> COMPRESSOR_ITEM = ITEMS.registerSimpleBlockItem(COMPRESSOR);
+    public static final DeferredItem<BlockItem> DNA_EXTRACTOR_ITEM = ITEMS.registerSimpleBlockItem(DNA_EXTRACTOR);
+    public static final DeferredItem<BlockItem> LATEX_ENCODER_ITEM = ITEMS.registerSimpleBlockItem(LATEX_ENCODER);
+    public static final DeferredItem<BlockItem> LATEX_PURIFIER_ITEM = ITEMS.registerSimpleBlockItem(LATEX_PURIFIER);
+
     public static final DeferredItem<BlockItem> AIR_CONDITIONER_ITEM = ITEMS.registerSimpleBlockItem(AIR_CONDITIONER);
     public static final DeferredItem<BlockItem> BIG_LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_DOOR);
     public static final DeferredItem<BlockItem> BIG_LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LIBRARY_DOOR);
@@ -80,6 +85,9 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> YELLOW_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(YELLOW_LAB_BLOCK);
 
     //Items
+    public static final DeferredItem<Item> DARK_LATEX_BASE = ITEMS.registerSimpleItem("dark_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
+    public static final DeferredItem<Item> WHITE_LATEX_BASE = ITEMS.registerSimpleItem("white_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
+
     public static final DeferredItem<ArmorItem> BLACK_LATEX_SHORTS = ITEMS.register("black_latex_shorts", ()-> new ArmorItem(ArmorMaterials.LATEX, ArmorItem.Type.LEGGINGS, new Item.Properties().setNoRepair()));
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
@@ -92,6 +100,7 @@ public final class ItemRegistry {
     public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
+    public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));
     public static final DeferredItem<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", SyringeItem::new);
     public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM=ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
     public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM=ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);

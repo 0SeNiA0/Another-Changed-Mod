@@ -29,6 +29,32 @@ public class ExtendedEnergyStorage extends EnergyStorage {
         return energy == capacity;
     }
 
+    public int getMaxReceive(){
+        return maxReceive;
+    }
+
+    public int getMaxExtract(){
+        return maxExtract;
+    }
+
+    /**
+     * Receives energy from provided IEnergyStorage
+     * @param sender Storage to receive energy from
+     * @param amount Maximum amount of energy to be sent.
+     * @param simulate If TRUE, the insertion will only be simulated.
+     * @return Amount of energy that was (or would have been, if simulated) transferred from provided storage to this.
+     */
+    public int receiveEnergyFrom(IEnergyStorage sender, int amount, boolean simulate){
+        if(amount < 0 || isFull() || !canReceive() || !sender.canExtract()) return 0;
+        int canGive = sender.extractEnergy(amount, true);
+        int canReceive = receiveEnergy(amount, true);
+        int toSend = Math.min(canGive, canReceive);
+        if(simulate) return toSend;
+        sender.extractEnergy(toSend, false);
+        receiveEnergy(toSend, false);
+        return toSend;
+    }
+
     /**
      * Sends energy to provided IEnergyStorage.
      * @param receiver Storage to send energy to.
@@ -38,7 +64,7 @@ public class ExtendedEnergyStorage extends EnergyStorage {
     Amount of energy that was (or would have been, if simulated) transferred from this storage to provided one.
      */
     public int transferEnergyTo(IEnergyStorage receiver, int amount, boolean simulate){
-        if(isEmpty() || !canExtract() || !receiver.canReceive()) return 0;
+        if(amount < 0 || isEmpty() || !canExtract() || !receiver.canReceive()) return 0;
         int canGive = extractEnergy(amount, true);
         int canReceive = receiver.receiveEnergy(amount, true);
         int toSend = Math.min(canGive, canReceive);
@@ -46,5 +72,17 @@ public class ExtendedEnergyStorage extends EnergyStorage {
         extractEnergy(toSend, false);
         receiver.receiveEnergy(toSend, false);
         return toSend;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if(maxReceive < 0) return 0;
+        return super.receiveEnergy(maxReceive, simulate);
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        if(maxExtract < 0) return 0;
+        return super.extractEnergy(maxExtract, simulate);
     }
 }

@@ -29,6 +29,8 @@ import net.zaharenko424.a_changed.block.doors.BigLabDoor;
 import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
 import net.zaharenko424.a_changed.block.doors.LabDoor;
 import net.zaharenko424.a_changed.block.doors.LibraryDoor;
+import net.zaharenko424.a_changed.block.machines.DNAExtractor;
+import net.zaharenko424.a_changed.block.machines.LatexEncoder;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.model.ModelCache;
@@ -110,9 +112,9 @@ public class ClientEvent {
     }
 
     private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
-            Flask.class, TestTubes.class);
+            Flask.class, LatexEncoder.class, TestTubes.class);
     private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
-            LabDoor.class, LibraryDoor.class);
+            DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 
     @SubscribeEvent
     public static void onRenderBlockHighlight(RenderHighlightEvent.Block event){

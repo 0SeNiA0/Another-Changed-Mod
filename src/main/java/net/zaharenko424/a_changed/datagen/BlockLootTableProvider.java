@@ -49,6 +49,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(CARDBOARD_BOX.get());
         dropSelf(CARPET_BLOCK.get());
         dropSelf(CHAIR.get());
+        dropSelf(COMPRESSOR.get());
         dropSelf(COMPUTER.get());
         dropSelf(CONNECTED_BLUE_LAB_TILE.get());
         dropSelf(CONNECTED_LAB_TILE.get());
@@ -58,6 +59,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(DARK_LATEX_BLOCK.get());
         crystalDrops(DARK_LATEX_CRYSTAL.get(), ItemRegistry.DARK_LATEX_CRYSTAL_SHARD);
         dropWhenSilkTouch(DARK_LATEX_CRYSTAL_ICE.get());
+        dropSelf(DNA_EXTRACTOR.get());
         dropOther(FLASK.get(), BROKEN_FLASK);
         dropSelf(GENERATOR.get());
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
@@ -70,6 +72,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(LAB_TILE.get());
         dropSelf(LASER_EMITTER.get());
         doublePartBlockDrops(LATEX_CONTAINER.get());
+        dropSelf(LATEX_ENCODER.get());
+        dropSelf(LATEX_PURIFIER.get());
         fourPartMultiBlockDrops(LIBRARY_DOOR.get());
         fourPartMultiBlockDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());

@@ -26,7 +26,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void buildRecipes(@NotNull RecipeOutput p_301172_) {
         latexBlockItem(false, p_301172_);
         latexBlockItem(true, p_301172_);
-
+        //TODO machines
         //TODO air conditioner
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_DOOR_ITEM)

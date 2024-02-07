@@ -15,6 +15,7 @@
   "block.a_changed.cardboard_box": "Cardboard box",
   "block.a_changed.carpet_block": "Carpet block",
   "block.a_changed.chair": "Chair",
+  "block.a_changed.compressor": "Compressor",
   "block.a_changed.computer": "Computer",
   "block.a_changed.connected_blue_lab_tile": "Connected blue lab tile",
   "block.a_changed.connected_lab_tile": "Connected lab tile",
@@ -24,6 +25,7 @@
   "block.a_changed.dark_latex_block": "Dark latex block",
   "block.a_changed.dark_latex_crystal": "Dark latex crystal",
   "block.a_changed.dark_latex_ice": "Dark latex crystal ice",
+  "block.a_changed.dna_extractor": "DNA extractor",
   "block.a_changed.flask": "Flask",
   "block.a_changed.gas_tank": "Red gas tank",
   "block.a_changed.generator": "Generator",
@@ -37,6 +39,8 @@
   "block.a_changed.lab_tile": "Lab tile",
   "block.a_changed.laser_emitter": "Laser emitter",
   "block.a_changed.latex_container": "Latex container",
+  "block.a_changed.latex_encoder": "Latex encoder",
+  "block.a_changed.latex_purifier": "Latex purifier",
   "block.a_changed.library_door": "Library door",
   "block.a_changed.maintenance_door": "Maintenance door",
   "block.a_changed.metal_box": "Metal box",
@@ -66,6 +70,7 @@
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
 
   "container.a_changed.generator": "Generator",
+  "container.a_changed.latex_purifier": "Latex Purifier",
 
   "death.attack.assimilation": "%1$s was assimilated by %2$s",
   "death.attack.assimilation.player": "%1$s was assimilated by %2$s",
@@ -101,6 +106,7 @@
   "item.a_changed.black_latex_shorts": "Black latex shorts",
   "item.a_changed.cardboard": "Cardboard",
   "item.a_changed.dark_latex": "Dark latex",
+  "item.a_changed.dark_latex_base": "Dark latex base",
   "item.a_changed.dark_latex_bucket": "Dark latex bucket",
   "item.a_changed.dark_latex_crystal_shard": "Dark latex crystal shard",
   "item.a_changed.green_crystal_shard": "Green crystal shard",
@@ -117,6 +123,7 @@
   "item.a_changed.untransfur_syringe": "Untransfur syringe",
   "item.a_changed.untransfur_bottle": "Bottle of untransfur",
   "item.a_changed.white_latex": "White latex",
+  "item.a_changed.white_latex_base": "White latex base",
   "item.a_changed.white_latex_bucket": "White latex bucket",
 
   "item.a_changed.bei_feng_spawn_egg": "Bei Feng Spawn Egg",

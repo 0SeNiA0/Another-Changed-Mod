@@ -18,6 +18,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
     protected void registerModels() {
         basicItem(BLACK_LATEX_SHORTS.get());
         basicItem(CARDBOARD.getId());
+        basicItem(DARK_LATEX_BASE.getId());
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
@@ -34,8 +35,9 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYRINGE_ITEM.getId());
-        basicItem(WHITE_LATEX_ITEM.getId());
+        basicItem(WHITE_LATEX_BASE.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
+        basicItem(WHITE_LATEX_ITEM.getId());
 
         spawnEgg(BEI_FENG_EGG);
         spawnEgg(BENIGN_EGG);

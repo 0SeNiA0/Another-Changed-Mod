@@ -161,7 +161,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onAttachCapabilitiesI(AttachCapabilitiesEvent<ItemStack> event){
         if(event.getObject().is(ItemRegistry.POWER_CELL.get())){
-            event.addCapability(ItemEnergyCapability.KEY, new ItemEnergyCapability.Provider(5000, event.getObject()));
+            event.addCapability(ItemEnergyCapability.KEY, new ItemEnergyCapability.Provider(10000, 128, event.getObject()));
         }
     }
 

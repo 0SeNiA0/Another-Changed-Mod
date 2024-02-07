@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.menu.GeneratorMenu;
+import net.zaharenko424.a_changed.menu.LatexPurifierMenu;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class AChanged {
             () -> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
 
     public static final DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU = MENU_TYPES.register("generator", ()-> IMenuTypeExtension.create(GeneratorMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<LatexPurifierMenu>> LATEX_PURIFIER_MENU = MENU_TYPES.register("latex_purifier", ()-> IMenuTypeExtension.create(LatexPurifierMenu::new));
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));

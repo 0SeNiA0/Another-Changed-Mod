@@ -90,6 +90,7 @@ public class CreativeTabs {
                     output.accept(DARK_LATEX_BUCKET);
 
                     output.accept(GENERATOR_ITEM);
+                    output.accept(POWER_CELL);
                 }).build());
 
         CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()
