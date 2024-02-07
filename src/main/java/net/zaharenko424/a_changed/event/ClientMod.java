@@ -1,11 +1,13 @@
 package net.zaharenko424.a_changed.event;
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
@@ -17,6 +19,7 @@ import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRendere
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
+import net.zaharenko424.a_changed.client.screen.GeneratorScreen;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 
@@ -29,6 +32,11 @@ import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientMod {
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event){
+        event.enqueueWork(() -> MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new));
+    }
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){

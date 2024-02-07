@@ -11,10 +11,7 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.LaserEmitter;
-import net.zaharenko424.a_changed.block.blocks.LatexPuddle;
-import net.zaharenko424.a_changed.block.blocks.Table;
-import net.zaharenko424.a_changed.block.blocks.CryoChamber;
+import net.zaharenko424.a_changed.block.blocks.*;
 import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
 import net.zaharenko424.a_changed.block.doors.Abstract2By2Door;
 import net.zaharenko424.a_changed.block.doors.Abstract3By3Door;
@@ -64,6 +61,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
         simpleBlockWithItemExisting(FLASK);
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
+        furnaceLikeWithItem(GENERATOR);
         doublePartCrossWithItem(GREEN_CRYSTAL);
         blockWithItem(HAZARD_BLOCK);
         pillarWithItem(HAZARD_LAB_BLOCK, blockLoc(LAB_BLOCK.getId()));
@@ -170,9 +168,24 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(id.getPath()).parent(part0);
     }
 
+    private void furnaceLikeWithItem(DeferredBlock<? extends HorizontalDirectionalBlock> block){
+        if(!block.get().defaultBlockState().hasProperty(Generator.LIT)) return;
+        ResourceLocation loc = blockLoc(block.getId());
+        ModelFile file = models().getExistingFile(loc);
+        ModelFile file_lit = models().getExistingFile(loc.withSuffix("_lit"));
+        getVariantBuilder(block.get()).forAllStates(state -> {
+            Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
+            if(state.getValue(Generator.LIT)){
+                return horizontalRotatedModel(file_lit, direction);
+            }
+            return horizontalRotatedModel(file, direction);
+        });
+        simpleBlockItem(block.get(), file);
+    }
+
     private void horizontalDirectionalBlockWithItem(DeferredBlock<? extends HorizontalDirectionalBlock> block){
-        ModelFile file= models().getExistingFile(blockLoc(block.getId()));
-        simpleBlockItem(block.get(),file);
+        ModelFile file = models().getExistingFile(blockLoc(block.getId()));
+        simpleBlockItem(block.get(), file);
         getVariantBuilder(block.get())
                 .forAllStates(state-> horizontalRotatedModel(file, state.getValue(HorizontalDirectionalBlock.FACING)));
     }

@@ -28,7 +28,7 @@ public abstract class HorizontalDirectionalBlock extends net.minecraft.world.lev
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
         Direction direction = p_49820_.getClickedFace();
-        if(direction.getAxis() == Direction.Axis.Y) direction = p_49820_.getNearestLookingDirection().getOpposite();
+        if(direction.getAxis() == Direction.Axis.Y) direction = p_49820_.getHorizontalDirection().getOpposite();
         return defaultBlockState().setValue(FACING, direction);
     }
 

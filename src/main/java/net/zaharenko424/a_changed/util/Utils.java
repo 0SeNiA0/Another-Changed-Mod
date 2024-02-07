@@ -12,16 +12,16 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ParametersAreNonnullByDefault
 public class Utils {
-
-    public static final VoxelShape EMPTY_SHAPE = Shapes.empty();
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
@@ -29,6 +29,16 @@ public class Utils {
 
     public static void addItemOrDrop(Player player, ItemStack item){
         if(!player.addItem(item)) player.drop(item,false);
+    }
+
+    private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
+
+    @Contract(pure = true)
+    public static @NotNull String formatEnergy(int energy){
+        if(energy >= 1000000000) return FORMAT.format((float) energy / 1000000000) + "B";
+        if(energy >= 1000000) return FORMAT.format((float) energy / 1000000) + "M";
+        if(energy >= 1000) return FORMAT.format((float) energy / 1000) + "k";
+        return String.valueOf(energy);
     }
 
     public static @NotNull VoxelShape rotateShape(Direction direction, VoxelShape source) {

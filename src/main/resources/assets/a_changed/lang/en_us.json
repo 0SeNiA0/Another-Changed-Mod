@@ -26,6 +26,7 @@
   "block.a_changed.dark_latex_ice": "Dark latex crystal ice",
   "block.a_changed.flask": "Flask",
   "block.a_changed.gas_tank": "Red gas tank",
+  "block.a_changed.generator": "Generator",
   "block.a_changed.green_crystal": "Green crystal",
   "block.a_changed.hazard_block": "Hazard block",
   "block.a_changed.hazard_lab_block": "Hazard lab block",
@@ -63,6 +64,8 @@
 
   "command.transfur_tolerance.get": "Transfur tolerance is ",
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
+
+  "container.a_changed.generator": "Generator",
 
   "death.attack.assimilation": "%1$s was assimilated by %2$s",
   "death.attack.assimilation.player": "%1$s was assimilated by %2$s",
@@ -109,6 +112,7 @@
   "item.a_changed.latex_syringe": "Latex syringe",
   "item.a_changed.orange": "Orange",
   "item.a_changed.orange_juice": "Orange juice",
+  "item.a_changed.power_cell": "Power cell",
   "item.a_changed.syringe": "Syringe",
   "item.a_changed.untransfur_syringe": "Untransfur syringe",
   "item.a_changed.untransfur_bottle": "Bottle of untransfur",

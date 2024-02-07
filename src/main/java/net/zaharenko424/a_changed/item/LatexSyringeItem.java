@@ -43,9 +43,9 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public void appendHoverText(@NotNull ItemStack p_41421_, @Nullable Level p_41422_, @NotNull List<Component> p_41423_, @NotNull TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-        CompoundTag tag=p_41421_.getTag();
+        CompoundTag tag = p_41421_.getTag();
         if(NBTUtils.hasModTag(tag)){
-            ResourceLocation transfurType=new ResourceLocation(NBTUtils.modTag(tag).getString(TRANSFUR_TYPE_KEY));
+            ResourceLocation transfurType = new ResourceLocation(NBTUtils.modTag(tag).getString(TRANSFUR_TYPE_KEY));
             try {
                 p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
             } catch (Exception ex) {

@@ -25,6 +25,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.ItemEnergyCapability;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
@@ -149,11 +150,18 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event){
+    public static void onAttachCapabilitiesE(AttachCapabilitiesEvent<Entity> event){
         if(!(event.getObject() instanceof LivingEntity entity)) return;
         if(entity.getType().is(AChanged.TRANSFURRABLE_TAG)){
             event.addCapability(TransfurCapability.KEY, TransfurCapability.createProvider(entity));
             if(entity instanceof Player player) event.addCapability(GrabCapability.KEY, GrabCapability.createProvider(player));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapabilitiesI(AttachCapabilitiesEvent<ItemStack> event){
+        if(event.getObject().is(ItemRegistry.POWER_CELL.get())){
+            event.addCapability(ItemEnergyCapability.KEY, new ItemEnergyCapability.Provider(5000, event.getObject()));
         }
     }
 

@@ -54,6 +54,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
     public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.copy(Blocks.GLASS)));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(decorProperties().noLootTable().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<Generator> GENERATOR = BLOCKS.register("generator", ()-> new Generator(decorProperties()));
     public static final DeferredBlock<TallCrystal> GREEN_CRYSTAL = BLOCKS.register("green_crystal", ()-> new TallCrystal(decorProperties(),TransfurRegistry.BEI_FENG_TF));
     public static final DeferredBlock<Block> HAZARD_BLOCK = BLOCKS.registerSimpleBlock("hazard_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Block> HAZARD_LAB_BLOCK = BLOCKS.registerSimpleBlock("hazard_lab_block", decorProperties().mapColor(DyeColor.WHITE));

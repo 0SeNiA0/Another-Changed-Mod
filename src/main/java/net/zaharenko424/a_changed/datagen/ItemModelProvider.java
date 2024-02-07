@@ -30,6 +30,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(LATEX_SYRINGE_ITEM.getId());
         basicItem(ORANGE_ITEM.getId());
         basicItem(ORANGE_JUICE_ITEM.getId());
+        basicItem(POWER_CELL.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYRINGE_ITEM.getId());

@@ -10,13 +10,16 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.menu.GeneratorMenu;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -42,17 +45,20 @@ public class AChanged {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     //Registries
-    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE,MODID);
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
+    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(BuiltInRegistries.MENU, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
 
     //Attributes
-    public static final DeferredHolder<Attribute,Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
+    public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
             () -> new RangedAttribute("attribute."+MODID+".air_decrease_speed",1,0,256));
-    public static final DeferredHolder<Attribute,Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
+    public static final DeferredHolder<Attribute, Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
             () -> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU = MENU_TYPES.register("generator", ()-> IMenuTypeExtension.create(GeneratorMenu::new));
+
     //Particles
-    public static final DeferredHolder<ParticleType<?>,SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
     //Tags
     public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
@@ -92,5 +98,6 @@ public class AChanged {
         CREATIVE_MODE_TABS.register(modEventBus);
         SOUNDS.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
+        MENU_TYPES.register(modEventBus);
     }
 }

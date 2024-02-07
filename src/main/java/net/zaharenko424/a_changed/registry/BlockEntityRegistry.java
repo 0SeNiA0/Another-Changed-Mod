@@ -6,6 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
+import net.zaharenko424.a_changed.entity.block.machines.GeneratorEntity;
 
 public class BlockEntityRegistry {
 
@@ -21,6 +22,8 @@ public class BlockEntityRegistry {
             .register("cryo_chamber", ()-> BlockEntityType.Builder.of(CryoChamberEntity::new, BlockRegistry.CRYO_CHAMBER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<GasTankEntity>> GAS_TANK_ENTITY = BLOCK_ENTITIES
             .register("gas_canister", () -> BlockEntityType.Builder.of(GasTankEntity::new, BlockRegistry.GAS_TANK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorEntity>> GENERATOR_ENTITY = BLOCK_ENTITIES
+            .register("generator", () -> BlockEntityType.Builder.of(GeneratorEntity::new, BlockRegistry.GENERATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<KeypadEntity>> KEYPAD_ENTITY = BLOCK_ENTITIES
             .register("keypad", () -> BlockEntityType.Builder.of(KeypadEntity::new,BlockRegistry.KEYPAD.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<LaserEmitterEntity>> LASER_EMITTER_ENTITY = BLOCK_ENTITIES

@@ -88,6 +88,8 @@ public class CreativeTabs {
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);
                     output.accept(DARK_LATEX_BUCKET);
+
+                    output.accept(GENERATOR_ITEM);
                 }).build());
 
         CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()
