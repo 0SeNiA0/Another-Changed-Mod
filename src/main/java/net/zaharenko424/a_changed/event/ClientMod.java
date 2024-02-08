@@ -2,6 +2,9 @@ package net.zaharenko424.a_changed.event;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
@@ -36,10 +39,10 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
-        event.enqueueWork(() -> {
-            MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new);
-            MenuScreens.register(AChanged.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
-        });
+        Sheets.addWoodType(AChanged.ORANGE);
+
+        MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new);
+        MenuScreens.register(AChanged.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
     }
 
     @SubscribeEvent
@@ -80,8 +83,10 @@ public class ClientMod {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.get(), (a)-> new CryoChamberRenderer());
+        event.registerBlockEntityRenderer(BlockEntityRegistry.HANGING_SIGN_ENTITY.get(), HangingSignRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
         event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 

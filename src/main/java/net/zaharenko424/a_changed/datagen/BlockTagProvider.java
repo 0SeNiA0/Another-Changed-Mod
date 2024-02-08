@@ -21,6 +21,8 @@ public class BlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
+        tag(BlockTags.CEILING_HANGING_SIGNS).add(ORANGE_HANGING_SIGN.get());
+        tag(BlockTags.FENCE_GATES).add(ORANGE_FENCE_GATE.get());
         tag(BlockTags.MINEABLE_WITH_AXE).add(CARDBOARD_BOX.get(),ORANGE_TREE_LOG.get(),SMALL_CARDBOARD_BOX.get()
                 ,TALL_CARDBOARD_BOX.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AIR_CONDITIONER.get(), BIG_LAB_DOOR.get(), BIG_LIBRARY_DOOR.get(),
@@ -35,6 +37,16 @@ public class BlockTagProvider extends BlockTagsProvider {
                 .add(DANGER_SIGN.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
         tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());
         tag(BlockTags.LOGS).add(ORANGE_TREE_LOG.get());
+        tag(BlockTags.PLANKS).add(ORANGE_PLANKS.get());
         tag(BlockTags.SAPLINGS).add(ORANGE_SAPLING.get());
+        tag(BlockTags.STANDING_SIGNS).add(ORANGE_SIGN.get());
+        tag(BlockTags.WALL_HANGING_SIGNS).add(ORANGE_WALL_HANGING_SIGN.get());
+        tag(BlockTags.WOODEN_BUTTONS).add(ORANGE_BUTTON.get());
+        tag(BlockTags.WOODEN_DOORS).add(ORANGE_DOOR.get());
+        tag(BlockTags.WOODEN_FENCES).add(ORANGE_FENCE.get());
+        tag(BlockTags.WOODEN_PRESSURE_PLATES).add(ORANGE_PRESSURE_PLATE.get());
+        tag(BlockTags.WOODEN_SLABS).add(ORANGE_SLAB.get());
+        tag(BlockTags.WOODEN_STAIRS).add(ORANGE_STAIRS.get());
+        tag(BlockTags.WOODEN_TRAPDOORS).add(ORANGE_TRAPDOOR.get());
     }
 }

@@ -23,7 +23,6 @@ public class CreativeTabs {
                     output.accept(ORANGE_JUICE_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
-                    output.accept(ORANGE_TREE_LOG_ITEM);
                     output.accept(WHITE_LATEX_ITEM);
                     output.accept(DARK_LATEX_ITEM);
                     output.accept(WHITE_LATEX_BLOCK_ITEM);
@@ -84,13 +83,29 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
                     output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
                     output.accept(VENT_ITEM);
-
-                    output.accept(LATEX_SOLVENT_BUCKET);
-                    output.accept(WHITE_LATEX_BUCKET);
-                    output.accept(DARK_LATEX_BUCKET);
-
+                    //Technology
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
+                    output.accept(COMPRESSOR_ITEM);
+                    output.accept(DNA_EXTRACTOR_ITEM);
+                    output.accept(LATEX_ENCODER_ITEM);
+                    output.accept(LATEX_PURIFIER_ITEM);
+                    //Wood
+                    output.accept(ORANGE_BUTTON_ITEM);
+                    output.accept(ORANGE_DOOR_ITEM);
+                    output.accept(ORANGE_FENCE_ITEM);
+                    output.accept(ORANGE_FENCE_GATE_ITEM);
+                    output.accept(ORANGE_HANGING_SIGN_ITEM);
+                    output.accept(ORANGE_PLANKS_ITEM);
+                    output.accept(ORANGE_PRESSURE_PLATE_ITEM);
+                    output.accept(ORANGE_SIGN_ITEM);
+                    output.accept(ORANGE_SLAB_ITEM);
+                    output.accept(ORANGE_STAIRS_ITEM);
+                    output.accept(ORANGE_TRAPDOOR_ITEM);
+                    output.accept(ORANGE_TREE_LOG_ITEM);
+                    output.accept(ORANGE_WOOD_ITEM);
+                    output.accept(STRIPPED_ORANGE_LOG_ITEM);
+                    output.accept(STRIPPED_ORANGE_WOOD_ITEM);
                 }).build());
 
         CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()
@@ -107,6 +122,10 @@ public class CreativeTabs {
                     output.accept(SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
+
+                    output.accept(LATEX_SOLVENT_BUCKET);
+                    output.accept(WHITE_LATEX_BUCKET);
+                    output.accept(DARK_LATEX_BUCKET);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.id)));
 

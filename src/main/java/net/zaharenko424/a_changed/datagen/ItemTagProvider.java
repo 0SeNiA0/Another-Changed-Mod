@@ -26,7 +26,20 @@ public class ItemTagProvider extends ItemTagsProvider {
         tag(Tags.Items.ARMORS_CHESTPLATES).add(HAZMAT_CHESTPLATE.get());
         tag(Tags.Items.ARMORS_LEGGINGS).add(BLACK_LATEX_SHORTS.get(), HAZMAT_LEGGINGS.get());
         tag(Tags.Items.ARMORS_BOOTS).add(HAZMAT_BOOTS.get());
+        tag(ItemTags.FENCE_GATES).add(ORANGE_FENCE_GATE_ITEM.get());
         tag(Tags.Items.GEMS).add(DARK_LATEX_CRYSTAL_SHARD.get());
+        tag(ItemTags.HANGING_SIGNS).add(ORANGE_HANGING_SIGN_ITEM.get());
+        tag(ItemTags.LEAVES).add(ORANGE_LEAVES_ITEM.get());
+        tag(ItemTags.LOGS).add(ORANGE_TREE_LOG_ITEM.get());
+        tag(ItemTags.PLANKS).add(ORANGE_PLANKS_ITEM.get());
         tag(ItemTags.SAPLINGS).add(ORANGE_SAPLING_ITEM.get());
+        tag(ItemTags.SIGNS).add(ORANGE_SIGN_ITEM.get());
+        tag(ItemTags.WOODEN_BUTTONS).add(ORANGE_BUTTON_ITEM.get());
+        tag(ItemTags.WOODEN_DOORS).add(ORANGE_DOOR_ITEM.get());
+        tag(ItemTags.WOODEN_FENCES).add(ORANGE_FENCE_ITEM.get());
+        tag(ItemTags.WOODEN_PRESSURE_PLATES).add(ORANGE_PRESSURE_PLATE_ITEM.get());
+        tag(ItemTags.WOODEN_SLABS).add(ORANGE_SLAB_ITEM.get());
+        tag(ItemTags.WOODEN_STAIRS).add(ORANGE_STAIRS_ITEM.get());
+        tag(ItemTags.WOODEN_TRAPDOORS).add(ORANGE_TRAPDOOR_ITEM.get());
     }
 }

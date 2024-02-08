@@ -1,10 +1,13 @@
 package net.zaharenko424.a_changed.datagen;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
@@ -29,7 +32,20 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(HAZMAT_BOOTS.getId());
         basicItem(LATEX_SOLVENT_BUCKET.getId());
         basicItem(LATEX_SYRINGE_ITEM.getId());
+
+        ResourceLocation planks = BlockRegistry.ORANGE_PLANKS.getId().withPrefix(ModelProvider.BLOCK_FOLDER+"/");
+        buttonInventory(ORANGE_BUTTON_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_DOOR_ITEM.getId());
+        fenceInventory(ORANGE_FENCE_ITEM.getId().getPath(), planks);
+        fenceGate(ORANGE_FENCE_GATE_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_HANGING_SIGN_ITEM.getId());
         basicItem(ORANGE_ITEM.getId());
+        pressurePlate(ORANGE_PRESSURE_PLATE_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_SIGN_ITEM.getId());
+        slab(ORANGE_SLAB_ITEM.getId().getPath(), planks, planks, planks);
+        stairs(ORANGE_STAIRS_ITEM.getId().getPath(), planks, planks, planks);
+        trapdoorBottom(ORANGE_TRAPDOOR_ITEM.getId().getPath(), planks);
+
         basicItem(ORANGE_JUICE_ITEM.getId());
         basicItem(POWER_CELL.getId());
         basicItem(SYRINGE_ITEM.getId());

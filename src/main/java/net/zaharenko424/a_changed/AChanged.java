@@ -13,6 +13,8 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -71,6 +73,8 @@ public class AChanged {
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> KEEP_TRANSFUR = GameRules.register("keepTransfurOnDeath", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> TRANSFUR_IS_DEATH = GameRules.register("transfurIsDeath", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
+
+    public static final WoodType ORANGE = WoodType.register(new WoodType(MODID + ":orange", BlockSetType.ACACIA));
 
     @Contract("_ -> new")
     public static @NotNull ResourceLocation resourceLoc(String path){

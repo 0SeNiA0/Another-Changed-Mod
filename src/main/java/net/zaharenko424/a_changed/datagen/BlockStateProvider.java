@@ -85,15 +85,33 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         rotatedDoublePartBlockWithItem(METAL_BOX,"metal_box");
         horizontalDirectionalBlockWithItem(BlockRegistry.NOTE);
         horizontalDirectionalBlockWithItem(NOTEPAD);
+
+        ResourceLocation planks = blockLoc(ORANGE_PLANKS.getId());
+        buttonBlock(ORANGE_BUTTON.get(), planks);
+        ResourceLocation door = blockLoc(ORANGE_DOOR.getId());
+        doorBlock(ORANGE_DOOR.get(), door.withSuffix("_bottom"), door.withSuffix("_top"));
+        fenceBlock(ORANGE_FENCE.get(), planks);
+        fenceGateBlock(ORANGE_FENCE_GATE.get(), planks);
+        hangingSignBlock(ORANGE_HANGING_SIGN, ORANGE_WALL_HANGING_SIGN, planks);
         blockWithItem(ORANGE_LAB_BLOCK);
         leavesWithItem(ORANGE_LEAVES);
+        simpleBlockWithItem(ORANGE_PLANKS.get(), cubeAll(ORANGE_PLANKS.get()));
+        pressurePlateBlock(ORANGE_PRESSURE_PLATE.get(), planks);
         crossWithItem(ORANGE_SAPLING);
-        logWithItem(ORANGE_TREE_LOG);
+        signBlock(ORANGE_SIGN.get(), ORANGE_WALL_SIGN.get(), planks);
+        slabBlock(ORANGE_SLAB.get(), planks, planks);
+        stairsBlock(ORANGE_STAIRS.get(), planks);
+        trapdoorBlock(ORANGE_TRAPDOOR.get(), planks, true);
+
+        logWithItem(ORANGE_TREE_LOG, null, null);
+        logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG.getId()), blockLoc(ORANGE_TREE_LOG.getId()));
         pipe();
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
         pillarWithItem(STRIPED_ORANGE_LAB_BLOCK,blockLoc(ORANGE_LAB_BLOCK.getId()));
+        logWithItem(STRIPPED_ORANGE_LOG, null, blockLoc(ORANGE_TREE_LOG.getId()).withSuffix("_top"));
+        logWithItem(STRIPPED_ORANGE_WOOD, blockLoc(STRIPPED_ORANGE_LOG.getId()), blockLoc(STRIPPED_ORANGE_LOG.getId()));
         tableModel();
         rotatedDoublePartBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
         horizontalDirectionalBlockWithItem(TEST_TUBES);
@@ -190,6 +208,12 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlockItem(block.get(), file);
     }
 
+    private void hangingSignBlock(DeferredBlock<?> signBlock, DeferredBlock<?> wallSignBlock, ResourceLocation texture) {
+        ModelFile sign = models().sign(signBlock.getId().getPath(), texture);
+        simpleBlock(signBlock.get(), sign);
+        simpleBlock(wallSignBlock.get(), sign);
+    }
+
     private void horizontalDirectionalBlockWithItem(DeferredBlock<? extends HorizontalDirectionalBlock> block){
         ModelFile file = models().getExistingFile(blockLoc(block.getId()));
         simpleBlockItem(block.get(), file);
@@ -282,12 +306,12 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlockWithItem(leaves.get(),models().withExistingParent(id.getPath(),"block/leaves").texture("all",blockLoc(id)));
     }
 
-    private void logWithItem(DeferredBlock<RotatedPillarBlock> block){
-        ResourceLocation id=block.getId();
-        ResourceLocation side=blockLoc(id);
-        ResourceLocation end=blockLoc(id).withSuffix("_top");
-        ModelFile vertical=models().cubeColumn(id.getPath(), side, end);
-        ModelFile horizontal=models().cubeColumnHorizontal(id.getPath() + "_horizontal", side, end);
+    private void logWithItem(DeferredBlock<? extends RotatedPillarBlock> block, @Nullable ResourceLocation side, @Nullable ResourceLocation top){
+        ResourceLocation id = block.getId();
+        ResourceLocation loc = side != null ? side : blockLoc(id);
+        ResourceLocation end = top != null ? top : blockLoc(id).withSuffix("_top");
+        ModelFile vertical = models().cubeColumn(id.getPath(), loc, end);
+        ModelFile horizontal = models().cubeColumnHorizontal(id.getPath() + "_horizontal", loc, end);
         getVariantBuilder(block.get())
                 .partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y)
                 .modelForState().modelFile(vertical).addModel()
