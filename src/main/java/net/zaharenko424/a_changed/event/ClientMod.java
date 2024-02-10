@@ -17,15 +17,14 @@ import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
+import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
+import net.zaharenko424.a_changed.client.screen.DNAExtractorScreen;
 import net.zaharenko424.a_changed.client.screen.GeneratorScreen;
 import net.zaharenko424.a_changed.client.screen.LatexPurifierScreen;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
+import net.zaharenko424.a_changed.registry.MenuRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -41,8 +40,9 @@ public class ClientMod {
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
 
-        MenuScreens.register(AChanged.GENERATOR_MENU.get(), GeneratorScreen::new);
-        MenuScreens.register(AChanged.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
+        MenuScreens.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
+        MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
+        MenuScreens.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
     }
 
     @SubscribeEvent
@@ -83,6 +83,7 @@ public class ClientMod {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.get(), (a)-> new CryoChamberRenderer());
+        event.registerBlockEntityRenderer(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), (a)-> new DNAExtractorRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.HANGING_SIGN_ENTITY.get(), HangingSignRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);

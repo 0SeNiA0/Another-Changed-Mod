@@ -25,6 +25,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
+        basicItem(DNA_SAMPLE.getId());
         basicItem(GREEN_CRYSTAL_SHARD.getId());
         basicItem(HAZMAT_HELMET.getId());
         basicItem(HAZMAT_CHESTPLATE.getId());

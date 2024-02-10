@@ -4,9 +4,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
+import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPE_REGISTRY;
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_REGISTRY;
 
@@ -127,7 +129,9 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_BUCKET);
                     output.accept(DARK_LATEX_BUCKET);
 
-                    TRANSFUR_REGISTRY.stream().forEach((tf)->output.accept(LatexSyringeItem.encodeTransfur(tf.id)));
+                    DNA_TYPE_REGISTRY.forEach(key -> output.accept(DNASample.encodeDNA(key)));
+
+                    TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);

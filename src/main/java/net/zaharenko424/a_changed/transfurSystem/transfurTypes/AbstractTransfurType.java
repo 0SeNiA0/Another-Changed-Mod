@@ -76,7 +76,7 @@ public abstract class AbstractTransfurType {
     }
 
     public Component fancyName(){
-        return Component.translatable("transfur."+ id.toString().replace(':','.'));
+        return Component.translatable("transfur."+ id.toLanguageKey());
     }
 
     public static class Properties{

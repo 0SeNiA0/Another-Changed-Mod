@@ -26,7 +26,7 @@ public abstract class AbstractMachine extends HorizontalDirectionalBlock impleme
 
     @Override
     public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean pMovedByPiston) {
-        if(!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof AbstractMachineEntity<?> machine){
+        if(!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof AbstractMachineEntity<?, ?> machine){
             machine.onRemove();
         }
         super.onRemove(state, level, pos, newState, pMovedByPiston);

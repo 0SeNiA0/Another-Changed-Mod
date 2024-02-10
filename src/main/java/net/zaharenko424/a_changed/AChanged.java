@@ -10,7 +10,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -18,11 +18,9 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.menu.GeneratorMenu;
-import net.zaharenko424.a_changed.menu.LatexPurifierMenu;
+import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -32,10 +30,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
+import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPES;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUID_TYPES;
 import static net.zaharenko424.a_changed.registry.ItemRegistry.ITEMS;
+import static net.zaharenko424.a_changed.registry.MenuRegistry.MENU_TYPES;
 import static net.zaharenko424.a_changed.registry.MobEffectRegistry.EFFECTS;
 import static net.zaharenko424.a_changed.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_TYPES;
@@ -49,8 +49,8 @@ public class AChanged {
 
     //Registries
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(BuiltInRegistries.MENU, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
 
     //Attributes
     public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
@@ -58,11 +58,11 @@ public class AChanged {
     public static final DeferredHolder<Attribute, Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
             () -> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU = MENU_TYPES.register("generator", ()-> IMenuTypeExtension.create(GeneratorMenu::new));
-    public static final DeferredHolder<MenuType<?>, MenuType<LatexPurifierMenu>> LATEX_PURIFIER_MENU = MENU_TYPES.register("latex_purifier", ()-> IMenuTypeExtension.create(LatexPurifierMenu::new));
-
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
+
+    //Recipe serializers
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DNAExtractorRecipe>> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("dna_extractor", ()-> DNAExtractorRecipe.Serializer.INSTANCE);
 
     //Tags
     public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
@@ -92,18 +92,20 @@ public class AChanged {
 
     public AChanged() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        TRANSFUR_TYPES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
-        EFFECTS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
-        FLUIDS.register(modEventBus);
-        ITEMS.register(modEventBus);
-        ENTITIES.register(modEventBus);
+        TRANSFUR_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
-        SOUNDS.register(modEventBus);
-        PARTICLE_TYPES.register(modEventBus);
+        DNA_TYPES.register(modEventBus);
+        EFFECTS.register(modEventBus);
+        ENTITIES.register(modEventBus);
+        FLUIDS.register(modEventBus);
+        FLUID_TYPES.register(modEventBus);
+        ITEMS.register(modEventBus);
         MENU_TYPES.register(modEventBus);
+        PARTICLE_TYPES.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
+        SOUNDS.register(modEventBus);
     }
 }

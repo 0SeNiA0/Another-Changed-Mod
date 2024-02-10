@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,16 +29,16 @@ public class LatexSyringeItem extends AbstractSyringe{
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel , @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(TransfurManager.isTransfurred(pPlayer)||!NBTUtils.hasModTag(pPlayer.getItemInHand(pUsedHand).getTag())) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
+        if(TransfurManager.isTransfurred(pPlayer) || !NBTUtils.hasModTag(pPlayer.getItemInHand(pUsedHand).getTag())) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
         return super.use(pLevel, pPlayer, pUsedHand);
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
-        Player player= (Player) pLivingEntity;
+        Player player = (Player) pLivingEntity;
         if(!pLevel.isClientSide) TransfurEvent.TRANSFUR_DEF.accept(player, TransfurManager.getTransfurType(new ResourceLocation(NBTUtils.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY))));
-        return onUse(pStack,new ItemStack(ItemRegistry.SYRINGE_ITEM.get()),player);
+        return onUse(pStack, new ItemStack(ItemRegistry.SYRINGE_ITEM.get()), player);
     }
 
     @Override
@@ -49,15 +50,15 @@ public class LatexSyringeItem extends AbstractSyringe{
             try {
                 p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
             } catch (Exception ex) {
-                p_41423_.add(Component.literal("Invalid transfur type "+transfurType));
+                p_41423_.add(Component.literal("Invalid transfur type " + transfurType));
             }
         }
     }
 
-    public static @NotNull ItemStack encodeTransfur(@NotNull ResourceLocation transfurType){
-        ItemStack syringe=new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
-        CompoundTag tag=syringe.hasTag()?syringe.getTag():new CompoundTag();
-        NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY,transfurType.toString());
+    public static @NotNull ItemStack encodeTransfur(@NotNull AbstractTransfurType transfurType){
+        ItemStack syringe = new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
+        CompoundTag tag = syringe.hasTag() ? syringe.getTag() : new CompoundTag();
+        NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
         syringe.setTag(tag);
         return syringe;
     }

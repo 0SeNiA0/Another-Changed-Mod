@@ -109,12 +109,13 @@ public final class ItemRegistry {
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
     public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF, Latex.DARK));
+    public static final DeferredItem<DNASample> DNA_SAMPLE = ITEMS.register("dna_sample", DNASample::new);
     public static final DeferredItem<Item> GREEN_CRYSTAL_SHARD = ITEMS.registerSimpleItem("green_crystal_shard");
     public static final DeferredItem<HazmatArmorItem> HAZMAT_HELMET = ITEMS.register("hazmat_helmet", ()-> new HazmatArmorItem(ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_CHESTPLATE = ITEMS.register("hazmat_chestplate", ()-> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_LEGGINGS = ITEMS.register("hazmat_leggings", ()-> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_BOOTS = ITEMS.register("hazmat_boots", ()-> new HazmatArmorItem(ArmorItem.Type.BOOTS, new Item.Properties()));
-    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", LatexSyringeItem::new);
+    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM = ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
     public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));

@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,20 +22,18 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.zaharenko424.a_changed.util.StateProperties.ACTIVE;
 
-public abstract class AbstractMachineEntity <T extends ExtendedEnergyStorage> extends BlockEntity implements MenuProvider {
+public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET extends ExtendedEnergyStorage> extends BlockEntity implements MenuProvider {
 
-    protected final ItemStackHandler inventory;
-    protected final LazyOptional<ItemStackHandler> invOptional;
+    protected final IT inventory;
+    protected LazyOptional<IT> invOptional;
 
-    protected final T energyStorage;
-    protected final LazyOptional<T> energyOptional;
+    protected final ET energyStorage;
+    protected LazyOptional<ET> energyOptional;
 
-    public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, ItemStackHandler inventory, T storage) {
+    public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, IT inventory, ET storage) {
         super(pType, pPos, pBlockState);
         this.inventory = inventory;
-        invOptional = LazyOptional.of(()->inventory);
         energyStorage = storage;
-        energyOptional = LazyOptional.of(()->energyStorage);
     }
 
     public int getEnergy(){
@@ -45,7 +44,7 @@ public abstract class AbstractMachineEntity <T extends ExtendedEnergyStorage> ex
         return energyStorage.getMaxEnergyStored();
     }
 
-    public ItemStackHandler getInventory(){
+    public IT getInventory(){
         return inventory;
     }
 
@@ -65,6 +64,10 @@ public abstract class AbstractMachineEntity <T extends ExtendedEnergyStorage> ex
         for(int i = 0; i < inventory.getSlots(); i++){
             Block.popResource(level, worldPosition, inventory.extractItem(i, inventory.getSlotLimit(i), false));
         }
+    }
+
+    public static boolean checkEnergyCap(@NotNull ItemStack stack){
+        return stack.getCapability(Capabilities.ENERGY).isPresent();
     }
 
     @Nullable
@@ -101,18 +104,35 @@ public abstract class AbstractMachineEntity <T extends ExtendedEnergyStorage> ex
     @Override
     public @NotNull <CT> LazyOptional<CT> getCapability(@NotNull Capability<CT> cap, @Nullable Direction side) {
         if(cap == Capabilities.ITEM_HANDLER){
-            return invOptional.cast();
+            return getItemCap(cap, side);
         }
         if(cap == Capabilities.ENERGY){
-            return energyOptional.cast();
+            return getEnergyCap(cap, side);
         }
         return super.getCapability(cap, side);
+    }
+
+    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side){
+        if(invOptional == null) invOptional = LazyOptional.of(()-> inventory);
+        return invOptional.cast();
+    }
+
+    protected <CT> LazyOptional<CT> getEnergyCap(@NotNull Capability<CT> cap, @Nullable Direction side){
+        if(energyOptional == null) energyOptional = LazyOptional.of(()-> energyStorage);
+        return energyOptional.cast();
     }
 
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        invOptional.invalidate();
-        energyOptional.invalidate();
+        if(invOptional != null) invOptional.invalidate();
+        if(energyOptional != null) energyOptional.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        if(invOptional != null) invOptional = LazyOptional.of(()-> inventory);
+        if(energyOptional != null) energyOptional = LazyOptional.of(()-> energyStorage);
     }
 }

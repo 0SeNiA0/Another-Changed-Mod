@@ -29,13 +29,13 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 175, 165, 0, 0, 175, 165, 256, 256);
+        guiGraphics.blit(TEXTURE, leftPos, topPos, 175, 165, 0, 0, 175, 165, 256, 166);
 
         int burnTicks = generatorEntity.getBurnTicks();
         if(burnTicks > 0){
             int offset = 14 * burnTicks / generatorEntity.getMaxBurnTicks();
             int y = 14 - offset;
-            guiGraphics.blit(TEXTURE, leftPos + 45, topPos + 57 + y, 177, y, 14, offset);
+            guiGraphics.blit(TEXTURE, leftPos + 45, topPos + 57 + y, 0, 177, y, 14, offset, 256, 166);
         }
 
         int energy = generatorEntity.getEnergy();

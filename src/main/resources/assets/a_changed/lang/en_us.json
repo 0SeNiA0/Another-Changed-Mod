@@ -85,6 +85,7 @@
   "command.transfur_tolerance.get": "Transfur tolerance is ",
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
 
+  "container.a_changed.dna_extractor": "DNA Extractor",
   "container.a_changed.generator": "Generator",
   "container.a_changed.latex_purifier": "Latex Purifier",
 
@@ -94,6 +95,8 @@
   "death.attack.transfur.player": "%1$s was transfurred by %2$s",
   "death.attack.solvent": "%1$s was dissolved",
   "death.attack.solvent.player": "%1$s was dissolved by %2$s",
+
+  "dna.a_changed.apple": "apple DNA",
 
   "effect.a_changed.assimilation_buff": "Assimilation Buff",
   "effect.a_changed.friendly_grab": "You are friendly grabbed",
@@ -125,6 +128,7 @@
   "item.a_changed.dark_latex_base": "Dark latex base",
   "item.a_changed.dark_latex_bucket": "Dark latex bucket",
   "item.a_changed.dark_latex_crystal_shard": "Dark latex crystal shard",
+  "item.a_changed.dna_sample": "DNA sample",
   "item.a_changed.green_crystal_shard": "Green crystal shard",
   "item.a_changed.hazmat_helmet": "Hazmat helmet",
   "item.a_changed.hazmat_chestplate": "Hazmat chestplate",

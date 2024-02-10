@@ -18,7 +18,7 @@ import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LatexPurifierEntity extends AbstractMachineEntity<EnergyConsumer> {
+public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
     public static final int MAX_PROGRESS = 160;
     private int progress;
@@ -27,8 +27,11 @@ public class LatexPurifierEntity extends AbstractMachineEntity<EnergyConsumer> {
         super(BlockEntityRegistry.LATEX_PURIFIER_ENTITY.get(), pPos, pBlockState, new ItemStackHandler(3){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot == 0 ? stack.is(ItemRegistry.DARK_LATEX_ITEM.get()) || stack.is(ItemRegistry.WHITE_LATEX_ITEM.get())
-                        : stack.is(ItemRegistry.DARK_LATEX_BASE.get()) || stack.is(ItemRegistry.WHITE_LATEX_BASE.get());
+                return switch(slot){
+                    case 0 -> checkEnergyCap(stack);
+                    case 1 -> stack.is(ItemRegistry.DARK_LATEX_ITEM.get()) || stack.is(ItemRegistry.WHITE_LATEX_ITEM.get());
+                    default -> false;
+                };
             }
         }, new EnergyConsumer(25000, 256, 0));
     }

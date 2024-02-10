@@ -6,6 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
+import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
 import net.zaharenko424.a_changed.entity.block.machines.GeneratorEntity;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
 import net.zaharenko424.a_changed.entity.block.sign.HangingSignEntity;
@@ -25,6 +26,8 @@ public class BlockEntityRegistry {
             .register("box_pile", () -> BlockEntityType.Builder.of(BoxPileEntity::new, SMALL_CARDBOARD_BOX.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CryoChamberEntity>> CRYO_CHAMBER_ENTITY = BLOCK_ENTITIES
             .register("cryo_chamber", ()-> BlockEntityType.Builder.of(CryoChamberEntity::new, CRYO_CHAMBER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DNAExtractorEntity>> DNA_EXTRACTOR_ENTITY = BLOCK_ENTITIES
+            .register("dna_extractor", ()-> BlockEntityType.Builder.of(DNAExtractorEntity::new, DNA_EXTRACTOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasTankEntity>> GAS_TANK_ENTITY = BLOCK_ENTITIES
             .register("gas_canister", () -> BlockEntityType.Builder.of(GasTankEntity::new, GAS_TANK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorEntity>> GENERATOR_ENTITY = BLOCK_ENTITIES

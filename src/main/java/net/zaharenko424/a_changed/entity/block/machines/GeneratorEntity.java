@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -19,13 +21,19 @@ import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GeneratorEntity extends AbstractMachineEntity<EnergyGenerator> {
+public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyGenerator> {
 
     private int burnTicks;
     private int maxBurnTicks;
 
     public GeneratorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.GENERATOR_ENTITY.get(), pos, state, new ItemStackHandler(2), new EnergyGenerator(10000, 0, 64));
+        super(BlockEntityRegistry.GENERATOR_ENTITY.get(), pos, state, new ItemStackHandler(2){
+            @Override
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+                return slot == 0 ? CommonHooks.getBurnTime(stack, null) > 0 && !(stack.getItem() instanceof BucketItem)
+                        : checkEnergyCap(stack);
+            }
+        }, new EnergyGenerator(10000, 0, 64));
     }
 
     public boolean isEmpty(){
@@ -54,8 +62,9 @@ public class GeneratorEntity extends AbstractMachineEntity<EnergyGenerator> {
             if(!energyStorage.isFull()) energyStorage.generateEnergy(16);
             changed = true;
         } else if(!energyStorage.isFull()) {
-            int burnTime = CommonHooks.getBurnTime(inventory.getStackInSlot(0), null);
-            if(burnTime > 0) {
+            ItemStack fuel = inventory.getStackInSlot(0);
+            int burnTime = CommonHooks.getBurnTime(fuel, null);
+            if(burnTime > 0 && !(fuel.getItem() instanceof BucketItem)) {
                 setActive(true);
                 burnTicks = burnTime;
                 maxBurnTicks = burnTime;
@@ -80,7 +89,7 @@ public class GeneratorEntity extends AbstractMachineEntity<EnergyGenerator> {
             if(entity == null) continue;
             if(energyStorage.transferEnergyTo(entity.getCapability(Capabilities.ENERGY)
                     .orElse(EmptyEnergyStorage.INSTANCE), energyStorage.getMaxExtract(), false) != 0) {
-                if(entity instanceof AbstractMachineEntity<?> machineEntity) machineEntity.update();
+                if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
                 changed = true;
             }
 

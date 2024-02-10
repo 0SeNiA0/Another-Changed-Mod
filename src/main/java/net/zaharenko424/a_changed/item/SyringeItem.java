@@ -26,6 +26,6 @@ public class SyringeItem extends AbstractSyringe {
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player= (Player) pLivingEntity;
         if(player.level().isClientSide) return pStack;
-        return onUse(pStack,LatexSyringeItem.encodeTransfur(Objects.requireNonNull(TransfurManager.getTransfurType(player)).id),player);
+        return onUse(pStack,LatexSyringeItem.encodeTransfur(Objects.requireNonNull(TransfurManager.getTransfurType(player))),player);
     }
 }

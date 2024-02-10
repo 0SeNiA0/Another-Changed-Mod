@@ -16,7 +16,7 @@ import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 
 public final class TransfurRegistry {
 
-    public static final DeferredRegister<AbstractTransfurType> TRANSFUR_TYPES = DeferredRegister.create(resourceLoc("atransfur_registry"),MODID);
+    public static final DeferredRegister<AbstractTransfurType> TRANSFUR_TYPES = DeferredRegister.create(resourceLoc("transfur_registry"), MODID);
     public static final Registry<AbstractTransfurType> TRANSFUR_REGISTRY = TRANSFUR_TYPES.makeRegistry(builder->{});
 
     //Transfur types
