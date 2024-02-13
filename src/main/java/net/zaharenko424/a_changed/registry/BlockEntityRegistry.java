@@ -8,6 +8,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
 import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
 import net.zaharenko424.a_changed.entity.block.machines.GeneratorEntity;
+import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
 import net.zaharenko424.a_changed.entity.block.sign.HangingSignEntity;
 import net.zaharenko424.a_changed.entity.block.sign.SignEntity;
@@ -40,6 +41,8 @@ public class BlockEntityRegistry {
             .register("laser_emitter", () -> BlockEntityType.Builder.of(LaserEmitterEntity::new, LASER_EMITTER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatexContainerEntity>> LATEX_CONTAINER_ENTITY = BLOCK_ENTITIES
             .register("latex_container", () -> BlockEntityType.Builder.of(LatexContainerEntity::new, LATEX_CONTAINER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatexEncoderEntity>> LATEX_ENCODER_ENTITY = BLOCK_ENTITIES
+            .register("latex_encoder", ()-> BlockEntityType.Builder.of(LatexEncoderEntity::new, LATEX_ENCODER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatexPurifierEntity>> LATEX_PURIFIER_ENTITY = BLOCK_ENTITIES
             .register("latex_purifier", () -> BlockEntityType.Builder.of(LatexPurifierEntity::new, LATEX_PURIFIER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NoteEntity>> NOTE_ENTITY = BLOCK_ENTITIES

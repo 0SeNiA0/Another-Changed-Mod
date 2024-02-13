@@ -52,7 +52,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(CARDBOARD_BOX);
         connectedTextureWithItem(CARPET_BLOCK,"carpet");
         horizontalDirectionalBlockWithItem(CHAIR);
-        machineLikeWithItem(COMPRESSOR);
+        machineLikeWithItem(COMPRESSOR, false);
         horizontalDirectionalBlockWithItem(COMPUTER);
         connectedTextureWithItem(CONNECTED_BLUE_LAB_TILE,"blue_lab_tile");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
@@ -63,10 +63,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         crossWithItem(DARK_LATEX_CRYSTAL);
         blockWithItem(DARK_LATEX_CRYSTAL_ICE);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(),models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
-        machineLikeWithItem(DNA_EXTRACTOR);
+        machineLikeWithItem(DNA_EXTRACTOR, true);
         simpleBlockWithItemExisting(FLASK);
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
-        machineLikeWithItem(GENERATOR);
+        machineLikeWithItem(GENERATOR, false);
         doublePartCrossWithItem(GREEN_CRYSTAL);
         blockWithItem(HAZARD_BLOCK);
         pillarWithItem(HAZARD_LAB_BLOCK, blockLoc(LAB_BLOCK.getId()));
@@ -77,8 +77,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(LAB_TILE);
         laserWithItem();
         doublePartYBlockWithItem(LATEX_CONTAINER);
-        machineLikeWithItem(LATEX_ENCODER);
-        machineLikeWithItem(LATEX_PURIFIER);
+        machineLikeWithItem(LATEX_ENCODER, false);
+        machineLikeWithItem(LATEX_PURIFIER, false);
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
         twoByTwoDoorWithItem(LIBRARY_DOOR);
         twoByTwoDoorWithItem(MAINTENANCE_DOOR);
@@ -193,15 +193,15 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(id.getPath()).parent(part0);
     }
 
-    private void machineLikeWithItem(DeferredBlock<? extends AbstractMachine> block){
+    private void machineLikeWithItem(DeferredBlock<? extends AbstractMachine> block, boolean sameActiveModel){
         if(!block.get().defaultBlockState().hasProperty(ACTIVE)) return;
         ResourceLocation loc = blockLoc(block.getId());
         ModelFile file = models().getExistingFile(loc);
-        ModelFile file_lit = models().getExistingFile(loc.withSuffix("_active"));
+        ModelFile file_active = sameActiveModel ? file : models().getExistingFile(loc.withSuffix("_active"));
         getVariantBuilder(block.get()).forAllStates(state -> {
             Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
             if(state.getValue(ACTIVE)){
-                return horizontalRotatedModel(file_lit, direction);
+                return horizontalRotatedModel(file_active, direction);
             }
             return horizontalRotatedModel(file, direction);
         });

@@ -46,6 +46,9 @@ public final class PacketHandler {
                 .decoder(ClientboundOpenTransfurScreenPacket::new).add();
         INSTANCE.simpleMessageBuilder(ServerboundTransfurChoicePacket.class, i++)
                 .decoder(ServerboundTransfurChoicePacket::new).add();
+        //Latex encoder screen
+        INSTANCE.simpleMessageBuilder(ServerboundLatexEncoderScreenPacket.class, i++)
+                .decoder(ServerboundLatexEncoderScreenPacket::new).add();
         //Note
         INSTANCE.simpleMessageBuilder(ClientboundOpenNotePacket.class, i++)
                 .decoder(ClientboundOpenNotePacket::new).add();

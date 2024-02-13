@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.capability;
+package net.zaharenko424.a_changed.capability.energy;
 
 public class EnergyConsumer extends ExtendedEnergyStorage {
 
@@ -20,6 +20,7 @@ public class EnergyConsumer extends ExtendedEnergyStorage {
 
     /**
      * Consumes specified amount of energy
+     * @param amount amount of energy to consume
      */
     public void consumeEnergy(int amount){
         if(amount < 0) return;

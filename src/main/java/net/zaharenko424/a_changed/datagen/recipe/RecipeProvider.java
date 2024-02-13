@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.DNATypeRegistry;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -30,8 +31,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         //TODO machines
         //TODO air conditioner
 
-
+        //TEST
         DNAExtractorRecipeBuilder.of(DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.APPLE_DNA)
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+        //TEST
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_DOOR_ITEM)
                 .requires(LAB_DOOR_ITEM)

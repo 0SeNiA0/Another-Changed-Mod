@@ -24,10 +24,7 @@ import net.zaharenko424.a_changed.registry.DNAType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class DNAExtractorRecipeBuilder implements RecipeBuilder {
 
@@ -40,7 +37,7 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
 
     public static @NotNull DNAExtractorRecipeBuilder of(@NotNull DeferredHolder<DNAType, DNAType> dnaType){
         DNAType type = dnaType.get();
-        return new DNAExtractorRecipeBuilder(type.getMaterial(), DNASample.encodeDNA(type));
+        return new DNAExtractorRecipeBuilder(Ingredient.of(type.getMaterial()), DNASample.encodeDNA(type));
     }
 
     @Override
@@ -70,6 +67,11 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
     @Override
     public @NotNull Item getResult() {
         return recipe.getResultItem().getItem();
+    }
+
+    @Override
+    public void save(@NotNull RecipeOutput pRecipeOutput) {
+        save(pRecipeOutput, Objects.requireNonNull(DNASample.decodeDNA(recipe.getResultItem())));
     }
 
     @Override
@@ -103,7 +105,7 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
 
         @Override
         public @NotNull JsonObject serializeRecipe() {
-            JsonObject obj = AChanged.DNA_EXTRACTOR_RECIPE_SERIALIZER.get().codec().encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(false, null).getAsJsonObject();
+            JsonObject obj = DNAExtractorRecipe.Serializer.CODEC.encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(false, null).getAsJsonObject();
             obj.addProperty("type", AChanged.DNA_EXTRACTOR_RECIPE_SERIALIZER.getId().toString());
             return obj;
         }

@@ -11,6 +11,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
@@ -24,18 +25,19 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
     }
 
     @Override
+    public @NotNull ItemStack getToastSymbol() {
+        return new ItemStack(ItemRegistry.DNA_EXTRACTOR_ITEM.get());
+    }
+
+    @Override
     public boolean matches(@NotNull Container container, int slot, @NotNull Level level) {
         if(level.isClientSide) return false;
         return ingredient.test(container.getItem(slot));
     }
 
-    public @NotNull ItemStack assemble() {
+    public @NotNull ItemStack assemble(@NotNull Container container, int slot) {
+        container.removeItem(slot, ingredient.getItems()[0].getCount());
         return result.copy();
-    }
-
-    @Override
-    public @NotNull ItemStack assemble(@NotNull Container container, @NotNull RegistryAccess registryAccess) {
-        return assemble();
     }
 
     public Ingredient getIngredient() {
@@ -69,13 +71,14 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
     public static class Serializer implements RecipeSerializer<DNAExtractorRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
+        public static final Codec<DNAExtractorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+                CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
+            ).apply(instance, DNAExtractorRecipe::new));
 
         @Override
         public @NotNull Codec<DNAExtractorRecipe> codec() {
-            return RecordCodecBuilder.create(instance -> instance.group(
-                    Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-                    CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
-                    ).apply(instance, DNAExtractorRecipe::new));
+            return CODEC;
         }
 
         @Override

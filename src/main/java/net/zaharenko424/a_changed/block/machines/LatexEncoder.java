@@ -2,12 +2,22 @@ package net.zaharenko424.a_changed.block.machines;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.NetworkHooks;
+import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +44,7 @@ public class LatexEncoder extends AbstractMachine {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return null;
+        return new LatexEncoderEntity(pos, state);
     }
 
     @Override
@@ -44,6 +54,24 @@ public class LatexEncoder extends AbstractMachine {
             case SOUTH -> SHAPE_S;
             case WEST -> SHAPE_W;
             default -> SHAPE_N;
+        };
+    }
+
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
+        if(player.isCrouching() || hand != InteractionHand.MAIN_HAND
+                || !(level.getBlockEntity(pos) instanceof LatexEncoderEntity encoder)) return InteractionResult.PASS;
+        if(!level.isClientSide){
+            NetworkHooks.openScreen((ServerPlayer) player, encoder, pos);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> pBlockEntityType) {
+        return level.isClientSide ? null : (a, b, c, d) -> {
+            if(d instanceof LatexEncoderEntity encoder) encoder.tick();
         };
     }
 }

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.screen;
+package net.zaharenko424.a_changed.client.screen.machines;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -40,8 +40,12 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
         int energy = generatorEntity.getEnergy();
         int capacity = generatorEntity.getCapacity();
-        if(energy > 0)
-            guiGraphics.fill(leftPos + 139,  topPos + 70 - (55 * energy / capacity),  leftPos + 159,  topPos + 70, -11605381);
+
+        if(energy > 0) {
+            int size = 55 * energy / capacity;
+            guiGraphics.blit(AbstractMachineScreen.SIDEBAR, leftPos + 139, topPos + 70 - size, 20, size,
+                    74, size < 9 ? 82 : size < 27 ? 56 : 0, 20, size, 128, 96);
+        }
 
         guiGraphics.drawString(font, "EU: ", leftPos + 75, topPos + 72, 4210752, false);
         String str = Utils.formatEnergy(energy);

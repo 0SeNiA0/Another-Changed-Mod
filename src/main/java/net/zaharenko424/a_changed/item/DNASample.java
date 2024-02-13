@@ -37,4 +37,12 @@ public class DNASample extends Item {
         sample.setTag(tag);
         return sample;
     }
+
+    public static @Nullable ResourceLocation decodeDNA(@NotNull ItemStack sample){
+        if(!(sample.getItem() instanceof DNASample)) throw new IllegalArgumentException("sample must be an instance of DNASample!");
+        if(!sample.hasTag()) return null;
+        CompoundTag modTag = NBTUtils.modTag(sample.getTag());
+        if(!modTag.contains("dna")) return null;
+        return new ResourceLocation(modTag.getString("dna"));
+    }
 }

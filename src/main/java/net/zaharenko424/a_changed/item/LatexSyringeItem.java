@@ -37,21 +37,19 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player = (Player) pLivingEntity;
-        if(!pLevel.isClientSide) TransfurEvent.TRANSFUR_DEF.accept(player, TransfurManager.getTransfurType(new ResourceLocation(NBTUtils.modTag(Objects.requireNonNull(pStack.getTag())).getString(TRANSFUR_TYPE_KEY))));
+        if(!pLevel.isClientSide) TransfurEvent.TRANSFUR_DEF.accept(player, TransfurManager.getTransfurType(Objects.requireNonNull(decodeTransfur(pStack))));
         return onUse(pStack, new ItemStack(ItemRegistry.SYRINGE_ITEM.get()), player);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack p_41421_, @Nullable Level p_41422_, @NotNull List<Component> p_41423_, @NotNull TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-        CompoundTag tag = p_41421_.getTag();
-        if(NBTUtils.hasModTag(tag)){
-            ResourceLocation transfurType = new ResourceLocation(NBTUtils.modTag(tag).getString(TRANSFUR_TYPE_KEY));
-            try {
-                p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
-            } catch (Exception ex) {
-                p_41423_.add(Component.literal("Invalid transfur type " + transfurType));
-            }
+        ResourceLocation transfurType = decodeTransfur(p_41421_);
+        if(transfurType == null) return;
+        try {
+            p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
+        } catch (Exception ex) {
+            p_41423_.add(Component.literal("Invalid transfur type " + transfurType));
         }
     }
 
@@ -61,5 +59,12 @@ public class LatexSyringeItem extends AbstractSyringe{
         NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
         syringe.setTag(tag);
         return syringe;
+    }
+
+    public static @Nullable ResourceLocation decodeTransfur(@NotNull ItemStack latexSyringe){
+        if(!(latexSyringe.getItem() instanceof LatexSyringeItem)) throw new IllegalArgumentException("latexSyringe must be an instance of LatexSyringeItem");
+        if(!latexSyringe.hasTag()) return null;
+        CompoundTag modTag = NBTUtils.modTag(latexSyringe.getTag());
+        return modTag.contains(TRANSFUR_TYPE_KEY) ? new ResourceLocation(modTag.getString(TRANSFUR_TYPE_KEY)) : null;
     }
 }

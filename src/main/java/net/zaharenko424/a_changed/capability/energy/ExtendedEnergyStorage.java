@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.capability;
+package net.zaharenko424.a_changed.capability.energy;
 
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;

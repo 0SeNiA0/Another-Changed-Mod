@@ -87,6 +87,7 @@
 
   "container.a_changed.dna_extractor": "DNA Extractor",
   "container.a_changed.generator": "Generator",
+  "container.a_changed.latex_encoder": "Latex Encoder",
   "container.a_changed.latex_purifier": "Latex Purifier",
 
   "death.attack.assimilation": "%1$s was assimilated by %2$s",

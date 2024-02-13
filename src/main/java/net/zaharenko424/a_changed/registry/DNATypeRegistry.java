@@ -13,5 +13,5 @@ public class DNATypeRegistry {
     public static final DeferredRegister<DNAType> DNA_TYPES = DeferredRegister.create(AChanged.resourceLoc("dna_registry"), MODID);
     public static final Registry<DNAType> DNA_TYPE_REGISTRY = DNA_TYPES.makeRegistry(builder -> {});
 
-    public static final DeferredHolder<DNAType, DNAType> APPLE_DNA = DNA_TYPES.register("apple", ()-> new DNAType(()-> Items.APPLE));
+    public static final DeferredHolder<DNAType, DNAType> APPLE_DNA = DNA_TYPES.register("apple", ()-> new DNAType(Items.APPLE::getDefaultInstance));
 }

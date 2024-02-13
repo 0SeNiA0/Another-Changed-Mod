@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EmptyEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.zaharenko424.a_changed.capability.EnergyGenerator;
+import net.zaharenko424.a_changed.capability.energy.EnergyGenerator;
 import net.zaharenko424.a_changed.menu.GeneratorMenu;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +27,28 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
     private int maxBurnTicks;
 
     public GeneratorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.GENERATOR_ENTITY.get(), pos, state, new ItemStackHandler(2){
+        super(BlockEntityRegistry.GENERATOR_ENTITY.get(), pos, state);
+    }
+
+    @Override
+    ItemStackHandler initInv() {
+        return new ItemStackHandler(2){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return slot == 0 ? CommonHooks.getBurnTime(stack, null) > 0 && !(stack.getItem() instanceof BucketItem)
                         : checkEnergyCap(stack);
             }
-        }, new EnergyGenerator(10000, 0, 64));
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                setChanged();
+            }
+        };
+    }
+
+    @Override
+    EnergyGenerator initEnergy() {
+        return new EnergyGenerator(10000, 0, 64);
     }
 
     public boolean isEmpty(){

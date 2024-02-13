@@ -17,11 +17,12 @@ import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import net.zaharenko424.a_changed.capability.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
 import net.zaharenko424.a_changed.menu.DNAExtractorMenu;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +32,7 @@ import java.util.Optional;
 
 public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
-    private final RangedWrapper ingredients = new RangedWrapper(inventory, 0, 4);
-    private LazyOptional<RangedWrapper> inOptional = LazyOptional.of(()-> ingredients);
+    private LazyOptional<RangedWrapper> inOptional = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 4));
     private LazyOptional<RangedWrapper> in0 = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 1));
     private LazyOptional<RangedWrapper> in1 = LazyOptional.of(()-> new RangedWrapper(inventory, 1, 2));
     private LazyOptional<RangedWrapper> in2 = LazyOptional.of(()-> new RangedWrapper(inventory, 2, 3));
@@ -43,20 +43,47 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     private static final int maxProgress = 600;
     private int[] progress = new int[4];
     private int rotationDeg;
+    private int rotationDegO;
 
     public DNAExtractorEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), pPos, pBlockState, new ItemStackHandler(8){
+        super(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), pPos, pBlockState);
+    }
+
+    @Override
+    ItemStackHandler initInv() {
+        return new ItemStackHandler(8){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return slot < 4;
             }
-        }, new EnergyConsumer(25000, 256, 0));
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                setChanged();
+            }
+        };
+    }
+
+    @Override
+    EnergyConsumer initEnergy() {
+        return new EnergyConsumer(25000, 256, 0);
     }
 
     public int getRot(){
         return rotationDeg;
     }
 
+    public int getRotO(){
+        return rotationDegO;
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
+        return new DNAExtractorMenu(i, inventory, this);
+    }
+
+//Eats 64/t for now
     @Override
     public void tick() {
         if(energyStorage.getEnergyStored() < 64) {
@@ -94,8 +121,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
                 return;
             }
             progress[slot] = 0;
-            inventory.extractItem(slot, 1, false);
-            ItemStack result = r.get().value().getResultItem();
+            ItemStack result = r.get().value().assemble(container, slot);
             ItemStack out;
             for(int i0 = 0; i0 < 4; i0++){
                 out = output.getStackInSlot(i0);
@@ -121,13 +147,13 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 
         for(ItemStack result : results){
             for(ItemStack out : outSlots){
-                if(!ItemHandlerHelper.canItemStacksStack(result, out)) continue;
+                if(!Utils.canStacksStack(result, out)) continue;
                 int toAdd = Math.min(result.getCount(), out.getMaxStackSize() - out.getCount());
                 out.grow(toAdd);
                 result.shrink(toAdd);
                 if(result.isEmpty()) break;
             }
-            if(result.isEmpty()) return false;
+            if(!result.isEmpty()) return false;
         }
 
         return true;
@@ -153,21 +179,12 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
             if(progress[i] != 0) anyProgress = true;
             progress[i] = 0;
         }
-        if(anyProgress) {
-            rotationDeg = 0;
-            update();
-        }
+        if(anyProgress) update();
     }
 
     @Override
     public @NotNull Component getDisplayName() {
         return Component.translatable("container.a_changed.dna_extractor");
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
-        return new DNAExtractorMenu(i, inventory, this);
     }
 
     @Override
@@ -188,7 +205,10 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         super.load(tag);
         int[] ar = tag.getIntArray("progress");
         if(ar.length == 4) progress = ar;
+        int rot = rotationDeg;
         rotationDeg = tag.getInt("rotation");
+        if(level != null && level.isClientSide)
+            if(hasAnyProgress()) rotationDegO = rot; else rotationDegO = rotationDeg;
     }
 
     @Override
@@ -212,7 +232,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     @Override
     public void reviveCaps() {
         super.reviveCaps();
-        inOptional = LazyOptional.of(()-> ingredients);
+        inOptional = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 4));
         in0 = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 1));
         in1 = LazyOptional.of(()-> new RangedWrapper(inventory, 1, 2));
         in2 = LazyOptional.of(()-> new RangedWrapper(inventory, 2, 3));

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.zaharenko424.a_changed.capability.ExtendedEnergyStorage;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,11 +30,15 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
     protected final ET energyStorage;
     protected LazyOptional<ET> energyOptional;
 
-    public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, IT inventory, ET storage) {
+    public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
-        this.inventory = inventory;
-        energyStorage = storage;
+        this.inventory = initInv();
+        energyStorage = initEnergy();
     }
+
+    abstract IT initInv();
+
+    abstract ET initEnergy();
 
     public int getEnergy(){
         return energyStorage.getEnergyStored();
@@ -82,6 +86,10 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
         save(tag);
         return tag;
     }
+
+    /*
+        handleUpdateTag is a scam. override is ignored
+    */
 
     @Override
     public void load(@NotNull CompoundTag tag) {

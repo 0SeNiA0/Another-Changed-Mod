@@ -29,7 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class LatexContainerEntity extends BlockEntity {
 
-    private final ItemStackHandler handler=new ItemStackHandler(){
+    private final ItemStackHandler handler = new ItemStackHandler(){
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return stack.getItem() instanceof LatexItem;
@@ -45,7 +45,7 @@ public class LatexContainerEntity extends BlockEntity {
             setChanged();
         }
     };
-    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(()->handler);
+    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(()-> handler);
 
     public LatexContainerEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), p_155229_, p_155230_);

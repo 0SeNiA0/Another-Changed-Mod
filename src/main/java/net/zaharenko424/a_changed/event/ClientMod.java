@@ -19,9 +19,10 @@ import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.screen.DNAExtractorScreen;
-import net.zaharenko424.a_changed.client.screen.GeneratorScreen;
-import net.zaharenko424.a_changed.client.screen.LatexPurifierScreen;
+import net.zaharenko424.a_changed.client.screen.machines.DNAExtractorScreen;
+import net.zaharenko424.a_changed.client.screen.machines.GeneratorScreen;
+import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
+import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
@@ -42,6 +43,7 @@ public class ClientMod {
 
         MenuScreens.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
         MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
+        MenuScreens.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
         MenuScreens.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
     }
 
