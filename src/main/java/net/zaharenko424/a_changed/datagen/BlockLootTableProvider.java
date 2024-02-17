@@ -53,6 +53,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(COMPUTER.get());
         dropSelf(CONNECTED_BLUE_LAB_TILE.get());
         dropSelf(CONNECTED_LAB_TILE.get());
+        dropSelf(COPPER_WIRE.get());
         twelvePartMultiBlockDrops(CRYO_CHAMBER.get());
         dropOther(CUP.get(), BROKEN_CUP);
         dropSelf(DANGER_SIGN.get());

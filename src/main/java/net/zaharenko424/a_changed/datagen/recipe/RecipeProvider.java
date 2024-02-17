@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.zaharenko424.a_changed.datagen.ItemTagProvider;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
@@ -28,18 +29,58 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void buildRecipes(@NotNull RecipeOutput out) {
         latexBlockItem(false, out);
         latexBlockItem(true, out);
-        //TODO machines
-        //TODO air conditioner
 
-        //TEST
+        //DNA extractor recipes
         DNAExtractorRecipeBuilder.of(DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
+
+        DNAExtractorRecipeBuilder.of(DNATypeRegistry.WOLF_DNA).unlockedByMaterial().save(out);
+
+
+        //Latex encoder recipes
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.BEI_FENG_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.BENIGN_TF.get())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
+                .addMiscIngredient(BLACK_LATEX_SHORTS.get().getDefaultInstance())
+                .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.DARK_LATEX_WOLF_F_TF.get())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
+                .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.DARK_LATEX_WOLF_M_TF.get())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
+                .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
+                .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get())
                 .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
-                .addDNASampleIngredient(DNATypeRegistry.APPLE_DNA)
+                .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
+                .addMiscIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
-        //TEST
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.WHITE_LATEX_WOLF_F_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
+        //TODO machines
+        //TODO air conditioner
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_DOOR_ITEM)
                 .requires(LAB_DOOR_ITEM)
@@ -103,6 +144,18 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COPPER_PLATE, 2)
+                .pattern("CCC")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .unlockedBy(getHasName(Items.COPPER_INGOT), has(Tags.Items.INGOTS_COPPER))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COPPER_WIRE_ITEM, 6)
+                .pattern("CCC")
+                .define('C', ItemTagProvider.PLATES_COPPER)
+                .unlockedBy(getHasName(COPPER_PLATE), has(ItemTagProvider.PLATES_COPPER))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, CUP_ITEM, 2)
                 .pattern("C C")
                 .pattern(" C ")
@@ -134,6 +187,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         //TODO gas tank
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GENERATOR_ITEM)
+                .pattern("III")
+                .pattern("IPI")
+                .pattern("IFI")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('P', POWER_CELL)
+                .define('F', Items.FURNACE)
+                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, HAZARD_BLOCK_ITEM,9)
                 .pattern("OOB")
                 .pattern("OBO")
@@ -150,6 +213,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('L', LAB_BLOCK_ITEM)
                 .define('O', ORANGE_LAB_BLOCK_ITEM)
                 .unlockedBy(getHasName(LAB_BLOCK_ITEM), has(LAB_BLOCK_ITEM))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRON_PLATE, 2)
+                .pattern("III")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IV_RACK_ITEM, 3)
@@ -196,9 +265,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("III")
                 .pattern(" G ")
                 .pattern("III")
-                .define('I', Tags.Items.INGOTS_IRON)
+                .define('I', ItemTagProvider.PLATES_IRON)
                 .define('G', Tags.Items.GLASS)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LIBRARY_DOOR_ITEM)
@@ -316,6 +385,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, POWER_CELL)
+                .pattern(" W ")
+                .pattern("IRI")
+                .pattern("IRI")
+                .define('W', COPPER_WIRE_ITEM)
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .save(out);
+
         //TODO scanner
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, SMALL_CARDBOARD_BOX_ITEM)
@@ -330,7 +409,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("I  ")
                 .define('I', Tags.Items.NUGGETS_IRON)
                 .define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy("hasIron", has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TABLE_ITEM,3)

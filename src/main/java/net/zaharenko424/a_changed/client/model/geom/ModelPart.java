@@ -196,14 +196,14 @@ public class ModelPart {
 
         public Cube(float x1, float y1, float z1, float sizeX, float sizeY, float sizeZ,
                 float inflateX, float inflateY, float inflateZ, boolean mirror,
-                ImmutableMap<Direction,UVData> uv, float scaleU, float scaleV) {
+                UV uv, float scaleU, float scaleV) {
             minX = x1;
             minY = y1;
             minZ = z1;
             maxX = x1 + sizeX;
             maxY = y1 + sizeY;
             maxZ = z1 + sizeZ;
-            quads = new Quad[uv.size()];
+            quads = new Quad[uv.uv.size()];
             float x2 = x1 + sizeX;
             float y2 = y1 + sizeY;
             float z2 = z1 + sizeZ;
@@ -230,7 +230,7 @@ public class ModelPart {
             Vertex vertex7 = new Vertex(x1, y1, z1, 0.0F, 0.0F);
             int i = 0;
             Direction direction;
-            for(Map.Entry<Direction,UVData> entry: uv.entrySet()){
+            for(Map.Entry<Direction,UVData> entry: uv.uv.entrySet()){
                 direction=entry.getKey();
                 quads[i]=new Quad(
                         switch(direction){

@@ -14,7 +14,7 @@ public abstract class AbstractSyringe extends Item {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        return ItemUtils.startUsingInstantly(pLevel,pPlayer,pUsedHand);
+        return ItemUtils.startUsingInstantly(pLevel, pPlayer, pUsedHand);
     }
 
     @Override
@@ -28,13 +28,13 @@ public abstract class AbstractSyringe extends Item {
     }
 
     protected ItemStack onUse(@NotNull ItemStack inUse, @NotNull ItemStack result, @NotNull Player player){
-        if(!player.getAbilities().instabuild) {
+        if(!player.isCreative()) {
             if (inUse.getCount() == 1) {
                 return result;
             }
             inUse.shrink(1);
         }
-        if(player.getInventory().getFreeSlot()!=-1){
+        if(player.getInventory().getFreeSlot() != -1){
             player.addItem(result);
         } else player.drop(result,true);
         return inUse;

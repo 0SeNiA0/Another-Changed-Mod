@@ -12,21 +12,23 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class GroupBuilder {
-    private final List<CubeDefinition> cubes=new ArrayList<>();
-    private final boolean mirror=false;
-
-    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, boolean mirror, ImmutableMap<Direction, UVData> uv){
-        cubes.add(new CubeDefinition(x1,y1,z1,x2,y2,z2,inflate,mirror,uv));
-        return this;
-    }
+    private final List<CubeDefinition> cubes = new ArrayList<>();
+    private final boolean mirror = false;
 
     public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, ImmutableMap<Direction, UVData> uv){
-        cubes.add(new CubeDefinition(x1,y1,z1,x2,y2,z2,inflate,mirror,uv));
-        return this;
+        return addBox(x1, y1, z1, x2, y2, z2, inflate, mirror, new UV(uv));
     }
 
-    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, ImmutableMap<Direction, UVData> uv){
-        cubes.add(new CubeDefinition(x1,y1,z1,x2,y2,z2,new Vector3f(),mirror,uv));
+    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, UV uv){
+        return addBox(x1, y1, z1, x2, y2, z2, new Vector3f(), mirror, uv);
+    }
+
+    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, UV uv){
+        return addBox(x1, y1, z1, x2, y2, z2, inflate, mirror, uv);
+    }
+
+    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, boolean mirror, UV uv){
+        cubes.add(new CubeDefinition(x1, y1, z1, x2, y2, z2, inflate, mirror, uv));
         return this;
     }
 

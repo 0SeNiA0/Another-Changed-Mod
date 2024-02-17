@@ -40,7 +40,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
 
         Gender gender = entity.getSelectedGender();
         if(gender != Gender.NONE)
-            guiGraphics.blit(TEXTURE, leftPos + (entity.getSelectedGender().ordinal() == 0 ? 129 : 149), topPos + 61, 0,
+            guiGraphics.blit(TEXTURE, leftPos + (gender.ordinal() == 0 ? 129 : 149), topPos + 61, 0,
                     176, 24, 18, 18, 256, 166);
 
         if(!entity.isEnabled())

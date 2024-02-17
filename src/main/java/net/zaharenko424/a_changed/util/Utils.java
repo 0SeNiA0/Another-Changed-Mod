@@ -6,7 +6,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -28,10 +27,6 @@ public class Utils {
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
-    }
-
-    public static void addItemOrDrop(Player player, ItemStack item){
-        if(!player.addItem(item)) player.drop(item,false);
     }
 
     public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){

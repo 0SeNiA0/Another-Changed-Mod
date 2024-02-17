@@ -18,8 +18,8 @@ public class GroupDefinition {
     private final Map<String, GroupDefinition> children = Maps.newHashMap();
 
     GroupDefinition(){
-        this.cubes=new ArrayList<>();
-        this.partPose=PartPose.ZERO;
+        this.cubes = new ArrayList<>();
+        this.partPose = PartPose.ZERO;
     }
 
     GroupDefinition(List<CubeDefinition> p_171581_, PartPose p_171582_) {
@@ -28,7 +28,7 @@ public class GroupDefinition {
     }
 
     public GroupDefinition addOrReplaceChild(String name, GroupBuilder builder){
-        return addOrReplaceChild(name,builder,PartPose.ZERO);
+        return addOrReplaceChild(name, builder, PartPose.ZERO);
     }
 
     public GroupDefinition addOrReplaceChild(String name, GroupBuilder builder, PartPose pose) {
@@ -43,7 +43,7 @@ public class GroupDefinition {
     public ModelPart bake(int textureWidth, int textureHeight) {
         Object2ObjectArrayMap<String, ModelPart> object2objectarraymap = this.children.entrySet().stream().collect(Collectors.toMap(
             Map.Entry::getKey,
-            group -> group.getKey().startsWith("armor_")?group.getValue().bake(64, 32):group.getValue().bake(textureWidth, textureHeight),
+            group -> group.getKey().startsWith("armor_") ? group.getValue().bake(64, 32) : group.getValue().bake(textureWidth, textureHeight),
             (p_171595_, p_171596_) -> p_171595_,
             Object2ObjectArrayMap::new
         ));

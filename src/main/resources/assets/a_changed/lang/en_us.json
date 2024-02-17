@@ -19,6 +19,7 @@
   "block.a_changed.computer": "Computer",
   "block.a_changed.connected_blue_lab_tile": "Connected blue lab tile",
   "block.a_changed.connected_lab_tile": "Connected lab tile",
+  "block.a_changed.copper_wire": "Copper wire",
   "block.a_changed.cryo_chamber": "Cryo chamber",
   "block.a_changed.cup": "Cup",
   "block.a_changed.danger_sign": "Danger sign",
@@ -85,6 +86,7 @@
   "command.transfur_tolerance.get": "Transfur tolerance is ",
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
 
+  "container.a_changed.compressor": "Compressor",
   "container.a_changed.dna_extractor": "DNA Extractor",
   "container.a_changed.generator": "Generator",
   "container.a_changed.latex_encoder": "Latex Encoder",
@@ -124,7 +126,9 @@
   "key.a_changed.keyCategory": "Another Changed Mod Keys",
 
   "item.a_changed.black_latex_shorts": "Black latex shorts",
+  "item.a_changed.blood_syringe": "Blood syringe",
   "item.a_changed.cardboard": "Cardboard",
+  "item.a_changed.copper_plate": "Copper plate",
   "item.a_changed.dark_latex": "Dark latex",
   "item.a_changed.dark_latex_base": "Dark latex base",
   "item.a_changed.dark_latex_bucket": "Dark latex bucket",
@@ -135,6 +139,8 @@
   "item.a_changed.hazmat_chestplate": "Hazmat chestplate",
   "item.a_changed.hazmat_leggings": "Hazmat leggings",
   "item.a_changed.hazmat_boots": "Hazmat boots",
+  "item.a_changed.iron_plate": "Iron plate",
+  "item.a_changed.latex_manipulator": "Latex manipulator",
   "item.a_changed.latex_solvent_bucket": "Latex solvent bucket",
   "item.a_changed.latex_syringe": "Latex syringe",
   "item.a_changed.orange": "Orange",
@@ -167,6 +173,7 @@
   "message.a_changed.player_already_grabbed": "Player, that you are trying to grab, is already grabbed!",
   "message.a_changed.player_doesnt_want_to_be_grabbed": "This player doesn't want to be grabbed!",
 
+  "misc.a_changed.blood_syringe": "Blood of %1$s",
   "misc.a_changed.keypad_attempt": "Try",
   "misc.a_changed.keypad_save_password": "Save password",
   "misc.a_changed.transfur": "Transfur and keep control",

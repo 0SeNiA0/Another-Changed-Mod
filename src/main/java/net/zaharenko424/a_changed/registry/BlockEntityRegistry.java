@@ -6,10 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
-import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
-import net.zaharenko424.a_changed.entity.block.machines.GeneratorEntity;
-import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
-import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
+import net.zaharenko424.a_changed.entity.block.machines.*;
 import net.zaharenko424.a_changed.entity.block.sign.HangingSignEntity;
 import net.zaharenko424.a_changed.entity.block.sign.SignEntity;
 
@@ -25,6 +22,10 @@ public class BlockEntityRegistry {
             .register("book_stack", () -> BlockEntityType.Builder.of(BookStackEntity::new, BOOK_STACK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoxPileEntity>> BOX_PILE_ENTITY = BLOCK_ENTITIES
             .register("box_pile", () -> BlockEntityType.Builder.of(BoxPileEntity::new, SMALL_CARDBOARD_BOX.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CompressorEntity>> COMPRESSOR_ENTITY = BLOCK_ENTITIES
+            .register("compressor", () -> BlockEntityType.Builder.of(CompressorEntity::new, COMPRESSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CopperWireEntity>> COPPER_WIRE_ENTITY = BLOCK_ENTITIES
+            .register("copper_wire", ()-> BlockEntityType.Builder.of(CopperWireEntity::new, COPPER_WIRE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CryoChamberEntity>> CRYO_CHAMBER_ENTITY = BLOCK_ENTITIES
             .register("cryo_chamber", ()-> BlockEntityType.Builder.of(CryoChamberEntity::new, CRYO_CHAMBER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DNAExtractorEntity>> DNA_EXTRACTOR_ENTITY = BLOCK_ENTITIES

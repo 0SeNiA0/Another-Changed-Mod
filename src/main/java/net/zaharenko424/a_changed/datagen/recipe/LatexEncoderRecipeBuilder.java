@@ -34,7 +34,7 @@ import java.util.Objects;
 public class LatexEncoderRecipeBuilder implements RecipeBuilder {
 
     private final NonNullList<Ingredient> ingredients = NonNullList.withSize(7, Ingredient.EMPTY);
-    private final Gender gender;
+    private Gender gender;
     private final ItemStack result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
@@ -95,12 +95,17 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
     /**
      * Adds any ingredient to this recipe if there is space left (max 2)
      */
-    public @NotNull LatexEncoderRecipeBuilder addNonOrganicIngredient(@NotNull ItemStack stack){
+    public @NotNull LatexEncoderRecipeBuilder addMiscIngredient(@NotNull ItemStack stack){
         for(int i = 5; i < 7; i++){
             if(ingredients.get(i).isEmpty()) continue;
             ingredients.set(i, Ingredient.of(stack));
             return this;
         }
+        return this;
+    }
+
+    public @NotNull LatexEncoderRecipeBuilder setGender(@NotNull Gender gender){
+        this.gender = gender;
         return this;
     }
 

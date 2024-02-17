@@ -22,8 +22,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.entity.block.BookStackEntity;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +51,7 @@ public class BookStack extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new BookStackEntity(p_153215_,p_153216_);
+        return new BookStackEntity(p_153215_, p_153216_);
     }
 
     @Override
@@ -61,24 +61,25 @@ public class BookStack extends Block implements EntityBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        BlockEntity entity=p_60556_.getBlockEntity(p_60557_);
-        if(!(entity instanceof BookStackEntity bookStack)||bookStack.bookAmount()==0) return ONE_BOOK;
+        BlockEntity entity = p_60556_.getBlockEntity(p_60557_);
+        if(!(entity instanceof BookStackEntity bookStack) || bookStack.bookAmount() == 0) return ONE_BOOK;
         return Objects.requireNonNull(SHAPE_BY_AMOUNT.get(bookStack.bookAmount()),"Book amount out of bounds!");
     }
 
     @Override
     public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return !canSurvive(p_60541_,p_60544_,p_60545_)? Blocks.AIR.defaultBlockState():super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
+        return !canSurvive(p_60541_, p_60544_, p_60545_) ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
     }
 
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
-        BlockEntity entity=p_60504_.getBlockEntity(p_60505_);
+        BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
         if(entity instanceof BookStackEntity bookStack){
-            ItemStack item=p_60506_.getItemInHand(p_60507_);
-            BlockPos above=p_60505_.above();
-            BlockState stateAbove=p_60504_.getBlockState(above);
+            ItemStack item = p_60506_.getItemInHand(p_60507_);
+            BlockPos above = p_60505_.above();
+            BlockState stateAbove = p_60504_.getBlockState(above);
             if(item.is(ItemTags.BOOKSHELF_BOOKS)){
                 if(bookStack.hasSpace()) {
                     bookStack.addBook(item, (int) p_60506_.yHeadRot, !p_60506_.isCreative());
@@ -92,7 +93,7 @@ public class BookStack extends Block implements EntityBlock {
             }
             if(item.isEmpty()){
                 if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
-                Utils.addItemOrDrop(p_60506_,bookStack.removeBook());
+                ItemHandlerHelper.giveItemToPlayer(p_60506_, bookStack.removeBook());
                 if(bookStack.isEmpty()) {
                     p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
                     return InteractionResult.SUCCESS;
@@ -105,7 +106,7 @@ public class BookStack extends Block implements EntityBlock {
 
     @Override
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
-        if(p_60515_.getBlock()!=p_60518_.getBlock()){
+        if(p_60515_.getBlock() != p_60518_.getBlock()){
             BlockEntity entity = p_60516_.getBlockEntity(p_60517_);
             if (entity instanceof BookStackEntity bookStack) bookStack.dropBooks();
         }
@@ -114,8 +115,8 @@ public class BookStack extends Block implements EntityBlock {
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        BlockPos pos= p_60527_.below();
-        BlockState stateBelow=p_60526_.getBlockState(pos);
-        return stateBelow.isFaceSturdy(p_60526_, pos,Direction.UP)||stateBelow.is(this);
+        BlockPos pos = p_60527_.below();
+        BlockState stateBelow = p_60526_.getBlockState(pos);
+        return stateBelow.isFaceSturdy(p_60526_, pos,Direction.UP) || stateBelow.is(this);
     }
 }

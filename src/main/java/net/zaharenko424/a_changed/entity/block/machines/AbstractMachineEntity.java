@@ -70,7 +70,7 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
         }
     }
 
-    public static boolean checkEnergyCap(@NotNull ItemStack stack){
+    public static boolean checkItemEnergyCap(@NotNull ItemStack stack){
         return stack.getCapability(Capabilities.ENERGY).isPresent();
     }
 

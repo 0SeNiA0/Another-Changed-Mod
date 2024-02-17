@@ -36,10 +36,11 @@ public class BlockRegistry {
     public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
 
     //Blocks
+    public static final DeferredBlock<Compressor> COMPRESSOR = BLOCKS.register("compressor", ()-> new Compressor(decorProperties()));
+    public static final DeferredBlock<WireBlock> COPPER_WIRE = BLOCKS.register("copper_wire", ()-> new WireBlock(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL)));
     public static final DeferredBlock<DNAExtractor> DNA_EXTRACTOR = BLOCKS.register("dna_extractor", ()-> new DNAExtractor(decorProperties()));
     public static final DeferredBlock<LatexEncoder> LATEX_ENCODER = BLOCKS.register("latex_encoder", ()-> new LatexEncoder(decorProperties().noOcclusion()));
     public static final DeferredBlock<LatexPurifier> LATEX_PURIFIER = BLOCKS.register("latex_purifier", ()-> new LatexPurifier(decorProperties()));
-    public static final DeferredBlock<Compressor> COMPRESSOR = BLOCKS.register("compressor", ()-> new Compressor(decorProperties()));
 
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
     public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
@@ -104,7 +105,6 @@ public class BlockRegistry {
     //Wood
     public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ORANGE_LOG = BLOCKS.register("stripped_orange_log", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_ACACIA_LOG)));
     public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ORANGE_WOOD = BLOCKS.register("stripped_orange_wood", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_ACACIA_WOOD)));
-
     public static final DeferredBlock<ButtonBlock> ORANGE_BUTTON = BLOCKS.register("orange_button", ()-> new ButtonBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY), BlockSetType.ACACIA, 30, true));
     public static final DeferredBlock<DoorBlock> ORANGE_DOOR = BLOCKS.register("orange_door", ()-> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_DOOR), BlockSetType.ACACIA));
     public static final DeferredBlock<FenceBlock> ORANGE_FENCE = BLOCKS.register("orange_fence", ()-> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_FENCE)));

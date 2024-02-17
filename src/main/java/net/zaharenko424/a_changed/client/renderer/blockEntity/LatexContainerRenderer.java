@@ -22,8 +22,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LatexContainerRenderer implements BlockEntityRenderer<LatexContainerEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.getId(), "latex");
-    private static final ResourceLocation DARK = BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
-    private static final ResourceLocation WHITE = BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
+    static final ResourceLocation DARK = BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
+    static final ResourceLocation WHITE = BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
     private final ModelPart latex;
 
     public LatexContainerRenderer(BlockEntityRendererProvider.Context p_173521_){

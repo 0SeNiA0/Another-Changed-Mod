@@ -86,9 +86,12 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
                     output.accept(VENT_ITEM);
                     //Technology
+                    output.accept(COPPER_PLATE);
+                    output.accept(IRON_PLATE);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
                     output.accept(COMPRESSOR_ITEM);
+                    output.accept(COPPER_WIRE_ITEM);
                     output.accept(DNA_EXTRACTOR_ITEM);
                     output.accept(LATEX_ENCODER_ITEM);
                     output.accept(LATEX_PURIFIER_ITEM);
@@ -122,14 +125,19 @@ public class CreativeTabs {
                     output.accept(BLACK_LATEX_SHORTS);
 
                     output.accept(SYRINGE_ITEM);
+                    output.accept(BLOOD_SYRINGE);
                     output.accept(UNTRANSFUR_SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
+                    output.accept(LATEX_MANIPULATOR);
 
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);
                     output.accept(DARK_LATEX_BUCKET);
 
                     DNA_TYPE_REGISTRY.forEach(key -> output.accept(DNASample.encodeDNA(key)));
+
+                    output.accept(DARK_LATEX_BASE);
+                    output.accept(WHITE_LATEX_BASE);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 

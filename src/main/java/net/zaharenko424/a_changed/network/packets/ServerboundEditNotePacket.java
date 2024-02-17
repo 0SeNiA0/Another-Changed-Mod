@@ -50,7 +50,7 @@ public class ServerboundEditNotePacket implements SimpleMessage {
             AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
-        if(sender.distanceToSqr(notePos.getCenter()) > 16) return;
+        if(sender.distanceToSqr(notePos.getCenter()) > 64) return;
         BlockEntity entity = sender.level().getBlockEntity(notePos);
         if(entity instanceof NoteEntity note){
             note.setText(text, finalize);

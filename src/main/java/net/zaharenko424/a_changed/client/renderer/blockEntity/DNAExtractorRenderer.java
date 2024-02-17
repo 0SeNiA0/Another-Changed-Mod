@@ -63,8 +63,8 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
 
     @Override
     public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource pBuffer, int packedLight, int pPackedOverlay) {
-        ItemStackHandler inv = extractor.getInventory();
         prepareTubes();
+        ItemStackHandler inv = extractor.getInventory();
         for(int i = 0; i < 4; i++){
             if(inv.getStackInSlot(i).isEmpty()) continue;
             tubes[i].visible = true;

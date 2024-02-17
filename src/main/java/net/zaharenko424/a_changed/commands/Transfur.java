@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class Transfur {
 
-    private static final SuggestionProvider<CommandSourceStack> suggestions= SuggestionProviders.register(
-            new ResourceLocation(AChanged.MODID,"transfur_types"),
-            (context,builder)->SharedSuggestionProvider.suggestResource(TransfurRegistry.TRANSFUR_REGISTRY.keySet().stream(),builder));
+    private static final SuggestionProvider<CommandSourceStack> suggestions = SuggestionProviders.register(
+            AChanged.resourceLoc("transfur_types"),
+            (context,builder) -> SharedSuggestionProvider.suggestResource(TransfurRegistry.TRANSFUR_REGISTRY.keySet().stream(), builder));
 
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
@@ -32,11 +32,11 @@ public class Transfur {
                                 Commands.argument("transfurType", ResourceLocationArgument.id())
                                         .suggests(suggestions)
                                         .executes(
-                                                context->context.getSource().isPlayer()? execute(ResourceLocationArgument.getId(context,"transfurType"),context.getSource().getPlayer()) :0
+                                                context -> context.getSource().isPlayer()? execute(ResourceLocationArgument.getId(context,"transfurType"), context.getSource().getPlayer()) :0
                                         )
                                         .then(
                                                 Commands.argument("target", EntityArgument.player())
-                                                        .executes(context->execute(ResourceLocationArgument.getId(context,"transfurType"),EntityArgument.getPlayer(context,"target"))
+                                                        .executes(context -> execute(ResourceLocationArgument.getId(context,"transfurType"), EntityArgument.getPlayer(context,"target"))
                                                         )
                                         )
                         )
@@ -44,8 +44,8 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        AbstractTransfurType transfur=TransfurManager.getTransfurType(transfurType);
-        if(transfur==null) return 0;
+        AbstractTransfurType transfur = TransfurManager.getTransfurType(transfurType);
+        if(transfur == null) return 0;
         TransfurEvent.TRANSFUR_TF.accept(player, transfur);
         return Command.SINGLE_SUCCESS;
     }

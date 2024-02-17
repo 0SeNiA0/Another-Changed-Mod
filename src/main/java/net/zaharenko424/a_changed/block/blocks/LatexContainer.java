@@ -17,12 +17,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock.Part;
 import net.zaharenko424.a_changed.block.NotRotatedMultiBlock;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.item.LatexItem;
 import net.zaharenko424.a_changed.util.StateProperties;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +78,7 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
                 return InteractionResult.SUCCESS;
             }
             if(item.isEmpty() && !container.isEmpty()){
-                Utils.addItemOrDrop(p_60506_, container.removeLatex());
+                ItemHandlerHelper.giveItemToPlayer(p_60506_, container.removeLatex());
                 return InteractionResult.SUCCESS;
             }
         }

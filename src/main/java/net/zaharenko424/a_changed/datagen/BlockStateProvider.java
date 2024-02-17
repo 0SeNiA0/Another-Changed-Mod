@@ -19,6 +19,7 @@ import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
 import net.zaharenko424.a_changed.block.doors.Abstract2By2Door;
 import net.zaharenko424.a_changed.block.doors.Abstract3By3Door;
 import net.zaharenko424.a_changed.block.machines.AbstractMachine;
+import net.zaharenko424.a_changed.block.machines.WireBlock;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(COMPUTER);
         connectedTextureWithItem(CONNECTED_BLUE_LAB_TILE,"blue_lab_tile");
         connectedTextureWithItem(CONNECTED_LAB_TILE,"lab_tile");
+        wire(COPPER_WIRE);
         cryoChamber(CRYO_CHAMBER);
         horizontalDirectionalBlockWithItem(CUP);
         horizontalDirectionalBlockWithItem(DANGER_SIGN);
@@ -421,25 +423,42 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         return models().withExistingParent(path,WIDE_CROSS).texture("1",texture);
     }
 
+    private void wire(DeferredBlock<WireBlock> wire){
+        ResourceLocation wireLoc = AChanged.resourceLoc("block/wire/wire");
+        ModelFile wire_ = models().getExistingFile(wireLoc);
+        ModelFile wire_n = models().getExistingFile(wireLoc.withSuffix("_n"));
+        ModelFile wire_u = models().getExistingFile(wireLoc.withSuffix("_u"));
+        ModelFile wire_ns = models().getExistingFile(wireLoc.withSuffix("_ns"));
+        itemModels().getBuilder(wire.getId().getPath()).parent(wire_ns);
+        getMultipartBuilder(wire.get())
+                .part().modelFile(wire_).addModel().end()
+                .part().modelFile(wire_n).addModel().condition(NORTH, true).end()
+                .part().modelFile(wire_n).rotationY(90).addModel().condition(EAST, true).end()
+                .part().modelFile(wire_n).rotationY(-180).addModel().condition(SOUTH, true).end()
+                .part().modelFile(wire_n).rotationY(-90).addModel().condition(WEST, true).end()
+                .part().modelFile(wire_u).addModel().condition(UP, true).end()
+                .part().modelFile(wire_u).rotationX(180).addModel().condition(DOWN, true).end();
+    }
+
     private void connectedTextureWithItem(DeferredBlock<?> block, String subFolder){
-        ResourceLocation textureLoc=block.getId().withPrefix("block/"+subFolder+"/");
-        ConfiguredModel c0=new ConfiguredModel(models().cubeAll(textureLoc+"_c0",textureLoc.withSuffix("0c")));
+        ResourceLocation textureLoc = block.getId().withPrefix("block/"+subFolder+"/");
+        ConfiguredModel c0 = new ConfiguredModel(models().cubeAll(textureLoc+"_c0", textureLoc.withSuffix("0c")));
         itemModels().getBuilder(block.getId().getPath()).parent(c0.model);
-        ModelFile c1=cube(textureLoc,"_c1","0c","4c","1c_u","1c_u","1c_u","1c_u");
-        ModelFile c2=cube(textureLoc,"_c2","4c","4c","2c_ud","2c_ud","2c_ud","2c_ud");
-        ModelFile c2angle=cube(textureLoc,"_c2angle","1c_e","4c","2c_uw","2c_ue","1c_u","4c");
-        ModelFile c3t1=cube(textureLoc,"_c3t1","4c","4c","3c_ued","3c_uwd","4c","2c_ud");
-        ModelFile c3t2=cube(textureLoc,"_c3t2","2c_we","4c","3c_uwe","3c_uwe","4c","4c");
-        ModelFile c3angle=cube(textureLoc,"_c3angle","2c_ue","4c","2c_uw","4c","2c_ue","4c");
-        ModelFile c4x=cube(textureLoc,"_c4x","4c","4c","4c","4c","4c","4c");
-        ModelFile c4angle=cube(textureLoc,"_c4angle","4c","4c","4c","3c_uwd","4c","3c_ued");
-        ConfiguredModel middle=new ConfiguredModel(models().cubeAll(textureLoc+"_middle",textureLoc.withSuffix("4c")));
-        getVariantBuilder(block.get()).forAllStates(state->{
+        ModelFile c1 = cube(textureLoc,"_c1","0c","4c","1c_u","1c_u","1c_u","1c_u");
+        ModelFile c2 = cube(textureLoc,"_c2","4c","4c","2c_ud","2c_ud","2c_ud","2c_ud");
+        ModelFile c2angle = cube(textureLoc,"_c2angle","1c_e","4c","2c_uw","2c_ue","1c_u","4c");
+        ModelFile c3t1 = cube(textureLoc,"_c3t1","4c","4c","3c_ued","3c_uwd","4c","2c_ud");
+        ModelFile c3t2 = cube(textureLoc,"_c3t2","2c_we","4c","3c_uwe","3c_uwe","4c","4c");
+        ModelFile c3angle = cube(textureLoc,"_c3angle","2c_ue","4c","2c_uw","4c","2c_ue","4c");
+        ModelFile c4x = cube(textureLoc,"_c4x","4c","4c","4c","4c","4c","4c");
+        ModelFile c4angle = cube(textureLoc,"_c4angle","4c","4c","4c","3c_uwd","4c","3c_ued");
+        ConfiguredModel middle = new ConfiguredModel(models().cubeAll(textureLoc+"_middle",textureLoc.withSuffix("4c")));
+        getVariantBuilder(block.get()).forAllStates(state -> {
             boolean u = state.getValue(UP);
             boolean d = state.getValue(DOWN);
             boolean n = state.getValue(NORTH);
             boolean e = state.getValue(EAST);
-            boolean  s = state.getValue(SOUTH);
+            boolean s = state.getValue(SOUTH);
             boolean w = state.getValue(WEST);
             if(!u && !d && !n && !e && !s && !w) return new ConfiguredModel[]{c0};
 
@@ -507,6 +526,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
             if(!u && !n)                return new ConfiguredModel[]{new ConfiguredModel(c4angle,-270,-90,false)};
             if(u && !d && !s)           return new ConfiguredModel[]{new ConfiguredModel(c4angle,-90,90,false)};
             if(!u && !s)                return new ConfiguredModel[]{new ConfiguredModel(c4angle,-270,-270,false)};
+
             return new ConfiguredModel[]{middle};
         });
     }

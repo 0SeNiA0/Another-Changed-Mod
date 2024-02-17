@@ -13,6 +13,8 @@ public class MenuRegistry {
 
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(BuiltInRegistries.MENU, MODID);
 
+    public static final DeferredHolder<MenuType<?>, MenuType<CompressorMenu>> COMPRESSOR_MENU = MENU_TYPES
+            .register("compressor", ()-> IMenuTypeExtension.create(CompressorMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<DNAExtractorMenu>> DNA_EXTRACTOR_MENU = MENU_TYPES
             .register("dna_extractor", ()-> IMenuTypeExtension.create(DNAExtractorMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU = MENU_TYPES

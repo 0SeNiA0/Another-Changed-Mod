@@ -29,6 +29,7 @@ import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.commands.GiveDNASample;
 import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
@@ -55,6 +56,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        GiveDNASample.register(dispatcher);
         Transfur.register(dispatcher);
         UnTransfur.register(dispatcher);
         TransfurTolerance.register(dispatcher);

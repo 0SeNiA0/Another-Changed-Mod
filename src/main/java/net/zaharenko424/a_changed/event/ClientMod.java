@@ -19,10 +19,7 @@ import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.screen.machines.DNAExtractorScreen;
-import net.zaharenko424.a_changed.client.screen.machines.GeneratorScreen;
-import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
-import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
+import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
@@ -41,6 +38,7 @@ public class ClientMod {
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
 
+        MenuScreens.register(MenuRegistry.COMPRESSOR_MENU.get(), CompressorScreen::new);
         MenuScreens.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
         MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
         MenuScreens.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
@@ -89,6 +87,7 @@ public class ClientMod {
         event.registerBlockEntityRenderer(BlockEntityRegistry.HANGING_SIGN_ENTITY.get(), HangingSignRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_ENCODER_ENTITY.get(), (a)-> new LatexEncoderRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
         event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer

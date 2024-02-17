@@ -14,6 +14,8 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
 
     private final Ingredient ingredient;
@@ -32,7 +34,17 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
     @Override
     public boolean matches(@NotNull Container container, int slot, @NotNull Level level) {
         if(level.isClientSide) return false;
-        return ingredient.test(container.getItem(slot));
+        return test(container.getItem(slot));
+    }
+
+    private boolean test(ItemStack stack){
+        if(stack == null) return false;
+        for(ItemStack itemstack : ingredient.getItems()) {
+            if (stack.getItem() == itemstack.getItem() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areCapsCompatible(itemstack)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public @NotNull ItemStack assemble(@NotNull Container container, int slot) {

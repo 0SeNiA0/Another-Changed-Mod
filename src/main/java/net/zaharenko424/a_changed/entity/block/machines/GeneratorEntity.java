@@ -36,7 +36,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return slot == 0 ? CommonHooks.getBurnTime(stack, null) > 0 && !(stack.getItem() instanceof BucketItem)
-                        : checkEnergyCap(stack);
+                        : checkItemEnergyCap(stack);
             }
 
             @Override
@@ -98,16 +98,20 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
         }
 
         BlockEntity entity;
+
         for(Direction direction : Direction.values()){
             if(energyStorage.isEmpty()) break;
             entity = level.getBlockEntity(worldPosition.relative(direction));
             if(entity == null) continue;
+            if(entity instanceof AbstractProxyWire wire){
+                wire.tickNetwork();
+                continue;
+            }
             if(energyStorage.transferEnergyTo(entity.getCapability(Capabilities.ENERGY)
                     .orElse(EmptyEnergyStorage.INSTANCE), energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
                 changed = true;
             }
-
         }
 
         if(changed) update();

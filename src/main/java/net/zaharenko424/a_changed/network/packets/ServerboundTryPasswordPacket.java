@@ -41,7 +41,7 @@ public class ServerboundTryPasswordPacket implements SimpleMessage {
             AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
-        if(sender.distanceToSqr(pos.getCenter()) > 16) return;
+        if(sender.distanceToSqr(pos.getCenter()) > 64) return;
         BlockEntity entity = sender.level().getBlockEntity(pos);
         if(entity instanceof KeypadEntity keypad){
             if(keypad.isCodeSet()){

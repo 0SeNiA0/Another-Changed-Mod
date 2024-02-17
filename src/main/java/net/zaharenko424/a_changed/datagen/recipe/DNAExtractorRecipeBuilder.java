@@ -31,7 +31,7 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
     private final DNAExtractorRecipe recipe;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
-    public DNAExtractorRecipeBuilder(Ingredient ingredient, ItemStack result){
+    public DNAExtractorRecipeBuilder(@NotNull Ingredient ingredient,@NotNull ItemStack result){
         this.recipe = new DNAExtractorRecipe(ingredient, result);
     }
 
