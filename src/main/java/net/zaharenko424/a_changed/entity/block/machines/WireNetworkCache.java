@@ -10,8 +10,8 @@ import java.util.HashSet;
 
 public class WireNetworkCache {
 
-    private final HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> consumers = new HashMap<>();
-    private final HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> providers = new HashMap<>();
+    private final HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> consumers = new HashMap<>();
+    private final HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> providers = new HashMap<>();
 
     private final HashSet<AbstractProxyWire> visitedWires = new HashSet<>();
 
@@ -20,12 +20,13 @@ public class WireNetworkCache {
     private long cachedTick;
 
     public void addConsumer(@NotNull IEnergyStorage storage, @NotNull BlockEntity entity){
+        if(providers.containsKey(entity)) return;
         int i = storage.receiveEnergy(Integer.MAX_VALUE, true);
-        consumers.put(Pair.of(storage, entity), i);
+        consumers.put(entity, Pair.of(storage, i));
         totalConsume += i;
     }
 
-    public HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> getConsumersMapped(){
+    public HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> getConsumersMapped(){
         return consumers;
     }
 
@@ -34,12 +35,13 @@ public class WireNetworkCache {
     }
 
     public void addProvider(@NotNull IEnergyStorage storage, @NotNull BlockEntity entity){
+        if(consumers.containsKey(entity)) return;
         int i = storage.extractEnergy(Integer.MAX_VALUE, true);
-        providers.put(Pair.of(storage, entity), i);
+        providers.put(entity, Pair.of(storage, i));
         totalProvide += i;
     }
 
-    public HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> getProvidersMapped(){
+    public HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> getProvidersMapped(){
         return providers;
     }
 

@@ -37,6 +37,7 @@ public class BlockTagProvider extends BlockTagsProvider {
                 .add(DANGER_SIGN.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
         tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());
         tag(BlockTags.LOGS).add(ORANGE_TREE_LOG.get());
+        tag(BlockTags.LOGS_THAT_BURN).add(ORANGE_WOOD.get(), STRIPPED_ORANGE_LOG.get(), STRIPPED_ORANGE_WOOD.get());
         tag(BlockTags.PLANKS).add(ORANGE_PLANKS.get());
         tag(BlockTags.SAPLINGS).add(ORANGE_SAPLING.get());
         tag(BlockTags.STANDING_SIGNS).add(ORANGE_SIGN.get());

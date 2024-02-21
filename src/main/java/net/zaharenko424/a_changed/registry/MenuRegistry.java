@@ -5,7 +5,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.menu.*;
+import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
+import net.zaharenko424.a_changed.menu.machines.*;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 
@@ -23,4 +24,6 @@ public class MenuRegistry {
             .register("latex_encoder", ()-> IMenuTypeExtension.create(LatexEncoderMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<LatexPurifierMenu>> LATEX_PURIFIER_MENU = MENU_TYPES
             .register("latex_purifier", ()-> IMenuTypeExtension.create(LatexPurifierMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<PneumaticSyringeRifleMenu>> PNEUMATIC_RIFLE_MENU = MENU_TYPES
+            .register("pneumatic_rifle", ()-> IMenuTypeExtension.create((a, b, c) -> new PneumaticSyringeRifleMenu(a, b)));
 }

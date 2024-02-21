@@ -2,13 +2,18 @@ package net.zaharenko424.a_changed.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
@@ -19,6 +24,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
@@ -66,6 +72,19 @@ public class ClientEvent {
             if(TransfurManager.isTransfurred(player)) {
                 if(!TransfurManager.isOrganic(player)) minecraft.setScreen(new GrabModeSelectionScreen());
             } else minecraft.setScreen(new WantToBeGrabbedScreen());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderTooltip(RenderTooltipEvent.GatherComponents event){
+        ItemStack item = event.getItemStack();
+        if(item.is(Items.PAPER)){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.notes").withStyle(ChatFormatting.GRAY)));
+            return;
+        }
+
+        if(item.is(ItemTags.BOOKSHELF_BOOKS)){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.books").withStyle(ChatFormatting.GRAY)));
         }
     }
 

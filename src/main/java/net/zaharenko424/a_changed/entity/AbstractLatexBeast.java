@@ -102,7 +102,7 @@ public abstract class AbstractLatexBeast extends Monster {
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) p_21372_.setSecondsOnFire(i * 4);
 
-        if(!p_21372_.hurt(DamageSources.transfur(p_21372_,this), 0.1F)) return false;
+        if(!p_21372_.hurt(DamageSources.transfur(this,null), 0.1F)) return false;
         doEnchantDamageEffects(this, p_21372_);
         setLastHurtMob(p_21372_);
         TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);

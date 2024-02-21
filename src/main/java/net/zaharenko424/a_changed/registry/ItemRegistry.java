@@ -103,26 +103,33 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> STRIPPED_ORANGE_WOOD_ITEM = ITEMS.registerSimpleBlockItem(STRIPPED_ORANGE_WOOD);
 
     //Items
-    public static final DeferredItem<Item> DARK_LATEX_BASE = ITEMS.registerSimpleItem("dark_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
-    public static final DeferredItem<Item> WHITE_LATEX_BASE = ITEMS.registerSimpleItem("white_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
+    public static final DeferredItem<Item> DARK_LATEX_BASE = ITEMS.registerSimpleItem("dark_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> WHITE_LATEX_BASE = ITEMS.registerSimpleItem("white_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()).rarity(Rarity.UNCOMMON));
 
     public static final DeferredItem<ArmorItem> BLACK_LATEX_SHORTS = ITEMS.register("black_latex_shorts", ()-> new ArmorItem(ArmorMaterials.LATEX, ArmorItem.Type.LEGGINGS, new Item.Properties().setNoRepair()));
     public static final DeferredItem<BloodSyringe> BLOOD_SYRINGE = ITEMS.register("blood_syringe", BloodSyringe::new);
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
+    public static final DeferredItem<CompressedAirCanister> COMPRESSED_AIR_CANISTER = ITEMS.register("compressed_air_canister", CompressedAirCanister::new);
+    public static final DeferredItem<Item> COPPER_COIL = ITEMS.registerSimpleItem("copper_coil");
     public static final DeferredItem<Item> COPPER_PLATE = ITEMS.registerSimpleItem("copper_plate");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
     public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF, Latex.DARK));
     public static final DeferredItem<DNASample> DNA_SAMPLE = ITEMS.register("dna_sample", DNASample::new);
+    public static final DeferredItem<Item> EMPTY_CANISTER = ITEMS.registerSimpleItem("empty_canister");
+    public static final DeferredItem<Item> GOLDEN_PLATE = ITEMS.registerSimpleItem("golden_plate");
     public static final DeferredItem<Item> GREEN_CRYSTAL_SHARD = ITEMS.registerSimpleItem("green_crystal_shard");
     public static final DeferredItem<HazmatArmorItem> HAZMAT_HELMET = ITEMS.register("hazmat_helmet", ()-> new HazmatArmorItem(ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_CHESTPLATE = ITEMS.register("hazmat_chestplate", ()-> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_LEGGINGS = ITEMS.register("hazmat_leggings", ()-> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_BOOTS = ITEMS.register("hazmat_boots", ()-> new HazmatArmorItem(ArmorItem.Type.BOOTS, new Item.Properties()));
     public static final DeferredItem<Item> IRON_PLATE = ITEMS.registerSimpleItem("iron_plate");
+    public static final DeferredItem<Item> LATEX_ENCODER_COMPONENTS = ITEMS.registerSimpleItem("latex_encoder_components");
     public static final DeferredItem<LatexManipulator> LATEX_MANIPULATOR = ITEMS.register("latex_manipulator", LatexManipulator::new);
+    public static final DeferredItem<Item> LATEX_PURIFIER_COMPONENTS = ITEMS.registerSimpleItem("latex_purifier_components");
     public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM = ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
+    public static final DeferredItem<PneumaticSyringeRifle> PNEUMATIC_SYRINGE_RIFLE = ITEMS.register("pneumatic_syringe_rifle", PneumaticSyringeRifle::new);
     public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));
     public static final DeferredItem<SyringeItem> SYRINGE_ITEM = ITEMS.register("syringe", SyringeItem::new);
     public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM = ITEMS.register("untransfur_bottle", UnTransfurBottle::new);

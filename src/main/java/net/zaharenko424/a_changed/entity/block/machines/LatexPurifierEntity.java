@@ -16,7 +16,7 @@ import net.neoforged.neoforge.energy.EmptyEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
-import net.zaharenko424.a_changed.menu.LatexPurifierMenu;
+import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;

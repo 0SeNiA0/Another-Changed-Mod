@@ -6,6 +6,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.zaharenko424.a_changed.client.model.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.model.geom.ModelPart;
+import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.DNAExtractorRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
@@ -38,6 +39,8 @@ public final class ModelCache implements ResourceManagerReloadListener {
         map.put(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
         map.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
         map.put(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
+
+        map.put(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
 
         map.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
 

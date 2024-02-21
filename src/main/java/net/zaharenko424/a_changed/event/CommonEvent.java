@@ -25,6 +25,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
 import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
@@ -34,6 +35,7 @@ import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.item.AbstractSyringeRifle;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurUpdatePacket;
@@ -135,12 +137,12 @@ public class CommonEvent {
             entity.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).tick();
             if(!(entity instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player))){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
+                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
                         TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity,null),0.1f))
+                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
                         TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
                     return;
                 }
@@ -162,9 +164,11 @@ public class CommonEvent {
 
     @SubscribeEvent
     public static void onAttachCapabilitiesI(AttachCapabilitiesEvent<ItemStack> event){
-        if(event.getObject().is(ItemRegistry.POWER_CELL.get())){
+        if(event.getObject().is(ItemRegistry.POWER_CELL.get()))
             event.addCapability(ItemEnergyCapability.KEY, new ItemEnergyCapability.Provider(10000, 128, event.getObject()));
-        }
+
+        if(event.getObject().getItem() instanceof AbstractSyringeRifle)
+            event.addCapability(PneumaticSyringeRifleItemHandlerCapability.KEY, new PneumaticSyringeRifleItemHandlerCapability.Provider(9));
     }
 
     /**

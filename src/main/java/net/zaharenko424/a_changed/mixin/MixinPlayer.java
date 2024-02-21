@@ -27,14 +27,14 @@ public abstract class MixinPlayer extends LivingEntity {
         super(p_20966_, p_20967_);
     }
 
-    @Redirect(at=@At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
+    @Redirect(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
     public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
         if(target.level().isClientSide) return target.hurt(p_19946_, damage);
         ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
         if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
         damage += TransfurManager.LATEX_DAMAGE_BONUS;
         if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);
-        if(target.hurt(DamageSources.transfur(target, this), damage)){
+        if(target.hurt(DamageSources.transfur(this, null), damage)){
             float tfProgress = 5f;
             if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
             if(hasEffect(MobEffects.DAMAGE_BOOST)) tfProgress += getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() + 1;

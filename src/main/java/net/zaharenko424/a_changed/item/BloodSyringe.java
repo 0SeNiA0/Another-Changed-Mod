@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -23,7 +24,7 @@ public class BloodSyringe extends Item {
     private static final ResourceLocation playerType = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER);
 
     public BloodSyringe() {
-        super(new Properties().stacksTo(1));
+        super(new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
     @Override
@@ -33,7 +34,7 @@ public class BloodSyringe extends Item {
         if(NBTUtils.hasModTag(tag)) {
             CompoundTag modTag = NBTUtils.modTag(tag);
             ResourceLocation entityType = new ResourceLocation(modTag.getString("entity_type"));
-            pTooltipComponents.add(Component.translatable("misc.a_changed.blood_syringe",
+            pTooltipComponents.add(Component.translatable("tooltip.a_changed.blood_syringe",
                     entityType.equals(playerType) && modTag.contains("name") ? modTag.getString("name")
                             : BuiltInRegistries.ENTITY_TYPE.get(entityType).getDescription()));
         } else pTooltipComponents.add(Component.literal("Invalid tag"));

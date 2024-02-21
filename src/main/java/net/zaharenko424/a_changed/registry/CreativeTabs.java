@@ -87,13 +87,19 @@ public class CreativeTabs {
                     output.accept(VENT_ITEM);
                     //Technology
                     output.accept(COPPER_PLATE);
+                    output.accept(GOLDEN_PLATE);
                     output.accept(IRON_PLATE);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
                     output.accept(COMPRESSOR_ITEM);
+                    output.accept(COMPRESSED_AIR_CANISTER);
+                    output.accept(EMPTY_CANISTER);
                     output.accept(COPPER_WIRE_ITEM);
+                    output.accept(COPPER_COIL);
                     output.accept(DNA_EXTRACTOR_ITEM);
+                    output.accept(LATEX_ENCODER_COMPONENTS);
                     output.accept(LATEX_ENCODER_ITEM);
+                    output.accept(LATEX_PURIFIER_COMPONENTS);
                     output.accept(LATEX_PURIFIER_ITEM);
                     //Wood
                     output.accept(ORANGE_BUTTON_ITEM);
@@ -138,6 +144,8 @@ public class CreativeTabs {
 
                     output.accept(DARK_LATEX_BASE);
                     output.accept(WHITE_LATEX_BASE);
+
+                    output.accept(PNEUMATIC_SYRINGE_RIFLE);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 

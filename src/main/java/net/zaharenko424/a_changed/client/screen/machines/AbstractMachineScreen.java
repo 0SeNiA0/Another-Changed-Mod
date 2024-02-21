@@ -8,11 +8,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
-import net.zaharenko424.a_changed.menu.AbstractMenu;
+import net.zaharenko424.a_changed.menu.machines.AbstractMachineMenu;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, ?>, C extends AbstractMenu<T>> extends AbstractContainerScreen<C> {
+public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, ?>, C extends AbstractMachineMenu<T>> extends AbstractContainerScreen<C> {
 
     public static final ResourceLocation SIDEBAR = AChanged.textureLoc("gui/energy_sidebar");
     protected final T entity;

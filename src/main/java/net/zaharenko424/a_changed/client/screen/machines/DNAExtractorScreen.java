@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
-import net.zaharenko424.a_changed.menu.DNAExtractorMenu;
+import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorScreen extends AbstractMachineScreen<DNAExtractorEntity, DNAExtractorMenu> {

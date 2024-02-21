@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.item.SyringeItem;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
-import net.zaharenko424.a_changed.menu.LatexEncoderMenu;
+import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
@@ -113,6 +113,7 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
             progress++;
         } else {
             inventory.insertItem(7, recipe.get().value().assemble(container), false);
+            progress = 0;
         }
 
         update();

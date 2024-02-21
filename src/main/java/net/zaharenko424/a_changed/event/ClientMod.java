@@ -17,8 +17,10 @@ import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
+import net.zaharenko424.a_changed.client.screen.PneumaticRifleScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -43,6 +45,8 @@ public class ClientMod {
         MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
         MenuScreens.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
         MenuScreens.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
+
+        MenuScreens.register(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), PneumaticRifleScreen::new);
     }
 
     @SubscribeEvent
@@ -90,6 +94,7 @@ public class ClientMod {
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_ENCODER_ENTITY.get(), (a)-> new LatexEncoderRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
+        event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new LatexEntityRenderer<>(a, BEI_FENG_TF));

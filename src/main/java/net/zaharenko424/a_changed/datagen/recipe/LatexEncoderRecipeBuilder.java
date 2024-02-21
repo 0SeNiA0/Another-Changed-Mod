@@ -11,7 +11,6 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
@@ -19,6 +18,7 @@ import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.item.SyringeItem;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
+import net.zaharenko424.a_changed.recipe.PartialNBTIngredientFix;
 import net.zaharenko424.a_changed.registry.DNAType;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class LatexEncoderRecipeBuilder implements RecipeBuilder {
 
-    private final NonNullList<Ingredient> ingredients = NonNullList.withSize(7, Ingredient.EMPTY);
+    private final NonNullList<PartialNBTIngredientFix> ingredients = NonNullList.withSize(7, PartialNBTIngredientFix.EMPTY);
     private Gender gender;
     private final ItemStack result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
@@ -44,7 +44,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
             throw new IllegalArgumentException("Invalid latex syringe encoding! ("+tf+")");
         this.result = result;
         this.gender = gender;
-        ingredients.set(0, Ingredient.of(ItemRegistry.SYRINGE_ITEM.get()));
+        ingredients.set(0, PartialNBTIngredientFix.of(ItemRegistry.SYRINGE_ITEM.get(), null));
     }
 
     public static @NotNull LatexEncoderRecipeBuilder of(@NotNull AbstractTransfurType transfurType){
@@ -58,7 +58,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
     public @NotNull LatexEncoderRecipeBuilder setSyringeIngredient(@NotNull ItemStack syringe){
         if(!(syringe.getItem() instanceof SyringeItem))
             throw new IllegalArgumentException("Syringe ingredient must be an instance of SyringeItem!");
-        ingredients.set(0, Ingredient.of(syringe));
+        ingredients.set(0, PartialNBTIngredientFix.of(syringe.getItem(), syringe.getTag()));
         return this;
     }
 
@@ -66,7 +66,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
      * Mandatory!
      */
     public @NotNull LatexEncoderRecipeBuilder setLatexBaseIngredient(@NotNull ItemStack latexBase){
-        ingredients.set(1, Ingredient.of(latexBase));
+        ingredients.set(1, PartialNBTIngredientFix.of(latexBase.getItem(), latexBase.getTag()));
         return this;
     }
 
@@ -86,7 +86,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
             throw new IllegalArgumentException("DNA sample ingredient must be an instance of DNASample!");
         for(int i = 2; i < 5; i++){
             if(!ingredients.get(i).isEmpty()) continue;
-            ingredients.set(i, Ingredient.of(dnaSample));
+            ingredients.set(i, PartialNBTIngredientFix.of(dnaSample.getItem(), dnaSample.getTag()));
             break;
         }
         return this;
@@ -97,8 +97,8 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
      */
     public @NotNull LatexEncoderRecipeBuilder addMiscIngredient(@NotNull ItemStack stack){
         for(int i = 5; i < 7; i++){
-            if(ingredients.get(i).isEmpty()) continue;
-            ingredients.set(i, Ingredient.of(stack));
+            if(!ingredients.get(i).isEmpty()) continue;
+            ingredients.set(i, PartialNBTIngredientFix.of(stack.getItem(), stack.getTag()));
             return this;
         }
         return this;

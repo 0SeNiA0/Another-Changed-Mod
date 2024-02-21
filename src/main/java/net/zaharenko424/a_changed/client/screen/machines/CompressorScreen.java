@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.CompressorEntity;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
-import net.zaharenko424.a_changed.menu.CompressorMenu;
+import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class CompressorScreen extends AbstractMachineScreen<CompressorEntity, CompressorMenu> {

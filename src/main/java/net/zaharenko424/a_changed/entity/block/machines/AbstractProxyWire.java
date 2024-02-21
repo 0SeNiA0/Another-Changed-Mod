@@ -29,9 +29,6 @@ public abstract class AbstractProxyWire extends BlockEntity {
 
         if(!networkCache.isWorthTicking()) return;
 
-        HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> consumers = networkCache.getConsumersMapped();
-        HashMap<Pair<IEnergyStorage, BlockEntity>, Integer> providers = networkCache.getProvidersMapped();
-
         int totalConsume = networkCache.getTotalConsume();
         int totalProvide = networkCache.getTotalProvide();
 
@@ -45,19 +42,21 @@ public abstract class AbstractProxyWire extends BlockEntity {
         mul = totalProvide > totalConsume ? 1 / transferPercentage : 1;
         float provideMul = bandwidthPercentage > 1 ? Math.min(1/ bandwidthPercentage, mul) : mul;
 
+        HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> consumers = networkCache.getConsumersMapped();
+        HashMap<BlockEntity, Pair<IEnergyStorage, Integer>> providers = networkCache.getProvidersMapped();
         float[] overflow = new float[]{0};
 
-        consumers.forEach((pair, amount) -> {
-            float toConsume = amount * consumeMul;
+        consumers.forEach((entity, pair) -> {
+            float toConsume = pair.getValue() * consumeMul;
             overflow[0] += toConsume % 1;
-            int i = calculateOverflow(overflow, (1 - consumeMul) * amount);
+            int i = calculateOverflow(overflow, (1 - consumeMul) * pair.getValue());
             pair.getKey().receiveEnergy((int) toConsume + i, false);
-            updateBlockEntity(pair.getValue());
+            updateBlockEntity(entity);
         });
 
-        providers.forEach((pair, amount) -> {
-            pair.getKey().extractEnergy((int) (amount * provideMul) - calculateOverflow(overflow, amount), false);
-            updateBlockEntity(pair.getValue());
+        providers.forEach((entity, pair) -> {
+            pair.getKey().extractEnergy((int) (pair.getValue() * provideMul) - calculateOverflow(overflow, pair.getValue()), false);
+            updateBlockEntity(entity);
         });
     }
 

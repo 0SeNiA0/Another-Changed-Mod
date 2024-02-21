@@ -15,16 +15,20 @@ import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class LatexEncoderRecipe implements SimpleRecipe<Container> {
 
-    private final NonNullList<Ingredient> ingredients;
+    private final NonNullList<PartialNBTIngredientFix> ingredients;
+    private final NonNullList<Ingredient> ingredients0;
     private final Gender gender;
     private final ItemStack result;
 
-    public LatexEncoderRecipe(@NotNull NonNullList<Ingredient> ingredients, Gender gender, ItemStack result){
+    public LatexEncoderRecipe(@NotNull NonNullList<PartialNBTIngredientFix> ingredients, Gender gender, ItemStack result){
         this.ingredients = ingredients;
         if(ingredients.size() != 7) throw
                 new IllegalStateException("Wrong amount of ingredients in Latex Encoder recipe (" + ingredients.size() + "/7)");
+        ingredients0 = Utils.toNonNull(List.copyOf(ingredients), PartialNBTIngredientFix.EMPTY);
         this.gender = gender;
         this.result = result;
     }
@@ -36,7 +40,7 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
 
     @Override
     public @NotNull NonNullList<Ingredient> getIngredients() {
-        return ingredients;
+        return ingredients0;
     }
 
     @Override
@@ -90,10 +94,10 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
 
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<LatexEncoderRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Ingredient.LIST_CODEC.fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
+                PartialNBTIngredientFix.CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
                 Codec.STRING.fieldOf("gender").forGetter(recipe -> recipe.gender.toString()),
                 ItemStack.CODEC.fieldOf("result").forGetter(recipe-> recipe.result)
-            ).apply(instance, (ingredients, str, result) -> new LatexEncoderRecipe(Utils.toNonNull(ingredients, Ingredient.EMPTY),
+            ).apply(instance, (ingredients, str, result) -> new LatexEncoderRecipe(Utils.toNonNull(ingredients, PartialNBTIngredientFix.EMPTY),
                 Gender.valueOf(str), result)));
 
         @Override
@@ -103,13 +107,13 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
 
         @Override
         public @NotNull LatexEncoderRecipe fromNetwork(@NotNull FriendlyByteBuf pBuffer) {
-            return new LatexEncoderRecipe(Utils.toNonNull(pBuffer.readList(Ingredient::fromNetwork), Ingredient.EMPTY),
+            return new LatexEncoderRecipe(Utils.toNonNull(pBuffer.readList(PartialNBTIngredientFix::fromNetwork), PartialNBTIngredientFix.EMPTY),
                     pBuffer.readEnum(Gender.class), pBuffer.readItem());
         }
 
         @Override
         public void toNetwork(@NotNull FriendlyByteBuf pBuffer, @NotNull LatexEncoderRecipe pRecipe) {
-            pBuffer.writeCollection(pRecipe.ingredients, (buf, ingredient) -> ingredient.toNetwork(buf));
+            pBuffer.writeCollection(pRecipe.ingredients, (buf, ingredient) -> ingredient.toNetwork0(buf));
             pBuffer.writeEnum(pRecipe.gender);
             pBuffer.writeItem(pRecipe.result);
         }

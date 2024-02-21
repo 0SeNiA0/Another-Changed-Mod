@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
-import net.zaharenko424.a_changed.menu.LatexPurifierMenu;
+import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEntity, LatexPurifierMenu> {

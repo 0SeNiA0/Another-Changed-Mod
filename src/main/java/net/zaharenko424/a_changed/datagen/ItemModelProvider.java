@@ -22,19 +22,25 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(BLACK_LATEX_SHORTS.getId());
         basicItem(BLOOD_SYRINGE.getId());
         basicItem(CARDBOARD.getId());
+        basicItem(COMPRESSED_AIR_CANISTER.getId());
+        basicItem(COPPER_COIL.getId());
         basicItem(COPPER_PLATE.getId());
         basicItem(DARK_LATEX_BASE.getId());
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
         basicItem(DNA_SAMPLE.getId());
+        basicItem(EMPTY_CANISTER.getId());
+        basicItem(GOLDEN_PLATE.getId());
         basicItem(GREEN_CRYSTAL_SHARD.getId());
         basicItem(HAZMAT_HELMET.getId());
         basicItem(HAZMAT_CHESTPLATE.getId());
         basicItem(HAZMAT_LEGGINGS.getId());
         basicItem(HAZMAT_BOOTS.getId());
         basicItem(IRON_PLATE.getId());
+        basicItem(LATEX_ENCODER_COMPONENTS.getId());
         basicItem(LATEX_MANIPULATOR.getId());
+        basicItem(LATEX_PURIFIER_COMPONENTS.getId());
         basicItem(LATEX_SOLVENT_BUCKET.getId());
         basicItem(LATEX_SYRINGE_ITEM.getId());
 

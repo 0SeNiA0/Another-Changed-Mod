@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
-import net.zaharenko424.a_changed.menu.LatexEncoderMenu;
+import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundLatexEncoderScreenPacket;
 import net.zaharenko424.a_changed.transfurSystem.Gender;

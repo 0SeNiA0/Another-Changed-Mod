@@ -183,7 +183,7 @@ public class TransfurEvent {
                 case DEATH -> {
                     handler.unTransfur();
                     updatePlayer(player, handler);
-                    player.hurt(DamageSources.transfur(player, player.getLastHurtByMob()), Float.MAX_VALUE);
+                    player.hurt(DamageSources.transfur(Objects.requireNonNullElse(player.getLastHurtByMob(), player), null), Float.MAX_VALUE);
                     spawnLatex(transfurType, level, player.blockPosition());
                 }
                 case PROMPT -> {

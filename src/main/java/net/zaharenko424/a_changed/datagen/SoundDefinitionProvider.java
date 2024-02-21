@@ -31,6 +31,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
         add(BUTTON_PRESSED, definition()
                 .subtitle(subtitle("button_pressed"))
                 .with(sound(AChanged.resourceLoc("decision1"))));
+        addSimpleSound(COMPRESSOR);
         addSimpleSound(DOOR_CLOSE);
         addSimpleSound(DOOR_LOCKED);
         addSimpleSound(DOOR_OPEN);
@@ -38,6 +39,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
         addSimpleSound(KEYPAD_UNLOCKED);
         addSimpleSound(KEYPAD_WRONG_PASSWORD);
         addSimpleSound(LASER);
+        addSimpleSound(PNEUMATIC_RIFLE);
         addSimpleSound(PUSH);
         addSimpleSound(SAVE);
         add(SMART_SEWAGE_CONSUME, definition()

@@ -14,41 +14,30 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
 
-    private final Ingredient ingredient;
+    private final PartialNBTIngredientFix ingredient;
     private final ItemStack result;
 
-    public DNAExtractorRecipe(Ingredient ingredient, ItemStack result){
+    public DNAExtractorRecipe(PartialNBTIngredientFix ingredient, ItemStack result){
         this.ingredient = ingredient;
         this.result = result;
     }
 
     @Override
     public @NotNull ItemStack getToastSymbol() {
-        return new ItemStack(ItemRegistry.DNA_EXTRACTOR_ITEM.get());
+        return ItemRegistry.DNA_EXTRACTOR_ITEM.get().getDefaultInstance();
     }
 
     @Override
     public boolean matches(@NotNull Container container, int slot, @NotNull Level level) {
         if(level.isClientSide) return false;
-        return test(container.getItem(slot));
-    }
-
-    private boolean test(ItemStack stack){
-        if(stack == null) return false;
-        for(ItemStack itemstack : ingredient.getItems()) {
-            if (stack.getItem() == itemstack.getItem() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areCapsCompatible(itemstack)) {
-                return true;
-            }
-        }
-        return false;
+        ItemStack item = container.getItem(slot);
+        return ingredient.test(item);
     }
 
     public @NotNull ItemStack assemble(@NotNull Container container, int slot) {
-        container.removeItem(slot, ingredient.getItems()[0].getCount());
+        container.removeItem(slot, 1);
         return result.copy();
     }
 
@@ -84,7 +73,7 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
 
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<DNAExtractorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+                PartialNBTIngredientFix.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
                 CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
             ).apply(instance, DNAExtractorRecipe::new));
 
@@ -95,12 +84,12 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
 
         @Override
         public @NotNull DNAExtractorRecipe fromNetwork(@NotNull FriendlyByteBuf friendlyByteBuf) {
-            return new DNAExtractorRecipe(Ingredient.fromNetwork(friendlyByteBuf), friendlyByteBuf.readItem());
+            return new DNAExtractorRecipe(PartialNBTIngredientFix.fromNetwork(friendlyByteBuf), friendlyByteBuf.readItem());
         }
 
         @Override
         public void toNetwork(@NotNull FriendlyByteBuf friendlyByteBuf, @NotNull DNAExtractorRecipe dnaExtractorRecipe) {
-            dnaExtractorRecipe.ingredient.toNetwork(friendlyByteBuf);
+            dnaExtractorRecipe.ingredient.toNetwork0(friendlyByteBuf);
             friendlyByteBuf.writeItem(dnaExtractorRecipe.result);
         }
     }

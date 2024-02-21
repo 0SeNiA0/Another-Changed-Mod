@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.menu;
+package net.zaharenko424.a_changed.menu.machines;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,7 +10,7 @@ import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class CompressorMenu extends AbstractMenu<CompressorEntity> {
+public class CompressorMenu extends AbstractMachineMenu<CompressorEntity> {
 
     public CompressorMenu(int pContainerId, Inventory playerInventory, @NotNull FriendlyByteBuf buf) {
         super(MenuRegistry.COMPRESSOR_MENU.get(), pContainerId, playerInventory, buf);

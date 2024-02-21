@@ -12,11 +12,11 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class NBTUtils {
 
-    private static final String KEY="changed";
+    public static final String KEY = "changed";
 
     public static @NotNull CompoundTag modTag(CompoundTag tag){
         if(tag.contains(KEY)) return tag.getCompound(KEY);
-        tag.put(KEY,new CompoundTag());
+        tag.put(KEY, new CompoundTag());
         return tag.getCompound(KEY);
     }
 
