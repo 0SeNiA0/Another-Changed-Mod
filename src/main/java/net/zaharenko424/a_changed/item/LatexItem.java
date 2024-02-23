@@ -21,9 +21,9 @@ public class LatexItem extends Item {
     private final Latex type;
 
     public LatexItem(@NotNull Supplier<? extends AbstractTransfurType> transfurType, Latex type) {
-        super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(2).build()));
-        this.transfurType=transfurType;
-        this.type=type;
+        super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
+        this.transfurType = transfurType;
+        this.type = type;
     }
 
     public Latex getLatexType(){
@@ -40,7 +40,7 @@ public class LatexItem extends Item {
             if(ADD_TRANSFUR == null) ADD_TRANSFUR = TransfurEvent.addTransfurProgress().checkResistance(false).build();
             ADD_TRANSFUR.accept(player, transfurType.get(), 10f);
         }
-        if(!player.getAbilities().instabuild) p_41409_.shrink(1);
+        if(!player.isCreative()) p_41409_.shrink(1);
         return p_41409_;
     }
 }

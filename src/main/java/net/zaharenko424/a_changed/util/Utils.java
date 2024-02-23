@@ -1,34 +1,59 @@
 package net.zaharenko424.a_changed.util;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ParametersAreNonnullByDefault
 public class Utils {
 
-    public static final VoxelShape EMPTY_SHAPE = Shapes.empty();
-
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
     }
 
-    public static void addItemOrDrop(Player player, ItemStack item){
-        if(!player.addItem(item)) player.drop(item,false);
+    public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
+        if(stackWith.isEmpty()) return true;
+        return stackWith.getCount() < stackWith.getMaxStackSize() && ItemHandlerHelper.canItemStacksStack(stack, stackWith);
+    }
+
+    private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
+
+    @Contract(pure = true)
+    public static @NotNull String formatEnergy(int energy){
+        if(energy >= 1000000000) return FORMAT.format((float) energy / 1000000000) + "B";
+        if(energy >= 1000000) return FORMAT.format((float) energy / 1000000) + "M";
+        if(energy >= 1000) return FORMAT.format((float) energy / 1000) + "k";
+        return String.valueOf(energy);
+    }
+
+    public static <T> @NotNull NonNullList<T> toNonNull(List<T> list, T def){
+        NonNullList<T> nonNull = NonNullList.withSize(list.size(), def);
+        T obj;
+        for(int i = 0; i < list.size(); i++){
+            obj = list.get(i);
+            if(obj != null) nonNull.set(i, obj);
+        }
+        return nonNull;
     }
 
     public static @NotNull VoxelShape rotateShape(Direction direction, VoxelShape source) {
@@ -93,5 +118,15 @@ public class Utils {
             texture = texture.substring(idx + 1);
         }
         return String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot ==EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
+    }
+
+    public static boolean test(ItemStack stack, Ingredient ingredient){
+        if(stack == null) return false;
+        for(ItemStack itemstack : ingredient.getItems()) {
+            if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areCapsCompatible(itemstack)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -18,6 +18,7 @@
   ],
   "client": [
     "client.MixinFallingBlockRenderer",
+    "client.MixinLivingEntityRenderer",
     "client.MixinPlayerRenderer"
   ]
 }

@@ -1,10 +1,13 @@
 package net.zaharenko424.a_changed.datagen;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
@@ -16,25 +19,52 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
     @Override
     protected void registerModels() {
-        basicItem(BLACK_LATEX_SHORTS.get());
+        basicItem(BLACK_LATEX_SHORTS.getId());
+        basicItem(BLOOD_SYRINGE.getId());
         basicItem(CARDBOARD.getId());
+        basicItem(COMPRESSED_AIR_CANISTER.getId());
+        basicItem(COPPER_COIL.getId());
+        basicItem(COPPER_PLATE.getId());
+        basicItem(DARK_LATEX_BASE.getId());
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
+        basicItem(DNA_SAMPLE.getId());
+        basicItem(EMPTY_CANISTER.getId());
+        basicItem(GOLDEN_PLATE.getId());
         basicItem(GREEN_CRYSTAL_SHARD.getId());
         basicItem(HAZMAT_HELMET.getId());
         basicItem(HAZMAT_CHESTPLATE.getId());
         basicItem(HAZMAT_LEGGINGS.getId());
         basicItem(HAZMAT_BOOTS.getId());
+        basicItem(IRON_PLATE.getId());
+        basicItem(LATEX_ENCODER_COMPONENTS.getId());
+        basicItem(LATEX_MANIPULATOR.getId());
+        basicItem(LATEX_PURIFIER_COMPONENTS.getId());
         basicItem(LATEX_SOLVENT_BUCKET.getId());
         basicItem(LATEX_SYRINGE_ITEM.getId());
+
+        ResourceLocation planks = BlockRegistry.ORANGE_PLANKS.getId().withPrefix(ModelProvider.BLOCK_FOLDER+"/");
+        buttonInventory(ORANGE_BUTTON_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_DOOR_ITEM.getId());
+        fenceInventory(ORANGE_FENCE_ITEM.getId().getPath(), planks);
+        fenceGate(ORANGE_FENCE_GATE_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_HANGING_SIGN_ITEM.getId());
         basicItem(ORANGE_ITEM.getId());
+        pressurePlate(ORANGE_PRESSURE_PLATE_ITEM.getId().getPath(), planks);
+        basicItem(ORANGE_SIGN_ITEM.getId());
+        slab(ORANGE_SLAB_ITEM.getId().getPath(), planks, planks, planks);
+        stairs(ORANGE_STAIRS_ITEM.getId().getPath(), planks, planks, planks);
+        trapdoorBottom(ORANGE_TRAPDOOR_ITEM.getId().getPath(), planks);
+
         basicItem(ORANGE_JUICE_ITEM.getId());
+        basicItem(POWER_CELL.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYRINGE_ITEM.getId());
-        basicItem(WHITE_LATEX_ITEM.getId());
+        basicItem(WHITE_LATEX_BASE.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
+        basicItem(WHITE_LATEX_ITEM.getId());
 
         spawnEgg(BEI_FENG_EGG);
         spawnEgg(BENIGN_EGG);

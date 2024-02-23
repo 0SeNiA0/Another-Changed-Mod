@@ -10,6 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

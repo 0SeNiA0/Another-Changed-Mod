@@ -224,7 +224,7 @@ public class GrabCapability {
             hold();
             if(mode.givesDebuffToTarget && !grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
                 if(mode == GrabMode.ASSIMILATE) {
-                    grabbedEntity.hurt(DamageSources.assimilation(grabbedEntity, player), Integer.MAX_VALUE);
+                    grabbedEntity.hurt(DamageSources.assimilation(player, null), Integer.MAX_VALUE);
                     player.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
                     player.getFoodData().eat(6, 1);
                 } else if(mode == GrabMode.REPLICATE)

@@ -1,24 +1,30 @@
 package net.zaharenko424.a_changed.event;
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.BookStackRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexContainerRenderer;
+import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
+import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
+import net.zaharenko424.a_changed.client.screen.PneumaticRifleScreen;
+import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
+import net.zaharenko424.a_changed.registry.MenuRegistry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -29,6 +35,19 @@ import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientMod {
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event){
+        Sheets.addWoodType(AChanged.ORANGE);
+
+        MenuScreens.register(MenuRegistry.COMPRESSOR_MENU.get(), CompressorScreen::new);
+        MenuScreens.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
+        MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
+        MenuScreens.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
+        MenuScreens.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
+
+        MenuScreens.register(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), PneumaticRifleScreen::new);
+    }
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){
@@ -68,9 +87,14 @@ public class ClientMod {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.get(), (a)-> new CryoChamberRenderer());
+        event.registerBlockEntityRenderer(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), (a)-> new DNAExtractorRenderer());
+        event.registerBlockEntityRenderer(BlockEntityRegistry.HANGING_SIGN_ENTITY.get(), HangingSignRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), (a)-> new LaserEmitterRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), LatexContainerRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.LATEX_ENCODER_ENTITY.get(), (a)-> new LatexEncoderRenderer());
+        event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
+        event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new LatexEntityRenderer<>(a, BEI_FENG_TF));

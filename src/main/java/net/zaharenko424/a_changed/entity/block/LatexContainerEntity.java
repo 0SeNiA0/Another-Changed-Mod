@@ -29,7 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class LatexContainerEntity extends BlockEntity {
 
-    private final ItemStackHandler handler=new ItemStackHandler(){
+    private final ItemStackHandler handler = new ItemStackHandler(){
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return stack.getItem() instanceof LatexItem;
@@ -45,22 +45,22 @@ public class LatexContainerEntity extends BlockEntity {
             setChanged();
         }
     };
-    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(()->handler);
+    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(()-> handler);
 
     public LatexContainerEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), p_155229_, p_155230_);
     }
 
     public boolean hasSpace(Item item){
-        return handler.getStackInSlot(0).isEmpty()||(handler.getStackInSlot(0).getCount()<16&&isSameLatexType(item));
+        return handler.getStackInSlot(0).isEmpty() || (handler.getStackInSlot(0).getCount() < 16 && isSameItem(item));
     }
 
     public boolean isEmpty(){
         return handler.getStackInSlot(0).isEmpty();
     }
 
-    public boolean isSameLatexType(Item item){
-        return handler.getStackInSlot(0).getItem()==item;
+    public boolean isSameItem(Item item){
+        return handler.getStackInSlot(0).getItem() == item;
     }
 
     public int getLatexAmount(){
@@ -86,7 +86,7 @@ public class LatexContainerEntity extends BlockEntity {
 
     public void onRemove(){
         if(getLatexAmount()>=8){
-            BlockState state= isSameLatexType(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
+            BlockState state= isSameItem(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
             level.setBlockAndUpdate(getBlockPos(),state);
         }
     }
@@ -126,7 +126,7 @@ public class LatexContainerEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
         if(isEmpty()) return;
-        CompoundTag item=new CompoundTag();
+        CompoundTag item = new CompoundTag();
         handler.getStackInSlot(0).save(item);
         NBTUtils.modTag(p_187471_).put("latex",item);
     }

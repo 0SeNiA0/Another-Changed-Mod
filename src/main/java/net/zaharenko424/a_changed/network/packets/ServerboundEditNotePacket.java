@@ -22,22 +22,22 @@ public class ServerboundEditNotePacket implements SimpleMessage {
     private final boolean finalize;
 
     public ServerboundEditNotePacket(List<String> text, BlockPos notePos, boolean finalize){
-        this.text=text;
-        this.notePos=notePos;
-        this.finalize=finalize;
+        this.text = text;
+        this.notePos = notePos;
+        this.finalize = finalize;
     }
 
     public ServerboundEditNotePacket(FriendlyByteBuf buffer){
-        text=new ArrayList<>();
-        NBTUtils.readFromTag(buffer.readNbt(),text);
-        notePos=buffer.readBlockPos();
-        finalize=buffer.readBoolean();
+        text = new ArrayList<>();
+        NBTUtils.readFromTag(buffer.readNbt(), text);
+        notePos = buffer.readBlockPos();
+        finalize = buffer.readBoolean();
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        CompoundTag tag=new CompoundTag();
-        NBTUtils.writeToTag(tag,text);
+        CompoundTag tag = new CompoundTag();
+        NBTUtils.writeToTag(tag, text);
         buffer.writeNbt(tag);
         buffer.writeBlockPos(notePos);
         buffer.writeBoolean(finalize);
@@ -45,16 +45,17 @@ public class ServerboundEditNotePacket implements SimpleMessage {
 
     @Override
     public void handleMainThread(NetworkEvent.Context context) {
-        ServerPlayer sender=context.getSender();
-        if(sender==null) {
+        ServerPlayer sender = context.getSender();
+        if(sender == null) {
             AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
-        BlockEntity entity=sender.level().getBlockEntity(notePos);
+        if(sender.distanceToSqr(notePos.getCenter()) > 64) return;
+        BlockEntity entity = sender.level().getBlockEntity(notePos);
         if(entity instanceof NoteEntity note){
-            note.setText(text,finalize);
+            note.setText(text, finalize);
             return;
         }
-        AChanged.LOGGER.warn("Block position does not contain NoteEntity! ("+notePos+")");
+        AChanged.LOGGER.warn("Block position does not contain NoteEntity! (" + notePos + ")");
     }
 }

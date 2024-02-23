@@ -19,6 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.entity.block.BoxPileEntity;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -50,7 +51,7 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new BoxPileEntity(p_153215_,p_153216_);
+        return new BoxPileEntity(p_153215_, p_153216_);
     }
 
     @Override
@@ -66,21 +67,21 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
     @Override
     public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
-        BlockEntity entity=p_60504_.getBlockEntity(p_60505_);
+        BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
         if(entity instanceof BoxPileEntity boxPile){
-            ItemStack item=p_60506_.getItemInHand(p_60507_);
+            ItemStack item = p_60506_.getItemInHand(p_60507_);
             if(item.is(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get())&&boxPile.hasSpace()){
-                boxPile.addBox(item,!p_60506_.isCreative());
-                p_60504_.setBlock(p_60505_,p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+                boxPile.addBox(item, !p_60506_.isCreative());
+                p_60504_.setBlock(p_60505_, p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
                 return InteractionResult.CONSUME;
             }
             if(item.isEmpty()){
-                Utils.addItemOrDrop(p_60506_,boxPile.removeBox());
+                ItemHandlerHelper.giveItemToPlayer(p_60506_, boxPile.removeBox());
                 if(boxPile.isEmpty()){
                     p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
                     return InteractionResult.SUCCESS;
                 }
-                p_60504_.setBlock(p_60505_,p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+                p_60504_.setBlock(p_60505_, p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -89,7 +90,7 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
 
     @Override
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
-        if(p_60515_.getBlock()!=p_60518_.getBlock()){
+        if(p_60515_.getBlock() != p_60518_.getBlock()){
             BlockEntity entity = p_60516_.getBlockEntity(p_60517_);
             if (entity instanceof BoxPileEntity boxPile) boxPile.dropBoxes();
         }

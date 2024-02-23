@@ -42,7 +42,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> DARK_LATEX_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL);
     public static final DeferredItem<BlockItem> DARK_LATEX_ICE_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL_ICE);
     public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
-    public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(),new Item.Properties()));
+    public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GREEN_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(GREEN_CRYSTAL);
     public static final DeferredItem<BlockItem> HAZARD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_BLOCK);
     public static final DeferredItem<BlockItem> HAZARD_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_LAB_BLOCK);
@@ -61,7 +61,6 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> ORANGE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> ORANGE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_LEAVES);
     public static final DeferredItem<BlockItem> ORANGE_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_SAPLING);
-    public static final DeferredItem<BlockItem> ORANGE_TREE_LOG_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_TREE_LOG);
     public static final DeferredItem<BlockItem> PIPE_ITEM = ITEMS.registerSimpleBlockItem(PIPE);
     public static final DeferredItem<BlockItem> SCANNER_ITEM = ITEMS.registerSimpleBlockItem(SCANNER);
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(SMALL_CARDBOARD_BOX);
@@ -78,22 +77,63 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_M);
     public static final DeferredItem<BlockItem> YELLOW_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(YELLOW_LAB_BLOCK);
 
+    //Machine BlockItems
+    public static final DeferredItem<BlockItem> COMPRESSOR_ITEM = ITEMS.registerSimpleBlockItem(COMPRESSOR);
+    public static final DeferredItem<BlockItem> COPPER_WIRE_ITEM = ITEMS.registerSimpleBlockItem(COPPER_WIRE);
+    public static final DeferredItem<BlockItem> DNA_EXTRACTOR_ITEM = ITEMS.registerSimpleBlockItem(DNA_EXTRACTOR);
+    public static final DeferredItem<BlockItem> GENERATOR_ITEM = ITEMS.registerSimpleBlockItem(GENERATOR);
+    public static final DeferredItem<BlockItem> LATEX_ENCODER_ITEM = ITEMS.registerSimpleBlockItem(LATEX_ENCODER);
+    public static final DeferredItem<BlockItem> LATEX_PURIFIER_ITEM = ITEMS.registerSimpleBlockItem(LATEX_PURIFIER);
+
+    //Wood BlockItems
+    public static final DeferredItem<BlockItem> ORANGE_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_BUTTON);
+    public static final DeferredItem<BlockItem> ORANGE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_DOOR);
+    public static final DeferredItem<BlockItem> ORANGE_FENCE_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_FENCE);
+    public static final DeferredItem<BlockItem> ORANGE_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_FENCE_GATE);
+    public static final DeferredItem<HangingSignItem> ORANGE_HANGING_SIGN_ITEM = ITEMS.register("orange_hanging_sign", ()-> new HangingSignItem(ORANGE_HANGING_SIGN.get(), ORANGE_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<BlockItem> ORANGE_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_PLANKS);
+    public static final DeferredItem<BlockItem> ORANGE_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_PRESSURE_PLATE);
+    public static final DeferredItem<SignItem> ORANGE_SIGN_ITEM = ITEMS.register("orange_sign", ()-> new SignItem(new Item.Properties().stacksTo(16), ORANGE_SIGN.get(), ORANGE_WALL_SIGN.get()));
+    public static final DeferredItem<BlockItem> ORANGE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_SLAB);
+    public static final DeferredItem<BlockItem> ORANGE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_STAIRS);
+    public static final DeferredItem<BlockItem> ORANGE_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_TRAPDOOR);
+    public static final DeferredItem<BlockItem> ORANGE_TREE_LOG_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_TREE_LOG);
+    public static final DeferredItem<BlockItem> ORANGE_WOOD_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_WOOD);
+    public static final DeferredItem<BlockItem> STRIPPED_ORANGE_LOG_ITEM = ITEMS.registerSimpleBlockItem(STRIPPED_ORANGE_LOG);
+    public static final DeferredItem<BlockItem> STRIPPED_ORANGE_WOOD_ITEM = ITEMS.registerSimpleBlockItem(STRIPPED_ORANGE_WOOD);
+
     //Items
+    public static final DeferredItem<Item> DARK_LATEX_BASE = ITEMS.registerSimpleItem("dark_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> WHITE_LATEX_BASE = ITEMS.registerSimpleItem("white_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()).rarity(Rarity.UNCOMMON));
+
     public static final DeferredItem<ArmorItem> BLACK_LATEX_SHORTS = ITEMS.register("black_latex_shorts", ()-> new ArmorItem(ArmorMaterials.LATEX, ArmorItem.Type.LEGGINGS, new Item.Properties().setNoRepair()));
+    public static final DeferredItem<BloodSyringe> BLOOD_SYRINGE = ITEMS.register("blood_syringe", BloodSyringe::new);
     public static final DeferredItem<Item> CARDBOARD = ITEMS.registerSimpleItem("cardboard");
+    public static final DeferredItem<CompressedAirCanister> COMPRESSED_AIR_CANISTER = ITEMS.register("compressed_air_canister", CompressedAirCanister::new);
+    public static final DeferredItem<Item> COPPER_COIL = ITEMS.registerSimpleItem("copper_coil");
+    public static final DeferredItem<Item> COPPER_PLATE = ITEMS.registerSimpleItem("copper_plate");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
     public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF, Latex.DARK));
+    public static final DeferredItem<DNASample> DNA_SAMPLE = ITEMS.register("dna_sample", DNASample::new);
+    public static final DeferredItem<Item> EMPTY_CANISTER = ITEMS.registerSimpleItem("empty_canister");
+    public static final DeferredItem<Item> GOLDEN_PLATE = ITEMS.registerSimpleItem("golden_plate");
     public static final DeferredItem<Item> GREEN_CRYSTAL_SHARD = ITEMS.registerSimpleItem("green_crystal_shard");
     public static final DeferredItem<HazmatArmorItem> HAZMAT_HELMET = ITEMS.register("hazmat_helmet", ()-> new HazmatArmorItem(ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_CHESTPLATE = ITEMS.register("hazmat_chestplate", ()-> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_LEGGINGS = ITEMS.register("hazmat_leggings", ()-> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_BOOTS = ITEMS.register("hazmat_boots", ()-> new HazmatArmorItem(ArmorItem.Type.BOOTS, new Item.Properties()));
-    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM=ITEMS.register("latex_syringe", LatexSyringeItem::new);
+    public static final DeferredItem<Item> IRON_PLATE = ITEMS.registerSimpleItem("iron_plate");
+    public static final DeferredItem<Item> LATEX_ENCODER_COMPONENTS = ITEMS.registerSimpleItem("latex_encoder_components");
+    public static final DeferredItem<LatexManipulator> LATEX_MANIPULATOR = ITEMS.register("latex_manipulator", LatexManipulator::new);
+    public static final DeferredItem<Item> LATEX_PURIFIER_COMPONENTS = ITEMS.registerSimpleItem("latex_purifier_components");
+    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM = ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(2f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
-    public static final DeferredItem<SyringeItem> SYRINGE_ITEM=ITEMS.register("syringe", SyringeItem::new);
-    public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM=ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
-    public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM=ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);
+    public static final DeferredItem<PneumaticSyringeRifle> PNEUMATIC_SYRINGE_RIFLE = ITEMS.register("pneumatic_syringe_rifle", PneumaticSyringeRifle::new);
+    public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));
+    public static final DeferredItem<SyringeItem> SYRINGE_ITEM = ITEMS.register("syringe", SyringeItem::new);
+    public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM = ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
+    public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);
     public static final DeferredItem<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(TransfurRegistry.WHITE_LATEX_WOLF_M_TF,Latex.WHITE));
 
     public static final DeferredItem<BucketItem> LATEX_SOLVENT_BUCKET = ITEMS.register("latex_solvent_bucket", ()->new BucketItem(LATEX_SOLVENT_STILL,new Item.Properties().stacksTo(1)));
@@ -110,7 +150,7 @@ public final class ItemRegistry {
     public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_F_EGG = ITEMS.register("white_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, 16777215, 13619151, spawnEgg()));
     public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_M_EGG = ITEMS.register("white_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_MALE, 16777215, 13619151, spawnEgg()));
 
-    public static Item.@NotNull Properties spawnEgg(){
+    private static Item.@NotNull Properties spawnEgg(){
         return new Item.Properties().rarity(Rarity.UNCOMMON);
     }
 }

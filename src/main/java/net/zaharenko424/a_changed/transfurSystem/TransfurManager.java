@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.transfurSystem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.zaharenko424.a_changed.AChanged;
@@ -38,13 +39,13 @@ public class TransfurManager {
         return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).isBeingTransfurred();
     }
 
-    public static float getTransfurProgress(@NotNull Player player){
+    public static float getTransfurProgress(@NotNull LivingEntity player){
         return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).getTransfurProgress();
     }
 
     public static @Nullable AbstractTransfurType getTransfurType(@NotNull Player player){
         LazyOptional<ITransfurHandler> optional = player.getCapability(TransfurCapability.CAPABILITY);
-        return optional.isPresent()?optional.orElseThrow(NO_CAPABILITY_EXC).getTransfurType():null;
+        return optional.isPresent() ? optional.orElseThrow(NO_CAPABILITY_EXC).getTransfurType() : null;
     }
 
     public static @Nullable AbstractTransfurType getTransfurType(@NotNull ResourceLocation transfurType){

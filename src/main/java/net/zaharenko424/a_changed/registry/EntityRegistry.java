@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
 import net.zaharenko424.a_changed.entity.SeatEntity;
+import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
@@ -51,6 +52,10 @@ public final class EntityRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_FEMALE =
             registerLatex("white_latex_wolf_female", EntityType.Builder.of((a, b) ->
             new LatexBeast(a,b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
+
+    //Projectiles
+    public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE_PROJECTILE = ENTITIES
+            .register("syringe_projectile", ()-> EntityType.Builder.<SyringeProjectile>of((a, b)-> new SyringeProjectile(b), MobCategory.MISC).sized(.3f, .3f).build("syringe_projectile"));
 
     private static <T extends AbstractLatexBeast> @NotNull DeferredHolder<EntityType<?>,EntityType<T>> registerLatex(@NotNull String id, @NotNull EntityType.Builder<T> builder){
         return ENTITIES.register(id,()-> builder.build(id));

@@ -7,6 +7,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.Contract;
@@ -20,18 +21,21 @@ public interface DamageSources {
     ResourceKey<DamageType> solvent = create("latex_solvent");
 
     @Contract("_, _ -> new")
-    static <T extends Entity,E extends LivingEntity> @NotNull DamageSource assimilation(@NotNull T target, @NotNull E entity){
-        return new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(assimilation), target, entity);
+    static <T extends Entity,E extends LivingEntity> @NotNull DamageSource assimilation(@NotNull T attackerDirect, @Nullable E attackerIndirect){
+        return new DamageSource(attackerDirect.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(assimilation), attackerDirect, attackerIndirect);
     }
 
     @Contract("_, _ -> new")
-    static <T extends Entity,E extends LivingEntity> @NotNull DamageSource transfur(@NotNull T target, @Nullable E entity){
-        return new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(transfur), target, entity);
+    static <T extends Entity,E extends Entity> @NotNull DamageSource transfur(@NotNull T attackerDirect, @Nullable E attackerIndirect){
+        return transfur(attackerDirect.level(), attackerDirect, attackerIndirect);
     }
 
-    @Contract("_ -> new")
-    static <T extends Entity> @NotNull DamageSource latexSolvent(@NotNull T target){
-        return new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(solvent), target, null);
+    static <T extends Entity,E extends Entity> @NotNull DamageSource transfur(@NotNull Level level, @Nullable T attackerDirect, @Nullable E attackerIndirect){
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(transfur), attackerDirect, attackerIndirect);
+    }
+
+    static <T extends Entity> @NotNull DamageSource latexSolvent(@NotNull Level level, @Nullable T attackerDirect){
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(solvent), attackerDirect, null);
     }
 
     private static @NotNull ResourceKey<DamageType> create(String str){

@@ -25,8 +25,8 @@ public class LatexSolventEffect extends UnRemovableEffect {
 
     @Override
     public void applyEffectTick(@NotNull LivingEntity p_19467_, int p_19468_) {
-        if(p_19467_ instanceof AbstractLatexBeast||(p_19467_ instanceof Player player&& TransfurManager.isTransfurred(player))){
-            p_19467_.hurt(DamageSources.latexSolvent(p_19467_),2f);
+        if(p_19467_ instanceof AbstractLatexBeast || (p_19467_ instanceof Player player && TransfurManager.isTransfurred(player))){
+            p_19467_.hurt(DamageSources.latexSolvent(p_19467_.level(), null),2f);
         }
     }
 }

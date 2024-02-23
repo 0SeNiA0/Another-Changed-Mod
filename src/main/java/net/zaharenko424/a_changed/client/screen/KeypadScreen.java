@@ -17,35 +17,35 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class KeypadScreen extends Screen {
-    private static final int MAX_SIZE=8;
+    private static final int MAX_SIZE = 8;
     private Button button;
-    private final List<CharBox> charBoxes=new ArrayList<>();
-    private int selectedChar=-1;
+    private final List<CharBox> charBoxes = new ArrayList<>();
+    private int selectedChar = -1;
     private final boolean passwordSet;
     private final BlockPos pos;
 
     public KeypadScreen(boolean isPasswordSet, int length, BlockPos pos) {
         super(Component.empty());
-        passwordSet=isPasswordSet;
-        this.pos=pos;
+        passwordSet = isPasswordSet;
+        this.pos = pos;
         int a=isPasswordSet?length:MAX_SIZE;
-        for(int i=0;i<a;i++){
+        for(int i = 0; i < a;i++){
             charBoxes.add(new CharBox());
-            if(isPasswordSet) charBoxes.get(i).num=0;
+            if(isPasswordSet) charBoxes.get(i).num = 0;
         }
     }
 
     @Override
     protected void init() {
         if(!passwordSet){
-            button=addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_save_password"), button ->{
-                int[] code=getCode();
-                if(code.length<4) return;
+            button = addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_save_password"), button ->{
+                int[] code = getCode();
+                if(code.length < 4) return;
                 minecraft.setScreen(null);
                 PacketHandler.INSTANCE.sendToServer(new ServerboundTryPasswordPacket(code,pos));
             }).bounds(width/2-40,height/3+30,80,20).build());
         } else {
-            button=addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_attempt"), button ->{
+            button = addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_attempt"), button ->{
                 minecraft.setScreen(null);
                 PacketHandler.INSTANCE.sendToServer(new ServerboundTryPasswordPacket(getCode(),pos));
             }).bounds(width/2-40,height/3+30,80,20).build());
@@ -55,17 +55,17 @@ public class KeypadScreen extends Screen {
     }
 
     private void recalculateCoordinates(){
-        int halfWidth=width/2;
-        int a=halfWidth-(25*charBoxes.size()/2);
-        for(int i=0;i<charBoxes.size();i++){
-            charBoxes.get(i).recalculate(a+i*25,height/3);
+        int halfWidth = width / 2;
+        int a = halfWidth - (25 * charBoxes.size() / 2);
+        for(int i = 0; i < charBoxes.size();i++){
+            charBoxes.get(i).recalculate(a + i * 25,height / 3);
         }
     }
 
     public int[] getCode(){
-        IntList list=new IntArrayList();
+        IntList list = new IntArrayList();
         charBoxes.forEach(box->{
-            if(box.num!=null) list.add((int)box.num);
+            if(box.num != null) list.add((int)box.num);
         });
         return list.toIntArray();
     }
@@ -76,42 +76,42 @@ public class KeypadScreen extends Screen {
             return true;
         }
         if(Character.isDigit(character)){
-            int i=Character.getNumericValue(character);
-            if(i>9||i<0) return false;
-            CharBox box=charBoxes.get(selectedChar);
-            boolean b=box.num==null;
-            box.num=i;
+            int i = Character.getNumericValue(character);
+            if(i > 9 || i < 0) return false;
+            CharBox box = charBoxes.get(selectedChar);
+            boolean b = box.num==null;
+            box.num = i;
             if(b) checkLength();
             return true;
         }
         return false;
     }
 
-    private static final List<Integer> keys= Arrays.asList(32,257,262,263,335);
+    private static final List<Integer> keys = Arrays.asList(32, 257, 262, 263, 335);
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(super.keyPressed(keyCode, scanCode, modifiers)){
             return true;
         }
-        if(selectedChar==-1&&!keys.contains(keyCode)) return false;
+        if(selectedChar == -1 && !keys.contains(keyCode)) return false;
         return switch (keyCode){
-            case 32,257,335 -> {
+            case 32, 257, 335 -> {
                 button.onPress();
                 yield true;
             }
-            case 259,261 -> {
+            case 259, 261 -> {
                 CharBox box=charBoxes.get(selectedChar);
                 if(!passwordSet) {
-                    box.num=null;
+                    box.num = null;
                     checkLength();
-                    List<CharBox> newList=new ArrayList<>();
+                    List<CharBox> newList = new ArrayList<>();
                     charBoxes.forEach(charBox->{
                         if(charBox.num!=null) newList.add(charBox);
                     });
-                    selectedChar=newList.size();
+                    selectedChar = newList.size();
                     charBoxes.clear();
                     charBoxes.addAll(newList);
-                    for(int i=charBoxes.size();i<MAX_SIZE;i++){
+                    for(int i = charBoxes.size(); i < MAX_SIZE;i++){
                         charBoxes.add(new CharBox());
                     }
                     recalculateCoordinates();
@@ -119,31 +119,31 @@ public class KeypadScreen extends Screen {
                 yield true;
             }
             case 262 -> {
-                if(charBoxes.size()>selectedChar+1){
+                if(charBoxes.size() > selectedChar + 1){
                     selectedChar++;
-                } else selectedChar=0;
+                } else selectedChar = 0;
                 yield true;
             }
             case 263 ->{
-                if(selectedChar>0) selectedChar--; else selectedChar=charBoxes.size()-1;
+                if(selectedChar>0) selectedChar--; else selectedChar = charBoxes.size()-1;
                 yield true;
             }
             case 264 ->{
-                CharBox box=charBoxes.get(selectedChar);
-                if(box.num==null){
-                    box.num=9;
+                CharBox box = charBoxes.get(selectedChar);
+                if(box.num == null){
+                    box.num = 9;
                     checkLength();
-                } else if(box.num==0) {
-                    box.num=9;
+                } else if(box.num == 0) {
+                    box.num = 9;
                 } else box.num--;
                 yield true;
             }
             case 265 ->{
-                CharBox box=charBoxes.get(selectedChar);
-                if(box.num==null){
+                CharBox box = charBoxes.get(selectedChar);
+                if(box.num == null){
                     box.num=0;
                     checkLength();
-                } else if(box.num==9) {
+                } else if(box.num == 9) {
                     box.num = 0;
                 } else box.num++;
                 yield true;
@@ -154,7 +154,7 @@ public class KeypadScreen extends Screen {
 
     private void checkLength(){
         if(passwordSet) return;
-        if(getCode().length<4) button.active=false; else if(!button.isActive()) button.active=true;
+        if(getCode().length < 4) button.active = false; else if(!button.isActive()) button.active = true;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class KeypadScreen extends Screen {
         if(super.mouseClicked(mouseX, mouseY, button)){
             return true;
         }
-        if(button==0) {
+        if(button == 0) {
             CharBox box;
             for (int i = 0; i < charBoxes.size(); i++) {
                 box = charBoxes.get(i);
@@ -182,13 +182,13 @@ public class KeypadScreen extends Screen {
         setFocused(null);
 
         for(CharBox charBox:charBoxes){
-            guiGraphics.fill(charBox.x,charBox.y,charBox.x1,charBox.y1,-16777216);
-            if(charBox.num!=null) guiGraphics.drawString(font,String.valueOf(charBox.num),charBox.x+7,charBox.y+9, 16777215);
+            guiGraphics.fill(charBox.x, charBox.y, charBox.x1, charBox.y1,-16777216);
+            if(charBox.num != null) guiGraphics.drawString(font,String.valueOf(charBox.num),charBox.x + 7,charBox.y + 9, 16777215);
         }
 
-        if(selectedChar!=-1) {
-            CharBox selected=charBoxes.get(selectedChar);
-            guiGraphics.drawString(font, "__", selected.x+4, selected.y+12,16777215,false);
+        if(selectedChar != -1) {
+            CharBox selected = charBoxes.get(selectedChar);
+            guiGraphics.drawString(font, "__", selected.x + 4, selected.y + 12,16777215,false);
         }
     }
 
@@ -200,10 +200,10 @@ public class KeypadScreen extends Screen {
         public Integer num;
 
         public void recalculate(int x,int y){
-            this.x=x;
-            this.y=y;
-            x1=x+20;
-            y1=y+25;
+            this.x = x;
+            this.y = y;
+            x1 = x + 20;
+            y1 = y + 25;
         }
     }
 }

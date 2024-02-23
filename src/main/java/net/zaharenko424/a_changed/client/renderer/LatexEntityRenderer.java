@@ -74,7 +74,7 @@ public class LatexEntityRenderer<E extends LivingEntity> extends LivingEntityRen
         if(transfurType == this.transfurType) return;
         this.transfurType = transfurType;
         if(transfurType != null) {
-            model = transfurType.getModel();
+            model = transfurType.getModel(0);
         }
     }
 

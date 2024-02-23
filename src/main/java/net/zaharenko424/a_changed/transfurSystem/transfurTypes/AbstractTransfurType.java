@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Pose;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
+import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ public abstract class AbstractTransfurType {
     public final float airReductionModifier;
     public final int maxHealthModifier;
     public final float swimSpeedModifier;
-    protected final boolean male;
+    protected final Gender gender;
     protected final boolean organic;
     protected final Consumer<LivingEntity> onTransfur;
     protected final Consumer<LivingEntity> onUnTransfur;
@@ -41,14 +42,14 @@ public abstract class AbstractTransfurType {
         airReductionModifier = properties.airReductionModifier;
         maxHealthModifier = properties.maxHealthModifier;
         swimSpeedModifier = properties.swimSpeedModifier;
-        male = properties.male;
+        gender = properties.gender;
         organic = properties.organic;
         onTransfur = properties.onTransfur;
         onUnTransfur = properties.onUnTransfur;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract <E extends LivingEntity> AbstractLatexEntityModel<E> getModel();
+    public abstract <E extends LivingEntity> AbstractLatexEntityModel<E> getModel(int modelVariant);
 
     public float getEyeHeight(@NotNull Pose pose){
         return switch (pose) {
@@ -61,6 +62,10 @@ public abstract class AbstractTransfurType {
     public EntityDimensions getPoseDimensions(Pose pose){
         if(dimensions == null || dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 2);
         return dimensions.get(pose);
+    }
+
+    public Gender getGender(){
+        return gender;
     }
 
     public boolean isOrganic(){
@@ -76,7 +81,7 @@ public abstract class AbstractTransfurType {
     }
 
     public Component fancyName(){
-        return Component.translatable("transfur."+ id.toString().replace(':','.'));
+        return Component.translatable("transfur."+ id.toLanguageKey());
     }
 
     public static class Properties{
@@ -97,6 +102,7 @@ public abstract class AbstractTransfurType {
         int maxHealthModifier = 0;
         float swimSpeedModifier = 0;
         boolean male = true;
+        Gender gender = Gender.NONE;
         boolean organic = false;
         Consumer<LivingEntity> onTransfur;
         Consumer<LivingEntity> onUnTransfur;
@@ -153,8 +159,8 @@ public abstract class AbstractTransfurType {
             return this;
         }
 
-        public Properties gender(boolean male){
-            this.male=male;
+        public Properties gender(Gender gender){
+            this.gender = gender;
             return this;
         }
 

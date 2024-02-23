@@ -4,16 +4,23 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.*;
 import net.zaharenko424.a_changed.block.boxes.CardboardBox;
 import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
 import net.zaharenko424.a_changed.block.boxes.TallBox;
 import net.zaharenko424.a_changed.block.boxes.TallCardboardBox;
 import net.zaharenko424.a_changed.block.doors.*;
+import net.zaharenko424.a_changed.block.machines.*;
+import net.zaharenko424.a_changed.block.sign.HangingSign;
+import net.zaharenko424.a_changed.block.sign.StandingSign;
+import net.zaharenko424.a_changed.block.sign.WallHangingSign;
+import net.zaharenko424.a_changed.block.sign.WallSign;
 import net.zaharenko424.a_changed.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +36,12 @@ public class BlockRegistry {
     public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
 
     //Blocks
+    public static final DeferredBlock<Compressor> COMPRESSOR = BLOCKS.register("compressor", ()-> new Compressor(decorProperties()));
+    public static final DeferredBlock<WireBlock> COPPER_WIRE = BLOCKS.register("copper_wire", ()-> new WireBlock(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL)));
+    public static final DeferredBlock<DNAExtractor> DNA_EXTRACTOR = BLOCKS.register("dna_extractor", ()-> new DNAExtractor(decorProperties()));
+    public static final DeferredBlock<LatexEncoder> LATEX_ENCODER = BLOCKS.register("latex_encoder", ()-> new LatexEncoder(decorProperties().noOcclusion()));
+    public static final DeferredBlock<LatexPurifier> LATEX_PURIFIER = BLOCKS.register("latex_purifier", ()-> new LatexPurifier(decorProperties()));
+
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(decorProperties()));
     public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
     public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(bigDoorProperties()));
@@ -54,6 +67,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
     public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.copy(Blocks.GLASS)));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(decorProperties().noLootTable().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<Generator> GENERATOR = BLOCKS.register("generator", ()-> new Generator(decorProperties()));
     public static final DeferredBlock<TallCrystal> GREEN_CRYSTAL = BLOCKS.register("green_crystal", ()-> new TallCrystal(decorProperties(),TransfurRegistry.BEI_FENG_TF));
     public static final DeferredBlock<Block> HAZARD_BLOCK = BLOCKS.registerSimpleBlock("hazard_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Block> HAZARD_LAB_BLOCK = BLOCKS.registerSimpleBlock("hazard_lab_block", decorProperties().mapColor(DyeColor.WHITE));
@@ -72,7 +86,6 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> ORANGE_LAB_BLOCK = BLOCKS.registerSimpleBlock("orange_lab_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<LeavesBlock> ORANGE_LEAVES = BLOCKS.register("orange_leaves", ()-> new LeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)));
     public static final DeferredBlock<SaplingBlock> ORANGE_SAPLING = BLOCKS.register("orange_sapling", ()-> new SaplingBlock(new OrangeTreeGrower(),BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
-    public static final DeferredBlock<RotatedPillarBlock> ORANGE_TREE_LOG = BLOCKS.register("orange_tree_log", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)));
     public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<SmallCardboardBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", ()-> new SmallCardboardBox(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY).noLootTable()));
@@ -88,6 +101,26 @@ public class BlockRegistry {
     public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_F_TF));
     public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_M = BLOCKS.register("white_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> YELLOW_LAB_BLOCK = BLOCKS.registerSimpleBlock("yellow_lab_block", decorProperties().mapColor(DyeColor.YELLOW));
+
+    //Wood
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ORANGE_LOG = BLOCKS.register("stripped_orange_log", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_ACACIA_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ORANGE_WOOD = BLOCKS.register("stripped_orange_wood", ()-> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_ACACIA_WOOD)));
+    public static final DeferredBlock<ButtonBlock> ORANGE_BUTTON = BLOCKS.register("orange_button", ()-> new ButtonBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY), BlockSetType.ACACIA, 30, true));
+    public static final DeferredBlock<DoorBlock> ORANGE_DOOR = BLOCKS.register("orange_door", ()-> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_DOOR), BlockSetType.ACACIA));
+    public static final DeferredBlock<FenceBlock> ORANGE_FENCE = BLOCKS.register("orange_fence", ()-> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_FENCE)));
+    public static final DeferredBlock<FenceGateBlock> ORANGE_FENCE_GATE = BLOCKS.register("orange_fence_gate", ()-> new FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_FENCE_GATE), AChanged.ORANGE));
+    public static final DeferredBlock<HangingSign> ORANGE_HANGING_SIGN = BLOCKS.register("orange_hanging_sign", ()-> new HangingSign(BlockBehaviour.Properties.copy(Blocks.ACACIA_HANGING_SIGN), AChanged.ORANGE));
+    public static final DeferredBlock<Block> ORANGE_PLANKS = BLOCKS.registerSimpleBlock("orange_planks", BlockBehaviour.Properties.copy(Blocks.ACACIA_PLANKS));
+    public static final DeferredBlock<PressurePlateBlock> ORANGE_PRESSURE_PLATE = BLOCKS.register("orange_pressure_plate", ()-> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.ACACIA_PRESSURE_PLATE), BlockSetType.ACACIA));
+    public static final DeferredBlock<StandingSign> ORANGE_SIGN = BLOCKS.register("orange_sign", ()-> new StandingSign(BlockBehaviour.Properties.copy(Blocks.ACACIA_SIGN), AChanged.ORANGE));
+    public static final DeferredBlock<SlabBlock> ORANGE_SLAB = BLOCKS.register("orange_slab", ()-> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_SLAB)));
+    public static final DeferredBlock<StairBlock> ORANGE_STAIRS = BLOCKS.register("orange_stairs", ()-> new StairBlock(()-> ORANGE_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(ORANGE_PLANKS.get())));
+    public static final DeferredBlock<TrapDoorBlock> ORANGE_TRAPDOOR = BLOCKS.register("orange_trapdoor", ()-> new TrapDoorBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_TRAPDOOR), BlockSetType.ACACIA));
+    public static final DeferredBlock<LogBlock> ORANGE_TREE_LOG = BLOCKS.register("orange_tree_log", ()-> new LogBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_LOG), STRIPPED_ORANGE_LOG));
+    public static final DeferredBlock<WallSign> ORANGE_WALL_SIGN = BLOCKS.register("orange_wall_sign", ()-> new WallSign(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava(), AChanged.ORANGE));
+    public static final DeferredBlock<WallHangingSign> ORANGE_WALL_HANGING_SIGN = BLOCKS.register("orange_wall_hanging_sign", ()-> new WallHangingSign(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava(), AChanged.ORANGE));
+    public static final DeferredBlock<LogBlock> ORANGE_WOOD = BLOCKS.register("orange_wood", ()-> new LogBlock(BlockBehaviour.Properties.copy(Blocks.ACACIA_WOOD), STRIPPED_ORANGE_WOOD));
+
 
     private static BlockBehaviour.@NotNull Properties liquidProperties(){
         return BlockBehaviour.Properties.of().liquid().noCollission().noLootTable().pushReaction(PushReaction.DESTROY).replaceable();

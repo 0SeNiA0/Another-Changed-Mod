@@ -22,12 +22,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LatexContainerRenderer implements BlockEntityRenderer<LatexContainerEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.getId(), "latex");
-    private static final ResourceLocation DARK = BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
-    private static final ResourceLocation WHITE = BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
+    static final ResourceLocation DARK = BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
+    static final ResourceLocation WHITE = BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
     private final ModelPart latex;
 
     public LatexContainerRenderer(BlockEntityRendererProvider.Context p_173521_){
-        latex=p_173521_.bakeLayer(LAYER).getChild("latex");
+        latex = p_173521_.bakeLayer(LAYER).getChild("latex");
     }
 
     public static @NotNull LayerDefinition bodyLayer(){
@@ -43,8 +43,8 @@ public class LatexContainerRenderer implements BlockEntityRenderer<LatexContaine
         latex.resetPose();
         p_112309_.pushPose();
         p_112309_.translate(.5,.125,.5);
-        latex.yScale=p_112307_.getLatexAmount()*.75f;
-        latex.render(p_112309_, p_112310_.getBuffer(RenderType.entitySolid(p_112307_.getLatexType()== Latex.DARK?DARK:WHITE)),p_112311_,p_112312_);
+        latex.yScale = p_112307_.getLatexAmount() * .75f;
+        latex.render(p_112309_, p_112310_.getBuffer(RenderType.entitySolid(p_112307_.getLatexType() == Latex.DARK?DARK:WHITE)), p_112311_, p_112312_);
         p_112309_.popPose();
     }
 }
