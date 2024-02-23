@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.item;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +28,7 @@ public class DNASample extends Item {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         CompoundTag tag = pStack.getTag();
         if(NBTUtils.hasModTag(tag)) pTooltipComponents.add(Component.translatable("dna."
-                + new ResourceLocation(NBTUtils.modTag(tag).getString("dna")).toLanguageKey()));
+                + new ResourceLocation(NBTUtils.modTag(tag).getString("dna")).toLanguageKey()).withStyle(ChatFormatting.AQUA));
     }
 
     public static @NotNull ItemStack encodeDNA(@NotNull DNAType dnaType){

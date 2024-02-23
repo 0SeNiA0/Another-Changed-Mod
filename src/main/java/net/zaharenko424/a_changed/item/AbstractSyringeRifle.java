@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -48,7 +49,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         if(level.isClientSide || hand != InteractionHand.MAIN_HAND) return super.use(level, player, hand);
-        ItemStack rifle = player.getItemInHand(hand);
+        ItemStack rifle = player.getMainHandItem();
 
         if(player.isCrouching()){
             NetworkHooks.openScreen((ServerPlayer) player, this);
@@ -67,9 +68,11 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         level.addFreshEntity(syringe);
 
         playSound(level, player);
+        //Update item so the tooltip is correct on client
+        ((ServerPlayer)player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, player.getInventory().selected, rifle));
 
         player.getCooldowns().addCooldown(rifle.getItem(), 20);
-        return InteractionResultHolder.success(rifle);
+        return InteractionResultHolder.consume(rifle);
     }
 
     public boolean hasAmmo(@NotNull IItemHandler handler){

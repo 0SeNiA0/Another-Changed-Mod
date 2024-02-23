@@ -78,16 +78,17 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         }
 
         if(getEnergy() < 48){
+            setActive(false);
             if(changed) update();
             return;
         }
-
         if(inventory.getStackInSlot(1).isEmpty() || !isSameLatex()
-                || inventory.getStackInSlot(1).getCount() == inventory.getSlotLimit(1)) {
+                || inventory.getStackInSlot(2).getCount() == inventory.getSlotLimit(2)) {
             if (progress > 0) {
                 progress = 0;
-                setActive(false);
+                changed = true;
             }
+            setActive(false);
         } else if(progress < MAX_PROGRESS) {
             setActive(true);
             energyStorage.consumeEnergy(48);

@@ -20,7 +20,7 @@ public class WireNetworkCache {
     private long cachedTick;
 
     public void addConsumer(@NotNull IEnergyStorage storage, @NotNull BlockEntity entity){
-        if(providers.containsKey(entity)) return;
+        if(consumers.containsKey(entity) || providers.containsKey(entity)) return;
         int i = storage.receiveEnergy(Integer.MAX_VALUE, true);
         consumers.put(entity, Pair.of(storage, i));
         totalConsume += i;
@@ -35,7 +35,7 @@ public class WireNetworkCache {
     }
 
     public void addProvider(@NotNull IEnergyStorage storage, @NotNull BlockEntity entity){
-        if(consumers.containsKey(entity)) return;
+        if(consumers.containsKey(entity) || providers.containsKey(entity)) return;
         int i = storage.extractEnergy(Integer.MAX_VALUE, true);
         providers.put(entity, Pair.of(storage, i));
         totalProvide += i;

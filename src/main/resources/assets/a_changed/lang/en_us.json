@@ -207,6 +207,7 @@
   "tooltip.a_changed.notes": "Shift right click on a wall to place a note",
   "tooltip.a_changed.syringe_rifle_air": "Enough compressed air for %1$s shots",
   "tooltip.a_changed.syringe_rifle_shots": "Syringes loaded: %1$s",
+  "tooltip.a_changed.wires": "Throughput: %1$s EU/t",
 
   "transfur.a_changed.bei_feng": "bei feng",
   "transfur.a_changed.benign": "benign",

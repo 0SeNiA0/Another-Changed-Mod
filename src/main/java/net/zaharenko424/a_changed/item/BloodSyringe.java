@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.item;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -36,7 +37,7 @@ public class BloodSyringe extends Item {
             ResourceLocation entityType = new ResourceLocation(modTag.getString("entity_type"));
             pTooltipComponents.add(Component.translatable("tooltip.a_changed.blood_syringe",
                     entityType.equals(playerType) && modTag.contains("name") ? modTag.getString("name")
-                            : BuiltInRegistries.ENTITY_TYPE.get(entityType).getDescription()));
+                            : BuiltInRegistries.ENTITY_TYPE.get(entityType).getDescription()).withStyle(ChatFormatting.DARK_RED));
         } else pTooltipComponents.add(Component.literal("Invalid tag"));
     }
 

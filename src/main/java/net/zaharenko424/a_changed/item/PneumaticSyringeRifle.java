@@ -34,7 +34,6 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
         level.playSound(null, player.blockPosition(), SoundRegistry.PNEUMATIC_RIFLE.get(), SoundSource.PLAYERS, .6f, .6f);
     }
 
-    @Override
     void appendHoverText(@NotNull ItemStack fuel, @NotNull List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.a_changed.syringe_rifle_air",
                 fuel.isEmpty() || !(fuel.getItem() instanceof CompressedAirCanister) ? 0

@@ -6,10 +6,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.capabilities.Capability;
+import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.energy.EmptyEnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.zaharenko424.a_changed.block.machines.WireBlock;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -17,9 +21,44 @@ public abstract class AbstractProxyWire extends BlockEntity {
 
     public static final int BANDWIDTH = 256;
     private WireNetworkCache networkCache;
+    private final IEnergyStorage fakeStorage;
+    private LazyOptional<IEnergyStorage> optional;
 
     public AbstractProxyWire(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
+        fakeStorage = new IEnergyStorage() {
+            @Override
+            public int receiveEnergy(int maxReceive, boolean simulate) {
+                tickNetwork();//Hopefully will make wires compatible with energy pushing things from other mods
+                return 0;
+            }
+
+            @Override
+            public int extractEnergy(int maxExtract, boolean simulate) {
+                return 0;
+            }
+
+            @Override
+            public int getEnergyStored() {
+                return 0;
+            }
+
+            @Override
+            public int getMaxEnergyStored() {
+                return 1;
+            }
+
+            @Override
+            public boolean canExtract() {
+                return false;
+            }
+
+            @Override
+            public boolean canReceive() {
+                return true;
+            }
+        };
+        optional = LazyOptional.of(()-> fakeStorage);
     }
 
     public void tickNetwork(){
@@ -91,10 +130,12 @@ public abstract class AbstractProxyWire extends BlockEntity {
     private void cacheNetwork(@NotNull WireNetworkCache cache){
         networkCache = cache;
         networkCache.addVisited(this);
+        BlockState wireState = getBlockState();
         BlockPos pos;
         BlockEntity entity;
         IEnergyStorage storage;
         for(Direction direction : Direction.values()){
+            if(!wireState.getValue(WireBlock.propByDirection.get(direction))) continue;//Eliminates pointless block checks
             pos = worldPosition.relative(direction);
             if(!level.isLoaded(pos)) continue;
             entity = level.getBlockEntity(pos);
@@ -107,5 +148,23 @@ public abstract class AbstractProxyWire extends BlockEntity {
             if(storage.canReceive()) networkCache.addConsumer(storage, entity);
             else if(storage.canExtract()) networkCache.addProvider(storage, entity);
         }
+    }
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if(cap == Capabilities.ENERGY) return optional.cast();
+        return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        optional.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        optional = LazyOptional.of(()-> fakeStorage);
     }
 }

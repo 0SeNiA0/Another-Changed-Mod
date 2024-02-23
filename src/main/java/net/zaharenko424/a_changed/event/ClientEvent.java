@@ -44,6 +44,7 @@ import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
 import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
 import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
@@ -85,6 +86,11 @@ public class ClientEvent {
 
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
             event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.books").withStyle(ChatFormatting.GRAY)));
+            return;
+        }
+
+        if(item.is(ItemRegistry.COPPER_WIRE_ITEM.get())){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.wires", 256).withStyle(ChatFormatting.GRAY)));
         }
     }
 

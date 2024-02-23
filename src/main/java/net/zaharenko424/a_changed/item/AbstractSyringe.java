@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSyringe extends Item {
     public AbstractSyringe(@NotNull Properties pProperties) {
-        super(pProperties.rarity(Rarity.UNCOMMON));
+        super(pProperties);
     }
 
     @Override

@@ -25,10 +25,6 @@ public class CreativeTabs {
                     output.accept(ORANGE_JUICE_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
-                    output.accept(WHITE_LATEX_ITEM);
-                    output.accept(DARK_LATEX_ITEM);
-                    output.accept(WHITE_LATEX_BLOCK_ITEM);
-                    output.accept(DARK_LATEX_BLOCK_ITEM);
                     output.accept(HAZARD_BLOCK_ITEM);
                     output.accept(HAZARD_LAB_BLOCK_ITEM);
                     output.accept(BLUE_LAB_TILE_ITEM);
@@ -130,15 +126,20 @@ public class CreativeTabs {
 
                     output.accept(BLACK_LATEX_SHORTS);
 
+                    output.accept(DARK_LATEX_ITEM);
+                    output.accept(WHITE_LATEX_ITEM);
+                    output.accept(DARK_LATEX_BLOCK_ITEM);
+                    output.accept(WHITE_LATEX_BLOCK_ITEM);
+
+                    output.accept(LATEX_SOLVENT_BUCKET);
+                    output.accept(WHITE_LATEX_BUCKET);
+                    output.accept(DARK_LATEX_BUCKET);
+
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
                     output.accept(UNTRANSFUR_SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
                     output.accept(LATEX_MANIPULATOR);
-
-                    output.accept(LATEX_SOLVENT_BUCKET);
-                    output.accept(WHITE_LATEX_BUCKET);
-                    output.accept(DARK_LATEX_BUCKET);
 
                     DNA_TYPE_REGISTRY.forEach(key -> output.accept(DNASample.encodeDNA(key)));
 

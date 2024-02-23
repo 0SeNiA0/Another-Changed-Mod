@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -40,11 +41,12 @@ public class SyringeProjectile extends AbstractArrow {
     @Override
     protected void onHitEntity(@NotNull EntityHitResult pResult) {
         super.onHitEntity(pResult);
-        Block.popResource(level(), blockPosition(), ItemRegistry.SYRINGE_ITEM.get().getDefaultInstance());
         Entity entity = pResult.getEntity();
+        if(entity.isInvulnerable() || (entity instanceof Player player && player.isCreative())) return;
+        Block.popResource(level(), blockPosition(), ItemRegistry.SYRINGE_ITEM.get().getDefaultInstance());
         if(transfurType == null || !DamageSources.checkTarget(entity)) return;
+        entity.hurt(DamageSources.transfur(this, getOwner()), .5f);
         LivingEntity living = (LivingEntity) entity;
-        living.hurt(DamageSources.transfur(this, getOwner()), .5f);
         TransfurEvent.ADD_TRANSFUR_DEF.accept(living, transfurType, 10f);
     }
 

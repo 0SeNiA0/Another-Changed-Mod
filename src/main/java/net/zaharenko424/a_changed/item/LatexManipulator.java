@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.item;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -54,14 +55,14 @@ public class LatexManipulator extends Item {
         }
 
         player.getCooldowns().addCooldown(this, 100);
-        return InteractionResultHolder.success(manipulator);
+        return InteractionResultHolder.consume(manipulator);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level pLevel, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pIsAdvanced) {
         CompoundTag tag = pStack.getOrCreateTag();
         if(!NBTUtils.hasModTag(tag)) return;
-        pTooltipComponents.add(Component.translatable("tooltip.a_changed.latex_manipulator", decodeTransfurType(NBTUtils.modTag(tag)).fancyName()));
+        pTooltipComponents.add(Component.translatable("tooltip.a_changed.latex_manipulator", decodeTransfurType(NBTUtils.modTag(tag)).fancyName()).withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
     private AbstractTransfurType decodeTransfurType(@NotNull CompoundTag modTag){
