@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +33,11 @@ public class Scanner extends HorizontalDirectionalBlock {
     public Scanner(Properties p_49795_) {
         super(p_49795_);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends net.minecraft.world.level.block.HorizontalDirectionalBlock> codec() {
+        return simpleCodec(Scanner::new);
     }
 
     @Override

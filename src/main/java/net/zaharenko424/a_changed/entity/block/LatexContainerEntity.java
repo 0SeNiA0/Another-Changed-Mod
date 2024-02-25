@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -12,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.item.LatexItem;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -45,7 +42,6 @@ public class LatexContainerEntity extends BlockEntity {
             setChanged();
         }
     };
-    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(()-> handler);
 
     public LatexContainerEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.LATEX_CONTAINER_ENTITY.get(), p_155229_, p_155230_);
@@ -75,19 +71,20 @@ public class LatexContainerEntity extends BlockEntity {
     public void addLatex(ItemStack item, boolean shrink){
         handler.insertItem(0,item.copyWithCount(1),false);
         if(shrink) item.shrink(1);
-        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(), Block.UPDATE_ALL);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     public ItemStack removeLatex() {
-        ItemStack item=handler.extractItem(0,1,false);
-        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),Block.UPDATE_ALL);
+        ItemStack item = handler.extractItem(0,1,false);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         return item;
     }
 
     public void onRemove(){
-        if(getLatexAmount()>=8){
-            BlockState state= isSameItem(ItemRegistry.DARK_LATEX_ITEM.asItem())?BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState():BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
-            level.setBlockAndUpdate(getBlockPos(),state);
+        if(getLatexAmount() >= 8){
+            BlockState state = isSameItem(ItemRegistry.DARK_LATEX_ITEM.asItem())
+                    ? BlockRegistry.DARK_LATEX_FLUID_BLOCK.get().defaultBlockState() : BlockRegistry.WHITE_LATEX_FLUID_BLOCK.get().defaultBlockState();
+            level.setBlockAndUpdate(getBlockPos(), state);
         }
     }
 
@@ -99,7 +96,7 @@ public class LatexContainerEntity extends BlockEntity {
 
     @Override
     public @NotNull CompoundTag getUpdateTag() {
-        CompoundTag tag=new CompoundTag();
+        CompoundTag tag = new CompoundTag();
         handler.getStackInSlot(0).save(tag);
         return tag;
     }
@@ -117,9 +114,9 @@ public class LatexContainerEntity extends BlockEntity {
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag modTag= NBTUtils.modTag(p_155245_);
+        CompoundTag modTag = NBTUtils.modTag(p_155245_);
         if(!modTag.contains("latex")) return;
-        handler.setStackInSlot(0,ItemStack.of(modTag.getCompound("latex")));
+        handler.setStackInSlot(0, ItemStack.of(modTag.getCompound("latex")));
     }
 
     @Override
@@ -129,17 +126,5 @@ public class LatexContainerEntity extends BlockEntity {
         CompoundTag item = new CompoundTag();
         handler.getStackInSlot(0).save(item);
         NBTUtils.modTag(p_187471_).put("latex",item);
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-        if(side!=null) return optional.cast();
-        return super.getCapability(cap, null);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        optional.invalidate();
     }
 }

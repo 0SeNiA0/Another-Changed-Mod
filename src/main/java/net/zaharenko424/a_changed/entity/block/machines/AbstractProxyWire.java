@@ -5,15 +5,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.energy.EmptyEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.zaharenko424.a_changed.block.machines.WireBlock;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -22,7 +18,6 @@ public abstract class AbstractProxyWire extends BlockEntity {
     public static final int BANDWIDTH = 256;
     private WireNetworkCache networkCache;
     private final IEnergyStorage fakeStorage;
-    private LazyOptional<IEnergyStorage> optional;
 
     public AbstractProxyWire(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
@@ -58,7 +53,6 @@ public abstract class AbstractProxyWire extends BlockEntity {
                 return true;
             }
         };
-        optional = LazyOptional.of(()-> fakeStorage);
     }
 
     public void tickNetwork(){
@@ -143,28 +137,14 @@ public abstract class AbstractProxyWire extends BlockEntity {
                 if(!networkCache.isVisited(wire)) wire.cacheNetwork(networkCache);
                 continue;
             }
-            if(entity == null || !entity.getCapability(Capabilities.ENERGY).isPresent()) continue;
-            storage = entity.getCapability(Capabilities.ENERGY).orElse(EmptyEnergyStorage.INSTANCE);
+            storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction);
+            if(storage == null) continue;
             if(storage.canReceive()) networkCache.addConsumer(storage, entity);
             else if(storage.canExtract()) networkCache.addProvider(storage, entity);
         }
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == Capabilities.ENERGY) return optional.cast();
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        optional.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        optional = LazyOptional.of(()-> fakeStorage);
+    public @NotNull IEnergyStorage getFakeStorage() {
+        return fakeStorage;
     }
 }

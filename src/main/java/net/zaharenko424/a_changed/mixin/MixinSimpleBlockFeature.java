@@ -9,6 +9,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.SimpleBlockFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.zaharenko424.a_changed.util.StateProperties;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +23,7 @@ public abstract class MixinSimpleBlockFeature extends Feature<SimpleBlockConfigu
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",shift = At.Shift.AFTER), method = "place", locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onPlace(FeaturePlaceContext<SimpleBlockConfiguration> p_160341_, CallbackInfoReturnable<Boolean> cir, SimpleBlockConfiguration cfg, WorldGenLevel level, BlockPos blockPos, BlockState state){
-        if(state.hasProperty(StateProperties.PART2)) level.setBlock(blockPos.above(),state.setValue(StateProperties.PART2,1),2);
+    private void onPlace(FeaturePlaceContext<SimpleBlockConfiguration> p_160341_, CallbackInfoReturnable<Boolean> cir, SimpleBlockConfiguration cfg, WorldGenLevel level, BlockPos blockPos, @NotNull BlockState state){
+        if(state.hasProperty(StateProperties.PART2)) level.setBlock(blockPos.above(), state.setValue(StateProperties.PART2,1),2);
     }
 }

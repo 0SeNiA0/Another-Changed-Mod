@@ -11,6 +11,7 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,7 +31,7 @@ public abstract class MixinPlayer extends LivingEntity {
     @Redirect(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
     public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
         if(target.level().isClientSide) return target.hurt(p_19946_, damage);
-        ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
+        ITransfurHandler handler = Utils.nonNullOrThrow(getCapability(TransfurCapability.CAPABILITY), TransfurCapability.NO_CAPABILITY_EXC);
         if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
         damage += TransfurManager.LATEX_DAMAGE_BONUS;
         if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);
@@ -46,19 +47,17 @@ public abstract class MixinPlayer extends LivingEntity {
 
     @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)
     private void onGetDimensions(Pose p_36166_, CallbackInfoReturnable<EntityDimensions> ci) {
-        getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
-            if(!handler.isTransfurred()) return;
-            ci.cancel();
-            ci.setReturnValue(handler.getTransfurType().getPoseDimensions(p_36166_));
-        });
+        ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY);
+        if(handler == null || !handler.isTransfurred()) return;
+        ci.cancel();
+        ci.setReturnValue(handler.getTransfurType().getPoseDimensions(p_36166_));
     }
 
     @Inject(at = @At("HEAD"), method = "getStandingEyeHeight", cancellable = true)
     private void onGetEyeHeight(Pose p_36259_, EntityDimensions p_36260_, CallbackInfoReturnable<Float> ci){
-        getCapability(TransfurCapability.CAPABILITY).ifPresent((handler)->{
-            if(!handler.isTransfurred()) return;
-            ci.cancel();
-            ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
-        });
+        ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY);
+        if(handler == null || !handler.isTransfurred()) return;
+        ci.cancel();
+        ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
     }
 }

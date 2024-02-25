@@ -11,15 +11,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.energy.EmptyEnergyStorage;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
-import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
+import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
@@ -33,9 +31,7 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
 
     private static final int MAX_PROGRESS = 120;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
-    private LazyOptional<RangedWrapper> inOptional = LazyOptional.of(()-> in);
     private final RangedWrapper out = new RangedWrapper(inventory, 2, 3);
-    private LazyOptional<RangedWrapper> outOptional = LazyOptional.of(()-> out);
     private int progress;
 
     public CompressorEntity(BlockPos pPos, BlockState pBlockState) {
@@ -78,8 +74,8 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
         boolean changed = false;
 
         if(!inventory.getStackInSlot(0).isEmpty()){
-            changed = energyStorage.receiveEnergyFrom(inventory.getStackInSlot(0).getCapability(Capabilities.ENERGY)
-                    .orElse(EmptyEnergyStorage.INSTANCE), energyStorage.getMaxReceive(), false) != 0;
+            changed = energyStorage.receiveEnergyFrom(inventory.getStackInSlot(0).getCapability(Capabilities.EnergyStorage.ITEM),
+                    energyStorage.getMaxReceive(), false) != 0;
         }
 
         if(getEnergy() < 32){
@@ -123,8 +119,8 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
     }
 
     @Override
-    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side) {
-        return side == Direction.DOWN ? outOptional.cast() : inOptional.cast();
+    protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
+        return (CT) (side == Direction.DOWN ? out : in);
     }
 
     @Override
@@ -137,19 +133,5 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
     void save(@NotNull CompoundTag tag) {
         super.save(tag);
         if(progress > 0) tag.putInt("progress", progress);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        inOptional.invalidate();
-        outOptional.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        inOptional = LazyOptional.of(()-> in);
-        outOptional = LazyOptional.of(()-> out);
     }
 }

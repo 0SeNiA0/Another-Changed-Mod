@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.datagen.recipe;
 
 import net.minecraft.advancements.Criterion;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
@@ -16,13 +15,11 @@ import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
-    public RecipeProvider(PackOutput p_248933_, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(p_248933_, lookupProvider);
+    public RecipeProvider(PackOutput p_248933_) {
+        super(p_248933_);
     }
 
     @Override

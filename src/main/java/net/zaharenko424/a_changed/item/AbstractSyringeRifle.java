@@ -15,11 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.EmptyHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
@@ -40,7 +38,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     public void initializeClient(@NotNull Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             @Override
-            public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack rifle) {
+            public HumanoidModel.ArmPose getArmPose(@NotNull LivingEntity entityLiving, @NotNull InteractionHand hand, @NotNull ItemStack rifle) {
                 return HumanoidModel.ArmPose.BOW_AND_ARROW;
             }
         });
@@ -52,11 +50,11 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         ItemStack rifle = player.getMainHandItem();
 
         if(player.isCrouching()){
-            NetworkHooks.openScreen((ServerPlayer) player, this);
+            player.openMenu(this);
             return InteractionResultHolder.success(rifle);
         }
 
-        IItemHandler handler = rifle.getCapability(Capabilities.ITEM_HANDLER).orElse(EmptyHandler.INSTANCE);
+        IItemHandler handler = rifle.getCapability(Capabilities.ItemHandler.ITEM);
 
         if(handler.getStackInSlot(0).isEmpty() || !hasAmmo(handler)) return InteractionResultHolder.fail(rifle);//no energy/air or ammo
 
@@ -97,7 +95,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level pLevel, @NotNull List<Component> tooltip, @NotNull TooltipFlag pIsAdvanced) {
         super.appendHoverText(stack, pLevel, tooltip, pIsAdvanced);
-        IItemHandler inventory = stack.getCapability(Capabilities.ITEM_HANDLER).orElse(EmptyHandler.INSTANCE);
+        IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
         appendHoverText(inventory.getStackInSlot(0), tooltip);
         int shots = 0;
         for(int i = 1; i < 9; i++){

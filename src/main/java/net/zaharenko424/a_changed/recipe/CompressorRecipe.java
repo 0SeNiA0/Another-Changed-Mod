@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipeCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -34,7 +33,7 @@ public class CompressorRecipe implements SimpleRecipe<Container> {
         int amount = 0;
         ItemStack item = container.getItem(1);
         for(ItemStack stack : ingredient.getItems()){
-            if(!item.equals(stack, false)) continue;
+            if(!item.equals(stack)) continue;
             amount = stack.getCount();
             break;
         }
@@ -73,7 +72,7 @@ public class CompressorRecipe implements SimpleRecipe<Container> {
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<CompressorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-                CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
+                ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
         ).apply(instance, CompressorRecipe::new));
 
         @Override

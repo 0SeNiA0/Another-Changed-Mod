@@ -9,10 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.energy.EmptyEnergyStorage;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
@@ -26,9 +24,7 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
 
     public static final int MAX_PROGRESS = 160;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
-    private LazyOptional<RangedWrapper> inOptional = LazyOptional.of(()-> in);
     private final RangedWrapper out = new RangedWrapper(inventory, 2, 3);
-    private LazyOptional<RangedWrapper> outOptional = LazyOptional.of(()-> out);
     private int progress;
 
     public LatexPurifierEntity(BlockPos pPos, BlockState pBlockState) {
@@ -73,8 +69,8 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         boolean changed = false;
 
         if(!inventory.getStackInSlot(0).isEmpty()){
-            changed = energyStorage.receiveEnergyFrom(inventory.getStackInSlot(0).getCapability(Capabilities.ENERGY)
-                    .orElse(EmptyEnergyStorage.INSTANCE), energyStorage.getMaxReceive(), false) != 0;
+            changed = energyStorage.receiveEnergyFrom(inventory.getStackInSlot(0).getCapability(Capabilities.EnergyStorage.ITEM),
+                    energyStorage.getMaxReceive(), false) != 0;
         }
 
         if(getEnergy() < 48){
@@ -119,8 +115,8 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
     }
 
     @Override
-    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side) {
-        return side == Direction.DOWN ? outOptional.cast() : inOptional.cast();
+    protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
+        return (CT) (side == Direction.DOWN ? out : in);
     }
 
     @Override
@@ -133,19 +129,5 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
     void save(@NotNull CompoundTag tag) {
         super.save(tag);
         if(progress > 0) tag.putInt("progress", progress);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        inOptional.invalidate();
-        outOptional.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        inOptional = LazyOptional.of(()-> in);
-        outOptional = LazyOptional.of(()-> out);
     }
 }

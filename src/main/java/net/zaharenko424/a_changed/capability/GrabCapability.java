@@ -12,66 +12,42 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.common.capabilities.*;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.common.util.NonNullSupplier;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.network.PacketHandler;
-import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabUpdatePacket;
-import net.zaharenko424.a_changed.network.packets.grab.ClientboundRemoteGrabUpdatePacket;
+import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
+import net.zaharenko424.a_changed.network.packets.grab.ClientboundRemoteGrabSyncPacket;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import org.jetbrains.annotations.Contract;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GrabCapability {
 
-    public static final Capability<IGrabHandler> CAPABILITY = CapabilityManager.get(new Token());
     public static final ResourceLocation KEY = AChanged.resourceLoc("grab_capability");
-    public static final NonNullSupplier<RuntimeException> NO_CAPABILITY_EXC = () -> new RuntimeException("Grab capability was expected but not found!");
+    public static final EntityCapability<IGrabHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, IGrabHandler.class);
+    public static final RuntimeException NO_CAPABILITY_EXC = new RuntimeException("Grab capability was expected but not found!");
 
-    @Contract(value = "_ -> new", pure = true)
-    public static @NotNull ICapabilityProvider createProvider(Player player) {
-        return new Provider(player);
+    public static @NotNull IGrabHandler getCapability(@NotNull Player player) {
+        return new GrabHandler(player);
     }
 
-    static class Token extends CapabilityToken<IGrabHandler>{}
+    public static @Nullable IGrabHandler of(@NotNull LivingEntity player){
+        return player.getCapability(CAPABILITY);
+    }
 
-    public static class Provider implements ICapabilitySerializable<CompoundTag> {
-
-        IGrabHandler handler;
-        LazyOptional<IGrabHandler> optional;
-
-        public Provider(Player player){
-            handler = new GrabHandler(player);
-            optional = LazyOptional.of(() -> handler);
-        }
-
-        @Override
-        public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return CAPABILITY.orEmpty(cap, optional);
-        }
-
-        @Override
-        public void deserializeNBT(CompoundTag nbt) {
-            handler.load(nbt);
-        }
-
-        @Override
-        public CompoundTag serializeNBT() {
-            return handler.save();
-        }
+    public static @NotNull IGrabHandler nonNullOf(@NotNull Player player){
+        return Utils.nonNullOrThrow(player.getCapability(CAPABILITY), NO_CAPABILITY_EXC);
     }
 
     public static class GrabHandler implements IGrabHandler {
 
         private static final int grabCooldown = 200;
         private static final int grabDuration = 100;
-        final Player player;
+        final Player player;//TODO either save data or use attachments
         LivingEntity grabbedEntity;
         Player grabbedBy;
         GrabMode mode = GrabMode.ASSIMILATE;
@@ -100,7 +76,7 @@ public class GrabCapability {
             if(!force && (!canGrab() || !mode.checkTarget(target))) return;
             grabbedEntity = target;
             if(target instanceof ServerPlayer player1) {
-                target.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).setGrabbedBy(player);
+                nonNullOf(player1).setGrabbedBy(player);
                 if(mode == GrabMode.FRIENDLY) {
                     player1.setGameMode(GameType.SPECTATOR);
                     player1.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB.get(), -1, 0, false, false));
@@ -121,7 +97,7 @@ public class GrabCapability {
             if(grabbedEntity == null) return;
             if(grabbedEntity.isAlive()){
                 if(grabbedEntity instanceof ServerPlayer player1) {
-                    grabbedEntity.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).setGrabbedBy(null);
+                    nonNullOf(player1).setGrabbedBy(null);
                     if (mode == GrabMode.FRIENDLY) {
                         player1.setCamera(null);
                         player1.setGameMode(GameType.SURVIVAL);
@@ -186,7 +162,7 @@ public class GrabCapability {
             }
 
             if(this.wantsToBeGrabbed != wantsToBeGrabbed && !wantsToBeGrabbed && grabbedBy != null){
-                IGrabHandler handler = grabbedBy.getCapability(CAPABILITY).orElseThrow(NO_CAPABILITY_EXC);
+                IGrabHandler handler = nonNullOf(grabbedBy);
                 if(!handler.grabMode().givesDebuffToTarget) handler.drop();
             }
             this.wantsToBeGrabbed = wantsToBeGrabbed;
@@ -249,17 +225,17 @@ public class GrabCapability {
             int id0 = grabbedEntity != null ? grabbedEntity.getId() : -1;
             int id1 = grabbedBy != null ? grabbedBy.getId() : -1;
 
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player),
-                    new ClientboundGrabUpdatePacket(id0, id1, mode, wantsToBeGrabbed));
-            PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(()-> player),
-                    new ClientboundRemoteGrabUpdatePacket(player.getUUID(), id0, id1, mode, wantsToBeGrabbed));
+            PacketDistributor.PLAYER.with((ServerPlayer) player)
+                    .send(new ClientboundGrabSyncPacket(id0, id1, mode, wantsToBeGrabbed));
+            PacketDistributor.TRACKING_ENTITY.with(player)
+                    .send(new ClientboundRemoteGrabSyncPacket(player.getUUID(), id0, id1, mode, wantsToBeGrabbed));
         }
 
         @Override
         public void updateRemotePlayer(@NotNull ServerPlayer packetReceiver) {
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()-> packetReceiver),
-                    new ClientboundRemoteGrabUpdatePacket(player.getUUID(), grabbedEntity != null ? grabbedEntity.getId() : -1,
-                            grabbedBy != null ? grabbedBy.getId() : -1, mode, wantsToBeGrabbed));
+            PacketDistributor.PLAYER.with(packetReceiver)
+                    .send(new ClientboundRemoteGrabSyncPacket(player.getUUID(), grabbedEntity != null ? grabbedEntity.getId() : -1,
+                    grabbedBy != null ? grabbedBy.getId() : -1, mode, wantsToBeGrabbed));
         }
     }
 }

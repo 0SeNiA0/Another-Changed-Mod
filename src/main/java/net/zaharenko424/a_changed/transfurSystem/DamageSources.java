@@ -43,7 +43,7 @@ public interface DamageSources {
     }
 
     static boolean checkTarget(Entity target){
-        return target instanceof LivingEntity entity && entity.getCapability(TransfurCapability.CAPABILITY).isPresent()
+        return target instanceof LivingEntity entity && entity.getCapability(TransfurCapability.CAPABILITY) != null
                 && (!(target instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player)));
     }
 }

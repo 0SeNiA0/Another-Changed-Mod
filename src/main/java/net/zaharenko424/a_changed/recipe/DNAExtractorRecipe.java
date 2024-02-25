@@ -6,7 +6,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipeCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -74,7 +73,7 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<DNAExtractorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 PartialNBTIngredientFix.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-                CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
+                ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
             ).apply(instance, DNAExtractorRecipe::new));
 
         @Override

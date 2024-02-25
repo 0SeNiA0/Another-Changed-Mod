@@ -1,60 +1,14 @@
 package net.zaharenko424.a_changed.capability.energy;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ItemEnergyCapability {
 
-    public static final ResourceLocation KEY = AChanged.resourceLoc("item_energy_storage");
-
-    public static class Provider implements ICapabilitySerializable<Tag> {
-
-        ExtendedEnergyStorage storage;
-        LazyOptional<ExtendedEnergyStorage> optional;
-
-        public Provider(int capacity, ItemStack item) {
-            storage = new ItemEnergyStorage(capacity, item);
-            optional = LazyOptional.of(()-> storage);
-        }
-
-        public Provider(int capacity, int maxTransfer, ItemStack item) {
-            storage = new ItemEnergyStorage(capacity, maxTransfer, item);
-            optional = LazyOptional.of(()-> storage);
-        }
-
-        public Provider(int capacity, int maxReceive, int maxExtract, ItemStack item) {
-            storage = new ItemEnergyStorage(capacity, maxReceive, maxExtract, item);
-            optional = LazyOptional.of(()-> storage);
-        }
-
-        public Provider(int capacity, int maxReceive, int maxExtract, int energy, ItemStack item) {
-            storage = new ItemEnergyStorage(capacity, maxReceive, maxExtract, energy, item);
-            optional = LazyOptional.of(()-> storage);
-        }
-
-        @Override
-        public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return Capabilities.ENERGY.orEmpty(cap, optional.cast());
-        }
-
-        @Override
-        public Tag serializeNBT() {
-            return storage.serializeNBT();
-        }
-
-        @Override
-        public void deserializeNBT(Tag nbt) {
-            storage.deserializeNBT(nbt);
-        }
+    @Contract("_, _, _ -> new")
+    public static @NotNull ItemEnergyStorage getCapability(int capacity, int maxTransfer, ItemStack item){
+        return new ItemEnergyStorage(capacity, maxTransfer, item);
     }
 
     public static class ItemEnergyStorage extends ExtendedEnergyStorage {

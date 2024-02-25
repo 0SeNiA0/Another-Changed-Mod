@@ -1,56 +1,28 @@
 package net.zaharenko424.a_changed.network.packets;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.block.KeypadEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerboundTryPasswordPacket implements SimpleMessage {
+public record ServerboundTryPasswordPacket(int[] attempt, BlockPos pos) implements CustomPacketPayload {
 
-    private final int[] attempt;
-    private final BlockPos pos;
-
-    public ServerboundTryPasswordPacket(int[] attempt, @NotNull BlockPos pos){
-        this.attempt=attempt;
-        this.pos=pos;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("try_password");
 
     public ServerboundTryPasswordPacket(@NotNull FriendlyByteBuf buffer){
-        attempt = buffer.readNbt().getIntArray("code");
-        pos = buffer.readBlockPos();
+        this(buffer.readVarIntArray(8), buffer.readBlockPos());
     }
 
     @Override
-    public void encode(@NotNull FriendlyByteBuf buffer) {
-        CompoundTag tag = new CompoundTag();
-        tag.putIntArray("code",attempt);
-        buffer.writeNbt(tag);
+    public void write(@NotNull FriendlyByteBuf buffer) {
+        buffer.writeVarIntArray(attempt);
         buffer.writeBlockPos(pos);
     }
 
     @Override
-    public void handleMainThread(NetworkEvent.@NotNull Context context) {
-        ServerPlayer sender = context.getSender();
-        if(sender == null) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
-            return;
-        }
-        if(sender.distanceToSqr(pos.getCenter()) > 64) return;
-        BlockEntity entity = sender.level().getBlockEntity(pos);
-        if(entity instanceof KeypadEntity keypad){
-            if(keypad.isCodeSet()){
-                keypad.tryCode(attempt);
-                return;
-            }
-            keypad.setCode(attempt);
-            return;
-        }
-        AChanged.LOGGER.warn("Block position does not contain KeypadEntity! (" + pos + ")");
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

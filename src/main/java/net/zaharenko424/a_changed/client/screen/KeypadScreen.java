@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.network.PacketHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.packets.ServerboundTryPasswordPacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -42,16 +42,20 @@ public class KeypadScreen extends Screen {
                 int[] code = getCode();
                 if(code.length < 4) return;
                 minecraft.setScreen(null);
-                PacketHandler.INSTANCE.sendToServer(new ServerboundTryPasswordPacket(code,pos));
+                sendPacket(code);
             }).bounds(width/2-40,height/3+30,80,20).build());
         } else {
             button = addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_attempt"), button ->{
                 minecraft.setScreen(null);
-                PacketHandler.INSTANCE.sendToServer(new ServerboundTryPasswordPacket(getCode(),pos));
+                sendPacket(getCode());
             }).bounds(width/2-40,height/3+30,80,20).build());
         }
         checkLength();
         recalculateCoordinates();
+    }
+
+    private void sendPacket(int[] code){
+        PacketDistributor.SERVER.noArg().send(new ServerboundTryPasswordPacket(code, pos));
     }
 
     private void recalculateCoordinates(){

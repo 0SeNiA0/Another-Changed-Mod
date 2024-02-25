@@ -17,7 +17,7 @@ import java.util.List;
 public class SmartSewageEntity extends BlockEntity {
 
     LivingEntity entity;
-    int tick=0;
+    int tick = 0;
 
     public SmartSewageEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.SMART_SEWAGE_ENTITY.get(), p_155229_, p_155230_);
@@ -25,21 +25,21 @@ public class SmartSewageEntity extends BlockEntity {
 
     public void tick() {
         tick++;
-        if(tick<20) return;
-        tick=0;
-        List<LivingEntity> list=level.getEntitiesOfClass(LivingEntity.class, Shapes.block().bounds().move(worldPosition.above()),
+        if(tick < 20) return;
+        tick = 0;
+        List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, Shapes.block().bounds().move(worldPosition.above()),
                 (entity)->entity.getType().is(AChanged.SEWAGE_SYSTEM_CONSUMABLE));
         if(list.isEmpty()){
             entity=null;
             return;
         }
-        if(entity!=null&&list.contains(entity)){
+        if(entity != null && list.contains(entity)){
             entity.discard();
             level.playSound(null,worldPosition, SoundRegistry.SMART_SEWAGE_CONSUME.get(), SoundSource.BLOCKS);
-            entity=null;
+            entity = null;
             return;
         }
-        entity=list.get(0);
+        entity = list.get(0);
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,2));
     }
 }

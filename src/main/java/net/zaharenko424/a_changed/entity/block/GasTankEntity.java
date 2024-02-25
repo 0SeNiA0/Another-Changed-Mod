@@ -25,13 +25,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GasTankEntity extends BlockEntity {
 
-    private static final AABB aabb=Shapes.block().bounds().inflate(3,2,3);
-    private final AABB ab=aabb.move(worldPosition.above().relative(getBlockState().getValue(GasTank.FACING),3));
-    private final Vec3 pos=worldPosition.above().getCenter();
-    private final BlockPos target=new BlockPos(0,0,0).relative(getBlockState().getValue(HorizontalDirectionalBlock.FACING));
-    private ItemStack canister=new ItemStack(ItemRegistry.GAS_TANK_ITEM.get());
-    private boolean open=false;
-    private int tick=0;
+    private static final AABB aabb = Shapes.block().bounds().inflate(3,2,3);
+    private final AABB ab = aabb.move(worldPosition.above().relative(getBlockState().getValue(GasTank.FACING),3));
+    private final Vec3 pos = worldPosition.above().getCenter();
+    private final BlockPos target = new BlockPos(0,0,0).relative(getBlockState().getValue(HorizontalDirectionalBlock.FACING));
+    private ItemStack canister = new ItemStack(ItemRegistry.GAS_TANK_ITEM.get());
+    private boolean open = false;
+    private int tick = 0;
 
     public GasTankEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.GAS_TANK_ENTITY.get(), p_155229_, p_155230_);
@@ -61,16 +61,16 @@ public class GasTankEntity extends BlockEntity {
     public void tick(){
         if(!open) return;
         tick++;
-        if(tick%2==0) ((ServerLevel)level).sendParticles(AChanged.BLUE_GAS_PARTICLE.get(),pos.x,pos.y,pos.z,0,target.getX(),target.getY(),target.getZ(),.4);
-        if(tick<20) return;
-        tick=0;
+        if(tick % 2 == 0) ((ServerLevel)level).sendParticles(AChanged.BLUE_GAS_PARTICLE.get(), pos.x, pos.y, pos.z,0, target.getX(), target.getY(), target.getZ(),.4);
+        if(tick < 20) return;
+        tick = 0;
         canister.hurt(1, level.random,null);
-        level.playSound(null,worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
-        level.getEntitiesOfClass(LivingEntity.class,ab, DamageSources::checkTarget).forEach((entity ->{
+        level.playSound(null, worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
+        level.getEntitiesOfClass(LivingEntity.class,ab, DamageSources::checkTarget).forEach((entity -> {
             if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get()) || isFullHazmat(entity)) return;
             TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.GAS_WOLF_TF.get(), 5f);
         }));
-        if(isEmpty()) open=false;
+        if(isEmpty()) open = false;
     }
 
     private boolean isFullHazmat(LivingEntity entity){

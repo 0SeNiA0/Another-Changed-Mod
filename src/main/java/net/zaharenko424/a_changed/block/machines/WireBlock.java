@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.zaharenko424.a_changed.block.blocks.ConnectedTextureBlock;
 import net.zaharenko424.a_changed.entity.block.machines.CopperWireEntity;
 import net.zaharenko424.a_changed.util.Utils;
@@ -66,8 +66,10 @@ public class WireBlock extends ConnectedTextureBlock implements EntityBlock {
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState p_60543_, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos p_60546_) {
         BlockEntity entity = level.getBlockEntity(p_60546_);
+
         return state.setValue(propByDirection.get(direction), p_60543_.is(this)
-                || entity != null && entity.getCapability(Capabilities.ENERGY).isPresent());
+                || entity != null
+                    && entity.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, p_60546_, direction.getOpposite()) != null);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class WireBlock extends ConnectedTextureBlock implements EntityBlock {
             pos.setWithOffset(context.getClickedPos(), direction);
             entity = level.getBlockEntity(pos);
             state = state.setValue(propByDirection.get(direction), level.getBlockState(pos).is(this)
-                    || entity != null && entity.getCapability(Capabilities.ENERGY).isPresent());
+                    || entity != null && level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()) != null);
         }
         return state;
     }

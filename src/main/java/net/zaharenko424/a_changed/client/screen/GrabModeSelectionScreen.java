@@ -7,12 +7,13 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +37,8 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        currentlyActive = grabMode.indexOf(minecraft.player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).grabMode());
+        currentlyActive = grabMode.indexOf(Utils.nonNullOrThrow(minecraft.player.getCapability(GrabCapability.CAPABILITY),
+                GrabCapability.NO_CAPABILITY_EXC).grabMode());
 
         int halfWidth = width / 2;
         int halfHeight = height / 2;
@@ -65,7 +67,7 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
-        PacketHandler.INSTANCE.sendToServer(new ServerboundGrabModePacket(grabMode.get(currentlyActive)));
+        PacketDistributor.SERVER.noArg().send(new ServerboundGrabModePacket(grabMode.get(currentlyActive)));
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         return true;
     }

@@ -24,15 +24,15 @@ public final class FluidRegistry {
     //Fluid types
     public static final DeferredHolder<FluidType,FluidType> LATEX_SOLVENT_TYPE = FLUID_TYPES.register("latex_solvent",() -> new FluidType(FluidType.Properties.create()) {
         @Override
-        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
-                public ResourceLocation getStillTexture() {
+                public @NotNull ResourceLocation getStillTexture() {
                     return resourceLoc("block/latex_solvent_still");
                 }
 
                 @Override
-                public ResourceLocation getFlowingTexture() {
+                public @NotNull ResourceLocation getFlowingTexture() {
                     return resourceLoc("block/latex_solvent_flowing");
                 }
             });
@@ -41,15 +41,15 @@ public final class FluidRegistry {
 
     public static final DeferredHolder<FluidType,FluidType> WHITE_LATEX_TYPE = FLUID_TYPES.register("white_latex",() -> new FluidType(FluidType.Properties.create()) {
         @Override
-        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
-                public ResourceLocation getStillTexture() {
+                public @NotNull ResourceLocation getStillTexture() {
                     return resourceLoc("block/white_latex_still");
                 }
 
                 @Override
-                public ResourceLocation getFlowingTexture() {
+                public @NotNull ResourceLocation getFlowingTexture() {
                     return resourceLoc("block/white_latex_flowing");
                 }
             });
@@ -58,15 +58,15 @@ public final class FluidRegistry {
 
     public static final DeferredHolder<FluidType,FluidType> DARK_LATEX_TYPE = FLUID_TYPES.register("dark_latex",() -> new FluidType(FluidType.Properties.create()) {
         @Override
-        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
             consumer.accept(new IClientFluidTypeExtensions(){
                 @Override
-                public ResourceLocation getStillTexture() {
+                public @NotNull ResourceLocation getStillTexture() {
                     return resourceLoc("block/dark_latex_still");
                 }
 
                 @Override
-                public ResourceLocation getFlowingTexture() {
+                public @NotNull ResourceLocation getFlowingTexture() {
                     return resourceLoc("block/dark_latex_flowing");
                 }
             });

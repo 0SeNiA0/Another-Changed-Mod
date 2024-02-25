@@ -6,10 +6,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundLatexEncoderScreenPacket;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +85,6 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
     }
 
     private void sendDataPacket(int index, int data){
-        PacketHandler.INSTANCE.sendToServer(new ServerboundLatexEncoderScreenPacket(entity.getBlockPos(), index, data));
+        PacketDistributor.SERVER.noArg().send(new ServerboundLatexEncoderScreenPacket(entity.getBlockPos(), index, data));
     }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class StandingSign extends StandingSignBlock {
 
     public StandingSign(Properties pProperties, WoodType pType) {
-        super(pProperties, pType);
+        super(pType, pProperties);
     }
 
     @Override

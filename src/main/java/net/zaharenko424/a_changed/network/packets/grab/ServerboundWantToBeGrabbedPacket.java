@@ -1,39 +1,26 @@
 package net.zaharenko424.a_changed.network.packets.grab;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.IGrabHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerboundWantToBeGrabbedPacket implements SimpleMessage {
+public record ServerboundWantToBeGrabbedPacket(boolean wantsToBeGrabbed) implements CustomPacketPayload {
 
-    private final boolean wantsToBeGrabbed;
-
-    public ServerboundWantToBeGrabbedPacket(boolean wantsToBeGrabbed){
-        this.wantsToBeGrabbed = wantsToBeGrabbed;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("want_to_be_grabbed");
 
     public ServerboundWantToBeGrabbedPacket(@NotNull FriendlyByteBuf buf){
-        wantsToBeGrabbed = buf.readBoolean();
+        this(buf.readBoolean());
     }
 
     @Override
-    public void encode(@NotNull FriendlyByteBuf buffer) {
+    public void write(@NotNull FriendlyByteBuf buffer) {
         buffer.writeBoolean(wantsToBeGrabbed);
     }
 
     @Override
-    public void handleMainThread(NetworkEvent.@NotNull Context context) {
-        ServerPlayer sender = context.getSender();
-        if(sender == null){
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
-            return;
-        }
-        IGrabHandler handler = sender.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC);
-        if(handler.wantsToBeGrabbed() != wantsToBeGrabbed) handler.setWantsToBeGrabbed(wantsToBeGrabbed);
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

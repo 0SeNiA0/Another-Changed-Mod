@@ -9,9 +9,8 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.EmptyHandler;
 import net.zaharenko424.a_changed.item.AbstractSyringeRifle;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +27,7 @@ public abstract class AbstractSyringeRifleMenu extends AbstractMenu {
         super(menuType, pContainerId);
         if(!(rifle.getItem() instanceof AbstractSyringeRifle)) throw new IllegalArgumentException("rifle must be an instance of AbstractSyringeRifle");
         this.rifle = rifle;
-        inventory = rifle.getCapability(Capabilities.ITEM_HANDLER).orElse(EmptyHandler.INSTANCE);
+        inventory = rifle.getCapability(Capabilities.ItemHandler.ITEM);
 
         createPlayerHotbar(playerInventory);
         createPlayerInventory(playerInventory);

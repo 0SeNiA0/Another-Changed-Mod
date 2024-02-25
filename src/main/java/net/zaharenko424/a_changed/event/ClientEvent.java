@@ -26,6 +26,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
@@ -42,7 +43,6 @@ import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.model.ModelCache;
 import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
 import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
@@ -97,7 +97,7 @@ public class ClientEvent {
     private static void grabLogic(Minecraft minecraft, Player player){
         if(TransfurManager.isHoldingEntity(player)){
             if(player.isCrouching()){
-                PacketHandler.INSTANCE.sendToServer(new ServerboundGrabPacket(-10));
+                PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(-10));
                 return;
             }
             return;
@@ -133,7 +133,7 @@ public class ClientEvent {
                 return;
             }
         }
-        PacketHandler.INSTANCE.sendToServer(new ServerboundGrabPacket(entity.getId()));
+        PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(entity.getId()));
     }
 
     private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,

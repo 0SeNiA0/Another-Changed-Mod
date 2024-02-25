@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.client.model.HierarchicalHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,7 +30,7 @@ public class ArrowLayer<E extends LivingEntity,M extends HierarchicalHumanoidMod
     @Override
     protected void renderStuckItem(PoseStack poseStack, MultiBufferSource buffer, int light, E entity, float x, float y, float z, float ticks) {
         float f = Mth.sqrt(x * x + z * z);
-        Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ());
+        Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ(), ItemStack.EMPTY);
         arrow.setYRot((float)(Math.atan2(x, z) * 180.0F / (float)Math.PI));
         arrow.setXRot((float)(Math.atan2(y, f) * 180.0F / (float)Math.PI));
         arrow.yRotO = arrow.getYRot();

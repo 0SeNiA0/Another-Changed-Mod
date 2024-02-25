@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.capability;
 
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,15 +9,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.common.capabilities.*;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.common.util.NonNullSupplier;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
-import org.jetbrains.annotations.Contract;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,41 +25,20 @@ import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
 public class TransfurCapability {
 
-    public static final Capability<ITransfurHandler> CAPABILITY = CapabilityManager.get(new Token());
     public static final ResourceLocation KEY = AChanged.resourceLoc("transfur_capability");
-    public static final NonNullSupplier<RuntimeException> NO_CAPABILITY_EXC = () -> new RuntimeException("Transfur capability was expected but not found!");
+    public static final EntityCapability<ITransfurHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, ITransfurHandler.class);
+    public static final RuntimeException NO_CAPABILITY_EXC = new RuntimeException("Transfur capability was expected but not found!");
 
-    @Contract("_ -> new")
-    public static @NotNull ICapabilityProvider createProvider(LivingEntity entity){
-        return new Provider(entity);
+    public static @NotNull ITransfurHandler getCapability(@NotNull LivingEntity player) {
+        return new TransfurHandler(player);
     }
 
-    static class Token extends CapabilityToken<ITransfurHandler>{}
+    public static @Nullable ITransfurHandler of(@NotNull LivingEntity entity){
+        return entity.getCapability(CAPABILITY);
+    }
 
-    public static class Provider implements ICapabilitySerializable<CompoundTag> {
-
-        ITransfurHandler handler;
-        LazyOptional<ITransfurHandler> optional;
-
-        public Provider(LivingEntity entity){
-            handler = new TransfurHandler(entity);
-            optional = LazyOptional.of(() -> handler);
-        }
-
-        @Override
-        public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return CAPABILITY.orEmpty(cap, optional);
-        }
-
-        @Override
-        public void deserializeNBT(CompoundTag tag) {
-            handler.load(tag);
-        }
-
-        @Override
-        public CompoundTag serializeNBT() {
-            return handler.save();
-        }
+    public static @NotNull ITransfurHandler nonNullOf(@NotNull LivingEntity entity){
+        return Utils.nonNullOrThrow(entity.getCapability(CAPABILITY), NO_CAPABILITY_EXC);
     }
 
     public static class TransfurHandler implements ITransfurHandler {

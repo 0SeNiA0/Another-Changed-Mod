@@ -87,7 +87,7 @@ public class LaserEmitterEntity extends BlockEntity {
         }
         lengthCache = length;
 
-        float halfLength = (float) length /2;
+        float halfLength = (float) length / 2;
         Vector3f step = directionCache.step();
         aabbCache = new AABB(worldPosition.relative(directionCache))
                 .deflate(step.x == 0 ? .25f : 0, step.y == 0 ? .25f : 0, step.z == 0 ? .25f : 0)

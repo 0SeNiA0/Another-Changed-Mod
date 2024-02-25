@@ -45,7 +45,7 @@ public class PartialNBTIngredientFix extends Ingredient {
             ItemStack stack = new ItemStack(item);
             if(tag != null && !tag.isEmpty()) stack.setTag(tag);
             return new Ingredient.ItemValue(stack);
-        }), NeoForgeMod.PARTIAL_NBT_INGREDIENT_TYPE);
+        }), NeoForgeMod.NBT_INGREDIENT_TYPE);
     }
 
     /** Creates a new ingredient matching any item from the list, containing the given NBT */

@@ -21,8 +21,8 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.ServerboundEditNotePacket;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -181,7 +181,7 @@ public class NoteScreen extends Screen {
     private void saveChanges(boolean finalize) {
         if (isModified||finalize) {
             eraseEmptyTrailingPages();
-            PacketHandler.INSTANCE.sendToServer(new ServerboundEditNotePacket(pages,notePos,finalize));
+            PacketDistributor.SERVER.noArg().send(new ServerboundEditNotePacket(pages,notePos,finalize));
         }
     }
 

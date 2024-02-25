@@ -1,17 +1,17 @@
 package net.zaharenko424.a_changed.block.machines;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +20,11 @@ public class LatexPurifier extends AbstractMachine {
 
     public LatexPurifier(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(LatexPurifier::new);
     }
 
     @Nullable
@@ -32,9 +37,7 @@ public class LatexPurifier extends AbstractMachine {
     public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
         if(player.isCrouching() || hand != InteractionHand.MAIN_HAND
                 || !(level.getBlockEntity(pos) instanceof LatexPurifierEntity purifier)) return InteractionResult.PASS;
-        if(!level.isClientSide){
-            NetworkHooks.openScreen((ServerPlayer) player, purifier, pos);
-        }
+        if(!level.isClientSide) player.openMenu(purifier, pos);
         return InteractionResult.SUCCESS;
     }
 

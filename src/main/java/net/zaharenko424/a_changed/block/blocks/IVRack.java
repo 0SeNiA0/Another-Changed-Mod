@@ -32,7 +32,7 @@ public class IVRack extends VerticalTwoBlockMultiBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return switch(state.getValue(FACING)){
             case NORTH, SOUTH -> state.getValue(PART) == 0 ? SHAPE_0N : SHAPE_1N;
             default -> state.getValue(PART) == 0 ? SHAPE_0E : SHAPE_1E;
