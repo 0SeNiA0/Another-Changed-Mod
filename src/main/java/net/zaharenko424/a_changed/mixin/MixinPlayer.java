@@ -11,7 +11,6 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +30,7 @@ public abstract class MixinPlayer extends LivingEntity {
     @Redirect(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
     public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
         if(target.level().isClientSide) return target.hurt(p_19946_, damage);
-        ITransfurHandler handler = Utils.nonNullOrThrow(getCapability(TransfurCapability.CAPABILITY), TransfurCapability.NO_CAPABILITY_EXC);
+        ITransfurHandler handler = TransfurCapability.nonNullOf(this);
         if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
         damage += TransfurManager.LATEX_DAMAGE_BONUS;
         if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);

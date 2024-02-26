@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
@@ -27,7 +28,7 @@ public class TransfurCapability {
 
     public static final ResourceLocation KEY = AChanged.resourceLoc("transfur_capability");
     public static final EntityCapability<ITransfurHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, ITransfurHandler.class);
-    public static final RuntimeException NO_CAPABILITY_EXC = new RuntimeException("Transfur capability was expected but not found!");
+    public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Transfur capability was expected but not found!");
 
     public static @NotNull ITransfurHandler getCapability(@NotNull LivingEntity player) {
         return new TransfurHandler(player);
@@ -38,7 +39,7 @@ public class TransfurCapability {
     }
 
     public static @NotNull ITransfurHandler nonNullOf(@NotNull LivingEntity entity){
-        return Utils.nonNullOrThrow(entity.getCapability(CAPABILITY), NO_CAPABILITY_EXC);
+        return Utils.nonNullOrThrow(entity.getCapability(CAPABILITY), NO_CAPABILITY_EXC.get());
     }
 
     public static class TransfurHandler implements ITransfurHandler {
@@ -60,8 +61,11 @@ public class TransfurCapability {
         static final int ticksUntilDeathTF = 400;
         int beingTransfurredTimer;
 
-        public TransfurHandler(LivingEntity entity){
-            this.entity=entity;
+        TransfurData dataHolder;
+
+        public TransfurHandler(@NotNull LivingEntity entity){
+            this.entity = entity;
+            dataHolder = entity.getData(TransfurData.TRANSFUR_DATA);
         }
 
         @Override
@@ -74,6 +78,7 @@ public class TransfurCapability {
             i0 = ticksUntilTFProgressDecrease;
             transfurProgress = amount;
             this.transfurType = transfurType;
+
         }
 
         @Override

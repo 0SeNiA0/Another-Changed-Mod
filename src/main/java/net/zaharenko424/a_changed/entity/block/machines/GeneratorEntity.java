@@ -97,17 +97,18 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
         }
 
         BlockEntity entity;
-
+        BlockPos pos;
         for(Direction direction : Direction.values()){
             if(energyStorage.isEmpty()) break;
-            entity = level.getBlockEntity(worldPosition.relative(direction));
+            pos = worldPosition.relative(direction);
+            entity = level.getBlockEntity(pos);
             if(entity == null) continue;
             if(entity instanceof AbstractProxyWire wire){
                 wire.tickNetwork();
                 continue;
             }
             if(energyStorage.transferEnergyTo(
-                    level.getCapability(Capabilities.EnergyStorage.BLOCK, worldPosition, direction.getOpposite()),
+                    level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()),
                     energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
                 changed = true;

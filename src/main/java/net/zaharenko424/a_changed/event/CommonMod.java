@@ -1,27 +1,43 @@
 package net.zaharenko424.a_changed.event;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.GrabCapability;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
+import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
+import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
 import net.zaharenko424.a_changed.network.packets.grab.*;
 import net.zaharenko424.a_changed.network.packets.transfur.*;
+import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import java.util.List;
+
 import static net.zaharenko424.a_changed.AChanged.*;
+import static net.zaharenko424.a_changed.capability.TransfurCapability.CAPABILITY;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -37,9 +53,9 @@ public class CommonMod {
 
         //Grab
         registrar.common(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleGrabSyncPacket(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handleGrabSyncPacket));
         registrar.play(ClientboundRemoteGrabSyncPacket.ID, ClientboundRemoteGrabSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemoteGrabSyncPacket(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handleRemoteGrabSyncPacket));
         registrar.play(ServerboundGrabPacket.ID, ServerboundGrabPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleGrabPacket));
 
@@ -51,13 +67,13 @@ public class CommonMod {
 
         //Transfur data
         registrar.play(ClientboundPlayerTransfurSyncPacket.ID, ClientboundPlayerTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handlePlayerTransfurSync(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handlePlayerTransfurSync));
         registrar.play(ClientboundRemotePlayerTransfurSyncPacket.ID, ClientboundRemotePlayerTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handleRemotePlayerTransfurSync));
 
         //Transfur screen
         registrar.play(ClientboundOpenTransfurScreenPacket.ID, a -> new ClientboundOpenTransfurScreenPacket(), handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenTransfurScreen()));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenTransfurScreen(context)));
         registrar.play(ServerboundTransfurChoicePacket.ID, ServerboundTransfurChoicePacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleTransfurChoicePacket));
 
@@ -67,15 +83,54 @@ public class CommonMod {
 
         //Note
         registrar.play(ClientboundOpenNotePacket.ID, ClientboundOpenNotePacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenNotePacket(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handleOpenNotePacket));
         registrar.play(ServerboundEditNotePacket.ID, ServerboundEditNotePacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleEditNotePacket));
 
         //Keypad
         registrar.play(ClientboundOpenKeypadPacket.ID, ClientboundOpenKeypadPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenKeypadPacket(packet)));
+                handler.client(ClientPacketHandler.INSTANCE::handleOpenKeypadPacket));
         registrar.play(ServerboundTryPasswordPacket.ID, ServerboundTryPasswordPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleTryPasswordPacket));
+    }
+
+    private static final List<EntityType<? extends LivingEntity>> transfurrable = List.of(EntityType.PLAYER, EntityType.ZOMBIE,
+            EntityType.SKELETON, EntityType.WITCH, EntityType.WITHER_SKELETON, EntityType.DROWNED, EntityType.PIGLIN_BRUTE,
+            EntityType.PIGLIN, EntityType.PILLAGER, EntityType.EVOKER, EntityType.HUSK, EntityType.VILLAGER, EntityType.VINDICATOR,
+            EntityType.ZOMBIE_VILLAGER, EntityType.STRAY, EntityType.ZOMBIFIED_PIGLIN, EntityType.ILLUSIONER);
+
+    @SubscribeEvent
+    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event){
+        event.registerEntity(GrabCapability.CAPABILITY, EntityType.PLAYER, (player, context) -> GrabCapability.getCapability(player));
+        for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
+            //Tag DOESN'T WORK for some reason (
+            //if(entityType.is(AChanged.TRANSFURRABLE_TAG))
+            if(transfurrable.contains(entityType))
+                event.registerEntity(CAPABILITY, entityType, (entity, context) -> entity instanceof LivingEntity living
+                        ? TransfurCapability.getCapability(living) : null);
+        }
+
+        //Item
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
+                ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
+
+        event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
+                PneumaticSyringeRifleItemHandlerCapability.getCapability(9), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+
+        //BlockEntity
+        registerMachineEntityCaps(event, BlockEntityRegistry.COMPRESSOR_ENTITY.get());
+        registerMachineEntityCaps(event, BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get());
+        registerMachineEntityCaps(event, BlockEntityRegistry.GENERATOR_ENTITY.get());
+        registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_ENCODER_ENTITY.get());
+        registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_PURIFIER_ENTITY.get());
+
+    }
+
+    private static void registerMachineEntityCaps(RegisterCapabilitiesEvent event, BlockEntityType<? extends AbstractMachineEntity<?,?>> type){
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, (machine, side) ->
+                machine.getCapability(Capabilities.ItemHandler.BLOCK, side));
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, type, (machine, side) ->
+                machine.getCapability(Capabilities.EnergyStorage.BLOCK, side));
     }
 
     @SubscribeEvent

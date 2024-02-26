@@ -4,23 +4,18 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
@@ -32,14 +27,11 @@ import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
-import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
 import net.zaharenko424.a_changed.commands.GiveDNASample;
 import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -51,8 +43,6 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static net.zaharenko424.a_changed.capability.TransfurCapability.CAPABILITY;
 
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID)
@@ -158,38 +148,6 @@ public class CommonEvent {
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event){
-        event.registerEntity(GrabCapability.CAPABILITY, EntityType.PLAYER, (player, context) -> GrabCapability.getCapability(player));
-        for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
-            if(entityType.is(AChanged.TRANSFURRABLE_TAG))
-                event.registerEntity(CAPABILITY, entityType, (entity, context) -> entity instanceof LivingEntity living
-                        ? TransfurCapability.getCapability(living) : null);
-        }
-
-        //Item
-        event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
-                ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
-
-        event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                PneumaticSyringeRifleItemHandlerCapability.getCapability(9), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
-
-        //BlockEntity
-        registerMachineEntityCaps(event, BlockEntityRegistry.COMPRESSOR_ENTITY.get());
-        registerMachineEntityCaps(event, BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get());
-        registerMachineEntityCaps(event, BlockEntityRegistry.GENERATOR_ENTITY.get());
-        registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_ENCODER_ENTITY.get());
-        registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_PURIFIER_ENTITY.get());
-
-    }
-
-    private static void registerMachineEntityCaps(RegisterCapabilitiesEvent event, BlockEntityType<? extends AbstractMachineEntity<?,?>> type){
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, (machine, side) ->
-                machine.getCapability(Capabilities.ItemHandler.BLOCK, side));
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, type, (machine, side) ->
-                machine.getCapability(Capabilities.EnergyStorage.BLOCK, side));
     }
 
     /**

@@ -25,11 +25,13 @@ import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 public class GrabCapability {
 
     public static final ResourceLocation KEY = AChanged.resourceLoc("grab_capability");
     public static final EntityCapability<IGrabHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, IGrabHandler.class);
-    public static final RuntimeException NO_CAPABILITY_EXC = new RuntimeException("Grab capability was expected but not found!");
+    public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Grab capability was expected but not found!");
 
     public static @NotNull IGrabHandler getCapability(@NotNull Player player) {
         return new GrabHandler(player);
@@ -40,7 +42,7 @@ public class GrabCapability {
     }
 
     public static @NotNull IGrabHandler nonNullOf(@NotNull Player player){
-        return Utils.nonNullOrThrow(player.getCapability(CAPABILITY), NO_CAPABILITY_EXC);
+        return Utils.nonNullOrThrow(player.getCapability(CAPABILITY), NO_CAPABILITY_EXC.get());
     }
 
     public static class GrabHandler implements IGrabHandler {

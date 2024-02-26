@@ -13,7 +13,6 @@ import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,8 +36,7 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        currentlyActive = grabMode.indexOf(Utils.nonNullOrThrow(minecraft.player.getCapability(GrabCapability.CAPABILITY),
-                GrabCapability.NO_CAPABILITY_EXC).grabMode());
+        currentlyActive = grabMode.indexOf(GrabCapability.nonNullOf(minecraft.player).grabMode());
 
         int halfWidth = width / 2;
         int halfHeight = height / 2;

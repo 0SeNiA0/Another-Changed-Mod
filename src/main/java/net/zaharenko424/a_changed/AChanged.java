@@ -17,9 +17,10 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
@@ -54,11 +55,13 @@ public class AChanged {
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
 
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
+
     //Attributes
     public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
-            () -> new RangedAttribute("attribute."+MODID+".air_decrease_speed",1,0,256));
+            () -> new RangedAttribute("attribute." + MODID + ".air_decrease_speed",1,0,256));
     public static final DeferredHolder<Attribute, Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
-            () -> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
+            () -> new RangedAttribute("attribute." + MODID + ".latex_resistance",0,0,1));
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
@@ -94,8 +97,7 @@ public class AChanged {
         return loc.withPrefix("textures/").withSuffix(".png");
     }
 
-    public AChanged() {
-        IEventBus modEventBus = NeoForge.EVENT_BUS;
+    public AChanged(IEventBus modEventBus) {
         ATTRIBUTES.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
@@ -111,5 +113,6 @@ public class AChanged {
         PARTICLE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
         SOUNDS.register(modEventBus);
+        ATTACHMENTS.register(modEventBus);
     }
 }

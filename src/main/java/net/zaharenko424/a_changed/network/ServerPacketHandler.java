@@ -113,11 +113,14 @@ public class ServerPacketHandler {
             AChanged.LOGGER.warn("Player "+sender+" tried to interact with " + clazz + " from more than 8 blocks away!");
             return;
         }
-        BlockEntity entity = sender.level().getBlockEntity(pos);
-        if(entity == null || !clazz.isAssignableFrom(entity.getClass())){
-            AChanged.LOGGER.warn("Block position does not contain " + clazz + "! (" + pos + ")");
-            return;
-        }
-        task.accept(sender, (E) entity);
+        context.workHandler().submitAsync(()->{
+            BlockEntity entity = sender.level().getBlockEntity(pos);
+            if(entity == null || !clazz.isAssignableFrom(entity.getClass())){
+                if(entity != null) AChanged.LOGGER.warn(clazz + " a "+ entity.getClass()); else AChanged.LOGGER.warn("blockEntity is null ???");
+                AChanged.LOGGER.warn("Block position does not contain " + clazz + "! (" + pos + ")");
+                return;
+            }
+            task.accept(sender, (E) entity);
+        });
     }
 }

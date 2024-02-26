@@ -7,7 +7,6 @@ import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.EntityAccessor;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,8 +32,7 @@ public abstract class MixinEntity implements EntityAccessor {
     private void onPush(Entity entity, CallbackInfo ci){
 
         if((entity instanceof Player player && TransfurManager.isGrabbed(player))
-                || (getSelf() instanceof Player player1
-                    && Utils.nonNullOrThrow(player1.getCapability(GrabCapability.CAPABILITY), GrabCapability.NO_CAPABILITY_EXC).getTarget() == entity))
+                || (getSelf() instanceof Player player1 && GrabCapability.nonNullOf(player1).getTarget() == entity))
             ci.cancel();
     }
 }
