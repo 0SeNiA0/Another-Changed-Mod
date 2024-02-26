@@ -38,8 +38,7 @@ public class ServerPacketHandler {
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
-        if(handler == null) throw GrabCapability.NO_CAPABILITY_EXC.get();
+        IGrabHandler handler = GrabCapability.nonNullOf(player);
         int targetId = packet.targetId();
         if(targetId == -10){
             handler.drop();
@@ -58,8 +57,7 @@ public class ServerPacketHandler {
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
-        if(handler == null) throw GrabCapability.NO_CAPABILITY_EXC.get();
+        IGrabHandler handler = GrabCapability.nonNullOf(player);
         if(handler.grabMode() == packet.mode()) return;
         handler.setGrabMode(packet.mode());
     }
@@ -70,8 +68,7 @@ public class ServerPacketHandler {
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
-        if(handler == null) throw GrabCapability.NO_CAPABILITY_EXC.get();
+        IGrabHandler handler = GrabCapability.nonNullOf(player);
         if(handler.wantsToBeGrabbed() != packet.wantsToBeGrabbed()) handler.setWantsToBeGrabbed(packet.wantsToBeGrabbed());
     }
 
@@ -81,8 +78,7 @@ public class ServerPacketHandler {
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
-        ITransfurHandler handler = player.getCapability(TransfurCapability.CAPABILITY);
-        if(handler == null) throw TransfurCapability.NO_CAPABILITY_EXC.get();
+        ITransfurHandler handler = TransfurCapability.nonNullOf(player);
         if(!handler.isBeingTransfurred()) return;
 
         if(packet.becomeTransfur()) TransfurEvent.TRANSFUR_TF.accept(player, handler.getTransfurType());

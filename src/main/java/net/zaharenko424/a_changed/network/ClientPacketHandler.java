@@ -37,8 +37,7 @@ public class ClientPacketHandler {
     public void handleGrabSyncPacket(ClientboundGrabSyncPacket packet){
         Player player = Minecraft.getInstance().player;
         if(player == null) return;
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
-        if(handler == null) throw GrabCapability.NO_CAPABILITY_EXC.get();
+        IGrabHandler handler = GrabCapability.nonNullOf(player);
         int targetId = packet.targetId();
         int grabbedBy = packet.grabbedBy();
         Level level = Minecraft.getInstance().level;
@@ -55,8 +54,7 @@ public class ClientPacketHandler {
     public void handleRemoteGrabSyncPacket(@NotNull ClientboundRemoteGrabSyncPacket packet){
         Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.playerId());
         if(player == null) return;
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
-        if(handler == null) throw GrabCapability.NO_CAPABILITY_EXC.get();
+        IGrabHandler handler = GrabCapability.nonNullOf(player);
         int targetId = packet.targetId();
         int grabbedBy = packet.grabbedBy();
         Level level = Minecraft.getInstance().level;
@@ -75,8 +73,7 @@ public class ClientPacketHandler {
     public void handlePlayerTransfurSync(ClientboundPlayerTransfurSyncPacket packet){
         LocalPlayer player = Minecraft.getInstance().player;
         if(player == null) return;
-        ITransfurHandler handler = player.getCapability(TransfurCapability.CAPABILITY);
-        if(handler == null) throw TransfurCapability.NO_CAPABILITY_EXC.get();
+        ITransfurHandler handler = TransfurCapability.nonNullOf(player);
         if(!packet.isTransfurred()){
             if(handler.isTransfurred()){
                 handler.unTransfur();
@@ -95,8 +92,7 @@ public class ClientPacketHandler {
             AChanged.LOGGER.warn("No player found with uuid "+playerId+"!");
             return;
         }
-        ITransfurHandler handler = player.getCapability(TransfurCapability.CAPABILITY);
-        if(handler == null) throw TransfurCapability.NO_CAPABILITY_EXC.get();
+        ITransfurHandler handler = TransfurCapability.nonNullOf(player);
         if(!packet.isTransfurred()){
             if(handler.isTransfurred()){
                 handler.unTransfur();

@@ -8,7 +8,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
@@ -61,7 +60,7 @@ public class TransfurTolerance {
         source.getLevel().getServer().getAllLevels().forEach(level->level.getAllEntities().forEach(entity->{
             if(DamageSources.checkTarget(entity)) TransfurEvent.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
-        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),new ClientboundTransfurToleranceSyncPacket());
+        PacketDistributor.ALL.noArg().send(new ClientboundTransfurToleranceSyncPacket());
         return Command.SINGLE_SUCCESS;
     }
 }

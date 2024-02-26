@@ -83,7 +83,7 @@ public class CommonEvent {
     public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
         Player player = event.getEntity();
         if(player.level().isClientSide) return;
-        IGrabHandler handler = player.getCapability(GrabCapability.CAPABILITY);
+        IGrabHandler handler = GrabCapability.of(player);
         if(handler == null) return;
         if(handler.getTarget() != null) handler.drop();
     }
@@ -91,8 +91,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(TransfurManager.isHoldingEntity(player))
-            player.getCapability(GrabCapability.CAPABILITY).drop();
+        if(TransfurManager.isHoldingEntity(player)) GrabCapability.nonNullOf(player).drop();
     }
 
     @SubscribeEvent
