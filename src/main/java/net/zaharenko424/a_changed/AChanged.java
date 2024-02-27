@@ -17,10 +17,8 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
@@ -30,6 +28,7 @@ import org.slf4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
@@ -54,8 +53,6 @@ public class AChanged {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
-
-    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
 
     //Attributes
     public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",

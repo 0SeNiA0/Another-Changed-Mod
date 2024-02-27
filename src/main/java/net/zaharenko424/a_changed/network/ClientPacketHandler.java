@@ -52,7 +52,6 @@ public class ClientPacketHandler {
             } else handler.setGrabbedBy((Player) level.getEntity(grabbedBy));
             handler.setGrabMode(packet.mode());
             handler.setWantsToBeGrabbed(packet.wantsToBeGrabbed());
-            AChanged.LOGGER.warn("wants to be grabbed? "+handler.wantsToBeGrabbed());
         });
     }
 
@@ -97,7 +96,7 @@ public class ClientPacketHandler {
             UUID playerId = packet.playerId();
             Player player = Objects.requireNonNull(Minecraft.getInstance().level).getPlayerByUUID(playerId);
             if(player == null){
-                AChanged.LOGGER.warn("No player found with uuid "+playerId+"!");
+                AChanged.LOGGER.warn("No player found with uuid " + playerId + "!");
                 return;
             }
             ITransfurHandler handler = TransfurCapability.nonNullOf(player);

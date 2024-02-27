@@ -1,7 +1,5 @@
 package net.zaharenko424.a_changed.menu;
 
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -42,14 +40,6 @@ public abstract class AbstractSyringeRifleMenu extends AbstractMenu {
             if(plInv.getItem(button).equals(rifle) || plInv.getItem(pSlotId).equals(rifle)) return;
         }
         super.clicked(pSlotId, button, clickType, player);
-    }
-
-    @Override
-    public void removed(@NotNull Player pPlayer) {
-        super.removed(pPlayer);
-        if(!(pPlayer instanceof ServerPlayer player)) return;
-        //Update rifle
-        player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, player.getInventory().findSlotMatchingItem(rifle), rifle));
     }
 
     @Override

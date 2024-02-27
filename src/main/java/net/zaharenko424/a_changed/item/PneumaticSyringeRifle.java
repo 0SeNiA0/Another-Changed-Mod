@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,11 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
 
     public PneumaticSyringeRifle() {
         super(new Properties());
+    }
+
+    @Override
+    boolean hasFuel(@NotNull ItemStack fuelStack) {
+        return super.hasFuel(fuelStack) && fuelStack.is(ItemRegistry.COMPRESSED_AIR_CANISTER);
     }
 
     @Override

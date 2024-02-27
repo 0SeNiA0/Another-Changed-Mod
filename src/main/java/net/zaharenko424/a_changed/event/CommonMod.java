@@ -17,9 +17,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
-import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
+import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
 import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
@@ -28,12 +26,12 @@ import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
 import net.zaharenko424.a_changed.network.packets.grab.*;
 import net.zaharenko424.a_changed.network.packets.transfur.*;
+import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-
 import java.util.List;
 
 import static net.zaharenko424.a_changed.AChanged.*;
@@ -101,13 +99,14 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event){
-        event.registerEntity(GrabCapability.CAPABILITY, EntityType.PLAYER, (player, context) -> GrabCapability.getCapability(player));
+        event.registerEntity(GrabCapability.CAPABILITY, EntityType.PLAYER, (player, context) ->
+                player.getData(AttachmentRegistry.GRAB_HANDLER));
         for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
             //Tag DOESN'T WORK for some reason (
             //if(entityType.is(AChanged.TRANSFURRABLE_TAG))
             if(transfurrable.contains(entityType))
                 event.registerEntity(CAPABILITY, entityType, (entity, context) -> entity instanceof LivingEntity living
-                        ? TransfurCapability.getCapability(living) : null);
+                        ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER) : null);
         }
 
         //Item
@@ -115,7 +114,7 @@ public class CommonMod {
                 ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
 
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                PneumaticSyringeRifleItemHandlerCapability.getCapability(9), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+                item.getData(AttachmentRegistry.SYRINGE_RIFLE_ITEM_HANDLER), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
 
         //BlockEntity
         registerMachineEntityCaps(event, BlockEntityRegistry.COMPRESSOR_ENTITY.get());

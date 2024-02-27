@@ -110,13 +110,12 @@ public class ServerPacketHandler {
         }
         ServerPlayer sender = (ServerPlayer) context.player().get();
         if(sender.distanceToSqr(pos.getCenter()) > 64) {
-            AChanged.LOGGER.warn("Player "+sender+" tried to interact with " + clazz + " from more than 8 blocks away!");
+            AChanged.LOGGER.warn("Player " + sender + " tried to interact with " + clazz + " from more than 8 blocks away!");
             return;
         }
         context.workHandler().submitAsync(()->{
             BlockEntity entity = sender.level().getBlockEntity(pos);
             if(entity == null || !clazz.isAssignableFrom(entity.getClass())){
-                if(entity != null) AChanged.LOGGER.warn(clazz + " a "+ entity.getClass()); else AChanged.LOGGER.warn("blockEntity is null ???");
                 AChanged.LOGGER.warn("Block position does not contain " + clazz + "! (" + pos + ")");
                 return;
             }

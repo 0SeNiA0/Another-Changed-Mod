@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -31,7 +30,6 @@ public class WantToBeGrabbedScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        AChanged.LOGGER.warn("wants to be grabbed "+ GrabCapability.nonNullOf(minecraft.player).wantsToBeGrabbed());
         currentlyActive = TransfurManager.wantsToBeGrabbed(minecraft.player) ? 0 : 1;
 
         int halfWidth = width / 2;

@@ -12,6 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
@@ -33,10 +35,6 @@ public class GrabCapability {
     public static final EntityCapability<IGrabHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, IGrabHandler.class);
     public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Grab capability was expected but not found!");
 
-    public static @NotNull IGrabHandler getCapability(@NotNull Player player) {
-        return new GrabHandler(player);
-    }
-
     public static @Nullable IGrabHandler of(@NotNull LivingEntity player){
         return player.getCapability(CAPABILITY);
     }
@@ -49,14 +47,16 @@ public class GrabCapability {
 
         private static final int grabCooldown = 200;
         private static final int grabDuration = 100;
-        final Player player;//TODO either save data or use attachments
+        private final Player player;
         LivingEntity grabbedEntity;
         Player grabbedBy;
         GrabMode mode = GrabMode.ASSIMILATE;
         boolean wantsToBeGrabbed = false;
 
-        public GrabHandler(Player player){
-            this.player = player;
+        public GrabHandler(IAttachmentHolder holder){
+            if(!(holder instanceof Player player1))
+                throw new IllegalStateException("Tried to create GrabHandler for unsupported holder: " + holder);
+            this.player = player1;
         }
 
         @Override
@@ -172,9 +172,10 @@ public class GrabCapability {
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
+        public GrabHandler load(@NotNull CompoundTag tag) {
             mode = GrabMode.valueOf(tag.getString("mode"));
             wantsToBeGrabbed = tag.getBoolean("wantToBeGrabbed");
+            return this;
         }
 
         @Override
@@ -238,6 +239,23 @@ public class GrabCapability {
             PacketDistributor.PLAYER.with(packetReceiver)
                     .send(new ClientboundRemoteGrabSyncPacket(player.getUUID(), grabbedEntity != null ? grabbedEntity.getId() : -1,
                     grabbedBy != null ? grabbedBy.getId() : -1, mode, wantsToBeGrabbed));
+        }
+    }
+
+    public static class Serializer implements IAttachmentSerializer<CompoundTag, GrabHandler> {
+
+        public static final Serializer INSTANCE = new Serializer();
+
+        private Serializer() {}
+
+        @Override
+        public @NotNull GrabHandler read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
+            return new GrabHandler(holder).load(tag);
+        }
+
+        @Override
+        public @Nullable CompoundTag write(@NotNull GrabHandler attachment) {
+            return attachment.save();
         }
     }
 }
