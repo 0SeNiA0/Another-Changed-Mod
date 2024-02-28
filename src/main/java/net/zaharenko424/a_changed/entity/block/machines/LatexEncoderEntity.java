@@ -57,7 +57,7 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
 
             @Override
             protected void onContentsChanged(int slot) {
-                setChanged();
+                update();
             }
         };
     }

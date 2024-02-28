@@ -115,7 +115,6 @@ public class JeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(ItemRegistry.DNA_EXTRACTOR_ITEM.toStack(), DNAExtractorRecipeCategory.TYPE);
         registration.addRecipeCatalyst(ItemRegistry.LATEX_ENCODER_ITEM.toStack(), LatexEncoderRecipeCategory.TYPE);
         registration.addRecipeCatalyst(ItemRegistry.LATEX_PURIFIER_ITEM.toStack(), LatexPurifierRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(ItemRegistry.SYRINGE_ITEM.toStack());
     }
 
     @Override

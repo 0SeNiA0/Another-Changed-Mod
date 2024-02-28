@@ -52,7 +52,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 
             @Override
             protected void onContentsChanged(int slot) {
-                setChanged();
+                update();
             }
         };
     }
@@ -131,7 +131,8 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     private boolean hasEnoughOutputSpace(@NotNull Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> recipes){
-        List<ItemStack> results = recipes.values().stream().map(optional -> optional.get().value().getResultItem()).toList();
+        List<ItemStack> results = recipes.values().stream().filter(Optional::isPresent)
+                .map(optional -> optional.get().value().getResultItem()).toList();
 
         List<ItemStack> outSlots = new ArrayList<>();
         for(int i = 0; i < 4; i++){
