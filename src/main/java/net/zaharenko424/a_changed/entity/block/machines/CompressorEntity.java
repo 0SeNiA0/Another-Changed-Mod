@@ -29,7 +29,7 @@ import java.util.Optional;
 
 public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
-    private static final int MAX_PROGRESS = 120;
+    public static final int MAX_PROGRESS = 120;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
     private final RangedWrapper out = new RangedWrapper(inventory, 2, 3);
     private int progress;

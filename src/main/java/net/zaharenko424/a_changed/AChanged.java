@@ -22,6 +22,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
+import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -63,10 +64,11 @@ public class AChanged {
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
-    //Recipe serializers
+    //Recipe serializers (these are actually needed)
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompressorRecipe>> COMPRESSOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("compressor", ()-> CompressorRecipe.Serializer.INSTANCE);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DNAExtractorRecipe>> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("dna_extractor", ()-> DNAExtractorRecipe.Serializer.INSTANCE);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexEncoderRecipe>> LATEX_ENCODER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_encoder", ()-> LatexEncoderRecipe.Serializer.INSTANCE);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexPurifierRecipe>> LATEX_PURIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_purifier", ()-> LatexPurifierRecipe.Serializer.INSTANCE);
 
     //Tags
     public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));

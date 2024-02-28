@@ -8,17 +8,23 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
+import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
@@ -78,35 +84,32 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
             if(changed) update();
             return;
         }
-        if(inventory.getStackInSlot(1).isEmpty() || !isSameLatex()
-                || inventory.getStackInSlot(2).getCount() == inventory.getSlotLimit(2)) {
-            if (progress > 0) {
-                progress = 0;
-                changed = true;
-            }
+
+        Optional<RecipeHolder<LatexPurifierRecipe>> recipe = getRecipe();
+        if(recipe.isEmpty() || !Utils.canStacksStack(recipe.get().value().getResultItem(), inventory.getStackInSlot(2))) {
+            if(progress != 0) progress = 0;
             setActive(false);
-        } else if(progress < MAX_PROGRESS) {
-            setActive(true);
-            energyStorage.consumeEnergy(48);
-            progress++;
-            changed = true;
-        } else if(progress == MAX_PROGRESS) {
-            progress = 0;
-            inventory.setStackInSlot(2, new ItemStack(inventory.extractItem(1, 1, false)
-                    .is(ItemRegistry.DARK_LATEX_ITEM.get()) ? ItemRegistry.DARK_LATEX_BASE.get()
-                    : ItemRegistry.WHITE_LATEX_BASE.get(), inventory.getStackInSlot(2).getCount() + 1));
-            changed = true;
+            return;
         }
 
-        if(changed) update();
+        setActive(true);
+        energyStorage.consumeEnergy(48);
+
+        if(progress < MAX_PROGRESS) {
+            progress++;
+        } else {
+            ItemStack item = recipe.get().value().assemble(container);
+            inventory.setStackInSlot(2,  item.copyWithCount(item.getCount() + inventory.getStackInSlot(2).getCount()));
+            progress = 0;
+        }
+
+        update();
     }
 
-    private boolean isSameLatex(){
-        ItemStack stack0 = inventory.getStackInSlot(1);
-        ItemStack stack1 = inventory.getStackInSlot(2);
-        if(stack1.isEmpty()) return true;
-        return stack0.is(ItemRegistry.DARK_LATEX_ITEM.get()) && stack1.is(ItemRegistry.DARK_LATEX_BASE.get())
-                || stack0.is(ItemRegistry.WHITE_LATEX_ITEM.get()) && stack1.is(ItemRegistry.WHITE_LATEX_BASE.get());
+    private final ItemHandlerContainer container = new ItemHandlerContainer(inventory);
+
+    private @NotNull Optional<RecipeHolder<LatexPurifierRecipe>> getRecipe(){
+        return level.getRecipeManager().getRecipeFor(LatexPurifierRecipe.Type.INSTANCE, container, level);
     }
 
     @Override

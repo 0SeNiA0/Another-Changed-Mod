@@ -45,15 +45,17 @@ public class CommonMod {
     public static void onRegisterPayload(RegisterPayloadHandlerEvent event){
         IPayloadRegistrar registrar = event.registrar(MODID);
 
+        //Lambda SHOULDN'T be replaced with method reference! -> server will crash
+
         //Transfur tolerance update
         registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));
 
         //Grab
         registrar.common(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handleGrabSyncPacket));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleGrabSyncPacket(packet, context)));
         registrar.play(ClientboundRemoteGrabSyncPacket.ID, ClientboundRemoteGrabSyncPacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handleRemoteGrabSyncPacket));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemoteGrabSyncPacket(packet, context)));
         registrar.play(ServerboundGrabPacket.ID, ServerboundGrabPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleGrabPacket));
 
@@ -65,9 +67,9 @@ public class CommonMod {
 
         //Transfur data
         registrar.play(ClientboundPlayerTransfurSyncPacket.ID, ClientboundPlayerTransfurSyncPacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handlePlayerTransfurSync));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handlePlayerTransfurSync(packet, context)));
         registrar.play(ClientboundRemotePlayerTransfurSyncPacket.ID, ClientboundRemotePlayerTransfurSyncPacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handleRemotePlayerTransfurSync));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet, context)));
 
         //Transfur screen
         registrar.play(ClientboundOpenTransfurScreenPacket.ID, a -> new ClientboundOpenTransfurScreenPacket(), handler ->
@@ -81,13 +83,13 @@ public class CommonMod {
 
         //Note
         registrar.play(ClientboundOpenNotePacket.ID, ClientboundOpenNotePacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handleOpenNotePacket));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenNotePacket(packet, context)));
         registrar.play(ServerboundEditNotePacket.ID, ServerboundEditNotePacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleEditNotePacket));
 
         //Keypad
         registrar.play(ClientboundOpenKeypadPacket.ID, ClientboundOpenKeypadPacket::new, handler ->
-                handler.client(ClientPacketHandler.INSTANCE::handleOpenKeypadPacket));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenKeypadPacket(packet, context)));
         registrar.play(ServerboundTryPasswordPacket.ID, ServerboundTryPasswordPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleTryPasswordPacket));
     }

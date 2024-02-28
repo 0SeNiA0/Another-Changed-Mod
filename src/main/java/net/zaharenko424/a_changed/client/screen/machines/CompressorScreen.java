@@ -6,13 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machines.CompressorEntity;
-import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
 import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class CompressorScreen extends AbstractMachineScreen<CompressorEntity, CompressorMenu> {
 
-    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/compressor");
+    public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/compressor");
 
     public CompressorScreen(CompressorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -31,6 +30,6 @@ public class CompressorScreen extends AbstractMachineScreen<CompressorEntity, Co
 
         int progress = entity.getProgress();
         if(progress > 0)
-            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 23 * progress / LatexPurifierEntity.MAX_PROGRESS, 17, 256, 166);
+            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 23 * progress / CompressorEntity.MAX_PROGRESS, 17, 256, 166);
     }
 }

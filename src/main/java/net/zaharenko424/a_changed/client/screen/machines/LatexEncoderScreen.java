@@ -12,11 +12,12 @@ import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundLatexEncoderScreenPacket;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity, LatexEncoderMenu> {
 
-    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_encoder");
+    public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_encoder");
 
     public LatexEncoderScreen(LatexEncoderMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -84,7 +85,8 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
         return super.mouseClicked(mouseX, mouseY, pButton);
     }
 
-    private void sendDataPacket(int index, int data){
+    @ApiStatus.Internal
+    public void sendDataPacket(int index, int data){
         PacketDistributor.SERVER.noArg().send(new ServerboundLatexEncoderScreenPacket(entity.getBlockPos(), index, data));
     }
 }

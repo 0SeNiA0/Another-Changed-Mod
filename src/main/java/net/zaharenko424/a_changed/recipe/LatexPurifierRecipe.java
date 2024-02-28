@@ -8,18 +8,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class CompressorRecipe extends FurnaceLikeRecipe<Container> {
+public class LatexPurifierRecipe extends FurnaceLikeRecipe<Container> {
 
-    public CompressorRecipe(Ingredient ingredient, ItemStack result) {
+    public LatexPurifierRecipe(Ingredient ingredient, ItemStack result) {
         super(ingredient, result);
-    }
-
-    @Override
-    public @NotNull ItemStack getToastSymbol() {
-        return ItemRegistry.COMPRESSOR_ITEM.get().getDefaultInstance();
     }
 
     @Override
@@ -32,32 +26,32 @@ public class CompressorRecipe extends FurnaceLikeRecipe<Container> {
         return Type.INSTANCE;
     }
 
-    public static class Serializer implements RecipeSerializer<CompressorRecipe> {
+    public static class Serializer implements RecipeSerializer<LatexPurifierRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<CompressorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        public static final Codec<LatexPurifierRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
                 ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
-        ).apply(instance, CompressorRecipe::new));
+        ).apply(instance, LatexPurifierRecipe::new));
 
         @Override
-        public @NotNull Codec<CompressorRecipe> codec() {
+        public @NotNull Codec<LatexPurifierRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public @NotNull CompressorRecipe fromNetwork(@NotNull FriendlyByteBuf friendlyByteBuf) {
-            return new CompressorRecipe(Ingredient.fromNetwork(friendlyByteBuf), friendlyByteBuf.readItem());
+        public @NotNull LatexPurifierRecipe fromNetwork(@NotNull FriendlyByteBuf friendlyByteBuf) {
+            return new LatexPurifierRecipe(Ingredient.fromNetwork(friendlyByteBuf), friendlyByteBuf.readItem());
         }
 
         @Override
-        public void toNetwork(@NotNull FriendlyByteBuf friendlyByteBuf, @NotNull CompressorRecipe recipe) {
+        public void toNetwork(@NotNull FriendlyByteBuf friendlyByteBuf, @NotNull LatexPurifierRecipe recipe) {
             recipe.ingredient.toNetwork(friendlyByteBuf);
             friendlyByteBuf.writeItem(recipe.result);
         }
     }
 
-    public static class Type implements RecipeType<CompressorRecipe> {
+    public static class Type implements RecipeType<LatexPurifierRecipe> {
         public static final Type INSTANCE = new Type();
     }
 }

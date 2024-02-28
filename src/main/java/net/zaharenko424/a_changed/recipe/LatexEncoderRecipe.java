@@ -61,6 +61,10 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
         return true;
     }
 
+    public Gender getGender(){
+        return gender;
+    }
+
     @Override
     public @NotNull ItemStack assemble(Container pContainer) {
         Ingredient ingredient;
