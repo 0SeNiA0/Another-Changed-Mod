@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 public class Crystal extends Block {
 
     private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.75,.625);
-    private static final AABB aabb=SHAPE.bounds();
+    private static final AABB aabb = SHAPE.bounds();
     private final Supplier<? extends AbstractTransfurType> transfurType;
 
     public Crystal(Properties p_49795_, Supplier<? extends AbstractTransfurType> transfurType) {
@@ -50,11 +50,11 @@ public class Crystal extends Block {
 
     @Override
     public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return canSurvive(p_60541_,p_60544_,p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
+        return canSurvive(p_60541_, p_60544_, p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
     }
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        return canSupportCenter(p_60526_,p_60527_.below(),Direction.UP);
+        return canSupportCenter(p_60526_,p_60527_.below(), Direction.UP);
     }
 }

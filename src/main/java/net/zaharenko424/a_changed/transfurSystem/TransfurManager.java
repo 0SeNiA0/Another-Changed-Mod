@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.GrabMode;
@@ -17,8 +16,6 @@ import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurT
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static net.zaharenko424.a_changed.capability.TransfurCapability.NO_CAPABILITY_EXC;
 
 
 public class TransfurManager {
@@ -32,20 +29,20 @@ public class TransfurManager {
     public static float TRANSFUR_TOLERANCE = 20;
 
     public static boolean isTransfurred(@NotNull Player player){
-        return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).isTransfurred();
+        return TransfurCapability.nonNullOf(player).isTransfurred();
     }
 
     public static boolean isBeingTransfurred(@NotNull Player player){
-        return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).isBeingTransfurred();
+        return TransfurCapability.nonNullOf(player).isBeingTransfurred();
     }
 
-    public static float getTransfurProgress(@NotNull LivingEntity player){
-        return player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(NO_CAPABILITY_EXC).getTransfurProgress();
+    public static float getTransfurProgress(@NotNull LivingEntity entity){
+        return TransfurCapability.nonNullOf(entity).getTransfurProgress();
     }
 
     public static @Nullable AbstractTransfurType getTransfurType(@NotNull Player player){
-        LazyOptional<ITransfurHandler> optional = player.getCapability(TransfurCapability.CAPABILITY);
-        return optional.isPresent() ? optional.orElseThrow(NO_CAPABILITY_EXC).getTransfurType() : null;
+        ITransfurHandler handler = TransfurCapability.of(player);
+        return handler == null ? null : handler.getTransfurType();
     }
 
     public static @Nullable AbstractTransfurType getTransfurType(@NotNull ResourceLocation transfurType){
@@ -57,19 +54,19 @@ public class TransfurManager {
     }
 
     public static boolean isHoldingEntity(@NotNull Player player){
-        return player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).getTarget() != null;
+        return GrabCapability.nonNullOf(player).getTarget() != null;
     }
 
-    public static boolean isGrabbed(@NotNull Player entity){
-        return entity.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).getGrabbedBy() != null;
+    public static boolean isGrabbed(@NotNull Player player){
+        return GrabCapability.nonNullOf(player).getGrabbedBy() != null;
     }
 
     public static GrabMode getGrabMode(@NotNull Player player){
-        return player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).grabMode();
+        return GrabCapability.nonNullOf(player).grabMode();
     }
 
     public static boolean wantsToBeGrabbed(@NotNull Player player){
-        return player.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).wantsToBeGrabbed();
+        return GrabCapability.nonNullOf(player).wantsToBeGrabbed();
     }
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(@NotNull ResourceLocation transfurType){

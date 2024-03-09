@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.capability;
 
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,64 +9,40 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.common.capabilities.*;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.common.util.NonNullSupplier;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
-import org.jetbrains.annotations.Contract;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
 public class TransfurCapability {
 
-    public static final Capability<ITransfurHandler> CAPABILITY = CapabilityManager.get(new Token());
     public static final ResourceLocation KEY = AChanged.resourceLoc("transfur_capability");
-    public static final NonNullSupplier<RuntimeException> NO_CAPABILITY_EXC = () -> new RuntimeException("Transfur capability was expected but not found!");
+    public static final EntityCapability<ITransfurHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, ITransfurHandler.class);
+    public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Transfur capability was expected but not found!");
 
-    @Contract("_ -> new")
-    public static @NotNull ICapabilityProvider createProvider(LivingEntity entity){
-        return new Provider(entity);
+    public static @Nullable ITransfurHandler of(@NotNull LivingEntity entity){
+        return entity.getCapability(CAPABILITY);
     }
 
-    static class Token extends CapabilityToken<ITransfurHandler>{}
-
-    public static class Provider implements ICapabilitySerializable<CompoundTag> {
-
-        ITransfurHandler handler;
-        LazyOptional<ITransfurHandler> optional;
-
-        public Provider(LivingEntity entity){
-            handler = new TransfurHandler(entity);
-            optional = LazyOptional.of(() -> handler);
-        }
-
-        @Override
-        public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return CAPABILITY.orEmpty(cap, optional);
-        }
-
-        @Override
-        public void deserializeNBT(CompoundTag tag) {
-            handler.load(tag);
-        }
-
-        @Override
-        public CompoundTag serializeNBT() {
-            return handler.save();
-        }
+    public static @NotNull ITransfurHandler nonNullOf(@NotNull LivingEntity entity){
+        return Utils.nonNullOrThrow(entity.getCapability(CAPABILITY), NO_CAPABILITY_EXC.get());
     }
 
     public static class TransfurHandler implements ITransfurHandler {
 
-        final LivingEntity entity;
+        private final LivingEntity entity;
         static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
         static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
         static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
@@ -84,8 +59,10 @@ public class TransfurCapability {
         static final int ticksUntilDeathTF = 400;
         int beingTransfurredTimer;
 
-        public TransfurHandler(LivingEntity entity){
-            this.entity=entity;
+        public TransfurHandler(IAttachmentHolder holder){
+            if(!(holder instanceof LivingEntity living) || !living.getType().is(AChanged.TRANSFURRABLE_TAG))
+                throw new IllegalStateException("Tried to create TransfurHandler for unsupported holder: " + holder);
+            this.entity = living;
         }
 
         @Override
@@ -98,6 +75,7 @@ public class TransfurCapability {
             i0 = ticksUntilTFProgressDecrease;
             transfurProgress = amount;
             this.transfurType = transfurType;
+
         }
 
         @Override
@@ -174,12 +152,13 @@ public class TransfurCapability {
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
+        public TransfurHandler load(@NotNull CompoundTag tag) {
             transfurProgress = tag.getFloat(TRANSFUR_PROGRESS_KEY);
             if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType = TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
-            if(entity instanceof Player) setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
             isTransfurred = tag.getBoolean(TRANSFURRED_KEY);
+            if(entity instanceof Player) setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
             if(isTransfurred()) addModifiers(entity.getAttributes());
+            return this;
         }
 
         @Override
@@ -187,8 +166,8 @@ public class TransfurCapability {
             CompoundTag tag = new CompoundTag();
             tag.putFloat(TRANSFUR_PROGRESS_KEY, transfurProgress);
             if(transfurType != null) tag.putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
-            if(entity instanceof Player) tag.putBoolean(BEING_TRANSFURRED_KEY, isBeingTransfurred);
             tag.putBoolean(TRANSFURRED_KEY, isTransfurred);
+            if(entity instanceof Player) tag.putBoolean(BEING_TRANSFURRED_KEY, isBeingTransfurred);
             return tag;
         }
 
@@ -210,6 +189,23 @@ public class TransfurCapability {
             if(entity.tickCount % ticksBetweenTFProgressDecrease != 0) return;
             transfurProgress--;
             if(entity instanceof ServerPlayer player) TransfurEvent.updatePlayer(player);
+        }
+    }
+
+    public static class Serializer implements IAttachmentSerializer<CompoundTag, TransfurHandler> {
+
+        public static final Serializer INSTANCE = new Serializer();
+
+        private Serializer(){}
+
+        @Override
+        public @NotNull TransfurHandler read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
+            return new TransfurHandler(holder).load(tag);
+        }
+
+        @Override
+        public @Nullable CompoundTag write(@NotNull TransfurHandler attachment) {
+            return attachment.save();
         }
     }
 }

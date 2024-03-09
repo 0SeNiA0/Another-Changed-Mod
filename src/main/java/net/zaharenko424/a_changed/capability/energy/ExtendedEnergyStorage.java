@@ -1,28 +1,39 @@
 package net.zaharenko424.a_changed.capability.energy;
 
-import net.neoforged.neoforge.energy.EnergyStorage;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.Tag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
 
-public class ExtendedEnergyStorage extends EnergyStorage {
+public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<Tag> {
+
+    protected int energy;
+    protected int capacity;
+    protected int maxReceive;
+    protected int maxExtract;
 
     public ExtendedEnergyStorage(int capacity) {
-        super(capacity);
+        this(capacity, capacity, capacity, 0);
     }
 
     public ExtendedEnergyStorage(int capacity, int maxTransfer) {
-        super(capacity, maxTransfer);
+        this(capacity, maxTransfer, maxTransfer, 0);
     }
 
     public ExtendedEnergyStorage(int capacity, int maxReceive, int maxExtract) {
-        super(capacity, maxReceive, maxExtract);
+        this(capacity, maxReceive, maxExtract, 0);
     }
 
     public ExtendedEnergyStorage(int capacity, int maxReceive, int maxExtract, int energy) {
-        super(capacity, maxReceive, maxExtract, energy);
+        this.capacity = capacity;
+        this.maxReceive = maxReceive;
+        this.maxExtract = maxExtract;
+        this.energy = Math.max(0, Math.min(capacity, energy));
     }
 
     public boolean isEmpty(){
-        return  energy == 0;
+        return energy == 0;
     }
 
     public boolean isFull(){
@@ -35,6 +46,19 @@ public class ExtendedEnergyStorage extends EnergyStorage {
 
     public int getMaxExtract(){
         return maxExtract;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if (maxReceive < 0 || !canReceive())
+            return 0;
+
+        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
+        if(simulate) return energyReceived;
+
+        energy += energyReceived;
+        onEnergyChanged();
+        return energyReceived;
     }
 
     /**
@@ -53,6 +77,19 @@ public class ExtendedEnergyStorage extends EnergyStorage {
         sender.extractEnergy(toSend, false);
         receiveEnergy(toSend, false);
         return toSend;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        if (maxExtract < 0 || !canExtract())
+            return 0;
+
+        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        if(simulate) return energyExtracted;
+
+        energy -= energyExtracted;
+        onEnergyChanged();
+        return energyExtracted;
     }
 
     /**
@@ -75,14 +112,36 @@ public class ExtendedEnergyStorage extends EnergyStorage {
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        if(maxReceive < 0) return 0;
-        return super.receiveEnergy(maxReceive, simulate);
+    public int getEnergyStored() {
+        return energy;
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        if(maxExtract < 0) return 0;
-        return super.extractEnergy(maxExtract, simulate);
+    public int getMaxEnergyStored() {
+        return capacity;
+    }
+
+    @Override
+    public boolean canExtract() {
+        return maxExtract > 0;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return maxReceive > 0;
+    }
+
+    public void onEnergyChanged(){}
+
+    @Override
+    public Tag serializeNBT() {
+        return IntTag.valueOf(getEnergyStored());
+    }
+
+    @Override
+    public void deserializeNBT(@NotNull Tag nbt) {
+        if (!(nbt instanceof IntTag intNbt))
+            throw new IllegalArgumentException("Tag, provided for deserialization, is not an IntTag!");
+        energy = intNbt.getAsInt();
     }
 }

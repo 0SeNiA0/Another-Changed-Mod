@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.block.blocks;
 
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -35,6 +36,11 @@ public class Computer extends HorizontalDirectionalBlock {
     public Computer(Properties p_49795_) {
         super(p_49795_);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(Computer::new);
     }
 
     @Override

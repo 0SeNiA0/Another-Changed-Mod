@@ -27,7 +27,7 @@ public interface ITransfurHandler {
 
     void setBeingTransfurred(boolean isBeingTransfurred);
 
-    void load(CompoundTag tag);
+    ITransfurHandler load(CompoundTag tag);
 
     CompoundTag save();
 

@@ -86,11 +86,17 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
     }
 
     @Override
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        pLevel.invalidateCapabilities(pPos);
+    }
+
+    @Override
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
         if(!p_60516_.isClientSide && !p_60515_.is(p_60518_.getBlock()) && p_60515_.getValue(PART) == 0){
             if(p_60516_.getBlockEntity(p_60517_) instanceof LatexContainerEntity container) container.onRemove();
         }
         super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
+        p_60516_.invalidateCapabilities(p_60517_);
     }
 
     @Nullable

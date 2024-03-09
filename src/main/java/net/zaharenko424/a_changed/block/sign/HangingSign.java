@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class HangingSign extends CeilingHangingSignBlock {
 
     public HangingSign(Properties pProperties, WoodType pType) {
-        super(pProperties, pType);
+        super(pType, pProperties);
     }
 
     @Override

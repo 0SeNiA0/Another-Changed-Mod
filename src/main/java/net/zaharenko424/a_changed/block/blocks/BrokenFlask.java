@@ -1,8 +1,10 @@
 package net.zaharenko424.a_changed.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -25,6 +27,11 @@ public class BrokenFlask extends SmallDecorBlock {
 
     public BrokenFlask(Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(BrokenFlask::new);
     }
 
     @Override

@@ -35,7 +35,7 @@ public final class DatagenEvent {
         generator.addProvider(event.includeServer(), new BiomeTagProvider(out,lookup0,helper));
         generator.addProvider(event.includeServer(), new DamageTypeTagProvider(out,lookup0,helper));
 
-        generator.addProvider(event.includeServer(), new RecipeProvider(out,lookup));
+        generator.addProvider(event.includeServer(), new RecipeProvider(out));
         generator.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(BlockLootTableProvider::new, LootContextParamSets.BLOCK),
                 new LootTableProvider.SubProviderEntry(EntityLootTableProvider::new, LootContextParamSets.ENTITY)

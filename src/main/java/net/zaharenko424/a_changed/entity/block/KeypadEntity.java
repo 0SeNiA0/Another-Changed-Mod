@@ -17,9 +17,9 @@ import static net.zaharenko424.a_changed.util.StateProperties.UNLOCKED;
 @ParametersAreNonnullByDefault
 public class KeypadEntity extends BlockEntity {
 
-    private int[] code=new int[0];
-    private boolean open=false;
-    private int ticksUntilReset=200;
+    private int[] code = new int[0];
+    private boolean open = false;
+    private int ticksUntilReset = 200;
 
     public KeypadEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.KEYPAD_ENTITY.get(), p_155229_, p_155230_);
@@ -35,10 +35,10 @@ public class KeypadEntity extends BlockEntity {
 
     public void tryCode(int[] attempt){
         if(open) return;
-        level.playSound(null,worldPosition, SoundRegistry.BUTTON_PRESSED.get(), SoundSource.BLOCKS);
+        level.playSound(null, worldPosition, SoundRegistry.BUTTON_PRESSED.get(), SoundSource.BLOCKS);
         if(Arrays.equals(code,attempt)){
-            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(UNLOCKED,true));
-            open=true;
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(UNLOCKED,true));
+            open = true;
             level.playSound(null,worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
             return;
         }
@@ -46,36 +46,36 @@ public class KeypadEntity extends BlockEntity {
     }
 
     public void setCode(int[] code){
-        if(this.code.length>0) return;
-        this.code=code;
+        if(this.code.length > 0) return;
+        this.code = code;
         setChanged();
     }
 
     public void tick(){
         if(!open) return;
         ticksUntilReset--;
-        if(ticksUntilReset==0){
-            ticksUntilReset=200;
-            open=false;
-            level.setBlockAndUpdate(worldPosition,getBlockState().setValue(UNLOCKED,false));
+        if(ticksUntilReset == 0){
+            ticksUntilReset = 200;
+            open = false;
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(UNLOCKED,false));
         }
     }
 
     @Override
     public void load(CompoundTag p_155245_) {
         super.load(p_155245_);
-        CompoundTag tag= NBTUtils.modTag(p_155245_);
-        code=tag.getIntArray("code");
-        open=tag.getBoolean("open");
-        if(tag.contains("ticks")) ticksUntilReset=tag.getInt("ticks");
+        CompoundTag tag = NBTUtils.modTag(p_155245_);
+        code = tag.getIntArray("code");
+        open = tag.getBoolean("open");
+        if(tag.contains("ticks")) ticksUntilReset = tag.getInt("ticks");
     }
 
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        CompoundTag tag= NBTUtils.modTag(p_187471_);
-        tag.putIntArray("code",code);
-        tag.putBoolean("open",open);
-        if(ticksUntilReset!=200) tag.putInt("ticks",ticksUntilReset);
+        CompoundTag tag = NBTUtils.modTag(p_187471_);
+        tag.putIntArray("code", code);
+        tag.putBoolean("open", open);
+        if(ticksUntilReset != 200) tag.putInt("ticks", ticksUntilReset);
     }
 }

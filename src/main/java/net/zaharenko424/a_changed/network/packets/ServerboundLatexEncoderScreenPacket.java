@@ -2,39 +2,32 @@ package net.zaharenko424.a_changed.network.packets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerboundLatexEncoderScreenPacket implements SimpleMessage {
+public record ServerboundLatexEncoderScreenPacket(BlockPos pos, int index, int data) implements CustomPacketPayload {
 
-    private final BlockPos pos;
-    private final int index;
-    private final int data;
-
-    public ServerboundLatexEncoderScreenPacket(@NotNull BlockPos pos, int index, int data){
-        this.pos = pos;
-        this.index = index;
-        this.data = data;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("latex_encoder_screen");
 
     public ServerboundLatexEncoderScreenPacket(@NotNull FriendlyByteBuf buf){
-        pos = buf.readBlockPos();
-        index = buf.readInt();
-        data = buf.readInt();
+        this(buf.readBlockPos(), buf.readInt(), buf.readInt());
     }
 
     @Override
-    public void encode(@NotNull FriendlyByteBuf buffer) {
+    public void write(@NotNull FriendlyByteBuf buffer) {
         buffer.writeBlockPos(pos);
         buffer.writeInt(index);
         buffer.writeInt(data);
     }
 
     @Override
+    public @NotNull ResourceLocation id() {
+        return ID;
+    }
+
+    /*@Override
     public void handleMainThread(NetworkEvent.@NotNull Context context) {
         ServerPlayer sender = context.getSender();
         if(sender == null) {
@@ -44,5 +37,5 @@ public class ServerboundLatexEncoderScreenPacket implements SimpleMessage {
         if(sender.distanceToSqr(pos.getCenter()) > 64) return;
         if(!(sender.level().getBlockEntity(pos) instanceof LatexEncoderEntity encoder)) return;
         encoder.setData(index, data);
-    }
+    }*/
 }

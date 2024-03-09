@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,6 +29,11 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock {
     public LaserEmitter(Properties p_52591_) {
         super(p_52591_);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE,false));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends DirectionalBlock> codec() {
+        return simpleCodec(LaserEmitter::new);
     }
 
     @Nullable

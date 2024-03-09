@@ -10,8 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
@@ -32,8 +31,8 @@ import java.util.Optional;
 public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
     public static final int MAX_PROGRESS = 300;
-    private LazyOptional<RangedWrapper> in = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 7));
-    private LazyOptional<RangedWrapper> out = LazyOptional.of(()-> new RangedWrapper(inventory, 7, 8));
+    private final RangedWrapper in = new RangedWrapper(inventory, 0, 7);
+    private final RangedWrapper out = new RangedWrapper(inventory, 7, 8);
     private Gender gender = Gender.FEMALE;
     private boolean enabled;
     private int progress;
@@ -58,7 +57,7 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
 
             @Override
             protected void onContentsChanged(int slot) {
-                setChanged();
+                update();
             }
         };
     }
@@ -132,8 +131,8 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side) {
-        return side == Direction.DOWN ? out.cast() : in.cast();
+    protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
+        return (CT) (side == Direction.DOWN ? out : in);
     }
 
     @Override
@@ -150,19 +149,5 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
         if(progress > 0) tag.putInt("progress", progress);
         tag.putString("selectedGender", gender.toString());
         tag.putBoolean("enabled", enabled);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        in.invalidate();
-        out.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        in = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 7));
-        out = LazyOptional.of(()-> new RangedWrapper(inventory, 7, 8));
     }
 }

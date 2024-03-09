@@ -1,45 +1,29 @@
 package net.zaharenko424.a_changed.network.packets.transfur;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ServerboundTransfurChoicePacket implements SimpleMessage {
+public record ServerboundTransfurChoicePacket(boolean becomeTransfur) implements CustomPacketPayload {
 
-    private final boolean becomeTransfur;
-
-    public ServerboundTransfurChoicePacket(boolean becomeTransfur){
-        this.becomeTransfur = becomeTransfur;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("transfur_choice");
 
     public ServerboundTransfurChoicePacket(FriendlyByteBuf buffer){
-        becomeTransfur = buffer.readBoolean();
+        this(buffer.readBoolean());
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeBoolean(becomeTransfur);
     }
 
     @Override
-    public void handleMainThread(NetworkEvent.Context context) {
-        ServerPlayer player = context.getSender();
-        if(player == null){
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
-            return;
-        }
-        ITransfurHandler handler = player.getCapability(TransfurCapability.CAPABILITY).orElseThrow(TransfurCapability.NO_CAPABILITY_EXC);
-        if(!handler.isBeingTransfurred()) return;
-
-        if(becomeTransfur) TransfurEvent.TRANSFUR_TF.accept(player, handler.getTransfurType());
-        else TransfurEvent.TRANSFUR_DEATH.accept(player, handler.getTransfurType());
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

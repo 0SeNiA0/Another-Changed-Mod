@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.network.PacketHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -33,7 +33,7 @@ public class TransfurScreen extends Screen {
     }
 
     private void sendPacket(boolean becomeTransfur){
-        PacketHandler.INSTANCE.sendToServer(new ServerboundTransfurChoicePacket(becomeTransfur));
+        PacketDistributor.SERVER.noArg().send(new ServerboundTransfurChoicePacket(becomeTransfur));
     }
 
     @Override

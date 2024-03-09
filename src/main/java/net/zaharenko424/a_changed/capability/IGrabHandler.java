@@ -31,7 +31,7 @@ public interface IGrabHandler {
 
     void setWantsToBeGrabbed(boolean wantsToBeGrabbed);
 
-    void load(CompoundTag tag);
+    IGrabHandler load(CompoundTag tag);
 
     CompoundTag save();
 

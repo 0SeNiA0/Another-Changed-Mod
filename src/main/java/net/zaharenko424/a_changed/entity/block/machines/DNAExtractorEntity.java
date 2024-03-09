@@ -12,8 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
@@ -32,13 +31,7 @@ import java.util.Optional;
 
 public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
 
-    private LazyOptional<RangedWrapper> inOptional = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 4));
-    private LazyOptional<RangedWrapper> in0 = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 1));
-    private LazyOptional<RangedWrapper> in1 = LazyOptional.of(()-> new RangedWrapper(inventory, 1, 2));
-    private LazyOptional<RangedWrapper> in2 = LazyOptional.of(()-> new RangedWrapper(inventory, 2, 3));
-    private LazyOptional<RangedWrapper> in3 = LazyOptional.of(()-> new RangedWrapper(inventory, 3, 4));
     private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
-    private LazyOptional<RangedWrapper> outOptional = LazyOptional.of(()-> output);
 
     private static final int maxProgress = 600;
     private int[] progress = new int[4];
@@ -59,7 +52,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 
             @Override
             protected void onContentsChanged(int slot) {
-                setChanged();
+                update();
             }
         };
     }
@@ -138,7 +131,8 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     private boolean hasEnoughOutputSpace(@NotNull Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> recipes){
-        List<ItemStack> results = recipes.values().stream().map(optional -> optional.get().value().getResultItem()).toList();
+        List<ItemStack> results = recipes.values().stream().filter(Optional::isPresent)
+                .map(optional -> optional.get().value().getResultItem()).toList();
 
         List<ItemStack> outSlots = new ArrayList<>();
         for(int i = 0; i < 4; i++){
@@ -188,15 +182,15 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side) {
-        if(side == null) return LazyOptional.empty();
-        return switch(side){
-            case UP -> inOptional.cast();
-            case NORTH -> in0.cast();
-            case EAST -> in1.cast();
-            case SOUTH -> in2.cast();
-            case WEST -> in3.cast();
-            case DOWN -> outOptional.cast();
+    protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
+        if(side == null) return null;
+        return (CT) switch(side){
+            case UP -> new RangedWrapper(inventory, 0, 4);
+            case NORTH -> new RangedWrapper(inventory, 0, 1);
+            case EAST -> new RangedWrapper(inventory, 1, 2);
+            case SOUTH -> new RangedWrapper(inventory, 2, 3);
+            case WEST -> new RangedWrapper(inventory, 3, 4);
+            case DOWN -> output;
         };
     }
 
@@ -216,27 +210,5 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         super.save(tag);
         tag.putIntArray("progress", progress);
         tag.putInt("rotation", rotationDeg);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        inOptional.invalidate();
-        in0.invalidate();
-        in1.invalidate();
-        in2.invalidate();
-        in3.invalidate();
-        outOptional.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        inOptional = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 4));
-        in0 = LazyOptional.of(()-> new RangedWrapper(inventory, 0, 1));
-        in1 = LazyOptional.of(()-> new RangedWrapper(inventory, 1, 2));
-        in2 = LazyOptional.of(()-> new RangedWrapper(inventory, 2, 3));
-        in3 = LazyOptional.of(()-> new RangedWrapper(inventory, 3, 4));
-        outOptional = LazyOptional.of(()-> output);
     }
 }

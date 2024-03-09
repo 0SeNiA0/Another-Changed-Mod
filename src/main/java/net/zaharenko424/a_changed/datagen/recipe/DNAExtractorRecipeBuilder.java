@@ -1,22 +1,16 @@
 package net.zaharenko424.a_changed.datagen.recipe;
 
-import com.google.gson.JsonObject;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.PartialNBTIngredientFix;
@@ -53,8 +47,8 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
                 CriteriaTriggers.INVENTORY_CHANGED
                         .createCriterion(
                                 new InventoryChangeTrigger.TriggerInstance(
-                                        Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-                                        MinMaxBounds.Ints.ANY, List.of(ItemPredicate.Builder.item().of(ingredient).build())
+                                        Optional.empty(), InventoryChangeTrigger.TriggerInstance.Slots.ANY,
+                                        List.of(ItemPredicate.Builder.item().of(ingredient).build())
                                 )
                         ));
         return this;
@@ -85,46 +79,6 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
                 .rewards(AdvancementRewards.Builder.recipe(pId))
                 .requirements(AdvancementRequirements.Strategy.OR);
         criteria.forEach(advancement$builder::addCriterion);
-        output.accept(new Finished(recipe, pId,
-                advancement$builder.build(pId.withPrefix("recipes/dna_extractor/"))));
-    }
-
-    public static class Finished implements FinishedRecipe {
-
-        private final DNAExtractorRecipe recipe;
-        private final ResourceLocation recipeId;
-        private final AdvancementHolder holder;
-
-        public Finished(DNAExtractorRecipe recipe, ResourceLocation recipeId, AdvancementHolder holder){
-            this.recipe = recipe;
-            this.recipeId = recipeId;
-            this.holder = holder;
-        }
-
-        @Override
-        public void serializeRecipeData(@NotNull JsonObject pJson) {}
-
-        @Override
-        public @NotNull JsonObject serializeRecipe() {
-            JsonObject obj = DNAExtractorRecipe.Serializer.CODEC.encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(false, null).getAsJsonObject();
-            obj.addProperty("type", AChanged.DNA_EXTRACTOR_RECIPE_SERIALIZER.getId().toString());
-            return obj;
-        }
-
-        @Override
-        public @NotNull ResourceLocation id() {
-            return recipeId;
-        }
-
-        @Override
-        public @NotNull RecipeSerializer<?> type() {
-            return DNAExtractorRecipe.Serializer.INSTANCE;
-        }
-
-        @Nullable
-        @Override
-        public AdvancementHolder advancement() {
-            return holder;
-        }
+        output.accept(pId, recipe, advancement$builder.build(pId.withPrefix("recipes/dna_extractor/")));
     }
 }

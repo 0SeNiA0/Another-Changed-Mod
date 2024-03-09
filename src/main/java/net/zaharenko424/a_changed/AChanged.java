@@ -17,18 +17,19 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
+import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
@@ -56,17 +57,18 @@ public class AChanged {
 
     //Attributes
     public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
-            () -> new RangedAttribute("attribute."+MODID+".air_decrease_speed",1,0,256));
+            () -> new RangedAttribute("attribute." + MODID + ".air_decrease_speed",1,0,256));
     public static final DeferredHolder<Attribute, Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
-            () -> new RangedAttribute("attribute."+MODID+".latex_resistance",0,0,1));
+            () -> new RangedAttribute("attribute." + MODID + ".latex_resistance",0,0,1));
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
-    //Recipe serializers
+    //Recipe serializers (these are actually needed)
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompressorRecipe>> COMPRESSOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("compressor", ()-> CompressorRecipe.Serializer.INSTANCE);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DNAExtractorRecipe>> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("dna_extractor", ()-> DNAExtractorRecipe.Serializer.INSTANCE);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexEncoderRecipe>> LATEX_ENCODER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_encoder", ()-> LatexEncoderRecipe.Serializer.INSTANCE);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexPurifierRecipe>> LATEX_PURIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_purifier", ()-> LatexPurifierRecipe.Serializer.INSTANCE);
 
     //Tags
     public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
@@ -94,8 +96,7 @@ public class AChanged {
         return loc.withPrefix("textures/").withSuffix(".png");
     }
 
-    public AChanged() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public AChanged(IEventBus modEventBus) {
         ATTRIBUTES.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
@@ -111,5 +112,6 @@ public class AChanged {
         PARTICLE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
         SOUNDS.register(modEventBus);
+        ATTACHMENTS.register(modEventBus);
     }
 }

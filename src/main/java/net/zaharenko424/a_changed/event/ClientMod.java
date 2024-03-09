@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.event;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
@@ -39,14 +38,17 @@ public class ClientMod {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
+    }
 
-        MenuScreens.register(MenuRegistry.COMPRESSOR_MENU.get(), CompressorScreen::new);
-        MenuScreens.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
-        MenuScreens.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
-        MenuScreens.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
-        MenuScreens.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
+    @SubscribeEvent
+    public static void onRegisterMenuScreens(RegisterMenuScreensEvent event){
+        event.register(MenuRegistry.COMPRESSOR_MENU.get(), CompressorScreen::new);
+        event.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
+        event.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
+        event.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
+        event.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
 
-        MenuScreens.register(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), PneumaticRifleScreen::new);
+        event.register(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), PneumaticRifleScreen::new);
     }
 
     @SubscribeEvent

@@ -3,8 +3,6 @@ package net.zaharenko424.a_changed.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -15,12 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.EmptyHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
+import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
+import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +38,10 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     public void initializeClient(@NotNull Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             @Override
-            public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack rifle) {
-                return HumanoidModel.ArmPose.BOW_AND_ARROW;
+            public HumanoidModel.ArmPose getArmPose(@NotNull LivingEntity entityLiving, @NotNull InteractionHand hand, @NotNull ItemStack rifle) {
+                PneumaticSyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler handler = rifle.getData(AttachmentRegistry.SYRINGE_RIFLE_ITEM_HANDLER);
+                return hasAmmo(handler) && hasFuel(handler.getStackInSlot(0)) ? HumanoidModel.ArmPose.BOW_AND_ARROW
+                        : HumanoidModel.ArmPose.ITEM;
             }
         });
     }
@@ -52,13 +52,13 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         ItemStack rifle = player.getMainHandItem();
 
         if(player.isCrouching()){
-            NetworkHooks.openScreen((ServerPlayer) player, this);
+            player.openMenu(this);
             return InteractionResultHolder.success(rifle);
         }
 
-        IItemHandler handler = rifle.getCapability(Capabilities.ITEM_HANDLER).orElse(EmptyHandler.INSTANCE);
+        IItemHandler handler = rifle.getCapability(Capabilities.ItemHandler.ITEM);
 
-        if(handler.getStackInSlot(0).isEmpty() || !hasAmmo(handler)) return InteractionResultHolder.fail(rifle);//no energy/air or ammo
+        if(!hasFuel(handler.getStackInSlot(0)) || !hasAmmo(handler)) return InteractionResultHolder.fail(rifle);//no energy/air or ammo
 
         if(!player.isCreative()) consumeFuel(handler);
 
@@ -68,8 +68,6 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         level.addFreshEntity(syringe);
 
         playSound(level, player);
-        //Update item so the tooltip is correct on client
-        ((ServerPlayer)player).connection.send(new ClientboundContainerSetSlotPacket(-2, 0, player.getInventory().selected, rifle));
 
         player.getCooldowns().addCooldown(rifle.getItem(), 20);
         return InteractionResultHolder.consume(rifle);
@@ -90,6 +88,10 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         return null;
     }
 
+    boolean hasFuel(@NotNull ItemStack fuelStack) {
+        return !fuelStack.isEmpty();
+    }
+
     abstract void consumeFuel(IItemHandler handler);
 
     abstract void playSound(Level level, Player player);
@@ -97,7 +99,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level pLevel, @NotNull List<Component> tooltip, @NotNull TooltipFlag pIsAdvanced) {
         super.appendHoverText(stack, pLevel, tooltip, pIsAdvanced);
-        IItemHandler inventory = stack.getCapability(Capabilities.ITEM_HANDLER).orElse(EmptyHandler.INSTANCE);
+        IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
         appendHoverText(inventory.getStackInSlot(0), tooltip);
         int shots = 0;
         for(int i = 1; i < 9; i++){

@@ -37,7 +37,7 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
     private void test(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
-        if(!pEntity.getCapability(TransfurCapability.CAPABILITY).isPresent()) return;
+        if(pEntity.getCapability(TransfurCapability.CAPABILITY) == null) return;
         float progress = TransfurManager.getTransfurProgress(pEntity);
         if(progress <= 0) return;
         pPoseStack.pushPose();

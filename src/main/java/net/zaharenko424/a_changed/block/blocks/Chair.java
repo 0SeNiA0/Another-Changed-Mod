@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -40,6 +41,11 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
     public Chair(Properties p_54120_) {
         super(p_54120_);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(Chair::new);
     }
 
     @Override

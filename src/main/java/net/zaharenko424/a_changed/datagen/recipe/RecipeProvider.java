@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.datagen.recipe;
 
 import net.minecraft.advancements.Criterion;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
@@ -16,13 +15,11 @@ import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
-    public RecipeProvider(PackOutput p_248933_, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(p_248933_, lookupProvider);
+    public RecipeProvider(PackOutput p_248933_) {
+        super(p_248933_);
     }
 
     @Override
@@ -51,10 +48,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(GOLDEN_PLATE), has(ItemTagProvider.PLATES_GOLD))
                 .save(out);
 
+
         //Compressor recipes
         new CompressorRecipeBuilder(Ingredient.of(EMPTY_CANISTER.get().getDefaultInstance()), COMPRESSED_AIR_CANISTER.get().getDefaultInstance())
                 .unlockedBy(getHasName(EMPTY_CANISTER), has(EMPTY_CANISTER))
                 .save(out);
+
 
         //DNA extractor recipes
         DNAExtractorRecipeBuilder.of(DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
@@ -103,6 +102,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
+
+        //Latex purifier recipes
+        new LatexPurifierRecipeBuilder(Ingredient.of(DARK_LATEX_ITEM.get()), DARK_LATEX_BASE.toStack())
+                .unlockedBy(getHasName(DARK_LATEX_ITEM), has(DARK_LATEX_ITEM))
+                .save(out);
+
+        new LatexPurifierRecipeBuilder(Ingredient.of(WHITE_LATEX_ITEM.get()), WHITE_LATEX_BASE.toStack())
+                .unlockedBy(getHasName(WHITE_LATEX_ITEM), has(WHITE_LATEX_ITEM))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, AIR_CONDITIONER_ITEM)

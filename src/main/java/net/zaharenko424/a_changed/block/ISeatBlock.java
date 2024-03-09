@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface ISeatBlock {
 
-    default boolean sit(@NotNull Level level,@NotNull BlockPos pos,@NotNull AABB ab,@NotNull Player player, boolean renderPlayer){
-        List<SeatEntity> list=level.getEntitiesOfClass(SeatEntity.class,ab);
+    default boolean sit(@NotNull Level level, @NotNull BlockPos pos, @NotNull AABB ab, @NotNull Player player, boolean renderPlayer){
+        List<SeatEntity> list = level.getEntitiesOfClass(SeatEntity.class, ab);
         if(list.isEmpty()){
             AChanged.LOGGER.warn("No seat entity found! Creating new");
-            SeatEntity seat=new SeatEntity(level,pos,renderPlayer);
+            SeatEntity seat = new SeatEntity(level, pos, renderPlayer);
             level.addFreshEntity(seat);
             list.add(seat);
         }

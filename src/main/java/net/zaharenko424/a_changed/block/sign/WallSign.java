@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class WallSign extends WallSignBlock {
 
     public WallSign(Properties pProperties, WoodType pType) {
-        super(pProperties, pType);
+        super(pType, pProperties);
     }
 
     @Override

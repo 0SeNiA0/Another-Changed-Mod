@@ -1,58 +1,33 @@
 package net.zaharenko424.a_changed.network.packets;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.a_changed.client.screen.NoteScreen;
-import net.zaharenko424.a_changed.util.NBTUtils;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
 @ParametersAreNonnullByDefault
-public class ClientboundOpenNotePacket implements SimpleMessage {
+public record ClientboundOpenNotePacket(List<String> text, BlockPos pos, boolean finalized, int guiId) implements CustomPacketPayload {
 
-    private final List<String> text;
-    private final BlockPos notePos;
-    private final boolean finalized;
-    private final int guiId;
-
-    public ClientboundOpenNotePacket(List<String> text, BlockPos notePos, boolean isFinalized, int guiId){
-        this.text=text;
-        this.notePos=notePos;
-        finalized=isFinalized;
-        this.guiId=guiId;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("open_note");
 
     public ClientboundOpenNotePacket(FriendlyByteBuf buffer){
-        text=new ArrayList<>();
-        NBTUtils.readFromTag(buffer.readNbt(),text);
-        notePos=buffer.readBlockPos();
-        finalized=buffer.readBoolean();
-        guiId=buffer.readInt();
+        this(buffer.readList(FriendlyByteBuf::readUtf), buffer.readBlockPos(), buffer.readBoolean(), buffer.readByte());
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        CompoundTag tag=new CompoundTag();
-        NBTUtils.writeToTag(tag,text);
-        buffer.writeNbt(tag);
-        buffer.writeBlockPos(notePos);
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeCollection(text, FriendlyByteBuf::writeUtf);
+        buffer.writeBlockPos(pos);
         buffer.writeBoolean(finalized);
-        buffer.writeInt(guiId);
+        buffer.writeByte(guiId);
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void handleMainThread(NetworkEvent.Context context) {
-        LocalPlayer player= Minecraft.getInstance().player;
-        if(player==null) return;
-        Minecraft.getInstance().setScreen(new NoteScreen(notePos,text,finalized,guiId));
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

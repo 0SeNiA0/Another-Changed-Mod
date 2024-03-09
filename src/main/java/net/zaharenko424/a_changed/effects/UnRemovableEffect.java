@@ -2,9 +2,11 @@ package net.zaharenko424.a_changed.effects;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.neoforged.neoforge.common.EffectCure;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Set;
 
 public class UnRemovableEffect extends MobEffect {
 
@@ -13,7 +15,5 @@ public class UnRemovableEffect extends MobEffect {
     }
 
     @Override
-    public List<ItemStack> getCurativeItems() {
-        return List.of();
-    }
+    public void fillEffectCures(@NotNull Set<EffectCure> cures, @NotNull MobEffectInstance effectInstance) {}
 }

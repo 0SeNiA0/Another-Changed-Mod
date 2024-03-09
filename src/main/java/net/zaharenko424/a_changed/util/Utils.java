@@ -31,6 +31,12 @@ public class Utils {
         return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
     }
 
+    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
+    public static <T> @NotNull T nonNullOrThrow(@Nullable T obj, RuntimeException exc) {
+        if(obj == null) throw exc;
+        return obj;
+    }
+
     public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
         if(stackWith.isEmpty()) return true;
         return stackWith.getCount() < stackWith.getMaxStackSize() && ItemHandlerHelper.canItemStacksStack(stack, stackWith);
@@ -123,7 +129,7 @@ public class Utils {
     public static boolean test(ItemStack stack, Ingredient ingredient){
         if(stack == null) return false;
         for(ItemStack itemstack : ingredient.getItems()) {
-            if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areCapsCompatible(itemstack)) {
+            if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areAttachmentsCompatible(itemstack)) {
                 return true;
             }
         }

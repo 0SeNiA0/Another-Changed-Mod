@@ -38,7 +38,7 @@ public abstract class NotRotatedMultiBlock extends Block {
 
     @Override
     public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return canSurvive(p_60541_,p_60544_,p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
+        return canSurvive(p_60541_, p_60544_, p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
     }
 
     @Nullable

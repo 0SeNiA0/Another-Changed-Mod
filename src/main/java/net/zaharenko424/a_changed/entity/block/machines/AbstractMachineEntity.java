@@ -12,9 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +24,7 @@ import static net.zaharenko424.a_changed.util.StateProperties.ACTIVE;
 public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET extends ExtendedEnergyStorage> extends BlockEntity implements MenuProvider {
 
     protected final IT inventory;
-    protected LazyOptional<IT> invOptional;
-
     protected final ET energyStorage;
-    protected LazyOptional<ET> energyOptional;
 
     public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
@@ -71,7 +67,7 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
     }
 
     public static boolean checkItemEnergyCap(@NotNull ItemStack stack){
-        return stack.getCapability(Capabilities.ENERGY).isPresent();
+        return stack.getCapability(Capabilities.EnergyStorage.ITEM) != null;
     }
 
     @Nullable
@@ -109,38 +105,21 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
         tag.put("energyStorage", energyStorage.serializeNBT());
     }
 
-    @Override
-    public @NotNull <CT> LazyOptional<CT> getCapability(@NotNull Capability<CT> cap, @Nullable Direction side) {
-        if(cap == Capabilities.ITEM_HANDLER){
+    public @Nullable <CT> CT getCapability(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
+        if(cap == Capabilities.ItemHandler.BLOCK){
             return getItemCap(cap, side);
         }
-        if(cap == Capabilities.ENERGY){
+        if(cap == Capabilities.EnergyStorage.BLOCK){
             return getEnergyCap(cap, side);
         }
-        return super.getCapability(cap, side);
+        return null;
     }
 
-    protected <CT> LazyOptional<CT> getItemCap(@NotNull Capability<CT> cap, @Nullable Direction side){
-        if(invOptional == null) invOptional = LazyOptional.of(()-> inventory);
-        return invOptional.cast();
+    protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side){
+        return (CT) inventory;
     }
 
-    protected <CT> LazyOptional<CT> getEnergyCap(@NotNull Capability<CT> cap, @Nullable Direction side){
-        if(energyOptional == null) energyOptional = LazyOptional.of(()-> energyStorage);
-        return energyOptional.cast();
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        if(invOptional != null) invOptional.invalidate();
-        if(energyOptional != null) energyOptional.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        if(invOptional != null) invOptional = LazyOptional.of(()-> inventory);
-        if(energyOptional != null) energyOptional = LazyOptional.of(()-> energyStorage);
+    protected <CT> CT getEnergyCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side){
+        return (CT) energyStorage;
     }
 }

@@ -7,9 +7,9 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.network.PacketHandler;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public class WantToBeGrabbedScreen extends AbstractRadialMenuScreen {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
-        PacketHandler.INSTANCE.sendToServer(new ServerboundWantToBeGrabbedPacket(currentlyActive == 0));
+        PacketDistributor.SERVER.noArg().send(new ServerboundWantToBeGrabbedPacket(currentlyActive == 0));
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         return true;
     }

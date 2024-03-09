@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -37,6 +38,11 @@ public class DangerSign extends HorizontalDirectionalBlock {
     public DangerSign(Properties p_54120_) {
         super(p_54120_);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends net.minecraft.world.level.block.HorizontalDirectionalBlock> codec() {
+        return simpleCodec(DangerSign::new);
     }
 
     @Override

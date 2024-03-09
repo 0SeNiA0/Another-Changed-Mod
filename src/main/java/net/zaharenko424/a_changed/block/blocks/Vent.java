@@ -5,5 +5,4 @@ public class Vent extends ConnectedTextureBlock {
     public Vent(Properties pProperties) {
         super(pProperties);
     }
-
 }

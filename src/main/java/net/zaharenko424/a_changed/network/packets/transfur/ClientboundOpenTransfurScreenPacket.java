@@ -1,28 +1,20 @@
 package net.zaharenko424.a_changed.network.packets.transfur;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.a_changed.client.screen.TransfurScreen;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.NotNull;
 
-public class ClientboundOpenTransfurScreenPacket implements SimpleMessage {
+public record ClientboundOpenTransfurScreenPacket() implements CustomPacketPayload {
 
-    public ClientboundOpenTransfurScreenPacket(){}
-
-    public ClientboundOpenTransfurScreenPacket(FriendlyByteBuf buffer){}
+    public static final ResourceLocation ID = AChanged.resourceLoc("open_transfur_screen");
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {}
+    public void write(@NotNull FriendlyByteBuf buffer) {}
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void handleMainThread(NetworkEvent.Context context) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if(player == null) return;
-        Minecraft.getInstance().setScreen(new TransfurScreen());
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

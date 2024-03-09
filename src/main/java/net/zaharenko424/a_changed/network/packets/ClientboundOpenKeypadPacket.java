@@ -1,46 +1,32 @@
 package net.zaharenko424.a_changed.network.packets;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.SimpleMessage;
-import net.zaharenko424.a_changed.client.screen.KeypadScreen;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.zaharenko424.a_changed.AChanged;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ClientboundOpenKeypadPacket implements SimpleMessage {
+public record ClientboundOpenKeypadPacket(boolean isPasswordSet, int length, BlockPos pos) implements CustomPacketPayload {
 
-    private final boolean isPasswordSet;
-    private final int length;
-    private final BlockPos pos;
-
-    public ClientboundOpenKeypadPacket(boolean isPasswordSet, int length, BlockPos pos){
-        this.isPasswordSet=isPasswordSet;
-        this.length=length;
-        this.pos=pos;
-    }
+    public static final ResourceLocation ID = AChanged.resourceLoc("open_keypad");
 
     public ClientboundOpenKeypadPacket(FriendlyByteBuf buffer){
-        isPasswordSet=buffer.readBoolean();
-        length=buffer.readInt();
-        pos=buffer.readBlockPos();
+        this(buffer.readBoolean(), buffer.readInt(), buffer.readBlockPos());
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeBoolean(isPasswordSet);
         buffer.writeInt(length);
         buffer.writeBlockPos(pos);
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void handleMainThread(NetworkEvent.Context context) {
-        if(Minecraft.getInstance().player==null) return;
-        Minecraft.getInstance().setScreen(new KeypadScreen(isPasswordSet,length,pos));
+    public @NotNull ResourceLocation id() {
+        return ID;
     }
 }

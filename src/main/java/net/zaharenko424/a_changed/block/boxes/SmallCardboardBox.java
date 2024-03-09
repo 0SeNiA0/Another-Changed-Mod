@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.block.boxes;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -23,7 +25,6 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.entity.block.BoxPileEntity;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,11 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
     public SmallCardboardBox(Properties p_54120_) {
         super(p_54120_);
         registerDefaultState(defaultBlockState().setValue(BOX_AMOUNT, 1));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(SmallCardboardBox::new);
     }
 
     @Nullable

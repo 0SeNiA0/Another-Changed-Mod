@@ -29,27 +29,7 @@ import java.util.Map;
 @SuppressWarnings("deprecation")
 public class Pipe extends Block {
 
-    private static final VoxelShape SHAPE_N = Shapes.or(Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 0.500625),
-            Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 0.5),
-            Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 0.5),
-            Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 0.5),
-            Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 0.5));
-    private static final VoxelShape SHAPE_NE = Shapes.or(Shapes.box(0.436875, 0.374375, 0.374375, 1.000625, 0.625625, 0.625625),
-            Shapes.box(0.5, 0.6, 0.4375, 1, 0.6625, 0.5625),
-            Shapes.box(0.5, 0.3375, 0.4375, 1, 0.4, 0.5625),
-            Shapes.box(0.625, 0.4375, 0.3375, 1, 0.5625, 0.4),
-            Shapes.box(0.5, 0.4375, 0.6, 1, 0.5625, 0.6625),
-            Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 0.375),
-            Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 0.5),
-            Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 0.5),
-            Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 0.5),
-            Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 0.563125),
-            Shapes.box(0.39375, 0.40625, 0.54375, 0.45625, 0.59375, 0.60625));
-    private static final VoxelShape SHAPE_NS = Shapes.or(Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 1.000625),
-            Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 1),
-            Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 1),
-            Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 1),
-            Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 1));
+    private static final VoxelShape SHAPE_N, SHAPE_NE, SHAPE_NS;
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
@@ -146,5 +126,29 @@ public class Pipe extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
         p_49915_.add(NORTH, EAST, SOUTH, WEST);
+    }
+
+    static {
+        SHAPE_N = Shapes.or(Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 0.500625),
+                Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 0.5),
+                Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 0.5),
+                Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 0.5),
+                Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 0.5));
+        SHAPE_NE = Shapes.or(Shapes.box(0.436875, 0.374375, 0.374375, 1.000625, 0.625625, 0.625625),
+                Shapes.box(0.5, 0.6, 0.4375, 1, 0.6625, 0.5625),
+                Shapes.box(0.5, 0.3375, 0.4375, 1, 0.4, 0.5625),
+                Shapes.box(0.625, 0.4375, 0.3375, 1, 0.5625, 0.4),
+                Shapes.box(0.5, 0.4375, 0.6, 1, 0.5625, 0.6625),
+                Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 0.375),
+                Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 0.5),
+                Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 0.5),
+                Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 0.5),
+                Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 0.563125),
+                Shapes.box(0.39375, 0.40625, 0.54375, 0.45625, 0.59375, 0.60625));
+        SHAPE_NS = Shapes.or(Shapes.box(0.374375, 0.374375, -0.000625, 0.625625, 0.625625, 1.000625),
+                Shapes.box(0.4375, 0.6, 0, 0.5625, 0.6625, 1),
+                Shapes.box(0.4375, 0.3375, 0, 0.5625, 0.4, 1),
+                Shapes.box(0.6, 0.4375, 0, 0.6625, 0.5625, 1),
+                Shapes.box(0.3375, 0.4375, 0, 0.4, 0.5625, 1));
     }
 }

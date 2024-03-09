@@ -30,8 +30,9 @@ public abstract class MixinEntity implements EntityAccessor {
 
     @Inject(at = @At("HEAD"), method = "push(Lnet/minecraft/world/entity/Entity;)V", cancellable = true)
     private void onPush(Entity entity, CallbackInfo ci){
+
         if((entity instanceof Player player && TransfurManager.isGrabbed(player))
-                || (getSelf() instanceof Player player1 && player1.getCapability(GrabCapability.CAPABILITY).orElseThrow(GrabCapability.NO_CAPABILITY_EXC).getTarget() == entity))
+                || (getSelf() instanceof Player player1 && GrabCapability.nonNullOf(player1).getTarget() == entity))
             ci.cancel();
     }
 }

@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.block.VerticalTwoBlockMultiBlock;
 import net.zaharenko424.a_changed.util.StateProperties;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +35,7 @@ public abstract class MixinFallingBlockRenderer extends EntityRenderer<FallingBl
 
     @Inject(at = @At(value = "INVOKE", target = "com/mojang/blaze3d/vertex/PoseStack.popPose ()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/item/FallingBlockEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", locals = LocalCapture.CAPTURE_FAILHARD, allow = 1)
-    private void onRender(FallingBlockEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci, BlockState blockstate, Level level, BlockPos blockpos){
+    private void onRender(FallingBlockEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci, @NotNull BlockState blockstate, Level level, BlockPos blockpos){
         if(!(blockstate.getBlock() instanceof VerticalTwoBlockMultiBlock)) return;
         blockstate = blockstate.setValue(StateProperties.PART2, 1);
         blockpos = blockpos.above();

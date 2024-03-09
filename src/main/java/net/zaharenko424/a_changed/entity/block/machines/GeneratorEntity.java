@@ -11,9 +11,8 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.EmptyEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.EnergyGenerator;
 import net.zaharenko424.a_changed.menu.machines.GeneratorMenu;
@@ -93,22 +92,24 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
         }
 
         if(!energyStorage.isEmpty() && !inventory.getStackInSlot(1).isEmpty()){
-            energyStorage.transferEnergyTo(inventory.getStackInSlot(1).getCapability(Capabilities.ENERGY).orElse(EmptyEnergyStorage.INSTANCE), 100, false);
+            energyStorage.transferEnergyTo(inventory.getStackInSlot(1).getCapability(Capabilities.EnergyStorage.ITEM), 100, false);
             changed = true;
         }
 
         BlockEntity entity;
-
+        BlockPos pos;
         for(Direction direction : Direction.values()){
             if(energyStorage.isEmpty()) break;
-            entity = level.getBlockEntity(worldPosition.relative(direction));
+            pos = worldPosition.relative(direction);
+            entity = level.getBlockEntity(pos);
             if(entity == null) continue;
             if(entity instanceof AbstractProxyWire wire){
                 wire.tickNetwork();
                 continue;
             }
-            if(energyStorage.transferEnergyTo(entity.getCapability(Capabilities.ENERGY)
-                    .orElse(EmptyEnergyStorage.INSTANCE), energyStorage.getMaxExtract(), false) != 0) {
+            if(energyStorage.transferEnergyTo(
+                    level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()),
+                    energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
                 changed = true;
             }
