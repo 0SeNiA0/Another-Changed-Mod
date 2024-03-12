@@ -40,7 +40,7 @@ import net.zaharenko424.a_changed.block.machines.DNAExtractor;
 import net.zaharenko424.a_changed.block.machines.LatexEncoder;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.model.ModelCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
 import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
 import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
@@ -57,7 +57,7 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void onAddReloadListener(AddReloadListenerEvent event){
-        event.addListener(ModelCache.INSTANCE);
+        event.addListener(ModelPartCache.INSTANCE);
     }
 
     @SubscribeEvent

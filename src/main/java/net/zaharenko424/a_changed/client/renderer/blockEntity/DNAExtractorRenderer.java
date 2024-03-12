@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.renderer.blockEntity;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
@@ -8,17 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.model.ModelCache;
-import net.zaharenko424.a_changed.client.model.geom.*;
+import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEntity> {
 
@@ -28,7 +25,7 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     private final ModelPart[] tubes = new ModelPart[4];
 
     public DNAExtractorRenderer(){
-        root = ModelCache.INSTANCE.bake(LAYER).getChild("root");
+        root = ModelPartCache.INSTANCE.bake(LAYER).getChild("root");
         tubes[0] = root.getChild("tube0");
         tubes[1] = root.getChild("tube1");
         tubes[2] = root.getChild("tube2");
@@ -36,29 +33,29 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     }
 
     public static @NotNull ModelDefinition bodyLayer(){
-        MeshDefinition meshDefinition = new MeshDefinition();
-        GroupDefinition groupDefinition = meshDefinition.getRoot();
+        ModelDefinition.Builder modelBuilder = new ModelDefinition.Builder();
+        GroupDefinition groupDefinition = modelBuilder.getRoot();
 
         GroupDefinition root = groupDefinition.addOrReplaceChild("root", GroupBuilder.create()
-                .addBox(-1f, 11f, -1f, 2f, 3f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(24f, 6f, 22f, 8f), Direction.SOUTH, new UVData(20f, 12f, 18f, 9f), Direction.WEST, new UVData(12f, 21f, 10f, 18f), Direction.NORTH, new UVData(20f, 9f, 18f, 6f), Direction.UP, new UVData(24f, 6f, 22f, 4f), Direction.EAST, new UVData(10f, 21f, 8f, 18f)))
-                .addBox(-2f, 10f, -2f, 4f, 1f, 4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(4f, 4f, 0f, 8f), Direction.SOUTH, new UVData(26f, 11f, 22f, 10f), Direction.WEST, new UVData(26f, 12f, 22f, 11f), Direction.NORTH, new UVData(26f, 9f, 22f, 8f), Direction.UP, new UVData(4f, 4f, 0f, 0f), Direction.EAST, new UVData(26f, 10f, 22f, 9f))), PartPose.offset(0f, 0f, 0f));
+                .addBox(-1f, 11f, -1f, 2, 3, 2, new CubeUV().west(12, 21, 10, 18).north(20, 9, 18, 6).east(10, 21, 8, 18).up(24, 6, 22, 4).down(24, 6, 22, 8).south(20, 12, 18, 9))
+                .addBox(-2f, 10f, -2f, 4, 1, 4, new CubeUV().west(26, 12, 22, 11).north(26, 9, 22, 8).east(26, 10, 22, 9).up(4, 4, 0, 0).down(4, 4, 0, 8).south(26, 11, 22, 10)));
         root.addOrReplaceChild("tube0", GroupBuilder.create()
-                .addBox(-0.7f, 11.5f, 4.8f, 1.4f, 4f, 1.4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(7.5f, 24f, 6f, 25.5f), Direction.SOUTH, new UVData(17.5f, 22f, 16f, 18f), Direction.WEST, new UVData(19.5f, 20f, 18f, 16f), Direction.NORTH, new UVData(19.5f, 16f, 18f, 12f), Direction.UP, new UVData(25.5f, 5.5f, 24f, 4f), Direction.EAST, new UVData(15.5f, 22f, 14f, 18f))), PartPose.offsetAndRotation(-8f, 0f, -8f, 0f, 0.7854f, 0f));
+                .addBox(-0.7f, 11.5f, 4.8f, 1.4f, 4, 1.4f, new CubeUV().west(19.5f, 20, 18, 16).north(19.5f, 16, 18, 12).east(15.5f, 22, 14, 18).up(25.5f, 5.5f, 24, 4).down(7.5f, 24, 6, 25.5f).south(17.5f, 22, 16, 18)), PartPose.offsetAndRotation(-8, 0, -8, 0, 0.7854f, 0));
         root.addOrReplaceChild("tube1", GroupBuilder.create()
-                .addBox(-0.7f, 11.5f, 16.8f, 1.4f, 4f, 1.4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(13.5f, 24f, 12f, 25.5f), Direction.SOUTH, new UVData(21.5f, 12f, 20f, 8f), Direction.WEST, new UVData(13.5f, 24f, 12f, 20f), Direction.NORTH, new UVData(21.5f, 4f, 20f, 0f), Direction.UP, new UVData(25.5f, 7.5f, 24f, 6f), Direction.EAST, new UVData(21.5f, 8f, 20f, 4f))), PartPose.offsetAndRotation(-8f, 0f, -8f, 0f, 0.7854f, 0f));
+                .addBox(-0.7f, 11.5f, 16.8f, 1.4f, 4, 1.4f, new CubeUV().west(13.5f, 24, 12, 20).north(21.5f, 4, 20, 0).east(21.5f, 8, 20, 4).up(25.5f, 7.5f, 24, 6).down(13.5f, 24, 12, 25.5f).south(21.5f, 12, 20, 8)), PartPose.offsetAndRotation(-8, 0, -8, 0, 0.7854f, 0));
         root.addOrReplaceChild("tube2", GroupBuilder.create()
-                .addBox(5.3f, 11.5f, 10.8f, 1.4f, 4f, 1.4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(15.5f, 24f, 14f, 25.5f), Direction.SOUTH, new UVData(19.5f, 24f, 18f, 20f), Direction.WEST, new UVData(21.5f, 24f, 20f, 20f), Direction.NORTH, new UVData(21.5f, 16f, 20f, 12f), Direction.UP, new UVData(25.5f, 13.5f, 24f, 12f), Direction.EAST, new UVData(21.5f, 20f, 20f, 16f))), PartPose.offsetAndRotation(-8f, 0f, -8f, 0f, 0.7854f, 0f));
+                .addBox(5.3f, 11.5f, 10.8f, 1.4f, 4, 1.4f, new CubeUV().west(21.5f, 24, 20, 20).north(21.5f, 16, 20, 12).east(21.5f, 20, 20, 16).up(25.5f, 13.5f, 24, 12).down(15.5f, 24, 14, 25.5f).south(19.5f, 24, 18, 20)), PartPose.offsetAndRotation(-8, 0, -8, 0, 0.7854f, 0));
         root.addOrReplaceChild("tube3", GroupBuilder.create()
-                .addBox(-6.7f, 11.5f, 10.8f, 1.4f, 4f, 1.4f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(17.5f, 24f, 16f, 25.5f), Direction.SOUTH, new UVData(1.5f, 26f, 0f, 22f), Direction.WEST, new UVData(23.5f, 4f, 22f, 0f), Direction.NORTH, new UVData(9.5f, 25f, 8f, 21f), Direction.UP, new UVData(25.5f, 15.5f, 24f, 14f), Direction.EAST, new UVData(11.5f, 25f, 10f, 21f))), PartPose.offsetAndRotation(-8f, 0f, -8f, 0f, 0.7854f, 0f));
+                .addBox(-6.7f, 11.5f, 10.8f, 1.4f, 4, 1.4f, new CubeUV().west(23.5f, 4, 22, 0).north(9.5f, 25, 8, 21).east(11.5f, 25, 10, 21).up(25.5f, 15.5f, 24, 14).down(17.5f, 24, 16, 25.5f).south(1.5f, 26, 0, 22)), PartPose.offsetAndRotation(-8, 0, -8, 0, 0.7854f, 0));
         root.addOrReplaceChild("cube", GroupBuilder.create()
-                .addBox(6.53f, 14f, -0.8f, 9.95f, 1.5f, 1.6f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(14f, 6f, 4f, 7.5f), Direction.SOUTH, new UVData(14f, 3.5f, 4f, 2f), Direction.WEST, new UVData(3.5f, 25.5f, 2f, 24f), Direction.NORTH, new UVData(14f, 1.5f, 4f, 0f), Direction.UP, new UVData(14f, 5.5f, 4f, 4f), Direction.EAST, new UVData(25.5f, 1.5f, 24f, 0f)))
-                .addBox(4.5f, 11f, -1f, 2f, 6f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(16f, 22f, 14f, 24f), Direction.SOUTH, new UVData(8f, 18f, 6f, 12f), Direction.WEST, new UVData(10f, 18f, 8f, 12f), Direction.NORTH, new UVData(4f, 18f, 2f, 12f), Direction.UP, new UVData(24f, 14f, 22f, 12f), Direction.EAST, new UVData(6f, 18f, 4f, 12f)))
-                .addBox(16.5f, 11f, -1f, 2f, 6f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(18f, 22f, 16f, 24f), Direction.SOUTH, new UVData(16f, 12f, 14f, 6f), Direction.WEST, new UVData(14f, 20f, 12f, 14f), Direction.NORTH, new UVData(14f, 14f, 12f, 8f), Direction.UP, new UVData(24f, 16f, 22f, 14f), Direction.EAST, new UVData(16f, 6f, 14f, 0f)))
-                .addBox(10.7f, 14f, -4.99f, 1.6f, 1.51f, 9.95f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(1.5f, 12f, 0f, 22f), Direction.SOUTH, new UVData(5.5f, 25.5f, 4f, 24f), Direction.WEST, new UVData(10f, 11.5f, 0f, 10f), Direction.NORTH, new UVData(25.5f, 3.5f, 24f, 2f), Direction.UP, new UVData(11.5f, 18f, 10f, 8f), Direction.EAST, new UVData(10f, 9.5f, 0f, 8f)))
-                .addBox(10.5f, 11f, -7f, 2f, 6f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(24f, 18f, 22f, 20f), Direction.SOUTH, new UVData(18f, 12f, 16f, 6f), Direction.WEST, new UVData(18f, 18f, 16f, 12f), Direction.NORTH, new UVData(16f, 18f, 14f, 12f), Direction.UP, new UVData(24f, 18f, 22f, 16f), Direction.EAST, new UVData(18f, 6f, 16f, 0f)))
-                .addBox(10.5f, 11f, 5f, 2f, 6f, 2f, new Vector3f(), ImmutableMap.of(Direction.DOWN, new UVData(24f, 22f, 22f, 24f), Direction.SOUTH, new UVData(6f, 24f, 4f, 18f), Direction.WEST, new UVData(8f, 24f, 6f, 18f), Direction.NORTH, new UVData(20f, 6f, 18f, 0f), Direction.UP, new UVData(24f, 22f, 22f, 20f), Direction.EAST, new UVData(4f, 24f, 2f, 18f))), PartPose.offsetAndRotation(-8f, 0f, -8f, 0f, -0.7854f, 0f));
+                .addBox(6.53f, 14f, -0.8f, 9.95f, 1.5f, 1.6f, new CubeUV().west(3.5f, 25.5f, 2, 24).north(14, 1.5f, 4, 0).east(25.5f, 1.5f, 24, 0).up(14, 5.5f, 4, 4).down(14, 6, 4, 7.5f).south(14, 3.5f, 4, 2))
+                .addBox(4.5f, 11f, -1f, 2, 6, 2, new CubeUV().west(10, 18, 8, 12).north(4, 18, 2, 12).east(6, 18, 4, 12).up(24, 14, 22, 12).down(16, 22, 14, 24).south(8, 18, 6, 12))
+                .addBox(16.5f, 11f, -1f, 2, 6, 2, new CubeUV().west(14, 20, 12, 14).north(14, 14, 12, 8).east(16, 6, 14, 0).up(24, 16, 22, 14).down(18, 22, 16, 24).south(16, 12, 14, 6))
+                .addBox(10.7f, 14f, -4.99f, 1.6f, 1.51f, 9.95f, new CubeUV().west(10, 11.5f, 0, 10).north(25.5f, 3.5f, 24, 2).east(10, 9.5f, 0, 8).up(11.5f, 18, 10, 8).down(1.5f, 12, 0, 22).south(5.5f, 25.5f, 4, 24))
+                .addBox(10.5f, 11f, -7f, 2, 6, 2, new CubeUV().west(18, 18, 16, 12).north(16, 18, 14, 12).east(18, 6, 16, 0).up(24, 18, 22, 16).down(24, 18, 22, 20).south(18, 12, 16, 6))
+                .addBox(10.5f, 11f, 5f, 2, 6, 2, new CubeUV().west(8, 24, 6, 18).north(20, 6, 18, 0).east(4, 24, 2, 18).up(24, 22, 22, 20).down(24, 22, 22, 24).south(6, 24, 4, 18)), PartPose.offsetAndRotation(-8, 0, -8, 0, -0.7854f, 0));
 
-        return ModelDefinition.create(meshDefinition, 64, 64, 2);
+        return ModelDefinition.create(modelBuilder, 64, 64, 2);
     }
 
     @Override

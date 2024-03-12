@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.client.model.AbstractLatexEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public abstract class AbstractTransfurType {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract <E extends LivingEntity> AbstractLatexEntityModel<E> getModel(int modelVariant);
+    public abstract <E extends LivingEntity> CustomEntityModel<E> getModel(int modelVariant);
 
     public float getEyeHeight(@NotNull Pose pose){
         return switch (pose) {

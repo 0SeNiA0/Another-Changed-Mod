@@ -15,7 +15,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
-import net.zaharenko424.a_changed.client.renderer.LatexEntityRenderer;
+import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
@@ -99,18 +99,18 @@ public class ClientMod {
         event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
 
-        event.registerEntityRenderer(BEI_FENG.get(), a -> new LatexEntityRenderer<>(a, BEI_FENG_TF));
+        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomEntityRenderer<>(a, BEI_FENG_TF.get().getModel(0)));
 
-        event.registerEntityRenderer(BENIGN.get(), a -> new LatexEntityRenderer<>(a, BENIGN_TF));
+        event.registerEntityRenderer(BENIGN.get(), a -> new CustomEntityRenderer<>(a, BENIGN_TF.get().getModel(0)));
 
-        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new LatexEntityRenderer<>(a, DARK_LATEX_WOLF_F_TF));
-        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new LatexEntityRenderer<>(a, DARK_LATEX_WOLF_M_TF));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomEntityRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getModel(0)));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomEntityRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getModel(0)));
 
-        event.registerEntityRenderer(GAS_WOLF.get(), a -> new LatexEntityRenderer<>(a, GAS_WOLF_TF));
+        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomEntityRenderer<>(a, GAS_WOLF_TF.get().getModel(0)));
 
-        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new LatexEntityRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new LatexEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF));
+        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomEntityRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel(0)));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel(0)));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel(0)));
     }
 
     @SubscribeEvent
