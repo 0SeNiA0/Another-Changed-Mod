@@ -57,7 +57,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         //DNA extractor recipes
         DNAExtractorRecipeBuilder.of(DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
-
+        DNAExtractorRecipeBuilder.of(DNATypeRegistry.CAT_DNA).unlockedByMaterial().save(out);
         DNAExtractorRecipeBuilder.of(DNATypeRegistry.WOLF_DNA).unlockedByMaterial().save(out);
 
 
@@ -83,6 +83,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.HYPNO_CAT_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .addDNASampleIngredient(DNATypeRegistry.CAT_DNA)
+                .addMiscIngredient(Items.GLOW_BERRIES.getDefaultInstance())
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get())
@@ -155,7 +162,17 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         stonecutting(BOLTED_BLUE_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem<?>[]{BLUE_LAB_TILE_ITEM,CONNECTED_BLUE_LAB_TILE_ITEM},has(BOLTED_BLUE_LAB_TILE_ITEM),out);
         stonecutting(CONNECTED_BLUE_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem<?>[]{BLUE_LAB_TILE_ITEM,BOLTED_BLUE_LAB_TILE_ITEM},has(CONNECTED_BLUE_LAB_TILE_ITEM),out);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CARDBOARD,1)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CAPACITOR_ITEM)
+                .pattern("ICI")
+                .pattern("PPP")
+                .pattern("III")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('C', ItemTagProvider.WIRES_COPPER)
+                .define('P', POWER_CELL)
+                .unlockedBy(getHasName(POWER_CELL), has(POWER_CELL))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CARDBOARD)
                 .pattern("P")
                 .pattern("P")
                 .pattern("P")
@@ -558,6 +575,27 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("CCC")
                 .define('C', CARDBOARD)
                 .unlockedBy(getHasName(CARDBOARD), has(CARDBOARD))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, STUN_BATON)
+                .pattern("CI ")
+                .pattern("CI ")
+                .pattern("IPI")
+                .define('C', ItemTagProvider.WIRES_COPPER)
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('P', POWER_CELL)
+                .unlockedBy(getHasName(POWER_CELL), has(POWER_CELL))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, SYRINGE_COIL_GUN)
+                .pattern("WW ")
+                .pattern("CCC")
+                .pattern("PII")
+                .define('W', ItemTagProvider.WIRES_COPPER)
+                .define('C', COPPER_COIL)
+                .define('P', POWER_CELL)
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .unlockedBy(getHasName(POWER_CELL), has(POWER_CELL))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SYRINGE_ITEM,8)

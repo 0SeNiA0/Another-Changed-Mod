@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -283,19 +283,22 @@ public class ModelPart {
         private final Quad[] quads;
 
         public Mesh(float[] vertices, float[] quads, float textureWidth, float textureHeight){
-            int size = quads.length / 8;
+            int size = quads.length / 12;
             this.quads = new Quad[size];
 
             int q = 0, i = 0;
             while (q < size) {
-                this.quads[q++] = new Quad(new Vertex[]{vertex(vertices, i++), vertex(vertices, i++), vertex(vertices, i++), vertex(vertices, i++)},
-                        new UVData(quads[i++], quads[i++], quads[i++], quads[i++]), textureWidth, textureHeight);
+                this.quads[q++] = new Quad(new Vertex[]{vertex(vertices, quads, i++, textureWidth, textureHeight),
+                        vertex(vertices, quads, i++, textureWidth, textureHeight),
+                        vertex(vertices, quads, i++, textureWidth, textureHeight),
+                        vertex(vertices, quads, i++, textureWidth, textureHeight)});
             }
         }
 
-        @Contract("_, _ -> new")
-        private @NotNull Vertex vertex(float[] vertices, int i){
-            return new Vertex(vertices[i++], vertices[i++], vertices[i]);
+        private @NotNull Vertex vertex(float[] vertices, float[] quads, int q, float textureWidth, float textureHeight){
+            q *= 3;
+            int j = (int) (quads[q] * 3);
+            return new Vertex(vertices[j++], vertices[j++], vertices[j], quads[q + 1] / textureWidth, quads[q + 2] / textureHeight);
         }
 
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
@@ -307,19 +310,65 @@ public class ModelPart {
         }
     }
 
+    public static class Triangle {
+        public final Vertex[] vertices;
+        public final Vector3f normal;
+
+        /**
+         * Put uv directly in vertices or use UVData here.
+         */
+        public Triangle(Vertex[] vertices, @Nullable UVData uv, float textureWidth, float textureHeight){
+            this.vertices = vertices;
+
+            if(uv != null) remapUV(uv, textureWidth, textureHeight);
+
+            normal = new Vector3f();
+            for (int i = 0; i < 3; i++) {
+                normal.add(vertices[i].pos.cross(vertices[(i + 1) % 3].pos, new Vector3f()));
+            }
+            normal.normalize();
+        }
+
+        public void remapUV(UVData uv, float textureWidth, float textureHeight){
+            vertices[0] = vertices[0].remap(uv.u1() / textureWidth, uv.v1() / textureHeight);
+            vertices[1] = vertices[1].remap(uv.u2() / textureWidth, uv.v1() / textureHeight);
+            vertices[2] = vertices[2].remap(uv.u1() / textureWidth, uv.v2() / textureHeight);
+        }
+
+        public void compile(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha){
+            Vector3f vector3f = normal.transform(new Vector3f(this.normal));
+            for(Vertex vertex : vertices) {
+                Vector4f vector4f = pose.transform(new Vector4f(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
+                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(),
+                        r, g, b, alpha,
+                        vertex.u, vertex.v,
+                        overlay, light,
+                        vector3f.x(), vector3f.y(), vector3f.z()
+                );
+            }
+        }
+    }
+
     public static class Quad {
         public final Vertex[] vertices;
         public final Vector3f normal;
 
-        public Quad(Vertex[] vertices, UVData uv, float textureWidth, float textureHeight){
+        public Quad(Vertex[] vertices){
             this.vertices = vertices;
-            remapUV(uv, textureWidth, textureHeight);
 
             normal = new Vector3f();
             for (int i = 0; i < 4; i++) {
                 normal.add(vertices[i].pos.cross(vertices[(i + 1) % 4].pos, new Vector3f()));
             }
             normal.normalize();
+        }
+
+        /**
+         * Put uv directly in vertices or use UVData here.
+         */
+        public Quad(Vertex[] vertices, @NotNull UVData uv, float textureWidth, float textureHeight){
+            this(vertices);
+            remapUV(uv, textureWidth, textureHeight);
         }
 
         public Quad(Vertex[] vertices, UVData uv, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
@@ -344,6 +393,9 @@ public class ModelPart {
             }
         }
 
+        /**
+         * Not for cube quads!
+         */
         public void remapUV(UVData uv, float textureWidth, float textureHeight){
             vertices[0] = vertices[0].remap(uv.u1() / textureWidth, uv.v1() / textureHeight);//bb vertex 1
             vertices[1] = vertices[1].remap(uv.u2() / textureWidth, uv.v1() / textureHeight);//bb vertex 3?
@@ -372,6 +424,10 @@ public class ModelPart {
 
         public Vertex(float x, float y, float z) {
             this(new Vector3f(x, y, z), 0, 0);
+        }
+
+        public Vertex(float x, float y, float z, float u, float v){
+            this(new Vector3f(x, y, z), u, v);
         }
 
         public Vertex remap(float u, float v) {

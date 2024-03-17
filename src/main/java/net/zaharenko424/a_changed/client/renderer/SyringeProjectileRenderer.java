@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
@@ -26,7 +26,7 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
 
     public SyringeProjectileRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-        root = ModelPartCache.INSTANCE.bake(LAYER).getChild("root");
+        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

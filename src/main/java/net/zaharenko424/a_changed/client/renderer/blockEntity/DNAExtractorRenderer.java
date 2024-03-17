@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -25,7 +25,7 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     private final ModelPart[] tubes = new ModelPart[4];
 
     public DNAExtractorRenderer(){
-        root = ModelPartCache.INSTANCE.bake(LAYER).getChild("root");
+        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
         tubes[0] = root.getChild("tube0");
         tubes[1] = root.getChild("tube1");
         tubes[2] = root.getChild("tube2");

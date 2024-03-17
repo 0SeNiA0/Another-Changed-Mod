@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.datagen;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -40,6 +41,13 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(ItemRegistry.ORANGE_ITEM)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2))))));
+
+        add(HYPNO_CAT.get(), new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(LootItem.lootTableItem(Items.GLOW_BERRIES)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))
+                        .add(LootItem.lootTableItem(Items.STRING)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))));
 
         add(PURE_WHITE_LATEX_WOLF.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()

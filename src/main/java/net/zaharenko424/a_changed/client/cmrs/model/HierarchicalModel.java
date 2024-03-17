@@ -30,7 +30,7 @@ public abstract class HierarchicalModel<E extends Entity> extends EntityModel<E>
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-        this.root().render(poseStack, consumer, light, overlay, r, g, b, alpha);
+        root().render(poseStack, consumer, light, overlay, r, g, b, alpha);
     }
 
     public abstract ModelPart root();

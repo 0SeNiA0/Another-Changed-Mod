@@ -10,10 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ElytraLayerFix<E extends LivingEntity,M extends EntityModel<E>> extends ElytraLayer<E,M> {
+public class ElytraLayerFix <E extends LivingEntity, M extends EntityModel<E>> extends ElytraLayer<E, M> {
 
     public ElytraLayerFix(RenderLayerParent<E, M> parent, EntityModelSet modelSet) {
         super(parent, modelSet);
-        elytraModel=new ElytraModelFix<>(modelSet.bakeLayer(ModelLayers.ELYTRA));
+        elytraModel = new ElytraModelFix<>(modelSet.bakeLayer(ModelLayers.ELYTRA));
     }
 }

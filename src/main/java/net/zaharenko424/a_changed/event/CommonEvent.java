@@ -5,6 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +20,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -39,6 +41,7 @@ import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
@@ -148,6 +151,17 @@ public class CommonEvent {
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
+    }
+
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event){
+        LivingEntity entity = event.getEntity();
+        if(event.getSource().is(DamageTypeTags.IS_FALL)){
+            if((entity instanceof Player player && TransfurManager.isTransfurred(player)
+                        && TransfurManager.getTransfurType(player) instanceof AbstractLatexCat)
+                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType instanceof AbstractLatexCat))
+                event.setAmount(event.getAmount() / 2);
+        }
     }
 
     /**

@@ -34,7 +34,7 @@ public abstract class MixinPlayer extends LivingEntity {
         if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
         damage += TransfurManager.LATEX_DAMAGE_BONUS;
         if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);
-        if(target.hurt(DamageSources.transfur(this, null), damage)){
+        if(target.hurt(DamageSources.transfur(null, this), damage)){
             float tfProgress = 5f;
             if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
             if(hasEffect(MobEffects.DAMAGE_BOOST)) tfProgress += getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() + 1;

@@ -28,6 +28,9 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
         super(p_19870_, p_19871_);
     }
 
+    /**
+     * AIR_DECREASE_SPEED attribute injection
+     */
     @Inject(at = @At("RETURN"), method = "decreaseAirSupply", cancellable = true)
     private void onDecreaseAirSupply(int p_21303_, CallbackInfoReturnable<Integer> cir){
         float airDecrease = (float) getAttributeValue(AChanged.AIR_DECREASE_SPEED);

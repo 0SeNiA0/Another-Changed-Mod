@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.item.DNASample;
-import net.zaharenko424.a_changed.registry.DNAType;
+import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 import org.jetbrains.annotations.NotNull;
 

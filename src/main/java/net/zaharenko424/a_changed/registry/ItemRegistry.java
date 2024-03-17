@@ -78,6 +78,7 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> YELLOW_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(YELLOW_LAB_BLOCK);
 
     //Machine BlockItems
+    public static final DeferredItem<BlockItem> CAPACITOR_ITEM = ITEMS.registerSimpleBlockItem(CAPACITOR);
     public static final DeferredItem<BlockItem> COMPRESSOR_ITEM = ITEMS.registerSimpleBlockItem(COMPRESSOR);
     public static final DeferredItem<BlockItem> COPPER_WIRE_ITEM = ITEMS.registerSimpleBlockItem(COPPER_WIRE);
     public static final DeferredItem<BlockItem> DNA_EXTRACTOR_ITEM = ITEMS.registerSimpleBlockItem(DNA_EXTRACTOR);
@@ -131,7 +132,9 @@ public final class ItemRegistry {
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
     public static final DeferredItem<PneumaticSyringeRifle> PNEUMATIC_SYRINGE_RIFLE = ITEMS.register("pneumatic_syringe_rifle", PneumaticSyringeRifle::new);
     public static final DeferredItem<PowerCell> POWER_CELL = ITEMS.register("power_cell", ()-> new PowerCell(new Item.Properties()));
+    public static final DeferredItem<StunBaton> STUN_BATON = ITEMS.register("stun_baton", StunBaton::new);
     public static final DeferredItem<SyringeItem> SYRINGE_ITEM = ITEMS.register("syringe", SyringeItem::new);
+    public static final DeferredItem<SyringeCoilGun> SYRINGE_COIL_GUN = ITEMS.register("syringe_coil_gun", SyringeCoilGun::new);
     public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM = ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
     public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);
     public static final DeferredItem<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(TransfurRegistry.WHITE_LATEX_WOLF_M_TF,Latex.WHITE));
@@ -146,6 +149,7 @@ public final class ItemRegistry {
     public static DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_F_EGG = ITEMS.register("dark_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_FEMALE, 2763306, 6908265, spawnEgg()));
     public static DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_M_EGG = ITEMS.register("dark_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_MALE, 2763306, 6908265, spawnEgg()));
     public static DeferredItem<SpawnEggItem> GAS_WOLF_EGG = ITEMS.register("gas_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.GAS_WOLF, 2763306, 16777215, spawnEgg()));
+    public static DeferredItem<SpawnEggItem> HYPNO_CAT_EGG = ITEMS.register("hypno_cat_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.HYPNO_CAT, 2763306, -344280, spawnEgg()));
     public static DeferredItem<SpawnEggItem> PURE_WHITE_LATEX_WOLF_EGG = ITEMS.register("pure_white_latex_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.PURE_WHITE_LATEX_WOLF, 16777215, 16777215, spawnEgg()));
     public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_F_EGG = ITEMS.register("white_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, 16777215, 13619151, spawnEgg()));
     public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_M_EGG = ITEMS.register("white_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_MALE, 16777215, 13619151, spawnEgg()));

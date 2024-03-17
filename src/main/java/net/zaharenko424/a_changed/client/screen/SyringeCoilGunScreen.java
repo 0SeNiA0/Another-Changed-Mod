@@ -6,14 +6,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
+import net.zaharenko424.a_changed.menu.SyringeCoilGunMenu;
 import org.jetbrains.annotations.NotNull;
 
-public class PneumaticRifleScreen extends AbstractContainerScreen<PneumaticSyringeRifleMenu> {
+public class SyringeCoilGunScreen extends AbstractContainerScreen<SyringeCoilGunMenu> {
 
-    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/syringe_rifle");
+    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/syringe_coil_gun");
 
-    public PneumaticRifleScreen(PneumaticSyringeRifleMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public SyringeCoilGunScreen(SyringeCoilGunMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
     }
 

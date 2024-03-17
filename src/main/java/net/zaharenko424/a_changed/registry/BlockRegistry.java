@@ -53,6 +53,7 @@ public class BlockRegistry {
     public static final DeferredBlock<BrokenCup> BROKEN_CUP = BLOCKS.register("broken_cup", ()-> new BrokenCup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.1f)));
     public static final DeferredBlock<BrokenFlask> BROKEN_FLASK = BLOCKS.register("broken_flask", ()-> new BrokenFlask(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<Block> BROWN_LAB_BLOCK = BLOCKS.registerSimpleBlock("brown_lab_block", decorProperties().mapColor(DyeColor.BROWN));
+    public static final DeferredBlock<Capacitor> CAPACITOR = BLOCKS.register("capacitor", () -> new Capacitor(decorProperties()));
     public static final DeferredBlock<CardboardBox> CARDBOARD_BOX = BLOCKS.register("cardboard_box", ()-> new CardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
     public static final DeferredBlock<ConnectedTextureBlock> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new ConnectedTextureBlock(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
     public static final DeferredBlock<Chair> CHAIR = BLOCKS.register("chair", ()-> new Chair(decorProperties().pushReaction(PushReaction.DESTROY)));

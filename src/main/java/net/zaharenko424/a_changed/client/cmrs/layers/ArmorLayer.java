@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.cmrs.layers;
 
-import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,24 +17,24 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.util.Utils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Map;
+import java.util.HashMap;
 
 @ParametersAreNonnullByDefault
 public class ArmorLayer<E extends LivingEntity, M extends CustomEntityModel<E>> extends RenderLayer<E,M> {
 
-    protected static final Map<String, ResourceLocation> ARMOR_LOCATION_CACHE = Maps.newHashMap();
+    protected static final HashMap<String, ResourceLocation> ARMOR_LOCATION_CACHE = new HashMap<>();
     protected final TextureAtlas armorTrimAtlas;
     protected M model;
 
     public ArmorLayer(CustomEntityRenderer<E> renderer, TextureAtlas armorTrimAtlas) {
         super((RenderLayerParent<E, M>) renderer);
-        this.armorTrimAtlas=armorTrimAtlas;
+        this.armorTrimAtlas = armorTrimAtlas;
     }
 
     @Override
@@ -43,10 +42,10 @@ public class ArmorLayer<E extends LivingEntity, M extends CustomEntityModel<E>> 
         model = renderer.getModel();
         if(!model.hasArmor()) return;
         model.setAllVisible(true);
-        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.HEAD,light);
-        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.CHEST,light);
-        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.LEGS,light);
-        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.FEET,light);
+        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.HEAD, light);
+        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.CHEST, light);
+        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.LEGS, light);
+        renderArmorPiece(poseStack, buffer, entity, EquipmentSlot.FEET, light);
     }
 
     private void renderArmorPiece(PoseStack poseStack, MultiBufferSource buffer, E entity, EquipmentSlot slot, int light) {
@@ -56,8 +55,8 @@ public class ArmorLayer<E extends LivingEntity, M extends CustomEntityModel<E>> 
         model.setupArmorPart(slot, false);
         ResourceLocation armorTexture = getArmorResource(entity, itemstack, slot, null);
 
-        if(armoritem instanceof net.minecraft.world.item.DyeableLeatherItem) {
-            int i = ((net.minecraft.world.item.DyeableLeatherItem)armoritem).getColor(itemstack);
+        if(armoritem instanceof net.minecraft.world.item.DyeableLeatherItem dyeable) {
+            int i = dyeable.getColor(itemstack);
             float f = (float)(i >> 16 & 0xFF) / 255.0F;
             float f1 = (float)(i >> 8 & 0xFF) / 255.0F;
             float f2 = (float)(i & 0xFF) / 255.0F;
@@ -67,7 +66,7 @@ public class ArmorLayer<E extends LivingEntity, M extends CustomEntityModel<E>> 
             renderModel(poseStack, buffer, light, 1, 1, 1, armorTexture);
         }
         ArmorTrim.getTrim(entity.level().registryAccess(), itemstack, true).ifPresent(p_289638_ ->
-                renderTrim(armoritem.getMaterial(), poseStack, buffer, light, p_289638_, slot==EquipmentSlot.LEGS)
+                renderTrim(armoritem.getMaterial(), poseStack, buffer, light, p_289638_, slot == EquipmentSlot.LEGS)
         );
         if(itemstack.hasFoil()) renderGlint(poseStack, buffer, light);
 

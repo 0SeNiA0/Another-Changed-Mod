@@ -14,7 +14,7 @@ public class CompressorScreen extends AbstractMachineScreen<CompressorEntity, Co
     public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/compressor");
 
     public CompressorScreen(CompressorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
+        super(pMenu, pPlayerInventory, pTitle, true);
     }
 
     @Override

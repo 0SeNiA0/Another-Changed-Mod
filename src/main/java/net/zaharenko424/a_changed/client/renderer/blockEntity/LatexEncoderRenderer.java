@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -30,7 +30,7 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
     private final ModelPart[] dna = new ModelPart[3];
 
     public LatexEncoderRenderer(){
-        root = ModelPartCache.INSTANCE.bake(LAYER).getChild("root");
+        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
         latexBase = root.getChild("latexBase");
         dnaRoot = root.getChild("dna");
         dna[0] = dnaRoot.getChild("dna0");

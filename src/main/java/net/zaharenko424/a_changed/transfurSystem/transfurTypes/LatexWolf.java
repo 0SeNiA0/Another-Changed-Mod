@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class LatexWolf extends AbstractTransfurType {
 
     public LatexWolf(@NotNull Properties properties){
-        super(properties.eyeHeight(1.75f,1.5f));
+        super(properties.eyeHeight(1.75f,1.5f).maxHealthModifier(4));
     }
 
     @Override

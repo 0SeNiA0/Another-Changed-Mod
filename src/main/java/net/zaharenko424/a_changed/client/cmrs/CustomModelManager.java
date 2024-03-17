@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.client.cmrs;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Streams;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -15,9 +14,10 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
-import net.zaharenko424.a_changed.event.RegisterModelsEvent;
+import net.zaharenko424.a_changed.event.LoadModelsToCacheEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +26,9 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,20 +44,33 @@ public class CustomModelManager {
     private final ConcurrentHashMap<ResourceLocation, CustomEntityModel<?>> modelCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ResourceLocation> urlLoaded = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> beingLoaded = new ConcurrentHashMap<>();
-    private final Set<ResourceLocation> registeredModels;// can be useful for commands
 
-    private CustomModelManager(){
-        registeredModels = new HashSet<>();
-        new RegisterModelsEvent(registeredModels);
-    }
+    private CustomModelManager(){}
 
+    /**
+     * Should not be called before all registries are registered!
+     */
     public static CustomModelManager getInstance(){
-        if(modelManager == null) modelManager = new CustomModelManager();
+        if(modelManager == null) {
+            modelManager = new CustomModelManager();
+            ModLoader.get().postEvent(new LoadModelsToCacheEvent());
+        }
         return modelManager;
     }
 
     public Set<ResourceLocation> getRegisteredModels(){
-        return Streams.concat(registeredModels.stream(), modelCache.keySet().stream()).collect(Collectors.toUnmodifiableSet());
+        return modelCache.keySet().stream().collect(Collectors.toUnmodifiableSet());
+    }
+
+    public Set<ResourceLocation> getQueuedModels(AbstractClientPlayer player){
+        if(!modelQueue.containsKey(player)) return Set.of();
+        List<CustomEntityModel<?>> models = new ArrayList<>();
+        modelQueue.get(player).forEach(pair -> models.add(pair.getKey()));
+        List<ResourceLocation> ids = new ArrayList<>();
+        modelCache.forEach((key, value) -> {
+            if (models.contains(value)) ids.add(key);
+        });
+        return Set.copyOf(ids);
     }
 
     public boolean hasCustomModel(@NotNull AbstractClientPlayer player){
@@ -82,10 +96,8 @@ public class CustomModelManager {
     public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomEntityModel<?>> func, int priority){
         if(urlLoaded.containsKey(url)){
             setPlayerModel(player, urlLoaded.get(url), null, priority);
-        } else loadModel(url, func).whenComplete((modelId, err) -> {
-            setPlayerModel(player, modelId, null, priority);
-            recalculatePlayerModel(player);
-        });
+        } else loadModel(url, func).whenComplete((modelId, err) ->
+                setPlayerModel(player, modelId, null, priority));
     }
 
     public void removeLocalPlayerModel(@NotNull ResourceLocation modelId){
@@ -94,7 +106,7 @@ public class CustomModelManager {
     }
 
     public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
-        if(!modelCache.containsKey(modelId)) throw new IllegalStateException("Model is not loaded " + modelId);
+        if(!modelCache.containsKey(modelId)) return;
         CustomEntityModel<?> model = modelCache.get(modelId);
         if(render.get(player) == model) render.remove(player);
         synchronized (modelQueue){
@@ -110,9 +122,15 @@ public class CustomModelManager {
         for(Pair<CustomEntityModel<?>, Integer> pair : modelQueue.get(player)){
             if(pair.getValue() <= priority) continue;
             model = pair.getKey();
+            priority = pair.getValue();
         }
         assert model != null;
         render.put(player, model);
+    }
+
+    public void loadModel(@NotNull ResourceLocation modelId, @NotNull CustomEntityModel<?> model){
+        if(modelCache.containsKey(modelId)) return;
+        modelCache.put(modelId, model);
     }
 
     public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomEntityModel<?>> func){

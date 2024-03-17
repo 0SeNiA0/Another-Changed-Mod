@@ -54,4 +54,54 @@ public interface Animations {
                     new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
             ))
             .build();
+
+    AnimationDefinition TAIL_ANIM_CAT = AnimationDefinition.Builder.withLength(4f).looping()
+            .addAnimation("tail",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-7.5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("tail0",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("tail1",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("tail2",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("tail3",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("tail4",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    net.minecraft.client.animation.AnimationChannel.Interpolations.CATMULLROM))).build();
 }

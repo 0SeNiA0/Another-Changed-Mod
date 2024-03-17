@@ -20,6 +20,8 @@ public class MobEffectRegistry {
                 .addAttributeModifier(Attributes.ATTACK_DAMAGE, "4e4c9021-3c8d-497d-ad86-87c3dc248c37", 6, AttributeModifier.Operation.ADDITION)
                 .addAttributeModifier(Attributes.MOVEMENT_SPEED, "10cc7158-9de0-4649-ad20-6536794cfc4e", .4, AttributeModifier.Operation.MULTIPLY_TOTAL)
                 .addAttributeModifier(Attributes.MAX_HEALTH, "63367a57-f186-436c-94fb-6f87f2d208ce", 16, AttributeModifier.Operation.ADDITION));
+    public static final DeferredHolder<MobEffect, ElectrocutedEffect> ELECTROCUTED_DEBUFF = EFFECTS
+            .register("electrocuted", ElectrocutedEffect::new);
     public static final DeferredHolder<MobEffect, InvisibleEffect> FRESH_AIR = EFFECTS
             .register("fresh_air", ()-> new InvisibleEffect(MobEffectCategory.BENEFICIAL, 15597018));
     public static final DeferredHolder<MobEffect, FriendlyGrabEffect> FRIENDLY_GRAB = EFFECTS

@@ -87,6 +87,7 @@ public class CreativeTabs {
                     output.accept(IRON_PLATE);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
+                    output.accept(CAPACITOR_ITEM);
                     output.accept(COMPRESSOR_ITEM);
                     output.accept(COMPRESSED_AIR_CANISTER);
                     output.accept(EMPTY_CANISTER);
@@ -124,6 +125,8 @@ public class CreativeTabs {
                     output.accept(HAZMAT_LEGGINGS);
                     output.accept(HAZMAT_BOOTS);
 
+                    output.accept(STUN_BATON);
+
                     output.accept(BLACK_LATEX_SHORTS);
 
                     output.accept(DARK_LATEX_ITEM);
@@ -147,6 +150,7 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_BASE);
 
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
+                    output.accept(SYRINGE_COIL_GUN);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 
@@ -155,6 +159,7 @@ public class CreativeTabs {
                     output.accept(DARK_LATEX_WOLF_F_EGG);
                     output.accept(DARK_LATEX_WOLF_M_EGG);
                     output.accept(GAS_WOLF_EGG);
+                    output.accept(HYPNO_CAT_EGG);
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);

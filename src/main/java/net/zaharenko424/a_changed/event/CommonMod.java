@@ -114,11 +114,18 @@ public class CommonMod {
         //Item
         event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
                 ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
+                ItemEnergyCapability.getCapability(25000, 128, item), ItemRegistry.STUN_BATON);
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
+                ItemEnergyCapability.getCapability(50000, 256, item), ItemRegistry.SYRINGE_COIL_GUN);
 
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                item.getData(AttachmentRegistry.SYRINGE_RIFLE_ITEM_HANDLER), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+                item.getData(AttachmentRegistry.PNEUMATIC_SYRINGE_RIFLE_ITEM_HANDLER), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+        event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
+                item.getData(AttachmentRegistry.SYRINGE_COIL_GUN_HANDLER), ItemRegistry.SYRINGE_COIL_GUN);
 
         //BlockEntity
+        registerMachineEntityCaps(event, BlockEntityRegistry.CAPACITOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.COMPRESSOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.GENERATOR_ENTITY.get());
@@ -149,6 +156,7 @@ public class CommonMod {
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
         event.put(GAS_WOLF.get(), LatexBeast.createAttributes().build());
+        event.put(HYPNO_CAT.get(), LatexBeast.createAttributes().build());
         event.put(PURE_WHITE_LATEX_WOLF.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
@@ -160,6 +168,7 @@ public class CommonMod {
         event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(GAS_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(HYPNO_CAT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.WORLD_SURFACE, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);

@@ -36,8 +36,8 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
     
     protected LivingEntityRenderer(EntityRendererProvider.Context p_174008_, M model, float shadowRadius) {
         super(p_174008_);
-        this.model=model;
-        this.shadowRadius=shadowRadius;
+        this.model = model;
+        this.shadowRadius = shadowRadius;
     }
 
     public final void addLayer(RenderLayer<E, M> p_115327_) {

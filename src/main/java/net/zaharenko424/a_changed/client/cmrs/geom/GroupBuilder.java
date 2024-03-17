@@ -34,7 +34,7 @@ public class GroupBuilder {
         if(vertices.length % 3 != 0){
             throw new IllegalArgumentException("Vertices in mesh are defined incorrectly!");
         }
-        if(quads.length % 8 != 0){
+        if(quads.length % 12 != 0){
             throw new IllegalArgumentException("Quads in mesh are defined incorrectly!");
         }
         meshes.add(new MeshDefinition(vertices, quads));

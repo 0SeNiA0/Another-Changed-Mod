@@ -13,13 +13,16 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.Protogen;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
-import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.screen.PneumaticRifleScreen;
+import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
+import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -42,13 +45,15 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterMenuScreens(RegisterMenuScreensEvent event){
+        event.register(MenuRegistry.CAPACITOR_MENU.get(), CapacitorScreen::new);
         event.register(MenuRegistry.COMPRESSOR_MENU.get(), CompressorScreen::new);
         event.register(MenuRegistry.DNA_EXTRACTOR_MENU.get(), DNAExtractorScreen::new);
         event.register(MenuRegistry.GENERATOR_MENU.get(), GeneratorScreen::new);
         event.register(MenuRegistry.LATEX_ENCODER_MENU.get(), LatexEncoderScreen::new);
         event.register(MenuRegistry.LATEX_PURIFIER_MENU.get(), LatexPurifierScreen::new);
 
-        event.register(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), PneumaticRifleScreen::new);
+        event.register(MenuRegistry.PNEUMATIC_SYRINGE_RIFLE_MENU.get(), PneumaticSyringeRifleScreen::new);
+        event.register(MenuRegistry.SYRINGE_COIL_GUN_MENU.get(), SyringeCoilGunScreen::new);
     }
 
     @SubscribeEvent
@@ -75,8 +80,8 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterColorHandlers(RegisterColorHandlersEvent.Item event){
-        event.register((itemStack,i)->
-                event.getBlockColors().getColor(((BlockItem)itemStack.getItem()).getBlock().defaultBlockState()
+        event.register((itemStack, i)->
+                event.getBlockColors().getColor(((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
                 , null, null, i), BlockRegistry.ORANGE_LEAVES);
     }
 
@@ -108,9 +113,19 @@ public class ClientMod {
 
         event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomEntityRenderer<>(a, GAS_WOLF_TF.get().getModel(0)));
 
+        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomEntityRenderer<>(a, HYPNO_CAT_TF.get().getModel(0)));
+
         event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomEntityRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel(0)));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel(0)));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel(0)));
+    }
+
+    @SubscribeEvent
+    public static void onLoadModelsToCache(LoadModelsToCacheEvent event){
+        CustomModelManager modelManager = CustomModelManager.getInstance();
+        TRANSFUR_REGISTRY.stream().forEach(transfurType ->
+                modelManager.loadModel(transfurType.id, transfurType.getModel(0)));
+        modelManager.loadModel(AChanged.resourceLoc("0senia0"), new Protogen<>());
     }
 
     @SubscribeEvent

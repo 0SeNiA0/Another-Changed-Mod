@@ -246,6 +246,8 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
     public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
         getArm(arm).translateAndRotate(poseStack);
         poseStack.scale(-1,-1,1);
+        if(arm == HumanoidArm.RIGHT) poseStack.translate(-1 / 16f, 0, 0);
+        else poseStack.translate(1 / 16f, 0, 0);
     }
 
     protected HumanoidArm getAttackArm(E entity) {
@@ -357,7 +359,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         part.getAllParts().forEach(child -> child.visible = b);
     }
 
-    private void poseRightArm(E entity) {
+    protected void poseRightArm(E entity) {
         if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
             rightArm.xRot = Mth.PI / 1.9f;
             rightArm.yRot = 0.1F + head.yRot;
@@ -400,7 +402,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         }
     }
 
-    private void poseLeftArm(E entity) {//TODO for some reason doesn't work for remote players ...
+    protected void poseLeftArm(E entity) {//TODO for some reason doesn't work for remote players ...
         if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
             leftArm.xRot = Mth.PI / 1.9f;
             leftArm.yRot = -0.1F + head.yRot;

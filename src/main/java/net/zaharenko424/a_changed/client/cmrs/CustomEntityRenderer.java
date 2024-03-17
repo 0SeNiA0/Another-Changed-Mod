@@ -67,21 +67,24 @@ public class CustomEntityRenderer<E extends LivingEntity> extends LivingEntityRe
     }
 
     public void renderHand(PoseStack poseStack, MultiBufferSource source, int light, AbstractClientPlayer player, boolean right){
-        if(CustomModelManager.getInstance().hasCustomModel(player))//TODO fix wrong arm rendering pose
+        if(CustomModelManager.getInstance().hasCustomModel(player))
             model = CustomModelManager.getInstance().getModel(player);
         assert model != null;
-        ModelPart arm;
+        ModelPart arm = right ? model.rightArm : model.leftArm;
+        arm.resetPose();
         if(right) {
-            arm = model.rightArm;
-            arm.resetPose();
-            arm.x = 3; //rotation
+            arm.x = -6;
+            arm.y = 1.5f;
+            arm.z = -2;
+            arm.yRot = Mth.DEG_TO_RAD * 5;
         } else {
-            arm = model.leftArm;
-            arm.resetPose();
-            arm.x = -1;
+            arm.x = 5;
+            arm.y = 1.5f;
+            arm.z = 0;
+            arm.yRot = Mth.DEG_TO_RAD * -5;
         }
-        arm.z = 12;//<- ->
-        arm.offsetScale(new Vector3f(.9f));
+        arm.zRot = Mth.DEG_TO_RAD * 180;
+        arm.offsetScale(new Vector3f(-.1f));
 
         model.setDrawAll(false, arm);
         boolean[] hasGlow = {false};

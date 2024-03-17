@@ -46,6 +46,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(BROKEN_CUP.get());
         dropSelf(BROKEN_FLASK.get());
         dropSelf(BROWN_LAB_BLOCK.get());
+        dropSelf(CAPACITOR.get());
         dropSelf(CARDBOARD_BOX.get());
         dropSelf(CARPET_BLOCK.get());
         dropSelf(CHAIR.get());

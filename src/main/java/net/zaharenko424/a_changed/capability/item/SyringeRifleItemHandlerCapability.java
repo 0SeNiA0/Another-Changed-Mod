@@ -12,7 +12,7 @@ import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PneumaticSyringeRifleItemHandlerCapability {
+public class SyringeRifleItemHandlerCapability {
 
     public static class PneumaticSyringeRifleItemHandler extends ItemStackHandler {
 
@@ -25,6 +25,18 @@ public class PneumaticSyringeRifleItemHandlerCapability {
             Item item = stack.getItem();
             return slot == 0 ? item instanceof CompressedAirCanister || stack.is(ItemRegistry.EMPTY_CANISTER.get())
                     : item instanceof LatexSyringeItem;
+        }
+    }
+
+    public static class SyringeCoilGunItemHandler extends ItemStackHandler {
+
+        public SyringeCoilGunItemHandler(){
+            super(4);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return stack.getItem() instanceof LatexSyringeItem;
         }
     }
 
@@ -44,6 +56,25 @@ public class PneumaticSyringeRifleItemHandlerCapability {
         @Override
         public @Nullable CompoundTag write(@NotNull PneumaticSyringeRifleItemHandler pneumaticSyringeRifleItemHandler) {
             return pneumaticSyringeRifleItemHandler.serializeNBT();
+        }
+    }
+
+    public static class Serializer1 implements IAttachmentSerializer<CompoundTag, SyringeCoilGunItemHandler> {
+
+        public static final Serializer1 INSTANCE = new Serializer1();
+
+        private Serializer1() {}
+
+        @Override
+        public @NotNull SyringeCoilGunItemHandler read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
+            SyringeCoilGunItemHandler handler = new SyringeCoilGunItemHandler();
+            handler.deserializeNBT(tag);
+            return handler;
+        }
+
+        @Override
+        public @Nullable CompoundTag write(@NotNull SyringeCoilGunItemHandler syringeCoilGunItemHandler) {
+            return syringeCoilGunItemHandler.serializeNBT();
         }
     }
 }

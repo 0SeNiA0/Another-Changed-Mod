@@ -1,6 +1,7 @@
-package net.zaharenko424.a_changed.registry;
+package net.zaharenko424.a_changed;
 
 import net.minecraft.world.item.ItemStack;
+import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 
 import java.util.Objects;
 import java.util.function.Supplier;

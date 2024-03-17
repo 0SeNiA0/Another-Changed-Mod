@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -28,7 +28,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     private final ModelPart beam;
 
     public LaserEmitterRenderer(){
-        beam = ModelPartCache.INSTANCE.bake(LAYER).getChild("beam");
+        beam = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("beam");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

@@ -18,6 +18,9 @@
   ],
   "client": [
     "client.MixinFallingBlockRenderer",
+    "client.MixinFogRenderer",
+    "client.MixinGameRenderer",
+    "client.MixinLightTexture",
     "client.MixinLivingEntityRenderer",
     "client.MixinPlayerRenderer"
   ]

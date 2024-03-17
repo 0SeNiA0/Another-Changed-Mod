@@ -60,7 +60,7 @@ public abstract class AbstractTransfurType {
     }
 
     public EntityDimensions getPoseDimensions(Pose pose){
-        if(dimensions == null || dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 2);
+        if(dimensions == null || dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 1.9f);
         return dimensions.get(pose);
     }
 
@@ -101,14 +101,13 @@ public abstract class AbstractTransfurType {
         float airReductionModifier = 0;
         int maxHealthModifier = 0;
         float swimSpeedModifier = 0;
-        boolean male = true;
         Gender gender = Gender.NONE;
         boolean organic = false;
         Consumer<LivingEntity> onTransfur;
         Consumer<LivingEntity> onUnTransfur;
 
         protected Properties(ResourceLocation resourceLocation){
-            location=resourceLocation;
+            location = resourceLocation;
         }
 
         @Contract(value = "_ -> new", pure = true)
@@ -117,20 +116,20 @@ public abstract class AbstractTransfurType {
         }
 
         public Properties eyeHeight(float standing){
-            eyeHeightStanding=standing;
+            eyeHeightStanding = standing;
             return this;
         }
 
         public Properties eyeHeight(float standing, float crouching){
-            eyeHeightStanding=standing;
-            eyeHeightCrouching=crouching;
+            eyeHeightStanding = standing;
+            eyeHeightCrouching = crouching;
             return this;
         }
 
         public Properties eyeHeight(float standing,float crouching, float swimming){
-            eyeHeightStanding=standing;
-            eyeHeightCrouching=crouching;
-            eyeHeightSwimming=swimming;
+            eyeHeightStanding = standing;
+            eyeHeightCrouching = crouching;
+            eyeHeightSwimming = swimming;
             return this;
         }
 
@@ -144,6 +143,9 @@ public abstract class AbstractTransfurType {
             return this;
         }
 
+        /**
+         * Zero (default) -> no changes to minecraft logic.<p>modifier > 0 -> faster air depletion. <p>-1 < modifier < 0 -> slower depletion. <p>modifier <= -1 -> no depletion.
+         */
         public Properties airReductionModifier(float airReductionModifier){
             this.airReductionModifier = airReductionModifier;
             return this;
@@ -154,6 +156,9 @@ public abstract class AbstractTransfurType {
             return this;
         }
 
+        /**
+         * Higher modifier -> higher swim speed
+         */
         public Properties swimSpeedModifier(float swimSpeedModifier){
             this.swimSpeedModifier = swimSpeedModifier;
             return this;
@@ -165,7 +170,7 @@ public abstract class AbstractTransfurType {
         }
 
         public Properties organic(boolean organic){
-            this.organic=organic;
+            this.organic = organic;
             return this;
         }
 

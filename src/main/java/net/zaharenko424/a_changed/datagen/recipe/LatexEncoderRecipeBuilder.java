@@ -17,7 +17,7 @@ import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.item.SyringeItem;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import net.zaharenko424.a_changed.recipe.PartialNBTIngredientFix;
-import net.zaharenko424.a_changed.registry.DNAType;
+import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;

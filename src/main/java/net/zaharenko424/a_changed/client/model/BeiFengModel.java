@@ -12,6 +12,7 @@ import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -20,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BeiFengModel<E extends LivingEntity> extends CustomEntityModel<E> {
 
-    public static ModelLayerLocation bodyLayer = new ModelLayerLocation(AChanged.resourceLoc("bei_feng"),"main");
+    public static ModelLayerLocation bodyLayer = new ModelLayerLocation(TransfurRegistry.BEI_FENG_TF.getId(),"main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/bei_feng");
 
     public BeiFengModel() {

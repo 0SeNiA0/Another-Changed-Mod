@@ -10,7 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelPartCache;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.CryoChamberEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -23,7 +23,7 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
     private final ModelPart fluid;
 
     public CryoChamberRenderer(){
-        fluid = ModelPartCache.INSTANCE.bake(LAYER).getChild("fluid");
+        fluid = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("fluid");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

@@ -43,6 +43,10 @@ public final class EntityRegistry {
             registerLatex("gas_wolf", EntityType.Builder.of((a, b) ->
             new LatexBeast(a,b, GAS_WOLF_TF.get()), MobCategory.MONSTER));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> HYPNO_CAT =
+            registerLatex("hypno_cat", EntityType.Builder.of((a, b) ->
+                    new LatexBeast(a, b, HYPNO_CAT_TF.get()), MobCategory.MONSTER));
+
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> PURE_WHITE_LATEX_WOLF =
             registerLatex("pure_white_latex_wolf", EntityType.Builder.of((a, b) ->
             new LatexBeast(a, b, PURE_WHITE_LATEX_WOLF_TF.get()), MobCategory.MONSTER));
