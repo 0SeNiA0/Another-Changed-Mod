@@ -55,8 +55,8 @@ public class TransfurTolerance {
     }
 
     private static int set(@NotNull CommandSourceStack source , float tolerance){
-        if(TransfurManager.TRANSFUR_TOLERANCE==tolerance) return Command.SINGLE_SUCCESS;
-        TransfurManager.TRANSFUR_TOLERANCE=tolerance;
+        if(TransfurManager.TRANSFUR_TOLERANCE == tolerance) return Command.SINGLE_SUCCESS;
+        TransfurManager.TRANSFUR_TOLERANCE = tolerance;
         if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set")
                 .append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to " + tolerance);

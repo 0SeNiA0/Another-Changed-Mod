@@ -127,7 +127,6 @@ public class CustomEntityRenderer<E extends LivingEntity> extends LivingEntityRe
 
     @Override
     protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
-        //TODO check for swimming latex
         float f = entity.getSwimAmount(ticks);
         float f1 = entity.getViewXRot(ticks);
         super.setupRotations(entity, poseStack, ageInTicks, yaw, ticks);

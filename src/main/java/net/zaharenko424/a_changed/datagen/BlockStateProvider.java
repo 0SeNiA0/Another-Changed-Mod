@@ -68,6 +68,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         crossWithItem(DARK_LATEX_CRYSTAL);
         blockWithItem(DARK_LATEX_CRYSTAL_ICE);
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(), models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
+        latexPuddleWithItem(DARK_LATEX_PUDDLE_F, false);
+        latexPuddleWithItem(DARK_LATEX_PUDDLE_M, false);
         machineLikeWithItem(DNA_EXTRACTOR, true);
         simpleBlockWithItemExisting(FLASK);
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
@@ -111,6 +113,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         logWithItem(ORANGE_TREE_LOG, null, null);
         logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG.getId()), blockLoc(ORANGE_TREE_LOG.getId()));
         pipe();
+        simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
+                new ResourceLocation("flower_pot_cross"), "plant", blockTexture(ORANGE_SAPLING.get())).renderType("cutout"));
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
@@ -121,12 +125,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         rotatedDoublePartBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
         horizontalDirectionalBlockWithItem(TEST_TUBES);
         simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
-        ventWithItem();
+        ventDuct();
+        ventHatchWithItem();
         pillarWithItem(VENT_WALL,null);
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/white_latex_still"));
-        whiteLatexPuddleWithItem(WHITE_LATEX_PUDDLE_F);
-        whiteLatexPuddleWithItem(WHITE_LATEX_PUDDLE_M);
+        latexPuddleWithItem(WHITE_LATEX_PUDDLE_F, true);
+        latexPuddleWithItem(WHITE_LATEX_PUDDLE_M, true);
         blockWithItem(YELLOW_LAB_BLOCK);
     }
 
@@ -250,10 +255,6 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         };
     }
 
-    private @NotNull ResourceLocation itemLoc(ResourceLocation loc){
-        return loc.withPrefix(ModelProvider.ITEM_FOLDER + "/");
-    }
-
     private void keypadWithItem(){
         ResourceLocation id = KEYPAD.getId();
         ModelFile file = models().getExistingFile(blockLoc(id));
@@ -276,8 +277,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(id.getPath()).parent(inactive);
     }
 
-    private void whiteLatexPuddleWithItem(DeferredBlock<LatexPuddle> puddle){
-        ResourceLocation loc = blockLoc(AChanged.resourceLoc("latex_puddle/latex_puddle"));
+    private void latexPuddleWithItem(DeferredBlock<LatexPuddle> puddle, boolean white){
+        ResourceLocation loc = blockLoc(AChanged.resourceLoc((white ? "white" : "dark") + "_latex_puddle/latex_puddle"));
         ModelFile puddle0 = models().getExistingFile(loc);
         ModelFile puddleN = models().getExistingFile(loc.withSuffix("_n"));
         ModelFile puddleNE = models().getExistingFile(loc.withSuffix("_ne"));
@@ -353,7 +354,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void simpleBlockWithItemExisting(DeferredBlock<?> block){
-        ResourceLocation id=block.getId();
+        ResourceLocation id = block.getId();
         ModelFile model = models().getExistingFile(blockLoc(id));
         getVariantBuilder(block.get()).forAllStates(state -> new ConfiguredModel[]{new ConfiguredModel(model)});
         itemModels().getBuilder(id.getPath()).parent(model);
@@ -422,16 +423,108 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                 horizontalRotatedModel(models().getExistingFile(id.withSuffix("_" + state.getValue(PART4) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
     }
 
-    private void ventWithItem(){
-        ResourceLocation id = VENT.getId();
+    private void ventDuct(){
+        ResourceLocation id = VENT_DUCT.getId();
+        ResourceLocation loc = blockLoc(id.withPrefix("vent_duct/"));
+        /*ModelFile duct_n = models().getExistingFile(loc.withSuffix("_n"));
+        ModelFile duct_nu = models().getExistingFile(loc.withSuffix("_nu"));
+
+        ModelFile duct_ne = models().getExistingFile(loc.withSuffix("_ne"));
+        ModelFile duct_neu = models().getExistingFile(loc.withSuffix("_neu"));
+
+        ModelFile duct_nw = models().getExistingFile(loc.withSuffix("_nw"));
+        ModelFile duct_ns = models().getExistingFile(loc.withSuffix("_ns"));
+
+        ModelFile duct_nsu = models().getExistingFile(loc.withSuffix("_nsu"));
+        ModelFile duct_nwu = models().getExistingFile(loc.withSuffix("_nwu"));
+
+        ModelFile duct_new = models().getExistingFile(loc.withSuffix("_new"));
+        ModelFile duct_newu = models().getExistingFile(loc.withSuffix("_newu"));
+
+        ModelFile duct_nesw = models().getExistingFile(loc.withSuffix("_nesw"));
+        ModelFile duct_neswu = models().getExistingFile(loc.withSuffix("_neswu"));
+
+        ModelFile duct_n_ = models().getExistingFile(loc.withSuffix("_n_"));
+        ModelFile duct_nu_ = models().getExistingFile(loc.withSuffix("_nu_"));
+
+        ModelFile duct_ne_ = models().getExistingFile(loc.withSuffix("_ne_"));
+        ModelFile duct_neu_ = models().getExistingFile(loc.withSuffix("_neu_"));
+
+        ModelFile duct_nw_ = models().getExistingFile(loc.withSuffix("_nw_"));
+        ModelFile duct_nwu_ = models().getExistingFile(loc.withSuffix("_nwu_"));
+
+        ModelFile duct_ns_ = models().getExistingFile(loc.withSuffix("_ns_"));
+        ModelFile duct_nsu_ = models().getExistingFile(loc.withSuffix("_nsu_"));
+
+
+        ModelFile duct_new_ = models().getExistingFile(loc.withSuffix("_new_"));
+        ModelFile duct_newu_ = models().getExistingFile(loc.withSuffix("_newu_"));
+
+        ModelFile duct_nesw_ = models().getExistingFile(loc.withSuffix("_nesw_"));
+        ModelFile duct_neswu_ = models().getExistingFile(loc.withSuffix("_neswu_"));*/
+
+        ModelFile frame = models().getExistingFile(loc);
+        //ModelFile frame_s = models().getExistingFile(loc.withSuffix("_s"));
+        ModelFile wall = models().getExistingFile(loc.withSuffix("_wall"));
+        //ModelFile wall_s = models().getExistingFile(loc.withSuffix("_wall_s"));
+        //ModelFile wall_b = models().getExistingFile(loc.withSuffix("_wall_b"));
+//will have to use variant builder and a bunch of models. make models for all states facing north to just have to rotate?
+        /*getVariantBuilder(VENT_DUCT.get()).forAllStates(state -> {
+            boolean u = state.getValue(UP);
+            boolean d = state.getValue(DOWN);
+            boolean n = state.getValue(NORTH);
+            boolean e = state.getValue(EAST);
+            boolean s = state.getValue(SOUTH);
+            boolean w = state.getValue(WEST);
+            boolean bars = state.getValue(BARS);
+            boolean middle = state.getValue(IN_MIDDLE);
+
+            int sidesConnected = 0;
+            boolean[] ar = {u, d, n, e, s, w};
+            for(boolean bool : ar){
+                if(bool) sidesConnected++;
+            }
+
+            List<ConfiguredModel> models = new ArrayList<>();
+            ModelFile wall_tmp;
+
+            if(sidesConnected == 2 && middle){
+                models.add(new ConfiguredModel(frame_s));
+                wall_tmp = bars ? wall_b : wall_s;
+            } else {
+                models.add(new ConfiguredModel(frame));
+                wall_tmp = wall;
+            }
+
+            if(!u) models.add(new ConfiguredModel(wall_tmp, -90, 0, false));
+            if(!d) models.add(new ConfiguredModel(wall_tmp, 90, 0, false));
+            if(!n) models.add(new ConfiguredModel(wall_tmp));
+            if(!e) models.add(new ConfiguredModel(wall_tmp, 0, 90, false));
+            if(!s) models.add(new ConfiguredModel(wall_tmp, 0, 180, false));
+            if(!w) models.add(new ConfiguredModel(wall_tmp, 0, 270, false));
+
+            return new ConfiguredModel[]{};
+        });*/
+
+        getMultipartBuilder(VENT_DUCT.get()).part().modelFile(frame).addModel().end()
+                .part().modelFile(wall).rotationX(90).addModel().condition(DOWN, false).end()
+                .part().modelFile(wall).rotationX(-90).addModel().condition(UP, false).end()
+                .part().modelFile(wall).addModel().condition(NORTH,false).end()
+                .part().modelFile(wall).rotationY(90).addModel().condition(EAST,false).end()
+                .part().modelFile(wall).rotationY(180).addModel().condition(SOUTH,false).end()
+                .part().modelFile(wall).rotationY(270).addModel().condition(WEST,false).end();
+    }
+
+    private void ventHatchWithItem(){
+        ResourceLocation id = VENT_HATCH.getId();
         ModelFile top = models().getExistingFile(blockLoc(id).withSuffix("_top"));
         ModelFile bottom = models().getExistingFile(blockLoc(id).withSuffix("_bottom"));
         ModelFile open = models().getExistingFile(blockLoc(id).withSuffix("_open"));
-        trapdoorBlock(VENT.get(), bottom, top, open, true);
+        trapdoorBlock(VENT_HATCH.get(), bottom, top, open, true);
         itemModels().getBuilder(id.getPath()).parent(bottom);
     }
 
-    private ModelFile wideCross(String path,ResourceLocation texture){
+    private @NotNull ModelFile wideCross(String path, ResourceLocation texture){
         return models().withExistingParent(path, WIDE_CROSS).texture("1", texture);
     }
 

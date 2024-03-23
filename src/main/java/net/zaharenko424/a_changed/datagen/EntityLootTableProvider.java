@@ -49,6 +49,15 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                         .add(LootItem.lootTableItem(Items.STRING)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))));
 
+        LootTable.Builder shork = new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(LootItem.lootTableItem(Items.COD)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))
+                        .add(LootItem.lootTableItem(Items.SALMON)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))));
+        add(LATEX_SHARK_FEMALE.get(), shork);
+        add(LATEX_SHARK_MALE.get(), shork);
+
         add(PURE_WHITE_LATEX_WOLF.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));

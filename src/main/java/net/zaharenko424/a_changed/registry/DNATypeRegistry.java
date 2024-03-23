@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.item.BloodSyringe;
+import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 
@@ -17,6 +18,12 @@ public class DNATypeRegistry {
     public static final Registry<DNAType> DNA_TYPE_REGISTRY = DNA_TYPES.makeRegistry(builder -> {});
 
     public static final DeferredHolder<DNAType, DNAType> APPLE_DNA = DNA_TYPES.register("apple", ()-> new DNAType(Items.APPLE::getDefaultInstance));
-    public static final DeferredHolder<DNAType, DNAType> CAT_DNA = DNA_TYPES.register("cat", ()-> new DNAType(()-> BloodSyringe.encodeEntityType(EntityType.CAT, null)));
-    public static final DeferredHolder<DNAType, DNAType> WOLF_DNA = DNA_TYPES.register("wolf", ()-> new DNAType(()-> BloodSyringe.encodeEntityType(EntityType.WOLF, null)));
+    public static final DeferredHolder<DNAType, DNAType> CAT_DNA = entityDna("cat", EntityType.CAT);
+    public static final DeferredHolder<DNAType, DNAType> COD_DNA = entityDna("cod", EntityType.COD);
+    public static final DeferredHolder<DNAType, DNAType> SALMON_DNA = entityDna("salmon", EntityType.SALMON);
+    public static final DeferredHolder<DNAType, DNAType> WOLF_DNA = entityDna("wolf", EntityType.WOLF);
+
+    private static @NotNull DeferredHolder<DNAType, DNAType> entityDna(String name, EntityType<?> entityType){
+        return DNA_TYPES.register(name, ()-> new DNAType(()-> BloodSyringe.encodeEntityType(entityType, null)));
+    }
 }

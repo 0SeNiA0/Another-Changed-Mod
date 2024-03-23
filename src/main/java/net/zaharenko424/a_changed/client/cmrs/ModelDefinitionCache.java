@@ -5,10 +5,7 @@ import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.model.DummyModel;
-import net.zaharenko424.a_changed.client.model.BeiFengModel;
-import net.zaharenko424.a_changed.client.model.HypnoCatModel;
-import net.zaharenko424.a_changed.client.model.LatexWolfFemaleModel;
-import net.zaharenko424.a_changed.client.model.LatexWolfMaleModel;
+import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.DNAExtractorRenderer;
@@ -38,6 +35,8 @@ public final class ModelDefinitionCache {
 
         modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());
         modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.bodyLayer());
+        modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.bodyLayer());
+        modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.bodyLayer());
         modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
         modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
 

@@ -39,7 +39,7 @@ public class HypnoCatModel <E extends LivingEntity> extends CustomEntityModel<E>
         if(!ears.isStarted()) ears.start((int) ageInTicks);
         if(!tail.isStarted()) tail.start((int) ageInTicks);
         animate(ears, Animations.EAR_ANIM, ageInTicks);
-        animate(tail, Animations.TAIL_ANIM_CAT, ageInTicks);
+        animate(tail, Animations.TAIL_CAT, ageInTicks);
     }
 
     public static @NotNull ModelDefinition bodyLayer() {

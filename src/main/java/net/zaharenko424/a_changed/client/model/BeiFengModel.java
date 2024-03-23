@@ -37,7 +37,7 @@ public class BeiFengModel<E extends LivingEntity> extends CustomEntityModel<E> {
         if(!ears.isStarted()) ears.start((int) ageInTicks);
         if(!tail.isStarted()) tail.start((int) ageInTicks);
         animate(ears, Animations.EAR_ANIM,ageInTicks);
-        animate(tail,Animations.DRAGON_TAIL_ANIM,ageInTicks);
+        animate(tail,Animations.TAIL_DRAGON,ageInTicks);
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

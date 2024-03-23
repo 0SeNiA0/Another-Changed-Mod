@@ -34,22 +34,9 @@ import static net.zaharenko424.a_changed.block.blocks.ConnectedTextureBlock.*;
 @SuppressWarnings("deprecation")
 public class LatexPuddle extends Block {
 
-    private static final VoxelShape SHAPE0 = Shapes.or(Shapes.box(0.25, 0, 0.25, 0.75, 0.0625, 0.75),
-            Shapes.box(0.1875, 0, 0.3125, 0.25, 0.0625, 0.6875),
-            Shapes.box(0.75, 0, 0.3125, 0.8125, 0.0625, 0.6875),
-            Shapes.box(0.3125, 0, 0.75, 0.6875, 0.0625, 0.8125),
-            Shapes.box(0.3125, 0, 0.1875, 0.6875, 0.0625, 0.25));
-    private static final VoxelShape SHAPE_N = Shapes.or(Shapes.box(0.25, 0, 0, 0.75, 0.0625, 0.75),
-            Shapes.box(0.1875, 0, 0, 0.25, 0.0625, 0.6875),
-            Shapes.box(0.125, 0, 0, 0.1875, 0.0625, 0.375),
-            Shapes.box(0.8125, 0, 0, 0.875, 0.0625, 0.375),
-            Shapes.box(0.75, 0, 0, 0.8125, 0.0625, 0.6875),
-            Shapes.box(0.3125, 0, 0.75, 0.6875, 0.0625, 0.8125));
-    private static final VoxelShape SHAPE_NE = Shapes.or(Shapes.box(0.25, 0, 0, 1, 0.0625, 0.75),
-            Shapes.box(0.1875, 0, 0, 0.25, 0.0625, 0.625),
-            Shapes.box(0.125, 0, 0, 0.1875, 0.0625, 0.375),
-            Shapes.box(0.375, 0, 0.75, 1, 0.0625, 0.8125),
-            Shapes.box(0.625, 0, 0.8125, 1, 0.0625, 0.875));
+    private static final VoxelShape SHAPE0;
+    private static final VoxelShape SHAPE_N;
+    private static final VoxelShape SHAPE_NE;
     private static final VoxelShape SHAPE_NS = Shapes.box(0.125, 0, 0, 0.875, 0.0625, 1);
     private static final VoxelShape SHAPE_NES = Shapes.box(0.125, 0, 0, 1, 0.0625, 1);
     private static final VoxelShape SHAPE_NESW = Shapes.box(0, 0, 0, 1, 0.0625, 1);
@@ -130,5 +117,24 @@ public class LatexPuddle extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
         super.createBlockStateDefinition(p_49915_.add(NORTH,EAST,SOUTH,WEST));
+    }
+
+    static {
+        SHAPE0 = Shapes.or(Shapes.box(0.25, 0, 0.25, 0.75, 0.0625, 0.75),
+                Shapes.box(0.1875, 0, 0.3125, 0.25, 0.0625, 0.6875),
+                Shapes.box(0.75, 0, 0.3125, 0.8125, 0.0625, 0.6875),
+                Shapes.box(0.3125, 0, 0.75, 0.6875, 0.0625, 0.8125),
+                Shapes.box(0.3125, 0, 0.1875, 0.6875, 0.0625, 0.25));
+        SHAPE_N = Shapes.or(Shapes.box(0.25, 0, 0, 0.75, 0.0625, 0.75),
+                Shapes.box(0.1875, 0, 0, 0.25, 0.0625, 0.6875),
+                Shapes.box(0.125, 0, 0, 0.1875, 0.0625, 0.375),
+                Shapes.box(0.8125, 0, 0, 0.875, 0.0625, 0.375),
+                Shapes.box(0.75, 0, 0, 0.8125, 0.0625, 0.6875),
+                Shapes.box(0.3125, 0, 0.75, 0.6875, 0.0625, 0.8125));
+        SHAPE_NE = Shapes.or(Shapes.box(0.25, 0, 0, 1, 0.0625, 0.75),
+                Shapes.box(0.1875, 0, 0, 0.25, 0.0625, 0.625),
+                Shapes.box(0.125, 0, 0, 0.1875, 0.0625, 0.375),
+                Shapes.box(0.375, 0, 0.75, 1, 0.0625, 0.8125),
+                Shapes.box(0.625, 0, 0.8125, 1, 0.0625, 0.875));
     }
 }

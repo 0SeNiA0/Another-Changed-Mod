@@ -27,7 +27,7 @@ public final class TransfurRegistry {
                     .of(resourceLoc("benign")).organic(true).onTransfur(entity -> {//TODO replace with unremovable effects
                         entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, -1, 0, false, false, false));
                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, -1, 2, false, false, false));
-                    }).onUnTransfur(entity ->{//OR move to TransfurEvent as an exception & check for this TF
+                    }).onUnTransfur(entity -> {//OR move to TransfurEvent as an exception & check for this TF
                         entity.removeEffect(MobEffects.BLINDNESS);
                         entity.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
                     })));
@@ -45,6 +45,13 @@ public final class TransfurRegistry {
 
     public static final DeferredHolder<AbstractTransfurType, HypnoCat> HYPNO_CAT_TF = TRANSFUR_TYPES
             .register("hypno_cat", ()-> new HypnoCat(AbstractLatexCat.CatProperties.of(resourceLoc("hypno_cat"))));
+
+    public static final DeferredHolder<AbstractTransfurType, LatexShark> LATEX_SHARK_F_TF = TRANSFUR_TYPES
+            .register("latex_shark_female", ()-> new LatexShark(AbstractWaterLatex.WaterLatexProperties
+                    .of(resourceLoc("latex_shark_female")).gender(Gender.FEMALE)));
+    public static final DeferredHolder<AbstractTransfurType, LatexShark> LATEX_SHARK_M_TF = TRANSFUR_TYPES
+            .register("latex_shark_male", ()-> new LatexShark(AbstractWaterLatex.WaterLatexProperties
+                    .of(resourceLoc("latex_shark_male")).gender(Gender.MALE)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> PURE_WHITE_LATEX_WOLF_TF = TRANSFUR_TYPES
             .register("pure_white_latex_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties

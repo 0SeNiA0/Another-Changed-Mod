@@ -2,9 +2,7 @@ package net.zaharenko424.a_changed.block.machines;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -64,26 +62,9 @@ public class WireBlock extends ConnectedTextureBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState p_60543_, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos p_60546_) {
-        BlockEntity entity = level.getBlockEntity(p_60546_);
-
-        return state.setValue(propByDirection.get(direction), p_60543_.is(this)
-                || entity != null
-                    && entity.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, p_60546_, direction.getOpposite()) != null);
-    }
-
-    @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        BlockState state = defaultBlockState();
-        Level level = context.getLevel();
-        BlockEntity entity;
-        for(Direction direction : Direction.values()){
-            pos.setWithOffset(context.getClickedPos(), direction);
-            entity = level.getBlockEntity(pos);
-            state = state.setValue(propByDirection.get(direction), level.getBlockState(pos).is(this)
-                    || entity != null && level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()) != null);
-        }
-        return state;
+    protected boolean shouldConnectTo(@NotNull BlockState state, BlockPos pos, @NotNull LevelAccessor level, Direction direction) {
+        BlockEntity entity = level.getBlockEntity(pos);
+        return super.shouldConnectTo(state, pos, level, direction)
+                || entity != null && entity.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()) != null;
     }
 }

@@ -149,7 +149,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         head.y -= 3;
     }
 
-    protected void setupSwimAnimation(E entity, float limbSwing){//Should be fine
+    protected void setupSwimAnimation(E entity, float limbSwing){//TODO fix anim for entities!
         float f5 = limbSwing % 26.0F;
         HumanoidArm humanoidarm = getAttackArm(entity);
         float f1 = humanoidarm == HumanoidArm.RIGHT && attackTime > 0.0F ? 0.0F : swimAmount;
@@ -221,7 +221,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 if(body.hasChild("tail")) setDrawAll(false, body.getChild("tail"));
             }
             case LEGS -> {
-                setupArmorPartsIn(glowing, body);
+                setupArmorPartsIn(glowing, body);//TODO remove or add a new armor part for legs -> chest armor
                 setupArmorPartsIn(glowing, rightLeg);
                 setupArmorPartsIn(glowing, leftLeg);
             }

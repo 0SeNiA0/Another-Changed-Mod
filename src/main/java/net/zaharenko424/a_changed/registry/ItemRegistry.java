@@ -41,6 +41,8 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> DARK_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_BLOCK);
     public static final DeferredItem<BlockItem> DARK_LATEX_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL);
     public static final DeferredItem<BlockItem> DARK_LATEX_ICE_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL_ICE);
+    public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_F);
+    public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_M);
     public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
     public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GREEN_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(GREEN_CRYSTAL);
@@ -70,7 +72,8 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> TALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(TALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> TEST_TUBES_ITEM = ITEMS.registerSimpleBlockItem(TEST_TUBES);
     public static final DeferredItem<BlockItem> TRAFFIC_CONE_ITEM = ITEMS.registerSimpleBlockItem(TRAFFIC_CONE);
-    public static final DeferredItem<BlockItem> VENT_ITEM = ITEMS.registerSimpleBlockItem(VENT);
+    public static final DeferredItem<BlockItem> VENT_DUCT_ITEM = ITEMS.registerSimpleBlockItem(VENT_DUCT);
+    public static final DeferredItem<BlockItem> VENT_HATCH_ITEM = ITEMS.registerSimpleBlockItem(VENT_HATCH);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);
     public static final DeferredItem<BlockItem> WHITE_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_BLOCK);
     public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_F);
@@ -144,15 +147,17 @@ public final class ItemRegistry {
     public static final DeferredItem<BucketItem> DARK_LATEX_BUCKET = ITEMS.register("dark_latex_bucket", ()-> new BucketItem(DARK_LATEX_STILL,new Item.Properties().stacksTo(1)));
 
     //Spawn eggs
-    public static DeferredItem<SpawnEggItem> BEI_FENG_EGG = ITEMS.register("bei_feng_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.BEI_FENG, 5334429, 2763306, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> BENIGN_EGG = ITEMS.register("benign_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.BENIGN, 2171169, 2171169, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_F_EGG = ITEMS.register("dark_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_FEMALE, 2763306, 6908265, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_M_EGG = ITEMS.register("dark_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_MALE, 2763306, 6908265, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> GAS_WOLF_EGG = ITEMS.register("gas_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.GAS_WOLF, 2763306, 16777215, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> HYPNO_CAT_EGG = ITEMS.register("hypno_cat_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.HYPNO_CAT, 2763306, -344280, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> PURE_WHITE_LATEX_WOLF_EGG = ITEMS.register("pure_white_latex_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.PURE_WHITE_LATEX_WOLF, 16777215, 16777215, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_F_EGG = ITEMS.register("white_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, 16777215, 13619151, spawnEgg()));
-    public static DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_M_EGG = ITEMS.register("white_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_MALE, 16777215, 13619151, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> BEI_FENG_EGG = ITEMS.register("bei_feng_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.BEI_FENG, 5334429, 2763306, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> BENIGN_EGG = ITEMS.register("benign_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.BENIGN, 2171169, 2171169, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_F_EGG = ITEMS.register("dark_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_FEMALE, 2763306, 6908265, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> DARK_LATEX_WOLF_M_EGG = ITEMS.register("dark_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.DARK_LATEX_WOLF_MALE, 2763306, 6908265, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> GAS_WOLF_EGG = ITEMS.register("gas_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.GAS_WOLF, 2763306, 16777215, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> HYPNO_CAT_EGG = ITEMS.register("hypno_cat_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.HYPNO_CAT, 2763306, -344280, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> LATEX_SHARK_F_EGG = ITEMS.register("latex_shark_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.LATEX_SHARK_FEMALE, -6908266, -1, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> LATEX_SHARK_M_EGG = ITEMS.register("latex_shark_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.LATEX_SHARK_MALE, -6908266, -2302756, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> PURE_WHITE_LATEX_WOLF_EGG = ITEMS.register("pure_white_latex_wolf_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.PURE_WHITE_LATEX_WOLF, 16777215, 16777215, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_F_EGG = ITEMS.register("white_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, 16777215, 13619151, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_M_EGG = ITEMS.register("white_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_MALE, 16777215, 13619151, spawnEgg()));
 
     private static Item.@NotNull Properties spawnEgg(){
         return new Item.Properties().rarity(Rarity.UNCOMMON);

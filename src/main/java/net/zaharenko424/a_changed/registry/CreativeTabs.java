@@ -78,9 +78,8 @@ public class CreativeTabs {
                     output.accept(TALL_CARDBOARD_BOX_ITEM);
                     output.accept(TEST_TUBES_ITEM);
                     output.accept(TRAFFIC_CONE_ITEM);
-                    output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
-                    output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
-                    output.accept(VENT_ITEM);
+                    output.accept(VENT_DUCT_ITEM);
+                    output.accept(VENT_HATCH_ITEM);
                     //Technology
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);
@@ -154,12 +153,19 @@ public class CreativeTabs {
 
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 
+                    output.accept(DARK_LATEX_PUDDLE_F_ITEM);
+                    output.accept(DARK_LATEX_PUDDLE_M_ITEM);
+                    output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
+                    output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
+
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);
                     output.accept(DARK_LATEX_WOLF_F_EGG);
                     output.accept(DARK_LATEX_WOLF_M_EGG);
                     output.accept(GAS_WOLF_EGG);
                     output.accept(HYPNO_CAT_EGG);
+                    output.accept(LATEX_SHARK_F_EGG);
+                    output.accept(LATEX_SHARK_M_EGG);
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);

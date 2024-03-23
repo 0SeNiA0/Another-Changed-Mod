@@ -35,7 +35,7 @@ public class LatexWolfFemaleModel<E extends LivingEntity> extends CustomEntityMo
         if(!ears.isStarted()) ears.start((int) ageInTicks);
         if(!tail.isStarted()) tail.start((int) ageInTicks);
         animate(ears, Animations.EAR_ANIM,ageInTicks);
-        animate(tail,Animations.TAIL_ANIM,ageInTicks);
+        animate(tail,Animations.TAIL_DEF,ageInTicks);
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

@@ -23,8 +23,10 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
@@ -61,15 +63,20 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event){
+        event.getServer().overworld().getDataStorage().computeIfAbsent(TransfurToleranceData.FACTORY, "transfur_tolerance");
+    }
+
+    @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        TransfurEvent.RECALCULATE_PROGRESS.accept(player);
         PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
         TransfurEvent.updatePlayer(player);
         player.refreshDimensions();
         if(TransfurManager.isBeingTransfurred(player)) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
         GrabCapability.nonNullOf(player).updatePlayer();
+        TransfurEvent.RECALCULATE_PROGRESS.accept(player);
     }
 
     @SubscribeEvent

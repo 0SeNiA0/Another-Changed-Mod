@@ -38,7 +38,7 @@ public class BlockRegistry {
     //Blocks
     public static final DeferredBlock<Compressor> COMPRESSOR = BLOCKS.register("compressor", ()-> new Compressor(decorProperties()));
     public static final DeferredBlock<WireBlock> COPPER_WIRE = BLOCKS.register("copper_wire", ()-> new WireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
-    public static final DeferredBlock<DNAExtractor> DNA_EXTRACTOR = BLOCKS.register("dna_extractor", ()-> new DNAExtractor(decorProperties()));
+    public static final DeferredBlock<DNAExtractor> DNA_EXTRACTOR = BLOCKS.register("dna_extractor", ()-> new DNAExtractor(decorProperties().noOcclusion()));
     public static final DeferredBlock<LatexEncoder> LATEX_ENCODER = BLOCKS.register("latex_encoder", ()-> new LatexEncoder(decorProperties().noOcclusion()));
     public static final DeferredBlock<LatexPurifier> LATEX_PURIFIER = BLOCKS.register("latex_purifier", ()-> new LatexPurifier(decorProperties()));
 
@@ -66,6 +66,8 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> DARK_LATEX_BLOCK = BLOCKS.registerSimpleBlock("dark_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
     public static final DeferredBlock<Crystal> DARK_LATEX_CRYSTAL = BLOCKS.register("dark_latex_crystal", ()-> new Crystal(decorProperties(),TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
+    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_F = BLOCKS.register("dark_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_F_TF));
+    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_M = BLOCKS.register("dark_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(decorProperties().noLootTable().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Generator> GENERATOR = BLOCKS.register("generator", ()-> new Generator(decorProperties()));
@@ -88,6 +90,7 @@ public class BlockRegistry {
     public static final DeferredBlock<LeavesBlock> ORANGE_LEAVES = BLOCKS.register("orange_leaves", ()-> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)));
     public static final DeferredBlock<SaplingBlock> ORANGE_SAPLING = BLOCKS.register("orange_sapling", ()-> new SaplingBlock(OrangeTreeGrower.GROWER, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)));
     public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
+    public static final DeferredBlock<FlowerPotBlock> POTTED_ORANGE_SAPLING = BLOCKS.register("potted_orange_sapling", ()-> new FlowerPotBlock(()-> (FlowerPotBlock) Blocks.FLOWER_POT, ORANGE_SAPLING, BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING)));
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<SmallCardboardBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", ()-> new SmallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY).noLootTable()));
     public static final DeferredBlock<SmartSewageSystem> SMART_SEWAGE_SYSTEM = BLOCKS.register("smart_sewage_system", ()-> new SmartSewageSystem(decorProperties()));
@@ -96,7 +99,8 @@ public class BlockRegistry {
     public static final DeferredBlock<TallCardboardBox> TALL_CARDBOARD_BOX = BLOCKS.register("tall_cardboard_box", ()-> new TallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<TestTubes> TEST_TUBES = BLOCKS.register("test_tubes", ()-> new TestTubes(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<TrafficCone> TRAFFIC_CONE = BLOCKS.register("traffic_cone", ()-> new TrafficCone(BlockBehaviour.Properties.of().strength(.75f,3f).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY).mapColor(DyeColor.YELLOW).noOcclusion()));
-    public static final DeferredBlock<TrapDoorBlock> VENT = BLOCKS.register("vent", ()-> new TrapDoorBlock(BlockSetType.STONE, decorProperties().noOcclusion()));
+    public static final DeferredBlock<VentDuct> VENT_DUCT = BLOCKS.register("vent_duct", ()-> new VentDuct(decorProperties()));
+    public static final DeferredBlock<TrapDoorBlock> VENT_HATCH = BLOCKS.register("vent_hatch", ()-> new TrapDoorBlock(BlockSetType.STONE, decorProperties().noOcclusion()));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<Block> WHITE_LATEX_BLOCK = BLOCKS.registerSimpleBlock("white_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
     public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_F_TF));

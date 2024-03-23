@@ -10,10 +10,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -29,7 +26,8 @@ import java.util.List;
 public class StunBaton extends SwordItem {
 
     public StunBaton() {
-        super(Tiers.WOOD, 3, -2.4f, new Properties().durability(100));
+        super(Tiers.WOOD, 3, -2.4f, new Properties()
+                .durability(100).rarity(Rarity.UNCOMMON));
     }
 
     @Override

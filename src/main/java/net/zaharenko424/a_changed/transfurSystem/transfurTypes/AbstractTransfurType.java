@@ -84,7 +84,7 @@ public abstract class AbstractTransfurType {
         return Component.translatable("transfur."+ id.toLanguageKey());
     }
 
-    public static class Properties{
+    public static class Properties {
         ResourceLocation location;
         float eyeHeightStanding = 1.62f;
         float eyeHeightCrouching = 1.27f;
@@ -157,7 +157,7 @@ public abstract class AbstractTransfurType {
         }
 
         /**
-         * Higher modifier -> higher swim speed
+         * Higher modifier -> higher swim speed <p> Attribute uses multiplyTotal operation
          */
         public Properties swimSpeedModifier(float swimSpeedModifier){
             this.swimSpeedModifier = swimSpeedModifier;

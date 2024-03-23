@@ -21,5 +21,11 @@ description = '''${mod_description}'''
     versionRange = "${minecraft_version_range}"
     ordering = "NONE"
     side = "BOTH"
+[[dependencies.${mod_id}]]
+    modId="smartbrainlib"
+    type = "required"
+    versionRange = "[1.8,)"
+    ordering = "NONE"
+    side = "SERVER"
 [[accessTransformers]]
     file = "accesstransformer.cfg"

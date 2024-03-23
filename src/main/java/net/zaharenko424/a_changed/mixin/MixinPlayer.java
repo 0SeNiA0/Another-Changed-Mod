@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.block.blocks.VentDuct;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
@@ -58,5 +59,10 @@ public abstract class MixinPlayer extends LivingEntity {
         if(handler == null || !handler.isTransfurred()) return;
         ci.cancel();
         ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
+    }
+
+    @Inject(at = @At("HEAD"), method = "canPlayerFitWithinBlocksAndEntitiesWhen", cancellable = true)
+    private void onCanFitWithinBlocksAndEntitiesWhen(Pose pPose, CallbackInfoReturnable<Boolean> cir){
+        if(getFeetBlockState().getBlock() instanceof VentDuct && pPose != Pose.SWIMMING) cir.setReturnValue(false);
     }
 }

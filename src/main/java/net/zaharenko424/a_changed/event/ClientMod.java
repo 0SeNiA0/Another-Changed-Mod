@@ -115,6 +115,9 @@ public class ClientMod {
 
         event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomEntityRenderer<>(a, HYPNO_CAT_TF.get().getModel(0)));
 
+        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomEntityRenderer<>(a, LATEX_SHARK_F_TF.get().getModel(0)));
+        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomEntityRenderer<>(a, LATEX_SHARK_M_TF.get().getModel(0)));
+
         event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomEntityRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel(0)));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel(0)));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomEntityRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel(0)));

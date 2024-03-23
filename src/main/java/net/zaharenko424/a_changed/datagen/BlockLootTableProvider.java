@@ -61,6 +61,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(DARK_LATEX_BLOCK.get());
         crystalDrops(DARK_LATEX_CRYSTAL.get(), ItemRegistry.DARK_LATEX_CRYSTAL_SHARD);
         dropWhenSilkTouch(DARK_LATEX_CRYSTAL_ICE.get());
+        dropSelf(DARK_LATEX_PUDDLE_F.get());
+        dropSelf(DARK_LATEX_PUDDLE_M.get());
         dropSelf(DNA_EXTRACTOR.get());
         dropOther(FLASK.get(), BROKEN_FLASK);
         dropSelf(GENERATOR.get());
@@ -100,6 +102,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropOther(ORANGE_WALL_SIGN.get(), ORANGE_SIGN);
         dropSelf(ORANGE_WOOD.get());
         dropSelf(PIPE.get());
+        add(POTTED_ORANGE_SAPLING.get(), createPotFlowerItemTable(ORANGE_SAPLING));
         dropSelf(SCANNER.get());
         dropSelf(SMART_SEWAGE_SYSTEM.get());
         dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());
@@ -109,7 +112,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         doublePartBlockDrops(TALL_CARDBOARD_BOX.get());
         dropSelf(TEST_TUBES.get());
         dropSelf(TRAFFIC_CONE.get());
-        dropSelf(VENT.get());
+        dropSelf(VENT_DUCT.get());
+        dropSelf(VENT_HATCH.get());
         dropSelf(VENT_WALL.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
         dropSelf(WHITE_LATEX_PUDDLE_F.get());
