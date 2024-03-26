@@ -37,6 +37,24 @@ public class Utils {
         return obj;
     }
 
+    public static int booleansToInt(boolean[] booleans){
+        int bits = 0;
+        for (int i = 0; i < booleans.length; i++)
+            if (booleans[i])
+                bits |= 1 << i;
+        return bits;
+    }
+
+    @Contract(pure = true)
+    public static boolean @NotNull [] intToBooleans(int bits, int size){
+        if(size > 32) size = 32;
+        boolean[] booleans = new boolean[size]; /*max. length: 32*/
+        for (int i = 0; i < booleans.length; i++)
+            if ((bits & 1 << i) != 0)
+                booleans[i] = true;
+        return booleans;
+    }
+
     public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
         if(stackWith.isEmpty()) return true;
         return stackWith.getCount() < stackWith.getMaxStackSize() && ItemHandlerHelper.canItemStacksStack(stack, stackWith);

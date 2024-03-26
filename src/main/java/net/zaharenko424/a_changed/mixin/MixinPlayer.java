@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.zaharenko424.a_changed.block.blocks.VentDuct;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
@@ -63,6 +64,9 @@ public abstract class MixinPlayer extends LivingEntity {
 
     @Inject(at = @At("HEAD"), method = "canPlayerFitWithinBlocksAndEntitiesWhen", cancellable = true)
     private void onCanFitWithinBlocksAndEntitiesWhen(Pose pPose, CallbackInfoReturnable<Boolean> cir){
-        if(getFeetBlockState().getBlock() instanceof VentDuct && pPose != Pose.SWIMMING) cir.setReturnValue(false);
+        if(pPose != Pose.SWIMMING && getFeetBlockState().getBlock() instanceof VentDuct duct
+                && duct.getShape(getFeetBlockState(), level(), blockPosition(), CollisionContext.empty()).bounds().move(blockPosition()).intersects(getBoundingBox())) {
+            cir.setReturnValue(false);
+        }
     }
 }

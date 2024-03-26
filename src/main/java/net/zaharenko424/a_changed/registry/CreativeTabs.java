@@ -23,6 +23,8 @@ public class CreativeTabs {
                 .displayItems((parameters, output) -> {
                     output.accept(ORANGE_ITEM);
                     output.accept(ORANGE_JUICE_ITEM);
+                    output.accept(CANNED_ORANGES_ITEM);
+                    output.accept(METAL_CAN_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
                     output.accept(HAZARD_BLOCK_ITEM);

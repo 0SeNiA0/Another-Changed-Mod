@@ -125,6 +125,6 @@ public class LatexContainerEntity extends BlockEntity {
         if(isEmpty()) return;
         CompoundTag item = new CompoundTag();
         handler.getStackInSlot(0).save(item);
-        NBTUtils.modTag(p_187471_).put("latex",item);
+        NBTUtils.modTag(p_187471_).put("latex", item);
     }
 }

@@ -47,7 +47,7 @@ public class Notepad extends AbstractNote {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new NoteEntity(p_153215_,p_153216_);
+        return new NoteEntity(p_153215_, p_153216_);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Notepad extends AbstractNote {
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        BlockPos pos=p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_,pos,Direction.UP);
+        BlockPos pos = p_60527_.below();
+        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, Direction.UP);
     }
 }

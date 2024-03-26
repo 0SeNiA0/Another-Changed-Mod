@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -33,11 +33,12 @@ import org.jetbrains.annotations.NotNull;
 public class VentDuct extends ConnectedTextureBlock {
 
     private static final VoxelShape SHAPE;
+    //private static final VoxelShape SHAPE_S, SH_S_UP, SH_S_DOWN, SH_S_NORTH, SH_S_SOUTH, SH_S_WEST, SH_S_EAST;
     private static final VoxelShape SH_UP, SH_DOWN, SH_NORTH, SH_SOUTH, SH_WEST, SH_EAST;
+    private static final VoxelShape SH_S_UP, SH_S_NORTH;
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
-    private static final AABB INSIDE;
-    public static final BooleanProperty BARS = StateProperties.BARS;
-    public static final BooleanProperty IN_MIDDLE = StateProperties.IN_MIDDLE;
+    public static final AABB INSIDE;
+    public static final IntegerProperty FLAGS = StateProperties.FLAGS3;
 
     public VentDuct(Properties pProperties) {
         super(pProperties);
@@ -48,20 +49,39 @@ public class VentDuct extends ConnectedTextureBlock {
                 .setValue(EAST,false)
                 .setValue(SOUTH,false)
                 .setValue(WEST,false)
-                .setValue(BARS, false)
-                .setValue(IN_MIDDLE, false));
+                .setValue(FLAGS, 0));
     }
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        int id = 0;
-        for(Direction direction : Direction.values()){
-            if(!state.getValue(propByDirection.get(direction))) id += (int) Math.pow(10, direction.ordinal());
+        int i = 0;
+        boolean[] ar = new boolean[7];
+        for (Direction direction : Direction.values()){
+            ar[i++] = state.getValue(propByDirection.get(direction));
         }
+        boolean b = state.getValue(FLAGS) > 0;
+        ar[i] = b;
+
+        int id = Utils.booleansToInt(ar);
         if(id == 0) return SHAPE;
 
         return CACHE.getShape(Direction.NORTH, id, () -> {
-            VoxelShape shape = SHAPE;
+            VoxelShape shape;
+            if(b){
+                if(state.getValue(UP)) return SH_S_UP;
+                if(state.getValue(NORTH)) return SH_S_NORTH;
+                return Utils.rotateShape(Direction.EAST, SH_S_NORTH);
+
+                /*shape = SHAPE_S;              //uncomment in case if small corners will be added
+                if(state.getValue(UP)) shape = Shapes.join(shape, SH_S_UP, BooleanOp.NOT_SAME);//uhm actually that's XOR
+                if(state.getValue(DOWN)) shape = Shapes.join(shape, SH_S_DOWN, BooleanOp.NOT_SAME);
+                if(state.getValue(NORTH)) shape = Shapes.join(shape, SH_S_NORTH, BooleanOp.NOT_SAME);
+                if(state.getValue(SOUTH)) shape = Shapes.join(shape, SH_S_SOUTH, BooleanOp.NOT_SAME);
+                if(state.getValue(WEST)) shape = Shapes.join(shape, SH_S_WEST, BooleanOp.NOT_SAME);
+                if(state.getValue(EAST)) shape = Shapes.join(shape, SH_S_EAST, BooleanOp.NOT_SAME);*/
+                //return shape;
+            }
+            shape = SHAPE;
             if(!state.getValue(UP)) shape = Shapes.or(shape, SH_UP);
             if(!state.getValue(DOWN)) shape = Shapes.or(shape, SH_DOWN);
             if(!state.getValue(NORTH)) shape = Shapes.or(shape, SH_NORTH);
@@ -74,36 +94,44 @@ public class VentDuct extends ConnectedTextureBlock {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if(pPlayer.getFeetBlockState().is(this) || pPlayer.isCrouching() || !INSIDE.move(pPos).contains(pHit.getLocation())
-                || pPlayer.distanceToSqr(pHit.getLocation()) > 9) return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        if(pPlayer.getFeetBlockState().is(this) || !pPlayer.isCrouching()
+                || pPlayer.distanceToSqr(pHit.getLocation()) > 9
+                || !getShape(pState, pLevel, pPos, CollisionContext.empty()).bounds().deflate(.5 / 16).move(pPos).contains(pHit.getLocation()))
+            return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
         Vec3 pos = pPos.getCenter();
         pPlayer.teleportTo(pos.x, pos.y, pos.z);
         pPlayer.setPose(Pose.SWIMMING);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.sidedSuccess(pLevel.isClientSide);
     }
 
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        BlockState state = super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
-        int sides = 0;
-        boolean inMiddle = true;
-        for(Direction direction : Direction.values()){
-            if(!state.getValue(propByDirection.get(direction))) continue;
-            sides++;
-            if(sides <= 2 && !p_60544_.getBlockState(p_60545_.relative(direction)).is(this)) inMiddle = false;
-        }
-
-        return state.setValue(BARS, sides == 2).setValue(IN_MIDDLE, inMiddle);
+        return updateState(super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_), p_60544_, p_60545_);
     }
 
     @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        BlockState state = super.getStateForPlacement(p_49820_);
+        return updateState(super.getStateForPlacement(p_49820_), p_49820_.getLevel(), p_49820_.getClickedPos());
+    }
+
+    private @NotNull BlockState updateState(BlockState state, LevelAccessor level, BlockPos pos){
         int sides = 0;
+        boolean bars = true;
+        Direction dir = null;
+        BlockState state1;
         for(Direction direction : Direction.values()){
-            if(state.getValue(propByDirection.get(direction))) sides++;
+            if(!state.getValue(propByDirection.get(direction))) continue;
+            state1 = level.getBlockState(pos.relative(direction));
+            if(!state1.is(this)) continue;
+            if(dir == null) dir = direction;
+            sides++;
+            if(sides > 2 || state1.getValue(FLAGS) == 2) bars = false;
         }
-        return state.setValue(BARS, sides == 2);
+
+        boolean small = sides == 2 && state.getValue(propByDirection.get(dir.getOpposite()));
+        bars = bars && small;
+
+        return state.setValue(FLAGS, bars ? 2 : small ? 1 : 0);
     }
 
     @Override
@@ -122,7 +150,7 @@ public class VentDuct extends ConnectedTextureBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(BARS, IN_MIDDLE));
+        super.createBlockStateDefinition(p_49915_.add(FLAGS));
     }
 
     static {
@@ -145,6 +173,80 @@ public class VentDuct extends ConnectedTextureBlock {
         SH_SOUTH = Utils.rotateShape(Direction.SOUTH, SH_NORTH);
         SH_WEST = Utils.rotateShape(Direction.WEST, SH_NORTH);
         SH_EAST = Utils.rotateShape(Direction.EAST, SH_NORTH);
-        INSIDE = SHAPE.bounds().deflate(.9 / 16);
+        SH_S_UP = Shapes.or(
+                Shapes.box(0.875f, 0.9375f, 0.125f, 0.9375f, 1, 0.875f),
+                Shapes.box(0.0625f, 0.9375f, 0.125f, 0.125f, 1, 0.875f),
+                Shapes.box(0.0625f, 0.9375f, 0.875f, 0.9375f, 1, 0.9375f),
+                Shapes.box(0.0625f, 0, 0.875f, 0.9375f, 0.0625f, 0.9375f),
+                Shapes.box(0.0625f, 0.0625f, 0.875f, 0.125f, 0.9375f, 0.9375f),
+                Shapes.box(0.875f, 0.0625f, 0.875f, 0.9375f, 0.9375f, 0.9375f),
+                Shapes.box(0.875f, 0.0625f, 0.0625f, 0.9375f, 0.9375f, 0.125f),
+                Shapes.box(0.0625f, 0.0625f, 0.0625f, 0.125f, 0.9375f, 0.125f),
+                Shapes.box(0.0625f, 0.9375f, 0.0625f, 0.9375f, 1, 0.125f),
+                Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, 0.0625f, 0.125f),
+                Shapes.box(0.875f, 0, 0.125f, 0.9375f, 0.0625f, 0.875f),
+                Shapes.box(0.0625f, 0, 0.125f, 0.125f, 0.0625f, 0.875f),
+                Shapes.box(0.0625f, 0.0625f, 0.125f, 0.125f, 0.9375f, 0.875f),
+                Shapes.box(0.875f, 0.0625f, 0.125f, 0.9375f, 0.9375f, 0.875f),
+                Shapes.box(0.125f, 0.0625f, 0.875f, 0.875f, 0.9375f, 0.9375f),
+                Shapes.box(0.125f, 0.0625f, 0.0625f, 0.875f, 0.9375f, 0.125f));
+        SH_S_NORTH = Shapes.or(
+                Shapes.box(0.875f, 0.125f, 0, 0.9375f, 0.875f, 0.0625f),
+                Shapes.box(0.0625f, 0.125f, 0, 0.125f, 0.875f, 0.0625f),
+                Shapes.box(0.0625f, 0.875f, 0, 0.9375f, 0.9375f, 0.0625f),
+                Shapes.box(0.0625f, 0.875f, 0.9375f, 0.9375f, 0.9375f, 1),
+                Shapes.box(0.0625f, 0.875f, 0.0625f, 0.125f, 0.9375f, 0.9375f),
+                Shapes.box(0.875f, 0.875f, 0.0625f, 0.9375f, 0.9375f, 0.9375f),
+                Shapes.box(0.875f, 0.0625f, 0.0625f, 0.9375f, 0.125f, 0.9375f),
+                Shapes.box(0.0625f, 0.0625f, 0.0625f, 0.125f, 0.125f, 0.9375f),
+                Shapes.box(0.0625f, 0.0625f, 0, 0.9375f, 0.125f, 0.0625f),
+                Shapes.box(0.0625f, 0.0625f, 0.9375f, 0.9375f, 0.125f, 1),
+                Shapes.box(0.875f, 0.125f, 0.9375f, 0.9375f, 0.875f, 1),
+                Shapes.box(0.0625f, 0.125f, 0.9375f, 0.125f, 0.875f, 1),
+                Shapes.box(0.0625f, 0.125f, 0.0625f, 0.125f, 0.875f, 0.9375f),
+                Shapes.box(0.875f, 0.125f, 0.0625f, 0.9375f, 0.875f, 0.9375f),
+                Shapes.box(0.125f, 0.875f, 0.0625f, 0.875f, 0.9375f, 0.9375f),
+                Shapes.box(0.125f, 0.0625f, 0.0625f, 0.875f, 0.125f, 0.9375f));
+        /*SHAPE_S = Shapes.or(                  //uncomment in case if small corners will be added
+                Shapes.box(0.875f, 0.125f, 0.0625f, 0.9375f, 0.875f, 0.125f),
+                Shapes.box(0.0625f, 0.125f, 0.0625f, 0.125f, 0.875f, 0.125f),
+                Shapes.box(0.0625f, 0.875f, 0.0625f, 0.9375f, 0.9375f, 0.125f),
+                Shapes.box(0.0625f, 0.875f, 0.875f, 0.9375f, 0.9375f, 0.9375f),
+                Shapes.box(0.0625f, 0.875f, 0.125f, 0.125f, 0.9375f, 0.875f),
+                Shapes.box(0.875f, 0.875f, 0.125f, 0.9375f, 0.9375f, 0.875f),
+                Shapes.box(0.875f, 0.0625f, 0.125f, 0.9375f, 0.125f, 0.875f),
+                Shapes.box(0.0625f, 0.0625f, 0.125f, 0.125f, 0.125f, 0.875f),
+                Shapes.box(0.0625f, 0.0625f, 0.0625f, 0.9375f, 0.125f, 0.125f),
+                Shapes.box(0.0625f, 0.0625f, 0.875f, 0.9375f, 0.125f, 0.9375f),
+                Shapes.box(0.875f, 0.125f, 0.875f, 0.9375f, 0.875f, 0.9375f),
+                Shapes.box(0.0625f, 0.125f, 0.875f, 0.125f, 0.875f, 0.9375f),
+                Shapes.box(0.0625f, 0.125f, 0.125f, 0.125f, 0.875f, 0.875f),
+                Shapes.box(0.875f, 0.125f, 0.125f, 0.9375f, 0.875f, 0.875f),
+                Shapes.box(0.125f, 0.125f, 0.875f, 0.875f, 0.875f, 0.9375f),
+                Shapes.box(0.125f, 0.125f, 0.0625f, 0.875f, 0.875f, 0.125f),
+                Shapes.box(0.125f, 0.875f, 0.125f, 0.875f, 0.9375f, 0.875f),
+                Shapes.box(0.125f, 0.0625f, 0.125f, 0.875f, 0.125f, 0.875f));
+        SH_S_UP = Shapes.or(
+                Shapes.box(0.0625f, 0.9375f, 0.0625f, 0.9375f, 1, 0.125f),
+                Shapes.box(0.0625f, 0.9375f, 0.875f, 0.9375f, 1, 0.9375f),
+                Shapes.box(0.0625f, 0.9375f, 0.125f, 0.125f, 1, 0.875f),
+                Shapes.box(0.875f, 0.9375f, 0.125f, 0.9375f, 1, 0.875f),
+                Shapes.box(0.125f, 0.875f, 0.125f, 0.875f, 0.9375f, 0.875f));
+        SH_S_DOWN = Shapes.or(
+                Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, 0.0625f, 0.125f),
+                Shapes.box(0.0625f, 0, 0.875f, 0.9375f, 0.0625f, 0.9375f),
+                Shapes.box(0.0625f, 0, 0.125f, 0.125f, 0.0625f, 0.875f),
+                Shapes.box(0.875f, 0, 0.125f, 0.9375f, 0.0625f, 0.875f),
+                Shapes.box(0.125f, 0.0625f, 0.125f, 0.875f, 0.125f, 0.875f));
+        SH_S_NORTH = Shapes.or(
+                Shapes.box(0.875f, 0.125f, 0, 0.9375f, 0.875f, 0.0625f),
+                Shapes.box(0.0625f, 0.125f, 0, 0.125f, 0.875f, 0.0625f),
+                Shapes.box(0.0625f, 0.875f, 0, 0.9375f, 0.9375f, 0.0625f),
+                Shapes.box(0.0625f, 0.0625f, 0, 0.9375f, 0.125f, 0.0625f),
+                Shapes.box(0.125f, 0.125f, 0.0625f, 0.875f, 0.875f, 0.125f));
+        SH_S_SOUTH = Utils.rotateShape(Direction.SOUTH, SH_S_NORTH);
+        SH_S_WEST = Utils.rotateShape(Direction.WEST, SH_S_NORTH);
+        SH_S_EAST = Utils.rotateShape(Direction.EAST, SH_S_NORTH);*/
+        INSIDE = SHAPE.bounds().deflate(1f / 16);
     }
 }

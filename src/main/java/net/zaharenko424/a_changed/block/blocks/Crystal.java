@@ -33,7 +33,7 @@ public class Crystal extends Block {
 
     public Crystal(Properties p_49795_, Supplier<? extends AbstractTransfurType> transfurType) {
         super(p_49795_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
-        this.transfurType=transfurType;
+        this.transfurType = transfurType;
     }
 
     @Override
@@ -55,6 +55,6 @@ public class Crystal extends Block {
 
     @Override
     public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        return canSupportCenter(p_60526_,p_60527_.below(), Direction.UP);
+        return canSupportCenter(p_60526_, p_60527_.below(), Direction.UP);
     }
 }

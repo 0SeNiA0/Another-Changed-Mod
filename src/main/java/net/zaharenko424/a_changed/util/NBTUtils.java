@@ -52,15 +52,15 @@ public class NBTUtils {
     public static void writeToTag(CompoundTag tag, List<String> list){
         if(list.isEmpty()) return;
         tag.putInt("Size",list.size());
-        for(int i=0;i<list.size();i++){
+        for(int i = 0; i < list.size(); i++){
             tag.putString(String.valueOf(i),list.get(i));
         }
     }
 
     public static void readFromTag(CompoundTag tag, List<String> list){
         if(!tag.contains("Size")) return;
-        int size=tag.getInt("Size");
-        for(int i=0;i<size;i++){
+        int size = tag.getInt("Size");
+        for(int i = 0; i < size; i++){
             list.add(tag.getString(String.valueOf(i)));
         }
     }

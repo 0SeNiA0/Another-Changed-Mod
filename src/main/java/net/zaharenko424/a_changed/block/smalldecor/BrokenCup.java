@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block.blocks;
+package net.zaharenko424.a_changed.block.smalldecor;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -13,25 +13,27 @@ import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
-public class BrokenFlask extends SmallDecorBlock {
+@SuppressWarnings("deprecation")
+public class BrokenCup extends SmallDecorBlock {
 
-    private static final VoxelShape SHAPE_N = Shapes.or(Shapes.box(0.375, 0, 0.125, 0.625, 0.25, 0.75),
-            Shapes.box(0.375, 0.25, 0.225, 0.625, 0.5, 0.475),
-            Shapes.box(0.375, 0.25, 0.1625, 0.625, 0.3125, 0.225),
-            Shapes.box(0.375, 0.25, 0.475, 0.625, 0.4375, 0.5375),
-            Shapes.box(0.375, 0.25, 0.5375, 0.625, 0.375, 0.6),
-            Shapes.box(0.375, 0, 0.75, 0.625, 0.1875, 0.875));
+    private static final VoxelShape SHAPE_N = Shapes.or(Shapes.box(0.3125, 0, 0.3875, 0.35, 0.1125, 0.6125),
+            Shapes.box(0.3375, 0, 0.34375, 0.65, 0.1125, 0.39375),
+            Shapes.box(0.3375, 0, 0.60625, 0.65, 0.1125, 0.65625),
+            Shapes.box(0.3375, 0.10625, 0.3875, 0.65, 0.15625, 0.6125),
+            Shapes.box(0.45625, 0.23125, 0.46875, 0.56875, 0.28125, 0.53125),
+            Shapes.box(0.56875, 0.15625, 0.46875, 0.61875, 0.25625, 0.53125),
+            Shapes.box(0.40625, 0.15625, 0.46875, 0.45625, 0.25625, 0.53125));
     private static final VoxelShape SHAPE_E = Utils.rotateShape(Direction.EAST, SHAPE_N);
     private static final VoxelShape SHAPE_S = Utils.rotateShape(Direction.SOUTH, SHAPE_N);
     private static final VoxelShape SHAPE_W = Utils.rotateShape(Direction.WEST, SHAPE_N);
 
-    public BrokenFlask(Properties pProperties) {
+    public BrokenCup(Properties pProperties) {
         super(pProperties);
     }
 
     @Override
     protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return simpleCodec(BrokenFlask::new);
+        return simpleCodec(BrokenCup::new);
     }
 
     @Override

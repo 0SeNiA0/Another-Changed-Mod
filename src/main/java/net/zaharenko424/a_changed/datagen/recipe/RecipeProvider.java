@@ -175,6 +175,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         labBlock(BROWN_LAB_BLOCK_ITEM, Items.BROWN_CONCRETE, out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, CANNED_ORANGES_ITEM)
+                .pattern("SSS")
+                .pattern("OSO")
+                .pattern("OCO")
+                .define('S', Items.SUGAR)
+                .define('O', ORANGE_ITEM)
+                .define('C', METAL_CAN_ITEM)
+                .unlockedBy(getHasName(ORANGE_ITEM), has(ORANGE_ITEM))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CAPACITOR_ITEM)
                 .pattern("ICI")
                 .pattern("PPP")
@@ -478,6 +488,20 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
                 .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, METAL_CAN_ITEM, 4)
+                .pattern("I")
+                .pattern("P")
+                .pattern("I")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('P', PIPE_ITEM)
+                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .save(out);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, METAL_CAN_ITEM)
+                .requires(Ingredient.of(CANNED_ORANGES_ITEM))
+                .unlockedBy(getHasName(CANNED_ORANGES_ITEM), has(CANNED_ORANGES_ITEM))
+                .save(out, METAL_CAN_ITEM.getId().withSuffix("_from_canned_oranges"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, NOTEPAD_ITEM)
                 .pattern("I ")

@@ -26,7 +26,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 @SuppressWarnings("deprecation")
 public abstract class SmallDecorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
-    protected SmallDecorBlock(Properties pProperties) {
+    public SmallDecorBlock(Properties pProperties) {
         super(pProperties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
@@ -37,9 +37,9 @@ public abstract class SmallDecorBlock extends HorizontalDirectionalBlock impleme
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        BlockState state = defaultBlockState().setValue(FACING, p_49820_.getHorizontalDirection().getOpposite());
-        if(p_49820_.getLevel().getFluidState(p_49820_.getClickedPos()).getType() == Fluids.WATER) state = state.setValue(WATERLOGGED, true);
+    public @Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        BlockState state = defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        if(context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER) state = state.setValue(WATERLOGGED, true);
         return state;
     }
 
@@ -49,21 +49,21 @@ public abstract class SmallDecorBlock extends HorizontalDirectionalBlock impleme
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || !player.isCrouching() || !player.getItemInHand(hand).isEmpty()) return super.use(pState, level, pos, player, hand, pHit);
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
+        if(level.isClientSide || !player.isCrouching() || !player.getItemInHand(hand).isEmpty()) return super.use(state, level, pos, player, hand, pHit);
         level.removeBlock(pos, false);
-        player.setItemInHand(hand, new ItemStack(pState.getBlock()));
+        player.setItemInHand(hand, new ItemStack(state.getBlock()));
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        BlockPos pos = p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, Direction.UP);
+    public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
+        BlockPos below = pos.below();
+        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(FACING, WATERLOGGED));
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(FACING, WATERLOGGED));
     }
 }

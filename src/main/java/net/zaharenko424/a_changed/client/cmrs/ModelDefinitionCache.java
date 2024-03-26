@@ -7,10 +7,7 @@ import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.model.DummyModel;
 import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.CryoChamberRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.DNAExtractorRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LaserEmitterRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.LatexEncoderRenderer;
+import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.event.RegisterModelDefinitionsEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -24,6 +21,7 @@ public final class ModelDefinitionCache {
     private final HashMap<ModelLayerLocation, ModelDefinition> modelCache = new HashMap<>();
 
     private ModelDefinitionCache(){
+        modelCache.put(CannedOrangesRenderer.LAYER, CannedOrangesRenderer.bodyLayer());
         modelCache.put(CryoChamberRenderer.LAYER, CryoChamberRenderer.bodyLayer());
         modelCache.put(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
         modelCache.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());

@@ -62,23 +62,23 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        Direction direction=p_60555_.getValue(FACING);
+        Direction direction = p_60555_.getValue(FACING);
         return switch (p_60555_.getValue(BOX_AMOUNT)){
-            default -> CACHE.getShape(direction,1,ONE_BOX);
-            case 2 -> CACHE.getShape(direction,2,TWO_BOXES);
-            case 3 -> CACHE.getShape(direction,3,THREE_BOXES);
+            default -> CACHE.getShape(direction,1, ONE_BOX);
+            case 2 -> CACHE.getShape(direction,2, TWO_BOXES);
+            case 3 -> CACHE.getShape(direction,3, THREE_BOXES);
         };
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
+    public @NotNull InteractionResult use(BlockState state, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
         if(entity instanceof BoxPileEntity boxPile){
             ItemStack item = p_60506_.getItemInHand(p_60507_);
             if(item.is(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get())&&boxPile.hasSpace()){
                 boxPile.addBox(item, !p_60506_.isCreative());
-                p_60504_.setBlock(p_60505_, p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+                p_60504_.setBlock(p_60505_, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
                 return InteractionResult.CONSUME;
             }
             if(item.isEmpty()){
@@ -87,7 +87,7 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
                     p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
                     return InteractionResult.SUCCESS;
                 }
-                p_60504_.setBlock(p_60505_, p_60503_.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+                p_60504_.setBlock(p_60505_, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -104,7 +104,7 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(BOX_AMOUNT));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(BOX_AMOUNT));
     }
 }

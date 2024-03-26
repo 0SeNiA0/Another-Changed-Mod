@@ -35,13 +35,13 @@ public class SmartSewageSystem extends HorizontalDirectionalBlock implements Ent
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new SmartSewageEntity(p_153215_,p_153216_);
+        return new SmartSewageEntity(p_153215_, p_153216_);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide?null:(a,b,c,d)->{
+        return p_153212_.isClientSide ? null : (a, b, c, d)->{
             if(d instanceof SmartSewageEntity sewage) sewage.tick();
         };
     }
@@ -49,7 +49,7 @@ public class SmartSewageSystem extends HorizontalDirectionalBlock implements Ent
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, p_49820_.getHorizontalDirection().getOpposite());
     }
 
     @Override

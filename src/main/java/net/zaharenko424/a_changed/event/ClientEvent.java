@@ -30,10 +30,11 @@ import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
+import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
-import net.zaharenko424.a_changed.block.blocks.Flask;
-import net.zaharenko424.a_changed.block.blocks.TestTubes;
+import net.zaharenko424.a_changed.block.smalldecor.Flask;
+import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
+import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
 import net.zaharenko424.a_changed.block.doors.BigLabDoor;
 import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
 import net.zaharenko424.a_changed.block.doors.LabDoor;
@@ -142,7 +143,7 @@ public class ClientEvent {
     }
 
     private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
-            Flask.class, LatexEncoder.class, TestTubes.class);
+            Flask.class, LatexEncoder.class, MetalCan.class, TestTubes.class);
     private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
             DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 

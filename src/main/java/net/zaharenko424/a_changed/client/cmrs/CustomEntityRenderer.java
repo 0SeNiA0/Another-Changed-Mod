@@ -55,7 +55,7 @@ public class CustomEntityRenderer<E extends LivingEntity> extends LivingEntityRe
         addLayer(new ElytraLayerFix<>(this, this.context.getModelSet()));
         addLayer(new SpinAttackEffect<>(this, context.getModelSet()));
         addLayer(new ArrowLayer<>(context.getEntityRenderDispatcher(), this));
-        //addLayer(new CustomHeadLayer<>(this,context.getModelSet(),context.getItemInHandRenderer()));//TODO fix, more like rewrite
+        addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getItemInHandRenderer()));
     }
 
     @Override

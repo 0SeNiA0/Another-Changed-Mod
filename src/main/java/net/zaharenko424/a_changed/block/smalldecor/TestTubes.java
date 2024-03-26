@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block.blocks;
+package net.zaharenko424.a_changed.block.smalldecor;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

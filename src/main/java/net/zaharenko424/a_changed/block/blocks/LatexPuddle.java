@@ -104,7 +104,7 @@ public class LatexPuddle extends Block {
     @Override
     public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
         if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0 || !DamageSources.checkTarget(p_60498_)) return;
-        if(p_60498_.getBoundingBox().intersects(AABB_CACHE.computeIfAbsent(getShape(p_60495_, p_60496_,p_60497_, CollisionContext.empty()), shape -> shape.bounds().expandTowards(0, .1, 0)).move(p_60497_)))
+        if(p_60498_.getBoundingBox().intersects(AABB_CACHE.computeIfAbsent(getShape(p_60495_, p_60496_, p_60497_, CollisionContext.empty()), shape -> shape.bounds().expandTowards(0, .1, 0)).move(p_60497_)))
             TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
     }
 
@@ -116,7 +116,7 @@ public class LatexPuddle extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(NORTH,EAST,SOUTH,WEST));
+        super.createBlockStateDefinition(p_49915_.add(NORTH, EAST, SOUTH, WEST));
     }
 
     static {

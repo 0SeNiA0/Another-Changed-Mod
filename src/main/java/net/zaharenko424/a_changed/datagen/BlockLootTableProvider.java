@@ -18,6 +18,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock;
+import net.zaharenko424.a_changed.block.GrowingFruitBlock;
 import net.zaharenko424.a_changed.block.blocks.Crystal;
 import net.zaharenko424.a_changed.block.blocks.TallCrystal;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -81,8 +82,11 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         fourPartMultiBlockDrops(LIBRARY_DOOR.get());
         fourPartMultiBlockDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());
+        dropSelf(METAL_CAN.get());
         dropOther(NOTE.get(), Items.PAPER);
         dropSelf(NOTEPAD.get());
+        fruitDrops(ORANGE.get());
+        dropOther(ORANGE.get(), ItemRegistry.ORANGE_ITEM);
         dropSelf(ORANGE_BUTTON.get());
         add(ORANGE_DOOR.get(), createDoorTable(ORANGE_DOOR.get()));
         dropSelf(ORANGE_FENCE.get());
@@ -174,6 +178,15 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART9,0)))
                 .add(
                         applyExplosionCondition(block, LootItem.lootTableItem(block))
+                )));
+    }
+
+    private void fruitDrops(GrowingFruitBlock fruitBlock){
+        add(fruitBlock, LootTable.lootTable().withPool(LootPool.lootPool()
+                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(fruitBlock)
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(fruitBlock.ageProperty(), fruitBlock.maxAge())))
+                .add(
+                        applyExplosionCondition(fruitBlock, LootItem.lootTableItem(fruitBlock.getFruitItem()))
                 )));
     }
 

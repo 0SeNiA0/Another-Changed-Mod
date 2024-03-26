@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block.blocks;
+package net.zaharenko424.a_changed.block.smalldecor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

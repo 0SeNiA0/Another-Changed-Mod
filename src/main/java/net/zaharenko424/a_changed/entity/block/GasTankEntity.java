@@ -92,7 +92,7 @@ public class GasTankEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
         CompoundTag tag = NBTUtils.modTag(p_187471_);
-        tag.put("canister",canister.save(new CompoundTag()));
-        tag.putBoolean("open",open);
+        tag.put("canister", canister.save(new CompoundTag()));
+        tag.putBoolean("open", open);
     }
 }

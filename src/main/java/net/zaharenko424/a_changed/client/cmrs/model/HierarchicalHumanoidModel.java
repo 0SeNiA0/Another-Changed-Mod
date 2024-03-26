@@ -149,33 +149,33 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         head.y -= 3;
     }
 
-    protected void setupSwimAnimation(E entity, float limbSwing){//TODO fix anim for entities!
+    protected void setupSwimAnimation(E entity, float limbSwing){
         float f5 = limbSwing % 26.0F;
         HumanoidArm humanoidarm = getAttackArm(entity);
         float f1 = humanoidarm == HumanoidArm.RIGHT && attackTime > 0.0F ? 0.0F : swimAmount;
         float f2 = humanoidarm == HumanoidArm.LEFT && attackTime > 0.0F ? 0.0F : swimAmount;
         if (!entity.isUsingItem()) {
             if (f5 < 14.0F) {
-                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, 0.0F);
-                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, 0.0F);
-                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, 0.0F);
+                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, 0.0F);
+                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI + 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI - 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
             } else if (f5 >= 14.0F && f5 < 22.0F) {
                 float f6 = (f5 - 14.0F) / 8.0F;
-                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) * f6);
-                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) * f6);
-                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, (float) (Math.PI / 2) * f6);
+                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, (float) (Math.PI / 2) * f6);
+                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, 5.012389F - 1.8707964F * f6);
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, 1.2707963F + 1.8707964F * f6);
             } else if (f5 >= 22.0F && f5 < 26.0F) {
                 float f3 = (f5 - 22.0F) / 4.0F;
-                leftArm.xRot = -rotlerpRad(f2, leftArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                rightArm.xRot = -Mth.lerp(f1, rightArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                leftArm.yRot = -rotlerpRad(f2, leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, rightArm.yRot, (float) Math.PI);
+                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
+                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
+                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
+                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
                 leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI);
                 rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI);
             }
@@ -195,18 +195,18 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
                 body.yRot *= -1.0F;
             }
 
-            rightArm.yRot += body.yRot;
-            leftArm.yRot += body.yRot;
-            leftArm.xRot += body.yRot;
+            rightArm.yRot = body.yRot;
+            leftArm.yRot = body.yRot;
+            leftArm.xRot = body.yRot;
             f = 1.0F - attackTime;
             f *= f;
             f *= f;
             f = 1.0F - f;
             float f1 = Mth.sin(f * (float) Math.PI);
             float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.xRot + 0.7F) * 0.75F;
-            arm.xRot += f1 * 1.2F + f2;
-            arm.yRot += body.yRot * 2.0F;
-            arm.zRot += Mth.sin(attackTime * (float) Math.PI) * -0.4F;
+            arm.xRot = f1 * 1.2F + f2;
+            arm.yRot = body.yRot * 2.0F;
+            arm.zRot = Mth.sin(attackTime * (float) Math.PI) * -0.4F;
         }
     }
 

@@ -73,14 +73,14 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterBlockColorHandlers(RegisterColorHandlersEvent.Block event){
-        event.register((state,tintGetter,pos,d)->
+        event.register((state, tintGetter, pos, d)->
                 tintGetter != null && pos != null ? BiomeColors.getAverageFoliageColor(tintGetter, pos)
                 : FoliageColor.getDefaultColor(), BlockRegistry.ORANGE_LEAVES.get());
     }
 
     @SubscribeEvent
     public static void onRegisterColorHandlers(RegisterColorHandlersEvent.Item event){
-        event.register((itemStack, i)->
+        event.register((itemStack, i) ->
                 event.getBlockColors().getColor(((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
                 , null, null, i), BlockRegistry.ORANGE_LEAVES);
     }
@@ -93,6 +93,7 @@ public class ClientMod {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), BookStackRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CANNED_ORANGES_ENTITY.get(), (a)-> new CannedOrangesRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.get(), (a)-> new CryoChamberRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), (a)-> new DNAExtractorRenderer());
         event.registerBlockEntityRenderer(BlockEntityRegistry.HANGING_SIGN_ENTITY.get(), HangingSignRenderer::new);

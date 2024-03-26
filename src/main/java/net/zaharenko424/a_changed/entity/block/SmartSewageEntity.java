@@ -28,14 +28,14 @@ public class SmartSewageEntity extends BlockEntity {
         if(tick < 20) return;
         tick = 0;
         List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, Shapes.block().bounds().move(worldPosition.above()),
-                (entity)->entity.getType().is(AChanged.SEWAGE_SYSTEM_CONSUMABLE));
+                (entity)-> entity.getType().is(AChanged.SEWAGE_SYSTEM_CONSUMABLE));
         if(list.isEmpty()){
-            entity=null;
+            entity = null;
             return;
         }
         if(entity != null && list.contains(entity)){
             entity.discard();
-            level.playSound(null,worldPosition, SoundRegistry.SMART_SEWAGE_CONSUME.get(), SoundSource.BLOCKS);
+            level.playSound(null, worldPosition, SoundRegistry.SMART_SEWAGE_CONSUME.get(), SoundSource.BLOCKS);
             entity = null;
             return;
         }
