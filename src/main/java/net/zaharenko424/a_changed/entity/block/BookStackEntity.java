@@ -50,12 +50,14 @@ public class BookStackEntity extends BlockEntity {
         books1.add(new BookData(Mth.DEG_TO_RAD * (-headRot + 180), level.random.nextInt(0,4)));
         if(shrink) book.shrink(1);
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        setChanged();
     }
 
     public ItemStack removeBook(){
         int i = books.size() - 1;
         books1.remove(i);
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        setChanged();
         return books.remove(i);
     }
 

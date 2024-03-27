@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -26,7 +27,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
+import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
@@ -43,6 +44,7 @@ import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -100,12 +102,20 @@ public class CommonEvent {
         if(level.isClientSide) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
         ItemStack item = player.getItemInHand(event.getHand());
-        if(!player.isCrouching()) return;
         Direction direction = player.getDirection().getOpposite();
         BlockPos pos = event.getPos();
+        if(!player.isCrouching()) {
+            BlockState above = level.getBlockState(pos.above());
+            if(above.getBlock() instanceof PileOfOranges oranges){
+                event.setCancellationResult(oranges.use(above, level, pos.above(), player, event.getHand(), event.getHitVec()));
+                event.setCanceled(true);
+                return;
+            }
+            return;
+        }
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
             if(!level.getBlockState(pos).canBeReplaced()) {
-                pos=pos.above();
+                pos = pos.above();
                 if(!level.getBlockState(pos).canBeReplaced()) return;
             }
             if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
@@ -114,9 +124,22 @@ public class CommonEvent {
             denyEvent(event);
             return;
         }
+        if(item.is(ItemRegistry.ORANGE_ITEM)){
+            if(!level.getBlockState(pos).canBeReplaced()) {
+                pos = pos.above();
+                if(!level.getBlockState(pos).canBeReplaced()) return;
+            }
+            if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
+            level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
+                entity.addOrange(event.getHitVec().getLocation(), (int) player.yHeadRot);
+                if(!player.isCreative()) item.shrink(1);
+            }));
+            denyEvent(event);
+            return;
+        }
         if(item.is(Items.PAPER)){
             if(!level.getBlockState(pos).canBeReplaced()) {
-                pos=pos.relative(direction);
+                pos = pos.relative(direction);
                 if(!level.getBlockState(pos).canBeReplaced()) return;
             }
             if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction),3)) return;

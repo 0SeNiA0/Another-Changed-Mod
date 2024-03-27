@@ -87,7 +87,7 @@ public class BookStack extends Block implements EntityBlock {
                 }
                 if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
                 if(stateAbove.canBeReplaced()){
-                    p_60504_.setBlockAndUpdate(above,defaultBlockState());
+                    p_60504_.setBlockAndUpdate(above, defaultBlockState());
                     return use(p_60504_.getBlockState(above), p_60504_, above, p_60506_, p_60507_, p_60508_);
                 }
             }
@@ -95,7 +95,7 @@ public class BookStack extends Block implements EntityBlock {
                 if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
                 ItemHandlerHelper.giveItemToPlayer(p_60506_, bookStack.removeBook());
                 if(bookStack.isEmpty()) {
-                    p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
+                    p_60504_.removeBlock(p_60505_, false);
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.SUCCESS;

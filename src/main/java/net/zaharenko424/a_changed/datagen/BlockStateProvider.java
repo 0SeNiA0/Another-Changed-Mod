@@ -457,7 +457,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ResourceLocation id = VENT_DUCT.getId();
         ResourceLocation loc = blockLoc(id.withPrefix("vent_duct/"));
 
-        ModelFile duct = models().getExistingFile(loc);// _letters -> sides with holes
+        // _letters -> sides with holes
+        ModelFile duct = models().getExistingFile(loc);
         ModelFile duct_n = models().getExistingFile(loc.withSuffix("_n"));
 
         ModelFile duct_ns = models().getExistingFile(loc.withSuffix("_ns"));
@@ -471,6 +472,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile duct_ewud = models().getExistingFile(loc.withSuffix("_ewud"));
         ModelFile duct_eswud = models().getExistingFile(loc.withSuffix("_eswud"));
         ModelFile duct_nswd = models().getExistingFile(loc.withSuffix("_nswd"));
+        ModelFile duct_neswud = models().getExistingFile(loc.withSuffix("_neswud"));
 
         getVariantBuilder(VENT_DUCT.get()).forAllStates(state -> {
             boolean u = state.getValue(UP);
@@ -491,6 +493,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
             }
 
             return new ConfiguredModel[]{switch (sidesConnected) {// == amount of holes
+                case 0 -> new ConfiguredModel(duct);
                 case 1 -> rotatedModel(duct_n, firstMatches(map, true));
                 case 2 -> {
                     if (isStraightThrough(map, true)) {
@@ -504,7 +507,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                     } else yield cornerModel2(!u, !d, !n, !e, !s, !w, duct_nswd);
                 }
                 case 5 -> rotatedModel(duct_eswud, firstMatches(map, false));
-                default -> new ConfiguredModel(duct);
+                default -> new ConfiguredModel(duct_neswud);
             }};
         });
     }

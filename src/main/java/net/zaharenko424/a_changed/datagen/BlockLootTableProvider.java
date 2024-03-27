@@ -127,7 +127,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
 
     private void createOrangeLeavesDrops(){
         Block leaves=ORANGE_LEAVES.get();
-        add(leaves, createLeavesDrops(leaves,ORANGE_SAPLING.get(),NORMAL_LEAVES_SAPLING_CHANCES)
+        add(leaves, createLeavesDrops(leaves,ORANGE_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES)
         .withPool(
             LootPool.lootPool().when(HAS_SHEARS.invert().and(HAS_NO_SILK_TOUCH))
                 .add(

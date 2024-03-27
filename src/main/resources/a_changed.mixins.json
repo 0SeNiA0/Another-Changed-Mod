@@ -14,7 +14,8 @@
     "MixinPlayer",
     "MixinServerGamePacketListenerImpl",
     "MixinSimpleBlockFeature",
-    "MixinVillagerHostileSensor"
+    "MixinVillagerHostileSensor",
+    "MixinWanderingTrader"
   ],
   "client": [
     "client.MixinFallingBlockRenderer",

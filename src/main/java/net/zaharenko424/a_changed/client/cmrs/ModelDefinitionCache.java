@@ -26,6 +26,7 @@ public final class ModelDefinitionCache {
         modelCache.put(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
         modelCache.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
         modelCache.put(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
+        modelCache.put(PileOfOrangesRenderer.LAYER, PileOfOrangesRenderer.bodyLayer());
 
         modelCache.put(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
 

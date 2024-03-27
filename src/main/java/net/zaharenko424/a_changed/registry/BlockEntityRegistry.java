@@ -16,6 +16,9 @@ public class BlockEntityRegistry {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, AChanged.MODID);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PileOfOrangesEntity>> PILE_OF_ORANGES_ENTITY = BLOCK_ENTITIES
+            .register("pile_of_oranges", () -> BlockEntityType.Builder.of(PileOfOrangesEntity::new, PILE_OF_ORANGES.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AirConditionerEntity>> AIR_CONDITIONER_ENTITY = BLOCK_ENTITIES
             .register("air_conditioner", () -> BlockEntityType.Builder.of(AirConditionerEntity::new, AIR_CONDITIONER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BookStackEntity>> BOOK_STACK_ENTITY = BLOCK_ENTITIES

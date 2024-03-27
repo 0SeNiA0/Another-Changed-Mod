@@ -295,6 +295,20 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(DARK_LATEX_CRYSTAL_SHARD), has(DARK_LATEX_CRYSTAL_SHARD))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.DARK_LATEX_PUDDLE_F,3)
+                .pattern("L L")
+                .pattern(" L ")
+                .define('L', DARK_LATEX_ITEM)
+                .unlockedBy(getHasName(DARK_LATEX_ITEM), has(DARK_LATEX_ITEM))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.DARK_LATEX_PUDDLE_M,3)
+                .pattern(" L ")
+                .pattern("L L")
+                .define('L', DARK_LATEX_ITEM)
+                .unlockedBy(getHasName(DARK_LATEX_ITEM), has(DARK_LATEX_ITEM))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, DNA_EXTRACTOR_ITEM)
                 .pattern("GIG")
                 .pattern("ICI")

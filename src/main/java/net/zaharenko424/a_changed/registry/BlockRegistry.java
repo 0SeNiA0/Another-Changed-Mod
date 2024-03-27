@@ -55,7 +55,7 @@ public class BlockRegistry {
     public static final DeferredBlock<BrokenCup> BROKEN_CUP = BLOCKS.register("broken_cup", ()-> new BrokenCup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.1f)));
     public static final DeferredBlock<BrokenFlask> BROKEN_FLASK = BLOCKS.register("broken_flask", ()-> new BrokenFlask(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<Block> BROWN_LAB_BLOCK = BLOCKS.registerSimpleBlock("brown_lab_block", decorProperties().mapColor(DyeColor.BROWN));
-    public static final DeferredBlock<CannedOranges> CANNED_ORANGES = BLOCKS.register("canned_oranges", ()-> new CannedOranges(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel((a)->0).noLootTable()));
+    public static final DeferredBlock<CannedOranges> CANNED_ORANGES = BLOCKS.register("canned_oranges", ()-> new CannedOranges(BlockBehaviour.Properties.of().noLootTable().strength(2).mapColor(MapColor.METAL).noOcclusion().sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Capacitor> CAPACITOR = BLOCKS.register("capacitor", () -> new Capacitor(decorProperties()));
     public static final DeferredBlock<CardboardBox> CARDBOARD_BOX = BLOCKS.register("cardboard_box", ()-> new CardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
     public static final DeferredBlock<ConnectedTextureBlock> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new ConnectedTextureBlock(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
@@ -87,13 +87,14 @@ public class BlockRegistry {
     public static final DeferredBlock<Abstract2By2Door> LIBRARY_DOOR = BLOCKS.register("library_door", ()-> new LibraryDoor(doorProperties().noOcclusion()));
     public static final DeferredBlock<MaintenanceDoor> MAINTENANCE_DOOR = BLOCKS.register("maintenance_door", ()-> new MaintenanceDoor(doorProperties()));
     public static final DeferredBlock<TallBox> METAL_BOX = BLOCKS.register("metal_box", ()-> new TallBox(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK)));
-    public static final DeferredBlock<MetalCan> METAL_CAN = BLOCKS.register("metal_can", ()-> new MetalCan(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel((a)->0)));
+    public static final DeferredBlock<MetalCan> METAL_CAN = BLOCKS.register("metal_can", ()-> new MetalCan(BlockBehaviour.Properties.of().strength(2).mapColor(MapColor.METAL).noOcclusion().sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Note> NOTE = BLOCKS.register("note", ()-> new Note(BlockBehaviour.Properties.ofFullCopy(Blocks.ORANGE_WOOL)));
     public static final DeferredBlock<Notepad> NOTEPAD = BLOCKS.register("notepad", ()-> new Notepad(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final DeferredBlock<GrowingFruitBlock> ORANGE = BLOCKS.register("orange", ()-> new Orange(BlockBehaviour.Properties.ofFullCopy(Blocks.PUMPKIN), ItemRegistry.ORANGE_ITEM));
     public static final DeferredBlock<Block> ORANGE_LAB_BLOCK = BLOCKS.registerSimpleBlock("orange_lab_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<FruitTreeLeaves> ORANGE_LEAVES = BLOCKS.register("orange_leaves", ()-> new FruitTreeLeaves(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES), ORANGE));
     public static final DeferredBlock<SaplingBlock> ORANGE_SAPLING = BLOCKS.register("orange_sapling", ()-> new SaplingBlock(OrangeTreeGrower.GROWER, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)));
+    public static final DeferredBlock<PileOfOranges> PILE_OF_ORANGES = BLOCKS.register("pile_of_oranges", ()-> new PileOfOranges(BlockBehaviour.Properties.of().noLootTable().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOL)));
     public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(decorProperties()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_ORANGE_SAPLING = BLOCKS.register("potted_orange_sapling", ()-> new FlowerPotBlock(()-> (FlowerPotBlock) Blocks.FLOWER_POT, ORANGE_SAPLING, BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING)));
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(decorProperties().pushReaction(PushReaction.DESTROY)));

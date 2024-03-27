@@ -63,7 +63,7 @@ public class VentDuct extends ConnectedTextureBlock {
         ar[i] = b;
 
         int id = Utils.booleansToInt(ar);
-        if(id == 0) return SHAPE;
+        if(id == 63) return SHAPE;
 
         return CACHE.getShape(Direction.NORTH, id, () -> {
             VoxelShape shape;
