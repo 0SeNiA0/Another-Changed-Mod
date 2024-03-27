@@ -8,11 +8,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.entity.block.CannedOrangesEntity;
@@ -29,16 +30,6 @@ public class CannedOranges extends MetalCan implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new CannedOrangesEntity(pos, state);
-    }
-
-    @Override
-    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return super.getLightEmission(state, level, pos);
-    }
-
-    @Override
-    public int getLightBlock(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        return super.getLightBlock(pState, pLevel, pPos);
     }
 
     @Override
@@ -64,6 +55,28 @@ public class CannedOranges extends MetalCan implements EntityBlock {
         }
         openCloseCan(state, pos, level);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void openCloseCan(@NotNull BlockState state, BlockPos pos, @NotNull Level level) {
+        super.openCloseCan(state, pos, level);
+        if(state.getValue(WATERLOGGED) && level.getBlockEntity(pos) instanceof CannedOrangesEntity oranges){
+            if(!oranges.hasFoodLeft()) return;
+            oranges.setFood(0);
+            level.playSound(null, pos, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS);
+        }
+    }
+
+    @Override
+    public boolean placeLiquid(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull FluidState pFluidState) {
+        if(super.placeLiquid(level, pos, state, pFluidState)){
+            if(state.getValue(OPEN) && level.getBlockEntity(pos) instanceof CannedOrangesEntity oranges && oranges.hasFoodLeft()){
+                oranges.setFood(0);
+                level.playSound(null, pos, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

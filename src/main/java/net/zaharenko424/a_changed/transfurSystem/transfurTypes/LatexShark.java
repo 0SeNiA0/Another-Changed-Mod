@@ -1,6 +1,8 @@
 package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.client.model.LatexSharkFemaleModel;
 import net.zaharenko424.a_changed.client.model.LatexSharkMaleModel;
@@ -14,6 +16,7 @@ public class LatexShark extends AbstractWaterLatex {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public <E extends LivingEntity> CustomEntityModel<E> getModel(int modelVariant) {
         return gender == Gender.FEMALE ? new LatexSharkFemaleModel<>() : new LatexSharkMaleModel<>();
     }

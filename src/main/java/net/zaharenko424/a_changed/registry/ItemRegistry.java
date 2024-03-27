@@ -1,7 +1,12 @@
 package net.zaharenko424.a_changed.registry;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
@@ -11,6 +16,8 @@ import net.zaharenko424.a_changed.item.ArmorMaterials;
 import net.zaharenko424.a_changed.item.*;
 import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
@@ -76,9 +83,16 @@ public final class ItemRegistry {
     public static final DeferredItem<BlockItem> TALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(TALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> TEST_TUBES_ITEM = ITEMS.registerSimpleBlockItem(TEST_TUBES);
     public static final DeferredItem<BlockItem> TRAFFIC_CONE_ITEM = ITEMS.register(TRAFFIC_CONE.getId().getPath(), ()-> new BlockItem(TRAFFIC_CONE.get(), new Item.Properties()){
+        private static final UUID id = UUID.fromString("b4aaae90-bae7-455b-8c10-6506e8224123");
         @Override
         public boolean canEquip(@NotNull ItemStack stack, @NotNull EquipmentSlot armorType, @NotNull Entity entity) {
             return armorType == EquipmentSlot.HEAD;
+        }
+
+        @Override
+        public @NotNull Multimap<Attribute, AttributeModifier> getAttributeModifiers(@NotNull EquipmentSlot slot, @NotNull ItemStack stack) {
+            if(slot == EquipmentSlot.HEAD) return ImmutableMultimap.of(Attributes.ARMOR, new AttributeModifier(id, "armor", 2, AttributeModifier.Operation.ADDITION));
+            return super.getAttributeModifiers(slot, stack);
         }
     });
     public static final DeferredItem<BlockItem> VENT_DUCT_ITEM = ITEMS.registerSimpleBlockItem(VENT_DUCT);
