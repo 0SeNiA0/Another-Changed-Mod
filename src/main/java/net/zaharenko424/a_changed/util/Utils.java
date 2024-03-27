@@ -16,8 +16,8 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.AChanged;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -28,13 +28,31 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Utils {
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
-        return ResourceKey.create(registry,new ResourceLocation(AChanged.MODID,str));
+        return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));
     }
 
     @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
     public static <T> @NotNull T nonNullOrThrow(@Nullable T obj, RuntimeException exc) {
         if(obj == null) throw exc;
         return obj;
+    }
+
+    public static int booleansToInt(boolean[] booleans){
+        int bits = 0;
+        for (int i = 0; i < booleans.length; i++)
+            if (booleans[i])
+                bits |= 1 << i;
+        return bits;
+    }
+
+    @Contract(pure = true)
+    public static boolean @NotNull [] intToBooleans(int bits, int size){
+        if(size > 32) size = 32;
+        boolean[] booleans = new boolean[size]; /*max. length: 32*/
+        for (int i = 0; i < booleans.length; i++)
+            if ((bits & 1 << i) != 0)
+                booleans[i] = true;
+        return booleans;
     }
 
     public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
@@ -123,10 +141,10 @@ public class Utils {
             domain = texture.substring(0, idx);
             texture = texture.substring(idx + 1);
         }
-        return String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot ==EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
+        return String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
     }
 
-    public static boolean test(ItemStack stack, Ingredient ingredient){
+    public static boolean test(@Nullable ItemStack stack, Ingredient ingredient){
         if(stack == null) return false;
         for(ItemStack itemstack : ingredient.getItems()) {
             if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areAttachmentsCompatible(itemstack)) {

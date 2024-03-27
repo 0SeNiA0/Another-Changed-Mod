@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.renderer.blockEntity;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -27,11 +26,11 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
     private static final ResourceLocation BOOK_1 = AChanged.textureLoc("block/book_stack/book_1");
     private static final ResourceLocation BOOK_2 = AChanged.textureLoc("block/book_stack/book_2");
     private static final ResourceLocation BOOK_3 = AChanged.textureLoc("block/book_stack/book_3");
-    private static final ImmutableMap<Integer,ResourceLocation> TEXTURE_BY_ID = ImmutableMap.of(0,BOOK_0,1,BOOK_1,2,BOOK_2,3,BOOK_3);
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[]{BOOK_0, BOOK_1, BOOK_2, BOOK_3};
     private final ModelPart book;
 
     public BookStackRenderer(BlockEntityRendererProvider.Context context){
-        book=context.bakeLayer(LAYER).getChild("book");
+        book = context.bakeLayer(LAYER).getChild("book");
     }
 
     public static @NotNull LayerDefinition bodyLayer(){
@@ -47,19 +46,19 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
 
     @Override
     public void render(BookStackEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
-        NonNullList<BookStackEntity.BookData> list=p_112307_.getBooks();
+        NonNullList<BookStackEntity.BookData> list = p_112307_.getBooks();
         if(list.isEmpty()) return;
         p_112309_.translate(.5,0,.5);
         BookStackEntity.BookData book;
-        for(int i=0;i<list.size();i++){
+        for(int i = 0; i < list.size(); i++){
             this.book.resetPose();
-            this.book.xScale=.5f;
-            this.book.yScale=.5f;
-            this.book.zScale=.5f;
-            book=list.get(i);
-            this.book.yRot=book.rotation();
-            this.book.y=i*2;
-            this.book.render(p_112309_,p_112310_.getBuffer(RenderType.entitySolid(TEXTURE_BY_ID.get(book.modelId()))),p_112311_,p_112312_);
+            this.book.xScale = .5f;
+            this.book.yScale = .5f;
+            this.book.zScale = .5f;
+            book = list.get(i);
+            this.book.yRot = book.rotation();
+            this.book.y = i * 2;
+            this.book.render(p_112309_, p_112310_.getBuffer(RenderType.entitySolid(TEXTURES[book.modelId()])), p_112311_, p_112312_);
         }
     }
 }

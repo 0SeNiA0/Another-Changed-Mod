@@ -39,10 +39,10 @@ public class KeypadEntity extends BlockEntity {
         if(Arrays.equals(code,attempt)){
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(UNLOCKED,true));
             open = true;
-            level.playSound(null,worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
+            level.playSound(null, worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
             return;
         }
-        level.playSound(null,worldPosition, SoundRegistry.KEYPAD_WRONG_PASSWORD.get(), SoundSource.BLOCKS);
+        level.playSound(null, worldPosition, SoundRegistry.KEYPAD_WRONG_PASSWORD.get(), SoundSource.BLOCKS);
     }
 
     public void setCode(int[] code){

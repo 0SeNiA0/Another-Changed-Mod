@@ -14,7 +14,7 @@ public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEnti
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_purifier");
 
     public LatexPurifierScreen(LatexPurifierMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, true);
     }
 
     @Override

@@ -14,10 +14,14 @@
     "MixinPlayer",
     "MixinServerGamePacketListenerImpl",
     "MixinSimpleBlockFeature",
-    "MixinVillagerHostileSensor"
+    "MixinVillagerHostileSensor",
+    "MixinWanderingTrader"
   ],
   "client": [
     "client.MixinFallingBlockRenderer",
+    "client.MixinFogRenderer",
+    "client.MixinGameRenderer",
+    "client.MixinLightTexture",
     "client.MixinLivingEntityRenderer",
     "client.MixinPlayerRenderer"
   ]

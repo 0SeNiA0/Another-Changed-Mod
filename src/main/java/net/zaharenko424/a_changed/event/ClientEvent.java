@@ -2,10 +2,12 @@ package net.zaharenko424.a_changed.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
@@ -23,15 +25,17 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.BrokenFlask;
+import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
+import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
-import net.zaharenko424.a_changed.block.blocks.Flask;
-import net.zaharenko424.a_changed.block.blocks.TestTubes;
+import net.zaharenko424.a_changed.block.smalldecor.Flask;
+import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
+import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
 import net.zaharenko424.a_changed.block.doors.BigLabDoor;
 import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
 import net.zaharenko424.a_changed.block.doors.LabDoor;
@@ -40,9 +44,10 @@ import net.zaharenko424.a_changed.block.machines.DNAExtractor;
 import net.zaharenko424.a_changed.block.machines.LatexEncoder;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.model.ModelCache;
 import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
 import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
+import net.zaharenko424.a_changed.commands.RemoveModel;
+import net.zaharenko424.a_changed.commands.SetModel;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
@@ -54,11 +59,6 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID, value = Dist.CLIENT)
 public class ClientEvent {
-
-    @SubscribeEvent
-    public static void onAddReloadListener(AddReloadListenerEvent event){
-        event.addListener(ModelCache.INSTANCE);
-    }
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.Key event){
@@ -92,6 +92,13 @@ public class ClientEvent {
         if(item.is(ItemRegistry.COPPER_WIRE_ITEM.get())){
             event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.wires", 256).withStyle(ChatFormatting.GRAY)));
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommand(RegisterClientCommandsEvent event){
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        SetModel.register(dispatcher);
+        RemoveModel.register(dispatcher);
     }
 
     private static void grabLogic(Minecraft minecraft, Player player){
@@ -137,7 +144,7 @@ public class ClientEvent {
     }
 
     private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
-            Flask.class, LatexEncoder.class, TestTubes.class);
+            Flask.class, LatexEncoder.class, MetalCan.class, PileOfOranges.class, TestTubes.class);
     private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
             DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 

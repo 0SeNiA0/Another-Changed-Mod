@@ -122,7 +122,7 @@ public class TransfurCapability {
                 if(i > 0) entity.setHealth(entity.getHealth() + i);
             }
             f = transfurType.swimSpeedModifier;
-            if(f != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", f, AttributeModifier.Operation.ADDITION));
+            if(f != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", f, AttributeModifier.Operation.MULTIPLY_TOTAL));
         }
 
         private void removeModifiers(@NotNull AttributeMap map){
@@ -187,7 +187,7 @@ public class TransfurCapability {
                 return;
             }
             if(entity.tickCount % ticksBetweenTFProgressDecrease != 0) return;
-            transfurProgress--;
+            transfurProgress = Math.max(0, transfurProgress - 1);
             if(entity instanceof ServerPlayer player) TransfurEvent.updatePlayer(player);
         }
     }

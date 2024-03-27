@@ -57,6 +57,6 @@ public class BoxPileEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag p_187471_) {
         super.saveAdditional(p_187471_);
-        NBTUtils.modTag(p_187471_).putInt("boxes",boxes);
+        NBTUtils.modTag(p_187471_).putInt("boxes", boxes);
     }
 }

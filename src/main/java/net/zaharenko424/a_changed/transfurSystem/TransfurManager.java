@@ -25,8 +25,9 @@ public class TransfurManager {
     public static final String BEING_TRANSFURRED_KEY = "isBeingTransfurred";
     public static final String TRANSFURRED_KEY = "transfurred";
     public static final int LATEX_DAMAGE_BONUS = 1;
+    public static final float DEF_TRANSFUR_TOLERANCE = 20;
     @ApiStatus.Internal
-    public static float TRANSFUR_TOLERANCE = 20;
+    public static float TRANSFUR_TOLERANCE = DEF_TRANSFUR_TOLERANCE;
 
     public static boolean isTransfurred(@NotNull Player player){
         return TransfurCapability.nonNullOf(player).isTransfurred();

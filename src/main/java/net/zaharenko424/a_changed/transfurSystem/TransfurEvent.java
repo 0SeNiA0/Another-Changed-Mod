@@ -174,7 +174,7 @@ public class TransfurEvent {
         }
 
         void transfurPlayer(ServerPlayer player, ITransfurHandler handler, AbstractTransfurType transfurType, ServerLevel level){
-            if(player.isCreative() || result == TransfurResult.TRANSFUR){
+            if(player.isCreative() || player.isSpectator() || result == TransfurResult.TRANSFUR){
                 actuallyTransfurPlayer(player, handler, transfurType);
                 return;
             }
@@ -185,7 +185,8 @@ public class TransfurEvent {
                 case DEATH -> {
                     handler.unTransfur();
                     updatePlayer(player, handler);
-                    player.hurt(DamageSources.transfur(Objects.requireNonNullElse(player.getLastHurtByMob(), player), null), Float.MAX_VALUE);
+                    player.setInvulnerable(false);
+                    player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
                     spawnLatex(transfurType, level, player.blockPosition());
                 }
                 case PROMPT -> {

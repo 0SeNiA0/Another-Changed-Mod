@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
 import net.zaharenko424.a_changed.entity.SeatEntity;
+import net.zaharenko424.a_changed.entity.WaterLatexBeast;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,17 @@ public final class EntityRegistry {
     public static final DeferredHolder<EntityType<?>,EntityType<LatexBeast>> GAS_WOLF =
             registerLatex("gas_wolf", EntityType.Builder.of((a, b) ->
             new LatexBeast(a,b, GAS_WOLF_TF.get()), MobCategory.MONSTER));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> HYPNO_CAT =
+            registerLatex("hypno_cat", EntityType.Builder.of((a, b) ->
+                    new LatexBeast(a, b, HYPNO_CAT_TF.get()), MobCategory.MONSTER));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WaterLatexBeast>> LATEX_SHARK_FEMALE =
+            registerLatex("latex_shark_female", EntityType.Builder.of((a, b) ->
+            new WaterLatexBeast(a, b, LATEX_SHARK_F_TF.get()), MobCategory.MONSTER));
+    public static final DeferredHolder<EntityType<?>, EntityType<WaterLatexBeast>> LATEX_SHARK_MALE =
+            registerLatex("latex_shark_male", EntityType.Builder.of((a, b) ->
+            new WaterLatexBeast(a, b, LATEX_SHARK_M_TF.get()), MobCategory.MONSTER));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> PURE_WHITE_LATEX_WOLF =
             registerLatex("pure_white_latex_wolf", EntityType.Builder.of((a, b) ->

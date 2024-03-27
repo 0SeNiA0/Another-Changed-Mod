@@ -11,12 +11,11 @@ public class VoxelShapeCache {
     private final HashMap<Pair<Direction, Integer>, VoxelShape> shapes = new HashMap<>();
 
     public VoxelShape getShape(Direction direction, int id, VoxelShape baseShape){
-        return shapes.computeIfAbsent(Pair.of(direction, id), pair ->
-                direction != Direction.NORTH ? Utils.rotateShape(direction, baseShape) : baseShape);
+        return getShape(direction, id, ()-> baseShape);
     }
 
     public VoxelShape getShape(Direction direction, int id, Supplier<VoxelShape> supplier){
-        Pair<Direction, Integer> pair = Pair.of(direction, id);
-        return shapes.containsKey(pair) ? shapes.get(pair) : getShape(direction, id, supplier.get());
+        return shapes.computeIfAbsent(Pair.of(direction, id), pair ->
+                direction != Direction.NORTH ? Utils.rotateShape(direction, supplier.get()) : supplier.get());
     }
 }

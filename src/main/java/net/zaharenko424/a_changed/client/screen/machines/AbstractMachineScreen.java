@@ -16,19 +16,20 @@ public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, 
 
     public static final ResourceLocation SIDEBAR = AChanged.textureLoc("gui/energy_sidebar");
     protected final T entity;
+    protected boolean sideBarActive;
     protected static boolean open;
-    protected int pos;
-    protected int posO;
+    protected int pos = open ? 60 : 0;
+    protected int posO = pos;
 
-    public AbstractMachineScreen(C pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public AbstractMachineScreen(C pMenu, Inventory pPlayerInventory, Component pTitle, boolean sideBarActive) {
         super(pMenu, pPlayerInventory, pTitle);
         entity = pMenu.getEntity();
-        pos = open ? 60 : 0;
-        posO = pos;
+        this.sideBarActive = sideBarActive;
     }
 
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+        if(!sideBarActive) return super.mouseClicked(pMouseX, pMouseY, pButton);
         if(areaClicked(leftPos - pos - 14, leftPos, topPos + 4, topPos + 82, pMouseX, pMouseY)){
             open = !open;
             return true;
@@ -38,6 +39,7 @@ public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, 
 
     @Override
     protected void containerTick() {
+        if(!sideBarActive) return;
         if(posO != pos) posO = pos;
         if(open && pos < 60) pos += Math.min(8, 60 - pos);
         if(!open && pos > 0) pos -= Math.min(8, pos);

@@ -79,7 +79,7 @@ public class KeypadScreen extends Screen {
         if(super.charTyped(character, modifiers)){
             return true;
         }
-        if(Character.isDigit(character)){
+        if(Character.isDigit(character) && selectedChar > -1 && selectedChar < 8){
             int i = Character.getNumericValue(character);
             if(i > 9 || i < 0) return false;
             CharBox box = charBoxes.get(selectedChar);

@@ -23,24 +23,42 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class BiomeModifierProvider {
 
-    public static final ResourceKey<BiomeModifier> ADD_LATEX_SPAWNS = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "add_latex_spawns");
+    public static final ResourceKey<BiomeModifier> ADD_SURFACE_LATEX_SPAWNS = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "add_surface_latex_spawns");
+    public static final ResourceKey<BiomeModifier> WATER_LATEX_SPAWNS_OCEAN = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "water_latex_spawns_ocean");
+    public static final ResourceKey<BiomeModifier> WATER_LATEX_SPAWNS_RIVER = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "water_latex_spawns_river");
     public static final ResourceKey<BiomeModifier> ADD_ORANGE_TREE = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS,"add_orange_tree");
 
     public static void bootstrap(BootstapContext<BiomeModifier> context){
         HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
 
-        context.register(ADD_LATEX_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(
+        context.register(ADD_SURFACE_LATEX_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 List.of(
                         new MobSpawnSettings.SpawnerData(EntityRegistry.BEI_FENG.get(), 10, 1, 2),
                         new MobSpawnSettings.SpawnerData(EntityRegistry.DARK_LATEX_WOLF_FEMALE.get(), 10 , 1, 2),
                         new MobSpawnSettings.SpawnerData(EntityRegistry.DARK_LATEX_WOLF_MALE.get(), 10, 1, 2),
                         new MobSpawnSettings.SpawnerData(EntityRegistry.GAS_WOLF.get(), 10, 1, 2),
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.HYPNO_CAT.get(), 10, 1, 2),
                         new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get(), 10, 1, 2),
                         new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_MALE.get(), 10, 1, 2)
                 ))
         );
+
+        context.register(WATER_LATEX_SPAWNS_OCEAN, new BiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_OCEAN),
+                List.of(
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.LATEX_SHARK_FEMALE.get(), 10, 1, 2),
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.LATEX_SHARK_MALE.get(), 10, 1, 2)
+                )
+        ));
+        context.register(WATER_LATEX_SPAWNS_RIVER, new BiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(BiomeTags.IS_RIVER),
+                List.of(
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.LATEX_SHARK_FEMALE.get(), 10, 1, 1),
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.LATEX_SHARK_MALE.get(), 10, 1, 1)
+                )
+        ));
 
         context.register(ADD_ORANGE_TREE, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_FOREST),

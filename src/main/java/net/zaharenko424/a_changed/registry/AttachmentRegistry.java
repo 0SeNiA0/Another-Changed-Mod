@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
-import net.zaharenko424.a_changed.capability.item.PneumaticSyringeRifleItemHandlerCapability;
+import net.zaharenko424.a_changed.capability.item.SyringeRifleItemHandlerCapability;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
@@ -33,7 +33,10 @@ public class AttachmentRegistry {
                     .serialize(ItemEnergyCapability.Serializer.INSTANCE).build());
 
     //Pneumatic syringe rifle inv
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PneumaticSyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler>> SYRINGE_RIFLE_ITEM_HANDLER = ATTACHMENTS
-            .register("syringe_rifle_item_handler", ()-> AttachmentType.builder(PneumaticSyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler::new)
-                    .serialize(PneumaticSyringeRifleItemHandlerCapability.Serializer.INSTANCE).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler>> PNEUMATIC_SYRINGE_RIFLE_ITEM_HANDLER = ATTACHMENTS
+            .register("pneumatic_syringe_rifle_item_handler", ()-> AttachmentType.builder(SyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler::new)
+                    .serialize(SyringeRifleItemHandlerCapability.Serializer.INSTANCE).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SyringeRifleItemHandlerCapability.SyringeCoilGunItemHandler>> SYRINGE_COIL_GUN_HANDLER = ATTACHMENTS
+            .register("syringe_coil_gun_item_handler", ()-> AttachmentType.builder(SyringeRifleItemHandlerCapability.SyringeCoilGunItemHandler::new)
+                    .serialize(SyringeRifleItemHandlerCapability.Serializer1.INSTANCE).build());
 }

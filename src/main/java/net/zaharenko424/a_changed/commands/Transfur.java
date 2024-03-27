@@ -22,7 +22,7 @@ public class Transfur {
 
     private static final SuggestionProvider<CommandSourceStack> suggestions = SuggestionProviders.register(
             AChanged.resourceLoc("transfur_types"),
-            (context,builder) -> SharedSuggestionProvider.suggestResource(TransfurRegistry.TRANSFUR_REGISTRY.keySet().stream(), builder));
+            (context, builder) -> SharedSuggestionProvider.suggestResource(TransfurRegistry.TRANSFUR_REGISTRY.keySet().stream(), builder));
 
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
@@ -36,7 +36,8 @@ public class Transfur {
                                         )
                                         .then(
                                                 Commands.argument("target", EntityArgument.player())
-                                                        .executes(context -> execute(ResourceLocationArgument.getId(context,"transfurType"), EntityArgument.getPlayer(context,"target"))
+                                                        .executes(
+                                                                context -> execute(ResourceLocationArgument.getId(context,"transfurType"), EntityArgument.getPlayer(context,"target"))
                                                         )
                                         )
                         )

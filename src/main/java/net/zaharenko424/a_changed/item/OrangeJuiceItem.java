@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class OrangeJuiceItem extends Item {
 
     public OrangeJuiceItem(@NotNull Item.Properties p_42979_) {
-        super(p_42979_.food(new FoodProperties.Builder().nutrition(4).saturationMod(4).build()).stacksTo(16));
+        super(p_42979_.food(new FoodProperties.Builder().nutrition(6).saturationMod(.5f).build()).stacksTo(16));
     }
 
     @Override
@@ -23,8 +23,8 @@ public class OrangeJuiceItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_42984_, @NotNull Level p_42985_, @NotNull LivingEntity p_42986_) {
-        Player player=(Player) p_42986_;
+        Player player = (Player) p_42986_;
         if(!player.getAbilities().instabuild) player.addItem(new ItemStack(Items.GLASS_BOTTLE));
-        return p_42986_.eat(p_42985_,p_42984_);
+        return p_42986_.eat(p_42985_, p_42984_);
     }
 }

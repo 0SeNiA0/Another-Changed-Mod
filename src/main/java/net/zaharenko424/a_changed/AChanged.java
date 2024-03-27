@@ -56,8 +56,11 @@ public class AChanged {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
 
     //Attributes
+    /**
+     * 1 -> default air depletion speed <p>Total value > 1 -> faster air depletion. <p>0 < totalValue < 1 -> slower depletion. <p>Total value == 0 -> no depletion.
+     */
     public static final DeferredHolder<Attribute, Attribute> AIR_DECREASE_SPEED = ATTRIBUTES.register("air_decrease_speed",
-            () -> new RangedAttribute("attribute." + MODID + ".air_decrease_speed",1,0,256));
+            () -> new RangedAttribute("attribute." + MODID + ".air_decrease_speed",1,0,256).setSyncable(true));
     public static final DeferredHolder<Attribute, Attribute> LATEX_RESISTANCE = ATTRIBUTES.register("latex_resistance",
             () -> new RangedAttribute("attribute." + MODID + ".latex_resistance",0,0,1));
 
@@ -84,12 +87,12 @@ public class AChanged {
 
     @Contract("_ -> new")
     public static @NotNull ResourceLocation resourceLoc(String path){
-        return new ResourceLocation(MODID,path);
+        return new ResourceLocation(MODID, path);
     }
 
     @Contract("_ -> new")
     public static @NotNull ResourceLocation textureLoc(String path){
-        return new ResourceLocation(MODID,"textures/"+path+".png");
+        return new ResourceLocation(MODID,"textures/" + path + ".png");
     }
 
     public static @NotNull ResourceLocation textureLoc(ResourceLocation loc){

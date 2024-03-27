@@ -60,8 +60,8 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState p_60503_, @NotNull Level p_60504_, @NotNull BlockPos p_60505_, @NotNull Player p_60506_, @NotNull InteractionHand p_60507_, @NotNull BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return super.use(p_60503_,p_60504_,p_60505_,p_60506_,p_60507_,p_60508_);
-        if(sit(p_60504_,p_60505_,Shapes.block().bounds().move(p_60505_),p_60506_,true)) return InteractionResult.SUCCESS;
+        if(p_60504_.isClientSide) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+        if(sit(p_60504_, p_60505_, Shapes.block().bounds().move(p_60505_), p_60506_,true)) return InteractionResult.SUCCESS;
         return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
     }
 
@@ -74,7 +74,7 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
     @Override
     public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
         if(p_60567_.isClientSide) super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
-        p_60567_.addFreshEntity(new SeatEntity(p_60567_,p_60568_,true));
+        p_60567_.addFreshEntity(new SeatEntity(p_60567_, p_60568_,true));
     }
 
     @Override

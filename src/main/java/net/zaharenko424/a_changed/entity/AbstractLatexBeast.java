@@ -10,10 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -37,6 +34,7 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public abstract class AbstractLatexBeast extends Monster {
+
     public final @NotNull AbstractTransfurType transfurType;
     static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
     static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
@@ -45,16 +43,17 @@ public abstract class AbstractLatexBeast extends Monster {
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, AbstractTransfurType transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
-        dimensions = transfurType.getPoseDimensions(Pose.STANDING);
-        ((GroundPathNavigation)navigation).setCanOpenDoors(true);
-        registerLatexGoals();
+        dimensions = transfurType.getPoseDimensions(Pose.STANDING);//TODO remove?
+        if(!hasBrain()) registerLatexGoals();
         AttributeMap map = getAttributes();
-        if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED,airDecreaseSpeed) && transfurType.airReductionModifier != 0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(Attributes.MAX_HEALTH,healthModifier) && transfurType.maxHealthModifier != 0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a", transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(NeoForgeMod.SWIM_SPEED,swimSpeed) && transfurType.swimSpeedModifier != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", transfurType.swimSpeedModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED, airDecreaseSpeed) && transfurType.airReductionModifier != 0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(Attributes.MAX_HEALTH, healthModifier) && transfurType.maxHealthModifier != 0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a", transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
+        if(!map.hasModifier(NeoForgeMod.SWIM_SPEED, swimSpeed) && transfurType.swimSpeedModifier != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", transfurType.swimSpeedModifier, AttributeModifier.Operation.MULTIPLY_TOTAL));
         addModifiers(map);
         transfurType.onTransfur(this);
     }
+
+    protected abstract boolean hasBrain();
 
     protected void addModifiers(AttributeMap map){}
 
@@ -65,17 +64,6 @@ public abstract class AbstractLatexBeast extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.ATTACK_DAMAGE, 4.0)
                 .add(Attributes.ARMOR, 2.0);
-    }
-
-    @Override
-    protected void registerGoals() {
-        goalSelector.addGoal(0, new FloatGoal(this));
-        goalSelector.addGoal(1, new OpenDoorGoal(this,false));
-        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, .8));
-        goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        targetSelector.addGoal(0, new HurtByTargetGoal(this));
     }
 
     protected void registerLatexGoals(){
@@ -89,10 +77,15 @@ public abstract class AbstractLatexBeast extends Monster {
         return p_219015_.getDifficulty() != Difficulty.PEACEFUL
                 && (
                         isDarkEnoughToSpawn(p_219015_, p_219017_, p_219018_)
-                        || ((p_219015_.getBiome(p_219017_).is(Biomes.DARK_LATEX_BIOME)&&(p_219014_==EntityRegistry.DARK_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.DARK_LATEX_WOLF_MALE.get()))
-                                ||(p_219015_.getBiome(p_219017_).is(Biomes.WHITE_LATEX_BIOME)&&(p_219014_==EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get()||p_219014_==EntityRegistry.WHITE_LATEX_WOLF_MALE.get())))
+                        || ((p_219015_.getBiome(p_219017_).is(Biomes.DARK_LATEX_BIOME) && (p_219014_ == EntityRegistry.DARK_LATEX_WOLF_FEMALE.get() || p_219014_ == EntityRegistry.DARK_LATEX_WOLF_MALE.get()))
+                                || (p_219015_.getBiome(p_219017_).is(Biomes.WHITE_LATEX_BIOME) && (p_219014_ == EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get() || p_219014_ == EntityRegistry.WHITE_LATEX_WOLF_MALE.get())))
                 )
                 && checkMobSpawnRules(p_219014_, p_219015_, p_219016_, p_219017_, p_219018_);
+    }
+
+    @Override
+    public @NotNull EntityDimensions getDimensions(Pose pPose) {
+        return transfurType.getPoseDimensions(pPose);
     }
 
     @Override
@@ -102,7 +95,7 @@ public abstract class AbstractLatexBeast extends Monster {
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) p_21372_.setSecondsOnFire(i * 4);
 
-        if(!p_21372_.hurt(DamageSources.transfur(this,null), 0.1F)) return false;
+        if(!p_21372_.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
         doEnchantDamageEffects(this, p_21372_);
         setLastHurtMob(p_21372_);
         TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);

@@ -4,7 +4,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
+import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -18,7 +18,7 @@ public class ItemEnergyCapability {
         return item.getData(AttachmentRegistry.ITEM_ENERGY_HANDLER).init(capacity, maxTransfer, item);
     }
 
-    public static class ItemEnergyStorage extends ExtendedEnergyStorage {
+    public static class ItemEnergyStorage extends EnergyConsumer {
 
         private ItemStack item;
 
@@ -48,6 +48,12 @@ public class ItemEnergyCapability {
             int extracted = super.extractEnergy(maxExtract, simulate);
             if(!simulate) updateItemDamage();
             return extracted;
+        }
+
+        @Override
+        public void consumeEnergy(int amount) {
+            super.consumeEnergy(amount);
+            updateItemDamage();
         }
 
         private void updateItemDamage(){

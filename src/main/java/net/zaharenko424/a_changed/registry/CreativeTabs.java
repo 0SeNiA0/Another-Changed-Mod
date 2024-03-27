@@ -23,6 +23,8 @@ public class CreativeTabs {
                 .displayItems((parameters, output) -> {
                     output.accept(ORANGE_ITEM);
                     output.accept(ORANGE_JUICE_ITEM);
+                    output.accept(CANNED_ORANGES_ITEM);
+                    output.accept(METAL_CAN_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
                     output.accept(HAZARD_BLOCK_ITEM);
@@ -78,15 +80,15 @@ public class CreativeTabs {
                     output.accept(TALL_CARDBOARD_BOX_ITEM);
                     output.accept(TEST_TUBES_ITEM);
                     output.accept(TRAFFIC_CONE_ITEM);
-                    output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
-                    output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
-                    output.accept(VENT_ITEM);
+                    output.accept(VENT_DUCT_ITEM);
+                    output.accept(VENT_HATCH_ITEM);
                     //Technology
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);
                     output.accept(IRON_PLATE);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
+                    output.accept(CAPACITOR_ITEM);
                     output.accept(COMPRESSOR_ITEM);
                     output.accept(COMPRESSED_AIR_CANISTER);
                     output.accept(EMPTY_CANISTER);
@@ -124,6 +126,8 @@ public class CreativeTabs {
                     output.accept(HAZMAT_LEGGINGS);
                     output.accept(HAZMAT_BOOTS);
 
+                    output.accept(STUN_BATON);
+
                     output.accept(BLACK_LATEX_SHORTS);
 
                     output.accept(DARK_LATEX_ITEM);
@@ -147,14 +151,23 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_BASE);
 
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
+                    output.accept(SYRINGE_COIL_GUN);
 
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
+
+                    output.accept(DARK_LATEX_PUDDLE_F_ITEM);
+                    output.accept(DARK_LATEX_PUDDLE_M_ITEM);
+                    output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
+                    output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
 
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);
                     output.accept(DARK_LATEX_WOLF_F_EGG);
                     output.accept(DARK_LATEX_WOLF_M_EGG);
                     output.accept(GAS_WOLF_EGG);
+                    output.accept(HYPNO_CAT_EGG);
+                    output.accept(LATEX_SHARK_F_EGG);
+                    output.accept(LATEX_SHARK_M_EGG);
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);

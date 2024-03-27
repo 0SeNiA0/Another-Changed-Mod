@@ -94,7 +94,7 @@ public class LaserEmitterEntity extends BlockEntity {
                 .inflate(Math.abs(step.x) * halfLength, Math.abs(step.y) * halfLength, Math.abs(step.z) * halfLength)
                 .move(new Vec3(step.mul(halfLength)));
 
-        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(), Block.UPDATE_ALL);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
 
         transfurEntities();
     }

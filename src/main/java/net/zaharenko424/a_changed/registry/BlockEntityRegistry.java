@@ -16,12 +16,19 @@ public class BlockEntityRegistry {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, AChanged.MODID);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PileOfOrangesEntity>> PILE_OF_ORANGES_ENTITY = BLOCK_ENTITIES
+            .register("pile_of_oranges", () -> BlockEntityType.Builder.of(PileOfOrangesEntity::new, PILE_OF_ORANGES.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AirConditionerEntity>> AIR_CONDITIONER_ENTITY = BLOCK_ENTITIES
             .register("air_conditioner", () -> BlockEntityType.Builder.of(AirConditionerEntity::new, AIR_CONDITIONER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BookStackEntity>> BOOK_STACK_ENTITY = BLOCK_ENTITIES
             .register("book_stack", () -> BlockEntityType.Builder.of(BookStackEntity::new, BOOK_STACK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoxPileEntity>> BOX_PILE_ENTITY = BLOCK_ENTITIES
             .register("box_pile", () -> BlockEntityType.Builder.of(BoxPileEntity::new, SMALL_CARDBOARD_BOX.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CannedOrangesEntity>> CANNED_ORANGES_ENTITY = BLOCK_ENTITIES
+            .register("canned_oranges", ()-> BlockEntityType.Builder.of(CannedOrangesEntity::new, CANNED_ORANGES.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitorEntity>> CAPACITOR_ENTITY = BLOCK_ENTITIES
+            .register("capacitor", () -> BlockEntityType.Builder.of(CapacitorEntity::new, CAPACITOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CompressorEntity>> COMPRESSOR_ENTITY = BLOCK_ENTITIES
             .register("compressor", () -> BlockEntityType.Builder.of(CompressorEntity::new, COMPRESSOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CopperWireEntity>> COPPER_WIRE_ENTITY = BLOCK_ENTITIES

@@ -20,7 +20,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
     public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_encoder");
 
     public LatexEncoderScreen(LatexEncoderMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
+        super(pMenu, pPlayerInventory, pTitle, true);
     }
 
     @Override

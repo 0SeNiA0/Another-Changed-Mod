@@ -14,7 +14,7 @@ public class DNAExtractorScreen extends AbstractMachineScreen<DNAExtractorEntity
     public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/dna_extractor");
 
     public DNAExtractorScreen(DNAExtractorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
+        super(pMenu, pPlayerInventory, pTitle, true);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Note extends AbstractNote {
 
     public Note(Properties p_52591_) {
         super(p_52591_);
-        registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Note extends AbstractNote {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new NoteEntity(p_153215_,p_153216_);
+        return new NoteEntity(p_153215_, p_153216_);
     }
 
     @Override

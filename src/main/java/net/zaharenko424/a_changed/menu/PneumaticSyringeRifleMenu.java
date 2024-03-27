@@ -9,14 +9,13 @@ import org.jetbrains.annotations.NotNull;
 public class PneumaticSyringeRifleMenu extends AbstractSyringeRifleMenu {
 
     public PneumaticSyringeRifleMenu(int pContainerId, Inventory playerInventory) {
-        super(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), pContainerId, playerInventory);
+        super(MenuRegistry.PNEUMATIC_SYRINGE_RIFLE_MENU.get(), pContainerId, playerInventory);
     }
 
     public PneumaticSyringeRifleMenu(int pContainerId, Inventory playerInventory, @NotNull ItemStack rifle) {
-        super(MenuRegistry.PNEUMATIC_RIFLE_MENU.get(), pContainerId, playerInventory, rifle);
+        super(MenuRegistry.PNEUMATIC_SYRINGE_RIFLE_MENU.get(), pContainerId, playerInventory, rifle);
     }
 
-    @Override
     protected void createRifleSlots() {
         addSlot(new SlotItemHandler(inventory, 0, 80, 33));
         addSlot(new SlotItemHandler(inventory, 1, 52, 33));

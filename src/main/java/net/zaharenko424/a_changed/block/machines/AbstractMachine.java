@@ -21,6 +21,10 @@ public abstract class AbstractMachine extends HorizontalDirectionalBlock impleme
 
     public AbstractMachine(Properties properties) {
         super(properties);
+        registerDefState();
+    }
+
+    protected void registerDefState(){
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
     }
 
