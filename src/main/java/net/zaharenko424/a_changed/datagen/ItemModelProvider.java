@@ -3,8 +3,10 @@ package net.zaharenko424.a_changed.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.SpawnEggItem;
-import net.neoforged.neoforge.client.model.generators.ModelProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -41,10 +43,14 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(LATEX_ENCODER_COMPONENTS.getId());
         basicItem(LATEX_MANIPULATOR.getId());
         basicItem(LATEX_PURIFIER_COMPONENTS.getId());
+        basicItem(LATEX_RESISTANT_COATING.getId());
+        basicItem(LATEX_RESISTANT_COMPOUND.getId());
+        basicItem(LATEX_RESISTANT_FABRIC.getId());
+        basicItemBlockTexture(LATEX_RESISTANT_GLASS_PANE_ITEM, BlockRegistry.LATEX_RESISTANT_GLASS).renderType("translucent");
         basicItem(LATEX_SOLVENT_BUCKET.getId());
         basicItem(LATEX_SYRINGE_ITEM.getId());
 
-        ResourceLocation planks = BlockRegistry.ORANGE_PLANKS.getId().withPrefix(ModelProvider.BLOCK_FOLDER+"/");
+        ResourceLocation planks = blockLoc(BlockRegistry.ORANGE_PLANKS);
         buttonInventory(ORANGE_BUTTON_ITEM.getId().getPath(), planks);
         basicItem(ORANGE_DOOR_ITEM.getId());
         fenceInventory(ORANGE_FENCE_ITEM.getId().getPath(), planks);
@@ -53,8 +59,6 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(ORANGE_ITEM.getId());
         pressurePlate(ORANGE_PRESSURE_PLATE_ITEM.getId().getPath(), planks);
         basicItem(ORANGE_SIGN_ITEM.getId());
-        slab(ORANGE_SLAB_ITEM.getId().getPath(), planks, planks, planks);
-        stairs(ORANGE_STAIRS_ITEM.getId().getPath(), planks, planks, planks);
         trapdoorBottom(ORANGE_TRAPDOOR_ITEM.getId().getPath(), planks);
 
         basicItem(ORANGE_JUICE_ITEM.getId());
@@ -65,6 +69,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(WHITE_LATEX_BASE.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
         basicItem(WHITE_LATEX_ITEM.getId());
+        basicItem(COPPER_WRENCH.getId());
 
         spawnEgg(BEI_FENG_EGG);
         spawnEgg(BENIGN_EGG);
@@ -77,6 +82,15 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);
         spawnEgg(WHITE_LATEX_WOLF_M_EGG);
+    }
+
+    private @NotNull ResourceLocation blockLoc(@NotNull DeferredBlock<?> block){
+        return block.getId().withPrefix(BLOCK_FOLDER + "/");
+    }
+
+    private @NotNull ItemModelBuilder basicItemBlockTexture(@NotNull DeferredItem<?> item, @NotNull DeferredBlock<?> block){
+        return getBuilder(item.getId().getPath()).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", blockLoc(block));
     }
 
     protected void spawnEgg(@NotNull DeferredItem<SpawnEggItem> egg){

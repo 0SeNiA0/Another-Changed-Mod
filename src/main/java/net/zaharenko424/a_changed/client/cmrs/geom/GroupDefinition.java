@@ -48,7 +48,7 @@ public class GroupDefinition {
         return groupDefinition;
     }
 
-    public ModelPart bake(int textureWidth, int textureHeight) {
+    public ModelPart bake(float textureWidth, float textureHeight) {
         Object2ObjectArrayMap<String, ModelPart> object2objectarraymap = this.children.entrySet().stream().collect(Collectors.toMap(
             Map.Entry::getKey,
             group -> group.getValue().armor ? group.getValue().bake(64, 32) : group.getValue().bake(textureWidth, textureHeight),

@@ -6,8 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.*;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
@@ -48,6 +47,8 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         threeByThreeDoorWithItem(BIG_LIBRARY_DOOR);
         threeByThreeDoorWithItem(BIG_MAINTENANCE_DOOR);
         blockWithItem(BLUE_LAB_TILE);
+        slabWithItem(BLUE_LAB_TILE_SLAB, blockLoc(BLUE_LAB_TILE));
+        stairsWithItem(BLUE_LAB_TILE_STAIRS, blockLoc(BLUE_LAB_TILE));
         blockWithItem(BOLTED_BLUE_LAB_TILE);
         blockWithItem(BOLTED_LAB_TILE);
         simpleBlock(BOOK_STACK.get());
@@ -73,22 +74,33 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlock(DARK_LATEX_FLUID_BLOCK.get(), models().getBuilder(DARK_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/dark_latex_still"));
         latexPuddleWithItem(DARK_LATEX_PUDDLE_F, false);
         latexPuddleWithItem(DARK_LATEX_PUDDLE_M, false);
+        horizontalDirectionalBlockWithItem(DERELICT_LATEX_ENCODER);
+        horizontalDirectionalBlockWithItem(DERELICT_LATEX_PURIFIER);
         machineLikeWithItem(DNA_EXTRACTOR, true);
         simpleBlockWithItemExisting(FLASK);
         rotatedDoublePartBlockWithItem(GAS_TANK,"gas_tank");
         machineLikeWithItem(GENERATOR, false);
         doublePartCrossWithItem(GREEN_CRYSTAL);
         blockWithItem(HAZARD_BLOCK);
-        pillarWithItem(HAZARD_LAB_BLOCK, blockLoc(LAB_BLOCK.getId()));
+        slabWithItem(HAZARD_SLAB, blockLoc(HAZARD_BLOCK));
+        stairsWithItem(HAZARD_STAIRS, blockLoc(HAZARD_BLOCK));
+        pillarWithItem(HAZARD_LAB_BLOCK, blockLoc(LAB_BLOCK));
         rotatedDoublePartBlockWithItem(IV_RACK, "iv_rack");
         keypadWithItem();
         blockWithItem(LAB_BLOCK);
+        slabWithItem(LAB_SLAB, blockLoc(LAB_BLOCK));
+        stairsWithItem(LAB_STAIRS, blockLoc(LAB_BLOCK));
         twoByTwoDoorWithItem(LAB_DOOR);
         blockWithItem(LAB_TILE);
+        slabWithItem(LAB_TILE_SLAB, blockLoc(LAB_TILE));
+        stairsWithItem(LAB_TILE_STAIRS, blockLoc(LAB_TILE));
         laserWithItem();
         doublePartYBlockWithItem(LATEX_CONTAINER);
         machineLikeWithItem(LATEX_ENCODER, false);
         machineLikeWithItem(LATEX_PURIFIER, false);
+        simpleCubeWithItem(LATEX_RESISTANT_BLOCK);
+        simpleBlockWithItem(LATEX_RESISTANT_GLASS.get(), models().cubeAll(LATEX_RESISTANT_GLASS.getId().getPath(), blockLoc(LATEX_RESISTANT_GLASS)).renderType("translucent"));
+        paneBlockWithRenderType(LATEX_RESISTANT_GLASS_PANE.get(), blockLoc(LATEX_RESISTANT_GLASS), blockLoc(LATEX_RESISTANT_GLASS), "translucent");
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
         twoByTwoDoorWithItem(LIBRARY_DOOR);
         twoByTwoDoorWithItem(MAINTENANCE_DOOR);
@@ -98,46 +110,50 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(NOTEPAD);
         orange();
 
-        ResourceLocation planks = blockLoc(ORANGE_PLANKS.getId());
+        ResourceLocation planks = blockLoc(ORANGE_PLANKS);
         buttonBlock(ORANGE_BUTTON.get(), planks);
-        ResourceLocation door = blockLoc(ORANGE_DOOR.getId());
+        ResourceLocation door = blockLoc(ORANGE_DOOR);
         doorBlock(ORANGE_DOOR.get(), door.withSuffix("_bottom"), door.withSuffix("_top"));
         fenceBlock(ORANGE_FENCE.get(), planks);
         fenceGateBlock(ORANGE_FENCE_GATE.get(), planks);
         hangingSignBlock(ORANGE_HANGING_SIGN, ORANGE_WALL_HANGING_SIGN, planks);
         blockWithItem(ORANGE_LAB_BLOCK);
+        slabWithItem(ORANGE_LAB_SLAB, blockLoc(ORANGE_LAB_BLOCK));
+        stairsWithItem(ORANGE_LAB_STAIRS, blockLoc(ORANGE_LAB_BLOCK));
         leavesWithItem(ORANGE_LEAVES);
-        simpleBlockWithItem(ORANGE_PLANKS.get(), cubeAll(ORANGE_PLANKS.get()));
+        simpleCubeWithItem(ORANGE_PLANKS);
         pressurePlateBlock(ORANGE_PRESSURE_PLATE.get(), planks);
         crossWithItem(ORANGE_SAPLING);
         signBlock(ORANGE_SIGN.get(), ORANGE_WALL_SIGN.get(), planks);
-        slabBlock(ORANGE_SLAB.get(), planks, planks);
-        stairsBlock(ORANGE_STAIRS.get(), planks);
+        slabWithItem(ORANGE_SLAB, planks);
+        stairsWithItem(ORANGE_STAIRS, planks);
         trapdoorBlock(ORANGE_TRAPDOOR.get(), planks, true);
 
         logWithItem(ORANGE_TREE_LOG, null, null);
-        logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG.getId()), blockLoc(ORANGE_TREE_LOG.getId()));
+        logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG), blockLoc(ORANGE_TREE_LOG));
         pipe();
         simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
-                new ResourceLocation("flower_pot_cross"), "plant", blockTexture(ORANGE_SAPLING.get())).renderType("cutout"));
+                new ResourceLocation("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
-        pillarWithItem(STRIPED_ORANGE_LAB_BLOCK,blockLoc(ORANGE_LAB_BLOCK.getId()));
-        logWithItem(STRIPPED_ORANGE_LOG, null, blockLoc(ORANGE_TREE_LOG.getId()).withSuffix("_top"));
-        logWithItem(STRIPPED_ORANGE_WOOD, blockLoc(STRIPPED_ORANGE_LOG.getId()), blockLoc(STRIPPED_ORANGE_LOG.getId()));
+        pillarWithItem(STRIPED_ORANGE_LAB_BLOCK, blockLoc(ORANGE_LAB_BLOCK));
+        logWithItem(STRIPPED_ORANGE_LOG, null, blockLoc(ORANGE_TREE_LOG).withSuffix("_top"));
+        logWithItem(STRIPPED_ORANGE_WOOD, blockLoc(STRIPPED_ORANGE_LOG), blockLoc(STRIPPED_ORANGE_LOG));
         tableModel();
         rotatedDoublePartBlockWithItem(TALL_CARDBOARD_BOX,"tall_box");
         horizontalDirectionalBlockWithItem(TEST_TUBES);
-        simpleBlockWithItem(TRAFFIC_CONE.get(),models().getExistingFile(blockLoc(TRAFFIC_CONE.getId())));
+        simpleBlockWithItemExisting(TRAFFIC_CONE);
         ventDuct();
         ventHatchWithItem();
         pillarWithItem(VENT_WALL,null);
         blockWithItem(WHITE_LATEX_BLOCK);
-        simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/white_latex_still"));
+        simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID + ":block/white_latex_still"));
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_F, true);
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_M, true);
         blockWithItem(YELLOW_LAB_BLOCK);
+        slabWithItem(YELLOW_LAB_SLAB, blockLoc(YELLOW_LAB_BLOCK));
+        stairsWithItem(YELLOW_LAB_STAIRS, blockLoc(YELLOW_LAB_BLOCK));
     }
 
     private void pipe(){
@@ -172,6 +188,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private @NotNull ResourceLocation blockLoc(ResourceLocation loc){
         return loc.withPrefix(ModelProvider.BLOCK_FOLDER + "/");
+    }
+
+    private @NotNull ResourceLocation blockLoc(DeferredBlock<?> block){
+        return blockLoc(block.getId());
     }
 
     private void blockWithItem(DeferredBlock<?> block){
@@ -237,7 +257,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void horizontalDirectionalBlockWithItem(DeferredBlock<? extends HorizontalDirectionalBlock> block){
-        ModelFile file = models().getExistingFile(blockLoc(block.getId()));
+        ModelFile file = models().getExistingFile(blockLoc(block));
         simpleBlockItem(block.get(), file);
         getVariantBuilder(block.get())
                 .forAllStates(state-> horizontalRotatedModelAr(file, state.getValue(HorizontalDirectionalBlock.FACING)));
@@ -282,14 +302,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void laserWithItem(){
-        ResourceLocation id = LASER_EMITTER.getId();
-        ResourceLocation loc = blockLoc(id);
+        ResourceLocation loc = blockLoc(LASER_EMITTER);
         ModelFile active = models().getExistingFile(loc.withSuffix("_active"));
         ModelFile inactive = models().getExistingFile(loc.withSuffix("_inactive"));
         getVariantBuilder(LASER_EMITTER.get())
                 .forAllStates(state ->
                         rotatedModelAr(state.getValue(StateProperties.ACTIVE) ? active : inactive, state.getValue(LaserEmitter.FACING)));
-        itemModels().getBuilder(id.getPath()).parent(inactive);
+        itemModels().getBuilder(LASER_EMITTER.getId().getPath()).parent(inactive);
     }
 
     private void latexPuddleWithItem(DeferredBlock<LatexPuddle> puddle, boolean white){
@@ -352,7 +371,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void metalCan(DeferredBlock<? extends MetalCan> can){
-        ResourceLocation loc = blockLoc(can.getId());
+        ResourceLocation loc = blockLoc(can);
         ModelFile file = models().getExistingFile(loc);
         ModelFile file_open = models().getExistingFile(loc.withSuffix("_open"));
         getVariantBuilder(can.get()).forAllStates(state ->
@@ -367,7 +386,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void pillarWithItem(DeferredBlock<?> block, @Nullable ResourceLocation up){
-        ResourceLocation loc = blockLoc(block.getId());
+        ResourceLocation loc = blockLoc(block);
         ResourceLocation top = up != null ? up : loc.withSuffix("_up");
         ModelFile file = models().cube(block.getId().getPath(), top, top, loc, loc, loc, loc).texture("particle",loc);
         simpleBlockWithItem(block.get(), file);
@@ -383,6 +402,11 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         );
     }
 
+    private void simpleCubeWithItem(DeferredBlock<?> block){
+        ModelFile file = cubeAll(block.get());
+        simpleBlockWithItem(block.get(), file);
+    }
+
     private void simpleBlockWithItemExisting(DeferredBlock<?> block){
         ResourceLocation id = block.getId();
         ModelFile model = models().getExistingFile(blockLoc(id));
@@ -392,6 +416,11 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private void simpleItem(ResourceLocation id, ResourceLocation texture){
         itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0", texture);
+    }
+
+    private void slabWithItem(DeferredBlock<? extends SlabBlock> slab, ResourceLocation texture){
+        slabBlock(slab.get(), texture, texture);
+        itemModels().slab(slab.getId().getPath(), texture, texture, texture);
     }
 
     private void smallCardboardBoxPileWithItem(){
@@ -413,7 +442,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private void smartSewageSystemWithItem(){
         ResourceLocation id = SMART_SEWAGE_SYSTEM.getId();
-        ResourceLocation loc = blockLoc(LAB_BLOCK.getId());
+        ResourceLocation loc = blockLoc(LAB_BLOCK);
         ResourceLocation top = blockLoc(id);
         String path = id.getPath();
         ModelFile file = models().cube(path, top, top, loc, loc, loc, loc).texture("particle", loc);
@@ -422,8 +451,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         itemModels().getBuilder(path).parent(file);
     }
 
+    private void stairsWithItem(DeferredBlock<? extends StairBlock> stairs, ResourceLocation texture){
+        stairsBlock(stairs.get(), texture);
+        itemModels().stairs(stairs.getId().getPath(), texture, texture, texture);
+    }
+
     private void tableModel(){
-        ResourceLocation id = blockLoc(TABLE.getId());
+        ResourceLocation id = blockLoc(TABLE);
         ModelFile file1 = models().getExistingFile(id.withSuffix("_top"));
         ModelFile file2 = models().getExistingFile(id.withSuffix("_leg"));
         getMultipartBuilder(TABLE.get()).part().modelFile(file1).addModel().end()
@@ -632,28 +666,28 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private ConfiguredModel model3(boolean u, boolean d, boolean n, boolean e, boolean s, boolean w, ModelFile file_wud, ModelFile file_ewu, ModelFile file_esu){
-        if(u && d && !n && !e && !s)      return new ConfiguredModel(file_wud);
-        if(u && d && !n && !e && !w)      return new ConfiguredModel(file_wud,0,-90,false);
+        if(u && d && !n && !e && !s && w)      return new ConfiguredModel(file_wud);
+        if(u && d && !n && !e && s && !w)      return new ConfiguredModel(file_wud,0,-90,false);
         if(u && d && !n && e && !s && !w) return new ConfiguredModel(file_wud,0,-180,false);
         if(u && d && n && !e && !s && !w) return new ConfiguredModel(file_wud,0,90,false);
-        if(!u && !d && n && !e)           return new ConfiguredModel(file_wud,-90,0,false);
-        if(!u && !d && n && s && !w)      return new ConfiguredModel(file_wud,-90,180,false);
+        if(!u && !d && n && !e && s && w)           return new ConfiguredModel(file_wud,-90,0,false);
+        if(!u && !d && n && e && s && !w)      return new ConfiguredModel(file_wud,-90,180,false);
 
-        if(u && !d && !n && e && !s)      return new ConfiguredModel(file_ewu);
-        if(!u && !d && !n)                return new ConfiguredModel(file_ewu,-90,0,false);
-        if(!u && d && !n && e && !s)      return new ConfiguredModel(file_ewu,180,0,false);
-        if(!u && !d && !s)                return new ConfiguredModel(file_ewu,90,0,false);
+        if(u && !d && !n && e && !s && w)      return new ConfiguredModel(file_ewu);
+        if(!u && !d && !n && e && s && w)                return new ConfiguredModel(file_ewu,-90,0,false);
+        if(!u && d && !n && e && !s && w)      return new ConfiguredModel(file_ewu,180,0,false);
+        if(!u && !d && n && e && !s && w)                return new ConfiguredModel(file_ewu,90,0,false);
         if(u && !d && n && !e && s && !w) return new ConfiguredModel(file_ewu,0,90,false);
         if(!u && d && n && !e && s && !w) return new ConfiguredModel(file_ewu,180,90,false);
 
-        if(u && !d && !n && e && !w)      return new ConfiguredModel(file_esu);
-        if(u && !d && !n && !e)           return new ConfiguredModel(file_esu,0,90,false);
+        if(u && !d && !n && e && s && !w)      return new ConfiguredModel(file_esu);
+        if(u && !d && !n && !e && s && w)           return new ConfiguredModel(file_esu,0,90,false);
         if(u && !d && n && e && !s && !w) return new ConfiguredModel(file_esu,90,0,false);
         if(!u && d && n && e && !s && !w) return new ConfiguredModel(file_esu,180,0,false);
-        if(!u && d && !n && e && !w)      return new ConfiguredModel(file_esu,270,0,false);
-        if(!u && d && !n && !e)           return new ConfiguredModel(file_esu,180,-180,false);
-        if(!u && d && n && !e && !s)      return new ConfiguredModel(file_esu,-90,-180,false);
-        if(u && !d && n && !e && !s)      return new ConfiguredModel(file_esu,90,-90,false);
+        if(!u && d && !n && e && s && !w)      return new ConfiguredModel(file_esu,270,0,false);
+        if(!u && d && !n && !e && s && w)           return new ConfiguredModel(file_esu,180,-180,false);
+        if(!u && d && n && !e && !s && w)      return new ConfiguredModel(file_esu,-90,-180,false);
+        if(u && !d && n && !e && !s && w)      return new ConfiguredModel(file_esu,90,-90,false);
         return null;
     }
 }

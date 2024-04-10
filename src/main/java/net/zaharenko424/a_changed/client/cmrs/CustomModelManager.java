@@ -4,10 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import it.unimi.dsi.fastutil.floats.FloatArrayList;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.floats.FloatArrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -15,14 +13,18 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.event.LoadModelsToCacheEvent;
+import net.zaharenko424.a_changed.util.FriendlierByteBuf;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -105,6 +107,16 @@ public class CustomModelManager {
         removePlayerModel(Minecraft.getInstance().player, modelId);
     }
 
+    public void removeLocalPlayerModel(@NotNull String url){
+        if(Minecraft.getInstance().player == null || !urlLoaded.containsKey(url)) return;
+        removePlayerModel(Minecraft.getInstance().player, urlLoaded.get(url));
+    }
+
+    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url){
+        if(!urlLoaded.containsKey(url)) return;
+        removePlayerModel(player, urlLoaded.get(url));
+    }
+
     public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
         CustomEntityModel<?> model = modelCache.get(modelId);
@@ -128,133 +140,128 @@ public class CustomModelManager {
         render.put(player, model);
     }
 
-    public void loadModel(@NotNull ResourceLocation modelId, @NotNull CustomEntityModel<?> model){
+    public void registerModel(@NotNull ResourceLocation modelId, @NotNull CustomEntityModel<?> model){
         if(modelCache.containsKey(modelId)) return;
         modelCache.put(modelId, model);
     }
 
-    public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomEntityModel<?>> func){
+    public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomEntityModel<?>> func) {
         if(urlLoaded.containsKey(url)) return CompletableFuture.supplyAsync(() -> urlLoaded.get(url));
         if(beingLoaded.containsKey(url)) return beingLoaded.get(url);
-        //TODO test HeapByteBuffer !!!
-        CompletableFuture<ResourceLocation> future = CompletableFuture.supplyAsync(() -> {
+
+        CompletableFuture<ResourceLocation> future = CompletableFuture.supplyAsync(()-> {
             try {
-                URL link = new URL("https://raw.githubusercontent.com/0SeNiA0/mod/" + url);
-                InputStream in = link.openStream();
+                URL link = new URL("https://raw.githubusercontent.com/0SeNiA0/special_tf_models/main/" + url + ".ccm");
+                HttpsURLConnection connection = (HttpsURLConnection) link.openConnection();
+                if(connection.getResponseCode() == 404) throw new FileNotFoundException();
+                InputStream in = connection.getInputStream();
                 byte[] bytes = in.readAllBytes();
                 in.close();
+                FriendlierByteBuf buf = new FriendlierByteBuf(Unpooled.wrappedBuffer(bytes));
 
-                StringReader reader = new StringReader(new String(bytes));
-                ResourceLocation modelId = new ResourceLocation(reader.readStringUntil('!'));
-
+                ResourceLocation modelId = buf.readResourceLocation();
                 ModelDefinition.Builder modelBuilder = new ModelDefinition.Builder();
+
                 HashMap<String, GroupDefinition> groups = new HashMap<>();
                 groups.put("groupDefinition", modelBuilder.getRoot());
 
-                char c;
-                String str, str1;
+                String name, parent;
                 GroupBuilder groupBuilder;
-                float[] ar, ar1;
-                Vector3f inflate;
-                CubeUV uv;
-                while (reader.canRead()){
-                    c = reader.read();
-                    if(c == 'g'){// group
-                        str = reader.readQuotedString();
-                        if(reader.peek() != 'p') {
-                            str1 = "groupDefinition";
-                        } else {
-                            reader.read();
-                            str1 = reader.readQuotedString();
-                        }
-                        groupBuilder = GroupBuilder.create();
-                        c = reader.read();
-                        while(c == 'a' || c == 'l' ||  c == 'c' || c == 'm'){
-                            switch(c){
-                                case 'a' -> groupBuilder.armor();
-                                case 'l' -> groupBuilder.glowing();//   not 'g' to not have conflict with group
-                                case 'c' -> {// cube
-                                    ar = readAr(reader, 6);
-                                    c = reader.read();
-                                    if(c == 'i'){
-                                        ar1 = readAr(reader, 3);
-                                        inflate = new Vector3f(ar1[0], ar1[1], ar1[2]);
-                                    } else inflate = new Vector3f();
-                                    uv = new CubeUV();
-                                    while(c == 'n' || c == 's' || c == 'w' || c == 'e' || c == 'u' || c == 'd'){
-                                        ar1 = readAr(reader, 4);
-                                        if(c == 'n') uv.north(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        if(c == 's') uv.south(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        if(c == 'w') uv.west(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        if(c == 'e') uv.east(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        if(c == 'u') uv.up(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        if(c == 'd') uv.down(ar1[0], ar1[1], ar1[2], ar[3]);
-                                        c = reader.read();
-                                    }
-                                    reader.setCursor(reader.getCursor() - 1);
-                                    groupBuilder.addBox(ar[0], ar[1], ar[2], ar[3], ar[4], ar[5], inflate, uv);
-                                }
-                                case 'm' -> {// mesh
-                                    ar = readAr(reader, -1);
-                                    reader.skip();//    skip 'q'
-                                    ar1 = readAr(reader, -1);
-                                    groupBuilder.addMesh(ar, ar1);
-                                }
-                            }
-                            c = reader.read();
-                        }
-                        reader.setCursor(reader.getCursor() - 1);
-                        if(c == 'o') {
-                            ar = readAr(reader, 6);
-                            groups.put(str, groups.get(str1).addOrReplaceChild(str, groupBuilder, PartPose.offsetAndRotation(ar[0], ar[1], ar[2], ar[3], ar[4], ar[5])));
-                        } else groups.put(str, groups.get(str1).addOrReplaceChild(str, groupBuilder));
+                GroupDefinition group;
+                float[] ar0, ar1, ar2, ar3;
+                char c;
+                while(buf.peekChar() != '!') {  // '!' end of model def
+                    name = buf.readUtf();
+                    parent = buf.readUtf();
+
+                    groupBuilder = GroupBuilder.create();
+
+                    ar2 = FloatArrays.EMPTY_ARRAY;
+                    ar3 = FloatArrays.EMPTY_ARRAY;
+                    c = buf.readChar();
+                    if(c == 'o'){
+                        ar2 = buf.readFloatArray();
+                        c = buf.readChar();
                     }
-                    if(c == 't') break;
-                    //  end / texture
+                    if(c == 'r'){
+                        ar3 = buf.readFloatArray();
+                        c = buf.readChar();
+                    }
+
+                    Vector3f inflation;
+                    while (c != ';') {//  ';' at the end of group definition!
+                        switch (c) {
+                            case 'a' -> groupBuilder.armor();
+                            case 'g' -> groupBuilder.glowing();
+                            case 'c' -> {
+                                ar0 = buf.readFloatArray();
+                                c = buf.readChar();
+
+                                if (c == 'i') {
+                                    inflation = new Vector3f(buf.readFloat());
+                                    c = buf.readChar();
+                                } else inflation = null;
+
+                                CubeUV uv = new CubeUV();
+                                while (c == 'n' || c == 's' || c == 'w' || c == 'e' || c == 'u' || c == 'd') {
+                                    ar1 = buf.readFloatArray();
+                                    if (c == 'n') uv.north(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    if (c == 's') uv.south(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    if (c == 'w') uv.west(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    if (c == 'e') uv.east(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    if (c == 'u') uv.up(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    if (c == 'd') uv.down(ar1[0], ar1[1], ar1[2], ar1[3]);
+                                    c = buf.readChar();
+                                }
+                                buf.unreadChar();
+
+                                if (inflation != null)
+                                    groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], inflation, uv);
+                                else groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], uv);
+                            }
+                            case 'm' -> groupBuilder.addMesh(buf.readFloatArray(), buf.readFloatArray());
+                        }
+                        c = buf.readChar();
+                    }
+                    group = groups.get(parent);
+                    if(ar2.length == 3 && ar3.length == 3){
+                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.offsetAndRotation(ar2[0], ar2[1], ar2[2], ar3[0], ar3[1], ar3[2]));
+                    } else if(ar2.length == 3) {
+                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.offset(ar2[0], ar2[1], ar2[2]));
+                    } else if(ar3.length == 3) {
+                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.rotation(ar3[0], ar3[1], ar3[2]));
+                    } else group = group.addOrReplaceChild(name, groupBuilder);
+
+                    groups.put(name, group);
                 }
-                if(!reader.canRead()) throw new IllegalStateException("Invalid model file! " + link);
+                buf.skipChar();
 
-                int[] textureSize = readIntAr(reader, 3);
-                CustomEntityModel<?> model = func.apply(ModelDefinition.create(modelBuilder, textureSize[0], textureSize[1], textureSize[2]).bake(), modelId);
+                CustomEntityModel<?> model = func.apply(ModelDefinition.create(modelBuilder, buf.readVarInt(), buf.readVarInt(), buf.readFloat()).bake(), modelId);
 
-                int read = reader.getRead().getBytes().length;
-                int toRead = bytes.length - read;
-                byte[] texture = new byte[toRead];
-                System.arraycopy(bytes, read, texture, 0, toRead);
+                byte[] textureBytes = new byte[buf.readableBytes()];
+                buf.readBytes(textureBytes);
+                buf.release();
 
                 Minecraft.getInstance().textureManager.register(model.getTexture(),
-                        new DynamicTexture(NativeImage.read(texture)));//TODO test
+                        new DynamicTexture(NativeImage.read(textureBytes)));
 
                 modelCache.put(modelId, model);
                 urlLoaded.put(url, modelId);
                 beingLoaded.remove(url);
                 return modelId;
-            } catch (IOException | CommandSyntaxException e) {
+            } catch (IOException e){
                 throw new RuntimeException(e);
             }
+        }).exceptionally(err -> {
+            if(!(err.getCause().getCause() instanceof FileNotFoundException)){
+                AChanged.LOGGER.error("Error occurred while loading model from {}", url);
+                err.printStackTrace();
+            }
+            beingLoaded.remove(url);
+            return null;
         });
         beingLoaded.put(url, future);
         return future;
-    }
-
-    private float[] readAr(@NotNull StringReader reader, int limit) throws CommandSyntaxException {
-        FloatArrayList list = new FloatArrayList();
-        while(StringReader.isAllowedNumber(reader.peek()) || reader.peek() == ','){
-            if(reader.peek() == ',') continue;
-            if(list.size() == limit) break;
-            list.add(reader.readFloat());
-        }
-        return list.elements();
-    }
-
-    private int[] readIntAr(@NotNull StringReader reader, int limit) throws CommandSyntaxException {
-        IntArrayList list = new IntArrayList();
-        while(StringReader.isAllowedNumber(reader.peek()) || reader.peek() == ','){
-            if(reader.peek() == ',') continue;
-            if(list.size() == limit) break;
-            list.add(reader.readInt());
-        }
-        return list.elements();
     }
 
     public void resetPlayerModels(@NotNull AbstractClientPlayer player){

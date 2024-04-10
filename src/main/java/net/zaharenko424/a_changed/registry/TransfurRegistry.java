@@ -13,7 +13,7 @@ import net.zaharenko424.a_changed.transfurSystem.transfurTypes.*;
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 
-public final class TransfurRegistry {
+public class TransfurRegistry {
 
     public static final DeferredRegister<AbstractTransfurType> TRANSFUR_TYPES = DeferredRegister.create(resourceLoc("transfur_registry"), MODID);
     public static final Registry<AbstractTransfurType> TRANSFUR_REGISTRY = TRANSFUR_TYPES.makeRegistry(builder->{});
@@ -30,14 +30,14 @@ public final class TransfurRegistry {
                     }).onUnTransfur(entity -> {//OR move to TransfurEvent as an exception & check for this TF
                         entity.removeEffect(MobEffects.BLINDNESS);
                         entity.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-                    })));
+                    }).colors(-14211289, -14803426)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> DARK_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("dark_latex_wolf_female", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("dark_latex_wolf_female")).gender(Gender.FEMALE)));
+                    .of(resourceLoc("dark_latex_wolf_female")).gender(Gender.FEMALE).colors(-13686230, -14146010)));
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> DARK_LATEX_WOLF_M_TF = TRANSFUR_TYPES
             .register("dark_latex_wolf_male", ()-> new LatexWolf(AbstractTransfurType.Properties
-                    .of(resourceLoc("dark_latex_wolf_male")).gender(Gender.MALE)));
+                    .of(resourceLoc("dark_latex_wolf_male")).gender(Gender.MALE).colors(-13686230, -14146010)));
 
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> GAS_WOLF_TF = TRANSFUR_TYPES
             .register("gas_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties
@@ -56,6 +56,11 @@ public final class TransfurRegistry {
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> PURE_WHITE_LATEX_WOLF_TF = TRANSFUR_TYPES
             .register("pure_white_latex_wolf", ()-> new LatexWolf(AbstractTransfurType.Properties
                     .of(resourceLoc("pure_white_latex_wolf"))));
+
+    public static final DeferredHolder<AbstractTransfurType, Special> SPECIAL_TF = TRANSFUR_TYPES
+            .register("special", ()-> new Special(AbstractTransfurType.Properties
+                    .of(resourceLoc("special"))));
+
     public static final DeferredHolder<AbstractTransfurType, LatexWolf> WHITE_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_female", ()-> new LatexWolf(AbstractTransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_female")).gender(Gender.FEMALE)));

@@ -14,6 +14,7 @@ import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -21,6 +22,7 @@ import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.block.GrowingFruitBlock;
 import net.zaharenko424.a_changed.block.blocks.Crystal;
 import net.zaharenko424.a_changed.block.blocks.TallCrystal;
+import net.zaharenko424.a_changed.block.machines.AbstractDerelictMachine;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +44,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         ninePartMultiBlockDrops(BIG_LIBRARY_DOOR.get());
         ninePartMultiBlockDrops(BIG_MAINTENANCE_DOOR.get());
         dropSelf(BLUE_LAB_TILE.get());
+        dropSelf(BLUE_LAB_TILE_SLAB.get());
+        dropSelf(BLUE_LAB_TILE_STAIRS.get());
         dropSelf(BOLTED_BLUE_LAB_TILE.get());
         dropSelf(BOLTED_LAB_TILE.get());
         dropSelf(BROKEN_CUP.get());
@@ -64,21 +68,32 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropWhenSilkTouch(DARK_LATEX_CRYSTAL_ICE.get());
         dropSelf(DARK_LATEX_PUDDLE_F.get());
         dropSelf(DARK_LATEX_PUDDLE_M.get());
+        derelictMachineDrops(DERELICT_LATEX_ENCODER.get(), 1.5f);
+        derelictMachineDrops(DERELICT_LATEX_PURIFIER.get(), 1);
         dropSelf(DNA_EXTRACTOR.get());
         dropOther(FLASK.get(), BROKEN_FLASK);
         dropSelf(GENERATOR.get());
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
         dropSelf(HAZARD_BLOCK.get());
+        dropSelf(HAZARD_SLAB.get());
+        dropSelf(HAZARD_STAIRS.get());
         dropSelf(HAZARD_LAB_BLOCK.get());
         doublePartBlockDrops(IV_RACK.get());
         dropSelf(KEYPAD.get());
         dropSelf(LAB_BLOCK.get());
+        dropSelf(LAB_SLAB.get());
+        dropSelf(LAB_STAIRS.get());
         fourPartMultiBlockDrops(LAB_DOOR.get());
         dropSelf(LAB_TILE.get());
+        dropSelf(LAB_TILE_SLAB.get());
+        dropSelf(LAB_TILE_STAIRS.get());
         dropSelf(LASER_EMITTER.get());
         doublePartBlockDrops(LATEX_CONTAINER.get());
         dropSelf(LATEX_ENCODER.get());
         dropSelf(LATEX_PURIFIER.get());
+        dropSelf(LATEX_RESISTANT_BLOCK.get());
+        dropSelf(LATEX_RESISTANT_GLASS.get());
+        dropSelf(LATEX_RESISTANT_GLASS_PANE.get());
         fourPartMultiBlockDrops(LIBRARY_DOOR.get());
         fourPartMultiBlockDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());
@@ -94,6 +109,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_HANGING_SIGN.get());
         dropOther(ORANGE_WALL_HANGING_SIGN.get(), ORANGE_HANGING_SIGN);
         dropSelf(ORANGE_LAB_BLOCK.get());
+        dropSelf(ORANGE_LAB_SLAB.get());
+        dropSelf(ORANGE_LAB_STAIRS.get());
         createOrangeLeavesDrops();
         dropSelf(ORANGE_PLANKS.get());
         dropSelf(ORANGE_PRESSURE_PLATE.get());
@@ -123,6 +140,8 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(WHITE_LATEX_PUDDLE_F.get());
         dropSelf(WHITE_LATEX_PUDDLE_M.get());
         dropSelf(YELLOW_LAB_BLOCK.get());
+        dropSelf(YELLOW_LAB_SLAB.get());
+        dropSelf(YELLOW_LAB_STAIRS.get());
     }
 
     private void createOrangeLeavesDrops(){
@@ -143,12 +162,31 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                 .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
     }
 
+    private void derelictMachineDrops(AbstractDerelictMachine derelictMachine, float dropMultiplier){
+        add(derelictMachine, LootTable.lootTable().withPool(LootPool.lootPool()
+                .add(
+                        applyExplosionCondition(derelictMachine, LootItem.lootTableItem(ItemRegistry.IRON_PLATE)
+                                .apply(SetItemCountFunction.setCount(BinomialDistributionGenerator.binomial(3, .5f * dropMultiplier))))
+                )
+        ).withPool(LootPool.lootPool()
+                .add(
+                        applyExplosionCondition(derelictMachine, LootItem.lootTableItem(ItemRegistry.GOLDEN_PLATE)
+                                .apply(SetItemCountFunction.setCount(BinomialDistributionGenerator.binomial(3, .25f * dropMultiplier))))
+                )
+        ).withPool(LootPool.lootPool()
+                .add(
+                        applyExplosionCondition(derelictMachine, LootItem.lootTableItem(Items.DIAMOND)
+                                .apply(SetItemCountFunction.setCount(BinomialDistributionGenerator.binomial(3, .1f * dropMultiplier))))
+                )
+        ));
+    }
+
     private void doublePartBlockDrops(Block block){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART2,0)))
                 .add(
-                        applyExplosionCondition(block,LootItem.lootTableItem(block))
+                        applyExplosionCondition(block, LootItem.lootTableItem(block))
                 )));
     }
 

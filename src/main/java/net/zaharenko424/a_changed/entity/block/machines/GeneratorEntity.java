@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.EnergyGenerator;
 import net.zaharenko424.a_changed.menu.machines.GeneratorMenu;
@@ -34,7 +33,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
         return new ItemStackHandler(2){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot == 0 ? CommonHooks.getBurnTime(stack, null) > 0 && !(stack.getItem() instanceof BucketItem)
+                return slot == 0 ? stack.getBurnTime(null) > 0 && !(stack.getItem() instanceof BucketItem)
                         : checkItemEnergyCap(stack);
             }
 
@@ -77,7 +76,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
             changed = true;
         } else if(!energyStorage.isFull()) {
             ItemStack fuel = inventory.getStackInSlot(0);
-            int burnTime = CommonHooks.getBurnTime(fuel, null);
+            int burnTime = fuel.getBurnTime(null);
             if(burnTime > 0 && !(fuel.getItem() instanceof BucketItem)) {
                 setActive(true);
                 burnTicks = burnTime;

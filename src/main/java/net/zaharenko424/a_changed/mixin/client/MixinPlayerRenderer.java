@@ -32,7 +32,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 
     @Inject(at = @At("RETURN"),method = "<init>")
     private void onInit(EntityRendererProvider.Context p_174557_, boolean p_174558_, CallbackInfo ci){
-        mod$renderer=new CustomEntityRenderer<>(p_174557_);
+        mod$renderer = new CustomEntityRenderer<>(p_174557_);
     }
 
     @Inject(at = @At("HEAD"),

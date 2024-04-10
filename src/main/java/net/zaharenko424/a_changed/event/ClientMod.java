@@ -21,12 +21,13 @@ import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
+import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -128,9 +129,11 @@ public class ClientMod {
     @SubscribeEvent
     public static void onLoadModelsToCache(LoadModelsToCacheEvent event){
         CustomModelManager modelManager = CustomModelManager.getInstance();
-        TRANSFUR_REGISTRY.stream().forEach(transfurType ->
-                modelManager.loadModel(transfurType.id, transfurType.getModel(0)));
-        modelManager.loadModel(AChanged.resourceLoc("0senia0"), new Protogen<>());
+        TRANSFUR_REGISTRY.stream().forEach(transfurType -> {
+            if (!(transfurType instanceof Special))
+                modelManager.registerModel(transfurType.id, transfurType.getModel(0));
+        });
+        modelManager.registerModel(AChanged.resourceLoc("0senia0"), new Protogen<>());
     }
 
     @SubscribeEvent

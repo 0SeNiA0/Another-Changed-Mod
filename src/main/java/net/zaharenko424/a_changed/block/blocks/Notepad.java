@@ -61,13 +61,13 @@ public class Notepad extends AbstractNote {
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos p_60527_) {
         BlockPos pos = p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, Direction.UP);
+        return level.getBlockState(pos).isFaceSturdy(level, pos, Direction.UP);
     }
 }

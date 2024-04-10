@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 
-public final class FluidRegistry {
+public class FluidRegistry {
 
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES,MODID);
     public static final DeferredRegister<net.minecraft.world.level.material.Fluid> FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID,MODID);

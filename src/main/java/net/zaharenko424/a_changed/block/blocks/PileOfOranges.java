@@ -1,12 +1,15 @@
 package net.zaharenko424.a_changed.block.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -34,6 +37,11 @@ public class PileOfOranges extends Block implements EntityBlock {
     public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         if(!(pLevel.getBlockEntity(pPos) instanceof PileOfOrangesEntity oranges)) return Shapes.empty();
         return oranges.getFinalShape();
+    }
+
+    @Override
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction pDirection, @NotNull BlockState pNeighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos pNeighborPos) {
+        return canSurvive(state, level, pos) ? state : level.getFluidState(pos).createLegacyBlock();
     }
 
     @Override
@@ -70,6 +78,12 @@ public class PileOfOranges extends Block implements EntityBlock {
 
     private boolean validateClickPos(Vec3 clickPos, BlockPos pos){
         return new AABB(pos).deflate(2 / 16f).move(0, -2 / 16f, 0).contains(clickPos);
+    }
+
+    @Override
+    public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
+        BlockPos below = pos.below();
+        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 
     @Nullable

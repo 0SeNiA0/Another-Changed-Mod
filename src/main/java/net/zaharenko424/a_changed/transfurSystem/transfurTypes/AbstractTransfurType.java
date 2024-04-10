@@ -21,6 +21,8 @@ public abstract class AbstractTransfurType {
 
     public final ResourceLocation id;
 
+    protected final int primaryColor;
+    protected final int secondaryColor;
     protected final float eyeHeightStanding;
     protected final float eyeHeightCrouching;
     protected final float eyeHeightSwimming;
@@ -35,6 +37,8 @@ public abstract class AbstractTransfurType {
 
     public AbstractTransfurType(@NotNull Properties properties){
         id = properties.location;
+        primaryColor = properties.primaryColor;
+        secondaryColor = properties.secondaryColor;
         eyeHeightStanding = properties.eyeHeightStanding;
         eyeHeightCrouching = properties.eyeHeightCrouching;
         eyeHeightSwimming = properties.eyeHeightSwimming;
@@ -50,6 +54,14 @@ public abstract class AbstractTransfurType {
 
     @OnlyIn(Dist.CLIENT)
     public abstract <E extends LivingEntity> CustomEntityModel<E> getModel(int modelVariant);
+
+    public int getPrimaryColor(){
+        return primaryColor;
+    }
+
+    public int getSecondaryColor(){
+        return secondaryColor;
+    }
 
     public float getEyeHeight(@NotNull Pose pose){
         return switch (pose) {
@@ -86,6 +98,8 @@ public abstract class AbstractTransfurType {
 
     public static class Properties {
         ResourceLocation location;
+        int primaryColor = -1644826;
+        int secondaryColor = -4934476;
         float eyeHeightStanding = 1.62f;
         float eyeHeightCrouching = 1.27f;
         float eyeHeightSwimming = .4f;
@@ -113,6 +127,15 @@ public abstract class AbstractTransfurType {
         @Contract(value = "_ -> new", pure = true)
         public static @NotNull Properties of(ResourceLocation resourceLocation){
             return new AbstractTransfurType.Properties(resourceLocation);
+        }
+
+        /**
+         * Color in ARGB
+         */
+        public Properties colors(int primary, int secondary){
+            primaryColor = primary;
+            secondaryColor = secondary;
+            return this;
         }
 
         public Properties eyeHeight(float standing){

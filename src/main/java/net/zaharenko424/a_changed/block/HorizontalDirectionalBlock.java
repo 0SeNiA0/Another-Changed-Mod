@@ -13,27 +13,28 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public abstract class HorizontalDirectionalBlock extends net.minecraft.world.level.block.HorizontalDirectionalBlock {
-    protected HorizontalDirectionalBlock(Properties p_54120_) {
-        super(p_54120_);
+
+    protected HorizontalDirectionalBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        Direction direction = p_60525_.getValue(FACING).getOpposite();
-        BlockPos pos = p_60527_.relative(direction);
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, direction);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        Direction direction = state.getValue(FACING).getOpposite();
+        BlockPos pos1 = pos.relative(direction);
+        return level.getBlockState(pos1).isFaceSturdy(level, pos1, direction);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        Direction direction = p_49820_.getClickedFace();
-        if(direction.getAxis() == Direction.Axis.Y) direction = p_49820_.getHorizontalDirection().getOpposite();
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction direction = context.getClickedFace();
+        if(direction.getAxis() == Direction.Axis.Y) direction = context.getHorizontalDirection().getOpposite();
         return defaultBlockState().setValue(FACING, direction);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(FACING));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(FACING));
     }
 }

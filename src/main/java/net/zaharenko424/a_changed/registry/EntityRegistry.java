@@ -16,7 +16,7 @@ import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 
-public final class EntityRegistry {
+public class EntityRegistry {
 
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MODID);
 

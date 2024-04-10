@@ -1,10 +1,12 @@
 package net.zaharenko424.a_changed.client.cmrs.geom;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -13,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
@@ -104,33 +107,33 @@ public class ModelPart {
         z = part.z;
     }
 
-    public boolean hasChild(String p_233563_) {
-        return this.children.containsKey(p_233563_);
+    public boolean hasChild(String name) {
+        return this.children.containsKey(name);
     }
 
     public boolean hasChildren(){
         return !children.isEmpty();
     }
 
-    public ModelPart getChild(String p_171325_) {
-        ModelPart modelpart = children.get(p_171325_);
+    public ModelPart getChild(String name) {
+        ModelPart modelpart = children.get(name);
         if (modelpart == null) {
-            throw new NoSuchElementException("Can't find part " + p_171325_);
+            throw new NoSuchElementException("Can't find part " + name);
         } else {
             return modelpart;
         }
     }
 
-    public void setPos(float p_104228_, float p_104229_, float p_104230_) {
-        x = p_104228_;
-        y = p_104229_;
-        z = p_104230_;
+    public void setPos(float newX, float newY, float newZ) {
+        x = newX;
+        y = newY;
+        z = newZ;
     }
 
-    public void setRotation(float p_171328_, float p_171329_, float p_171330_) {
-        xRot = p_171328_;
-        yRot = p_171329_;
-        zRot = p_171330_;
+    public void setRotation(float newXRot, float newYRot, float newZRot) {
+        xRot = newXRot;
+        yRot = newYRot;
+        zRot = newZRot;
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay) {
@@ -138,7 +141,7 @@ public class ModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-        if(!visible || (cubes.isEmpty() && meshes.isEmpty() && children.isEmpty())) return;
+        if(!visible || (isEmpty() && children.isEmpty())) return;
         poseStack.pushPose();
         translateAndRotate(poseStack);
 
@@ -170,12 +173,30 @@ public class ModelPart {
         }
     }
 
+    public boolean hasCubes(){
+        return !cubes.isEmpty();
+    }
+
+    public boolean hasMeshes(){
+        return !meshes.isEmpty();
+    }
+
+    /**
+     * @return Random cube if any or null.
+     */
     public ModelPart.Cube getRandomCube(RandomSource random) {
-        return this.cubes.get(random.nextInt(cubes.size()));
+        return hasCubes() ? cubes.get(random.nextInt(cubes.size())) : null;
+    }
+
+    /**
+     * @return First mesh if any or null.
+     */
+    public ModelPart.Mesh getMesh(){
+        return hasMeshes() ? meshes.get(0) : null;
     }
 
     public boolean isEmpty() {
-        return this.cubes.isEmpty();
+        return cubes.isEmpty() && meshes.isEmpty();
     }
 
     public void offsetPos(Vector3f pos) {
@@ -197,7 +218,7 @@ public class ModelPart {
     }
 
     /**
-     * @return immutable map
+     * @return Unmodifiable map
      */
     public Map<String, ModelPart> getChildren(){
         return children;
@@ -219,7 +240,7 @@ public class ModelPart {
 
         public Cube(float x1, float y1, float z1, float sizeX, float sizeY, float sizeZ,
                     float inflateX, float inflateY, float inflateZ, boolean mirror,
-                    CubeUV uv, float scaleU, float scaleV) {
+                    CubeUV uv, float textureWidth, float textureHeight) {
             minX = x1;
             minY = y1;
             minZ = z1;
@@ -253,7 +274,7 @@ public class ModelPart {
             Vertex vertex7 = new Vertex(x1, y1, z1);
             int i = 0;
             Direction direction;
-            for(Map.Entry<Direction,UVData> entry : uv.uv.entrySet()){
+            for(Map.Entry<Direction, UVData> entry : uv.uv.entrySet()){
                 direction = entry.getKey();
                 quads[i] = new Quad(
                         switch(direction){
@@ -263,7 +284,7 @@ public class ModelPart {
                             case NORTH -> new Vertex[]{vertex0, vertex7, vertex2, vertex1};
                             case EAST ->  new Vertex[]{vertex4, vertex0, vertex1, vertex5};
                             case SOUTH -> new Vertex[]{vertex3, vertex4, vertex5, vertex6};
-                        }, entry.getValue(), scaleU, scaleV, mirror, direction
+                        }, entry.getValue(), textureWidth, textureHeight, mirror, direction
                 );
                 i++;
             }
@@ -280,25 +301,35 @@ public class ModelPart {
 
     public static class Mesh {
 
+        protected final ImmutableList<Vector3f> vertices;
         private final Quad[] quads;
 
         public Mesh(float[] vertices, float[] quads, float textureWidth, float textureHeight){
+            ImmutableList.Builder<Vector3f> builder = ImmutableList.builder();
+            for(int i = 0; i < vertices.length;){
+                builder.add(new Vector3f(vertices[i++], vertices[i++], vertices[i++]));
+            }
+            this.vertices = builder.build();
+
             int size = quads.length / 12;
             this.quads = new Quad[size];
 
             int q = 0, i = 0;
             while (q < size) {
-                this.quads[q++] = new Quad(new Vertex[]{vertex(vertices, quads, i++, textureWidth, textureHeight),
-                        vertex(vertices, quads, i++, textureWidth, textureHeight),
-                        vertex(vertices, quads, i++, textureWidth, textureHeight),
-                        vertex(vertices, quads, i++, textureWidth, textureHeight)});
+                this.quads[q++] = new Quad(new Vertex[]{vertex(quads, i++, textureWidth, textureHeight),
+                        vertex(quads, i++, textureWidth, textureHeight),
+                        vertex(quads, i++, textureWidth, textureHeight),
+                        vertex(quads, i++, textureWidth, textureHeight)});
             }
         }
 
-        private @NotNull Vertex vertex(float[] vertices, float[] quads, int q, float textureWidth, float textureHeight){
+        private @NotNull Vertex vertex(float[] quads, int q, float textureWidth, float textureHeight){
             q *= 3;
-            int j = (int) (quads[q] * 3);
-            return new Vertex(vertices[j++], vertices[j++], vertices[j], quads[q + 1] / textureWidth, quads[q + 2] / textureHeight);
+            return new Vertex(vertices.get((int) quads[q]), quads[q + 1] / textureWidth, quads[q + 2] / textureHeight);
+        }
+
+        public void animateRawGeometry(Consumer<ImmutableList<Vector3f>> vertexConsumer){
+            vertexConsumer.accept(vertices);
         }
 
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
@@ -311,6 +342,7 @@ public class ModelPart {
     }
 
     public static class Triangle {
+
         public final Vertex[] vertices;
         public final Vector3f normal;
 
@@ -350,6 +382,7 @@ public class ModelPart {
     }
 
     public static class Quad {
+
         public final Vertex[] vertices;
         public final Vector3f normal;
 
@@ -417,27 +450,15 @@ public class ModelPart {
         }
     }
 
-    public static class Vertex {
-        public final Vector3f pos;
-        public final float u;
-        public final float v;
+    public record Vertex(Vector3f pos, float u, float v) {
 
         public Vertex(float x, float y, float z) {
             this(new Vector3f(x, y, z), 0, 0);
         }
 
-        public Vertex(float x, float y, float z, float u, float v){
-            this(new Vector3f(x, y, z), u, v);
-        }
-
-        public Vertex remap(float u, float v) {
-            return new Vertex(this.pos, u, v);
-        }
-
-        public Vertex(Vector3f pos, float u, float v) {
-            this.pos = pos;
-            this.u = u;
-            this.v = v;
+        @Contract("_, _ -> new")
+        public @NotNull Vertex remap(float u, float v) {
+            return new Vertex(pos, u, v);
         }
     }
 }

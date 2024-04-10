@@ -21,6 +21,8 @@
     "client.MixinFallingBlockRenderer",
     "client.MixinFogRenderer",
     "client.MixinGameRenderer",
+    "client.MixinGui",
+    "client.MixinItemRenderer",
     "client.MixinLightTexture",
     "client.MixinLivingEntityRenderer",
     "client.MixinPlayerRenderer"

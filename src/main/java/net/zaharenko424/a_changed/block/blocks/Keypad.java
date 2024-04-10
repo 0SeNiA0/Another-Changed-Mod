@@ -100,8 +100,8 @@ public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_);
-        p_49915_.add(UNLOCKED);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(UNLOCKED);
     }
 }

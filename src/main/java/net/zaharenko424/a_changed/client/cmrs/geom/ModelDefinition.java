@@ -8,17 +8,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class ModelDefinition {
     private final Builder mesh;
-    private final int textureWidth;
-    private final int textureHeight;
+    private final float textureWidth;
+    private final float textureHeight;
 
-    private ModelDefinition(Builder mesh, int textureWidth, int textureHeight){
-        this.mesh=mesh;
-        this.textureWidth=textureWidth;
-        this.textureHeight=textureHeight;
+    private ModelDefinition(Builder mesh, float textureWidth, float textureHeight){
+        this.mesh = mesh;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
     }
 
     public ModelPart bake(){
-        return mesh.getRoot().bake(textureWidth,textureHeight);
+        return mesh.getRoot().bake(textureWidth, textureHeight);
     }
 
     @Contract(value = "_,_,_ -> new", pure = true)
@@ -26,8 +26,8 @@ public class ModelDefinition {
         return new ModelDefinition(mesh,textureWidth,textureHeight);
     }
 
-    public static @NotNull ModelDefinition create(Builder mesh, int textureWidth, int textureHeight, int uvScale){
-        return new ModelDefinition(mesh,textureWidth/uvScale,textureHeight/uvScale);
+    public static @NotNull ModelDefinition create(Builder mesh, int textureWidth, int textureHeight, float uvScale){
+        return new ModelDefinition(mesh,textureWidth / uvScale,textureHeight / uvScale);
     }
 
     public static class Builder {

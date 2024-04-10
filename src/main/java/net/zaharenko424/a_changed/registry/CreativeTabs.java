@@ -39,11 +39,25 @@ public class CreativeTabs {
                     output.accept(LAB_BLOCK_ITEM);
                     output.accept(LAB_TILE_ITEM);
                     output.accept(ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
                     output.accept(VENT_WALL_ITEM);
                     output.accept(YELLOW_LAB_BLOCK_ITEM);
 
+                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
+                    output.accept(HAZARD_SLAB_ITEM);
+                    output.accept(LAB_SLAB_ITEM);
+                    output.accept(LAB_TILE_SLAB_ITEM);
+                    output.accept(ORANGE_LAB_SLAB_ITEM);
+                    output.accept(YELLOW_LAB_SLAB_ITEM);
+
+                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
+                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(LAB_STAIRS_ITEM);
+                    output.accept(LAB_TILE_STAIRS_ITEM);
+                    output.accept(ORANGE_LAB_STAIRS_ITEM);
+                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+
+                    output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
                     output.accept(BROKEN_CUP_ITEM);
                     output.accept(BROKEN_FLASK_ITEM);
@@ -83,9 +97,16 @@ public class CreativeTabs {
                     output.accept(VENT_DUCT_ITEM);
                     output.accept(VENT_HATCH_ITEM);
                     //Technology
+                    output.accept(COPPER_WRENCH);
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);
                     output.accept(IRON_PLATE);
+                    output.accept(LATEX_RESISTANT_COATING);
+                    output.accept(LATEX_RESISTANT_COMPOUND);
+                    output.accept(LATEX_RESISTANT_FABRIC);
+                    output.accept(LATEX_RESISTANT_BLOCK_ITEM);
+                    output.accept(LATEX_RESISTANT_GLASS_ITEM);
+                    output.accept(LATEX_RESISTANT_GLASS_PANE_ITEM);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
                     output.accept(CAPACITOR_ITEM);
@@ -97,8 +118,10 @@ public class CreativeTabs {
                     output.accept(DNA_EXTRACTOR_ITEM);
                     output.accept(LATEX_ENCODER_COMPONENTS);
                     output.accept(LATEX_ENCODER_ITEM);
+                    output.accept(DERELICT_LATEX_ENCODER_ITEM);
                     output.accept(LATEX_PURIFIER_COMPONENTS);
                     output.accept(LATEX_PURIFIER_ITEM);
+                    output.accept(DERELICT_LATEX_PURIFIER_ITEM);
                     //Wood
                     output.accept(ORANGE_BUTTON_ITEM);
                     output.accept(ORANGE_DOOR_ITEM);

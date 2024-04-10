@@ -1,6 +1,5 @@
 {
 	"credit": "Made with Blockbench",
-	"render_type": "translucent",
 	"texture_size": [64, 64],
 	"textures": {
 		"1": "a_changed:block/latex_encoder",
@@ -114,7 +113,7 @@
 		},
 		"ground": {
 			"translation": [0, 3, 0],
-			"scale": [0.25, 0.25, 0.25]
+			"scale": [0.6, 0.6, 0.6]
 		},
 		"gui": {
 			"rotation": [30, 225, 0],
