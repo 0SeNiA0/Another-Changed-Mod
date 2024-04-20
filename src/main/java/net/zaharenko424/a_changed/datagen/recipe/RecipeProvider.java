@@ -167,6 +167,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(LAB_DOOR_ITEM), has(LAB_DOOR_ITEM))
                 .save(out);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_LAMP_ITEM)
+                .requires(LAB_LAMP_ITEM, 2)
+                .unlockedBy(getHasName(LAB_LAMP_ITEM), has(LAB_LAMP_ITEM))
+                .save(out);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LIBRARY_DOOR_ITEM)
                 .requires(LIBRARY_DOOR_ITEM)
                 .requires(LIBRARY_DOOR_ITEM)
@@ -256,7 +261,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("WGW")
                 .define('P', Tags.Items.GLASS_PANES)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .define('L', Items.REDSTONE_LAMP)
+                .define('L', LAB_LAMP_ITEM)
                 .define('W', ItemTagProvider.WIRES_COPPER)
                 .define('G', ItemTagProvider.PLATES_GOLD)
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
@@ -479,6 +484,21 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .requires(BIG_LAB_DOOR_ITEM)
                 .unlockedBy(getHasName(BIG_LAB_DOOR_ITEM), has(BIG_LAB_DOOR_ITEM))
                 .save(out, LAB_DOOR_ITEM.getId().withSuffix("_from_big"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LAB_LAMP_ITEM, 4)
+                .pattern("IWI")
+                .pattern("GWG")
+                .pattern("GGG")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('W', ItemTagProvider.WIRES_COPPER)
+                .define('G', Tags.Items.GLASS)
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
+                .save(out);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LAB_LAMP_ITEM, 2)
+                .requires(BIG_LAB_LAMP_ITEM)
+                .unlockedBy(getHasName(BIG_LAB_LAMP_ITEM), has(BIG_LAB_LAMP_ITEM))
+                .save(out, LAB_LAMP_ITEM.getId().withSuffix("_from_big"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LASER_EMITTER_ITEM)
                 .pattern("III")

@@ -58,21 +58,20 @@ public class CreativeTabs {
                     output.accept(YELLOW_LAB_STAIRS_ITEM);
 
                     output.accept(SMART_SEWAGE_SYSTEM_ITEM);
+                    output.accept(LAB_LAMP_ITEM);
+                    output.accept(BIG_LAB_LAMP_ITEM);
+                    output.accept(TV_SCREEN_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
+                    output.accept(CUP_ITEM);
                     output.accept(BROKEN_CUP_ITEM);
+                    output.accept(FLASK_ITEM);
                     output.accept(BROKEN_FLASK_ITEM);
-                    output.accept(CARDBOARD_BOX_ITEM);
+                    output.accept(TEST_TUBES_ITEM);
                     output.accept(CHAIR_ITEM);
+                    output.accept(TABLE_ITEM);
                     output.accept(COMPUTER_ITEM);
                     output.accept(CRYO_CHAMBER_ITEM);
-                    output.accept(CUP_ITEM);
                     output.accept(DANGER_SIGN_ITEM);
-                    output.accept(DARK_LATEX_ICE_ITEM);
-                    output.accept(DARK_LATEX_CRYSTAL_ITEM);
-                    output.accept(DARK_LATEX_CRYSTAL_SHARD);
-                    output.accept(FLASK_ITEM);
-                    output.accept(GREEN_CRYSTAL_ITEM);
-                    output.accept(GREEN_CRYSTAL_SHARD);
                     output.accept(GAS_TANK_ITEM);
                     output.accept(IV_RACK_ITEM);
                     output.accept(KEYPAD_ITEM);
@@ -84,15 +83,14 @@ public class CreativeTabs {
                     output.accept(BIG_LIBRARY_DOOR_ITEM);
                     output.accept(MAINTENANCE_DOOR_ITEM);
                     output.accept(BIG_MAINTENANCE_DOOR_ITEM);
-                    output.accept(METAL_BOX_ITEM);
                     output.accept(NOTE_ITEM);
                     output.accept(NOTEPAD_ITEM);
                     output.accept(PIPE_ITEM);
                     output.accept(SCANNER_ITEM);
                     output.accept(SMALL_CARDBOARD_BOX_ITEM);
-                    output.accept(TABLE_ITEM);
+                    output.accept(CARDBOARD_BOX_ITEM);
                     output.accept(TALL_CARDBOARD_BOX_ITEM);
-                    output.accept(TEST_TUBES_ITEM);
+                    output.accept(METAL_BOX_ITEM);
                     output.accept(TRAFFIC_CONE_ITEM);
                     output.accept(VENT_DUCT_ITEM);
                     output.accept(VENT_HATCH_ITEM);
@@ -157,6 +155,11 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_ITEM);
                     output.accept(DARK_LATEX_BLOCK_ITEM);
                     output.accept(WHITE_LATEX_BLOCK_ITEM);
+                    output.accept(DARK_LATEX_ICE_ITEM);
+                    output.accept(DARK_LATEX_CRYSTAL_ITEM);
+                    output.accept(DARK_LATEX_CRYSTAL_SHARD);
+                    output.accept(GREEN_CRYSTAL_ITEM);
+                    output.accept(GREEN_CRYSTAL_SHARD);
 
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);

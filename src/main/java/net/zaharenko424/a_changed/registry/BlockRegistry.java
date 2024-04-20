@@ -51,6 +51,7 @@ public class BlockRegistry {
     //Blocks
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(softMetal()));
     public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
+    public static final DeferredBlock<BigLabLamp> BIG_LAB_LAMP = BLOCKS.register("big_lab_lamp", ()-> new BigLabLamp(decorProperties().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(glassDoorProperties()));
     public static final DeferredBlock<BigMaintenanceDoor> BIG_MAINTENANCE_DOOR = BLOCKS.register("big_maintenance_door", ()-> new BigMaintenanceDoor(bigDoorProperties()));
     public static final DeferredBlock<Block> BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
@@ -90,6 +91,7 @@ public class BlockRegistry {
     public static final DeferredBlock<SlabBlock> LAB_SLAB = registerSlab("lab_slab");
     public static final DeferredBlock<StairBlock> LAB_STAIRS = registerStairs("lab_stairs", LAB_BLOCK);
     public static final DeferredBlock<LabDoor> LAB_DOOR = BLOCKS.register("lab_door", ()-> new LabDoor(metalDoorProperties()));
+    public static final DeferredBlock<LabLamp> LAB_LAMP = BLOCKS.register("lab_lamp", ()-> new LabLamp(decorProperties().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Block> LAB_TILE = BLOCKS.registerSimpleBlock("lab_tile", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<SlabBlock> LAB_TILE_SLAB = registerSlab("lab_tile_slab");
     public static final DeferredBlock<StairBlock> LAB_TILE_STAIRS = registerStairs("lab_tile_stairs", LAB_TILE);
@@ -121,6 +123,7 @@ public class BlockRegistry {
     public static final DeferredBlock<TallCardboardBox> TALL_CARDBOARD_BOX = BLOCKS.register("tall_cardboard_box", ()-> new TallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<TestTubes> TEST_TUBES = BLOCKS.register("test_tubes", ()-> new TestTubes(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<TrafficCone> TRAFFIC_CONE = BLOCKS.register("traffic_cone", ()-> new TrafficCone(BlockBehaviour.Properties.of().strength(.75f,3f).sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY).mapColor(DyeColor.YELLOW).noOcclusion()));
+    public static final DeferredBlock<TVScreen> TV_SCREEN = BLOCKS.register("tv_screen", ()-> new TVScreen(decorProperties()));
     public static final DeferredBlock<VentDuct> VENT_DUCT = BLOCKS.register("vent_duct", ()-> new VentDuct(softMetal().noOcclusion()));
     public static final DeferredBlock<TrapDoorBlock> VENT_HATCH = BLOCKS.register("vent_hatch", ()-> new TrapDoorBlock(BlockSetType.STONE, softMetal().noOcclusion()));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));

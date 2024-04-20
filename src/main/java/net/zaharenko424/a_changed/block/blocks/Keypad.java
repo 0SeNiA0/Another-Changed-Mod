@@ -95,8 +95,13 @@ public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
     }
 
     @Override
-    public int getSignal(BlockState p_60483_, BlockGetter p_60484_, BlockPos p_60485_, Direction p_60486_) {
-        return p_60483_.getValue(UNLOCKED) ? 15 : 0;
+    public int getSignal(BlockState state, BlockGetter p_60484_, BlockPos p_60485_, Direction p_60486_) {
+        return state.getValue(UNLOCKED) ? 15 : 0;
+    }
+
+    @Override
+    public int getDirectSignal(BlockState state, BlockGetter pLevel, BlockPos pPos, Direction direction) {
+        return state.getValue(UNLOCKED) && state.getValue(FACING) == direction ? 15 : 0;
     }
 
     @Override

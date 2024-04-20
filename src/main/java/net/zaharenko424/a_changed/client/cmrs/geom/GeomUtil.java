@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.client.cmrs.geom;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 public interface GeomUtil {
 
@@ -48,7 +49,11 @@ public interface GeomUtil {
         private QuadBuilder(){}
 
         public QuadBuilder vertex(float x, float y, float z){
-            if(i < 4) vertices[i++] = new ModelPart.Vertex(x, y, z);
+            return vertex(new Vector3f(x, y, z));
+        }
+
+        public QuadBuilder vertex(Vector3f pos){
+            if(i < 4) vertices[i++] = new ModelPart.Vertex(pos);
             return this;
         }
 

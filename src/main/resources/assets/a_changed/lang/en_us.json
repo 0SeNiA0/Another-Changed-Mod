@@ -4,6 +4,7 @@
 
   "block.a_changed.air_conditioner": "Air conditioner",
   "block.a_changed.big_lab_door": "Big lab door",
+  "block.a_changed.big_lab_lamp": "Big lab lamp",
   "block.a_changed.big_library_door": "Big library door",
   "block.a_changed.big_maintenance_door": "Big maintenance door",
   "block.a_changed.blue_lab_tile": "Blue lab tile",
@@ -49,6 +50,7 @@
   "block.a_changed.lab_slab": "Lab slab",
   "block.a_changed.lab_stairs": "Lab stairs",
   "block.a_changed.lab_door": "Lab door",
+  "block.a_changed.lab_lamp": "Lab lamp",
   "block.a_changed.lab_tile": "Lab tile",
   "block.a_changed.lab_tile_slab": "Lab tile slab",
   "block.a_changed.lab_tile_stairs": "Lab tile stairs",
@@ -98,6 +100,7 @@
   "block.a_changed.tall_cardboard_box": "Tall cardboard box",
   "block.a_changed.test_tubes": "Test tubes",
   "block.a_changed.traffic_cone": "Traffic cone",
+  "block.a_changed.tv_screen": "TV screen",
   "block.a_changed.vent_duct": "Vent duct",
   "block.a_changed.vent_hatch": "Vent hatch",
   "block.a_changed.vent_wall": "Vent wall",
@@ -158,6 +161,7 @@
   "key.a_changed.grab_mode": "Grab mode radial menu",
   "key.a_changed.keyCategory": "Another Changed Mod Keys",
 
+  "item.a_changed.absolute_solver": "Absolute Solver",
   "item.a_changed.black_latex_shorts": "Black latex shorts",
   "item.a_changed.blood_syringe": "Blood syringe",
   "item.a_changed.cardboard": "Cardboard",

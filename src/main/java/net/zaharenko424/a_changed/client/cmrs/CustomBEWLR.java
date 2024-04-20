@@ -27,6 +27,7 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
     private final ModelPart absoluteSolver;
     private final ResourceLocation solverTexture = AChanged.textureLoc("misc/absolute_solver");
 
+
     private CustomBEWLR() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
 
@@ -60,6 +61,15 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             absoluteSolver.x = 7;
             absoluteSolver.y = -3;
             absoluteSolver.zRot = Mth.DEG_TO_RAD * Mth.rotLerp(partialTick, deg, nextDeg);
+
+            /*RenderSystem.setShaderTexture(0, solverTexture);
+            //RenderSystem.setShader(CustomShaders.getInstance()::getBLOOM);
+            RenderSystem.setShader(GameRenderer::getRendertypeEntitySolidShader);
+            BufferBuilder builder = Tesselator.getInstance().getBuilder();
+            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
+            absoluteSolver.render(poseStack, builder, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            BufferUploader.drawWithShader(builder.end());*/
+
             absoluteSolver.render(poseStack, buffer.getBuffer(RenderType.entitySolid(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }

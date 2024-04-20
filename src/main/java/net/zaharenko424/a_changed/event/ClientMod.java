@@ -15,7 +15,6 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
-import net.zaharenko424.a_changed.client.cmrs.Protogen;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
@@ -42,6 +41,7 @@ public class ClientMod {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
+
     }
 
     @SubscribeEvent
@@ -133,7 +133,6 @@ public class ClientMod {
             if (!(transfurType instanceof Special))
                 modelManager.registerModel(transfurType.id, transfurType.getModel(0));
         });
-        modelManager.registerModel(AChanged.resourceLoc("0senia0"), new Protogen<>());
     }
 
     @SubscribeEvent

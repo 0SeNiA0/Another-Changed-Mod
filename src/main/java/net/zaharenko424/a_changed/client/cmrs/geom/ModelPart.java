@@ -228,9 +228,8 @@ public class ModelPart {
         return Stream.concat(Stream.of(this), children.values().stream().flatMap(ModelPart::getAllParts));
     }
 
-    public static class Cube {
+    public static class Cube extends Mesh {
 
-        private final Quad[] quads;
         public final float minX;
         public final float minY;
         public final float minZ;
@@ -241,68 +240,66 @@ public class ModelPart {
         public Cube(float x1, float y1, float z1, float sizeX, float sizeY, float sizeZ,
                     float inflateX, float inflateY, float inflateZ, boolean mirror,
                     CubeUV uv, float textureWidth, float textureHeight) {
+            super(buildVertices(x1 - inflateX, y1 - inflateY, z1 - inflateZ,
+                    x1 + sizeX + inflateX, y1 + sizeY + inflateY, z1 + sizeZ + inflateZ, mirror),
+                    new Quad[uv.uv.size()]);
             minX = x1;
             minY = y1;
             minZ = z1;
             maxX = x1 + sizeX;
             maxY = y1 + sizeY;
             maxZ = z1 + sizeZ;
-            quads = new Quad[uv.uv.size()];
-            float x2 = x1 + sizeX;
-            float y2 = y1 + sizeY;
-            float z2 = z1 + sizeZ;
-            x1 -= inflateX;
-            y1 -= inflateY;
-            z1 -= inflateZ;
-            x2 += inflateX;
-            y2 += inflateY;
-            z2 += inflateZ;
 
+            int i = 0;
+            Direction direction;
+            for(Map.Entry<Direction, UVData> entry : uv.uv.entrySet()){
+                direction = entry.getKey();
+                quads[i++] = new Quad(
+                        switch(direction){
+                            case DOWN ->  quadVertices(4, 3, 7, 0);
+                            case UP ->    quadVertices(1, 2, 6, 5);
+                            case WEST ->  quadVertices(7, 3, 6, 2);
+                            case NORTH -> quadVertices(0, 7, 2, 1);
+                            case EAST ->  quadVertices(4, 0, 1, 5);
+                            case SOUTH -> quadVertices(3, 4, 5, 6);
+                        }, entry.getValue(), textureWidth, textureHeight, mirror, direction
+                );
+            }
+        }
+
+        private static @NotNull ImmutableList<Vector3f> buildVertices(float x1, float y1, float z1, float x2, float y2, float z2, boolean mirror){
             if (mirror) {//Swap X start with X end
                 float f3 = x2;
                 x2 = x1;
                 x1 = f3;
             }
-
-            Vertex vertex0 = new Vertex(x2, y1, z1);
-            Vertex vertex1 = new Vertex(x2, y2, z1);
-            Vertex vertex2 = new Vertex(x1, y2, z1);
-            Vertex vertex3 = new Vertex(x1, y1, z2);
-            Vertex vertex4 = new Vertex(x2, y1, z2);
-            Vertex vertex5 = new Vertex(x2, y2, z2);
-            Vertex vertex6 = new Vertex(x1, y2, z2);
-            Vertex vertex7 = new Vertex(x1, y1, z1);
-            int i = 0;
-            Direction direction;
-            for(Map.Entry<Direction, UVData> entry : uv.uv.entrySet()){
-                direction = entry.getKey();
-                quads[i] = new Quad(
-                        switch(direction){
-                            case DOWN ->  new Vertex[]{vertex4, vertex3, vertex7, vertex0};
-                            case UP ->    new Vertex[]{vertex1, vertex2, vertex6, vertex5};
-                            case WEST ->  new Vertex[]{vertex7, vertex3, vertex6, vertex2};
-                            case NORTH -> new Vertex[]{vertex0, vertex7, vertex2, vertex1};
-                            case EAST ->  new Vertex[]{vertex4, vertex0, vertex1, vertex5};
-                            case SOUTH -> new Vertex[]{vertex3, vertex4, vertex5, vertex6};
-                        }, entry.getValue(), textureWidth, textureHeight, mirror, direction
-                );
-                i++;
-            }
+            ImmutableList.Builder<Vector3f> builder = new ImmutableList.Builder<>();
+            builder.add(new Vector3f(x2, y1, z1));
+            builder.add(new Vector3f(x2, y2, z1));
+            builder.add(new Vector3f(x1, y2, z1));
+            builder.add(new Vector3f(x1, y1, z2));
+            builder.add(new Vector3f(x2, y1, z2));
+            builder.add(new Vector3f(x2, y2, z2));
+            builder.add(new Vector3f(x1, y2, z2));
+            builder.add(new Vector3f(x1, y1, z1));
+            return builder.build();
         }
 
-        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-            Matrix4f poseM = pose.pose();
-            Matrix3f normal = pose.normal();
-            for(Quad quad : this.quads) {
-                quad.compile(poseM, normal, consumer, light, overlay, r, g, b, alpha);
-            }
+        private Vertex @NotNull [] quadVertices(int v0, int v1, int v2, int v3){
+            return new Vertex[]{new Vertex(vertices.get(v0)), new Vertex(vertices.get(v1)),
+                    new Vertex(vertices.get(v2)), new Vertex(vertices.get(v3))};
         }
     }
 
     public static class Mesh {
 
         protected final ImmutableList<Vector3f> vertices;
-        private final Quad[] quads;
+        protected final Quad[] quads;
+
+        protected Mesh(ImmutableList<Vector3f> vertices, Quad[] quads){
+            this.vertices = vertices;
+            this.quads = quads;
+        }
 
         public Mesh(float[] vertices, float[] quads, float textureWidth, float textureHeight){
             ImmutableList.Builder<Vector3f> builder = ImmutableList.builder();
@@ -323,9 +320,9 @@ public class ModelPart {
             }
         }
 
-        private @NotNull Vertex vertex(float[] quads, int q, float textureWidth, float textureHeight){
-            q *= 3;
-            return new Vertex(vertices.get((int) quads[q]), quads[q + 1] / textureWidth, quads[q + 2] / textureHeight);
+        private @NotNull Vertex vertex(float[] quads, int quadIndex, float textureWidth, float textureHeight){
+            quadIndex *= 3;
+            return new Vertex(vertices.get((int) quads[quadIndex]), quads[quadIndex + 1] / textureWidth, quads[quadIndex + 2] / textureHeight);
         }
 
         public void animateRawGeometry(Consumer<ImmutableList<Vector3f>> vertexConsumer){
@@ -454,6 +451,10 @@ public class ModelPart {
 
         public Vertex(float x, float y, float z) {
             this(new Vector3f(x, y, z), 0, 0);
+        }
+
+        public Vertex(Vector3f pos){
+            this(pos, 0, 0);
         }
 
         @Contract("_, _ -> new")

@@ -41,6 +41,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     protected void generate() {
         doublePartBlockDrops(AIR_CONDITIONER.get());
         ninePartMultiBlockDrops(BIG_LAB_DOOR.get());
+        doublePartBlockDrops(BIG_LAB_LAMP.get());
         ninePartMultiBlockDrops(BIG_LIBRARY_DOOR.get());
         ninePartMultiBlockDrops(BIG_MAINTENANCE_DOOR.get());
         dropSelf(BLUE_LAB_TILE.get());
@@ -84,6 +85,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(LAB_SLAB.get());
         dropSelf(LAB_STAIRS.get());
         fourPartMultiBlockDrops(LAB_DOOR.get());
+        dropSelf(LAB_LAMP.get());
         dropSelf(LAB_TILE.get());
         dropSelf(LAB_TILE_SLAB.get());
         dropSelf(LAB_TILE_STAIRS.get());
@@ -133,6 +135,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         doublePartBlockDrops(TALL_CARDBOARD_BOX.get());
         dropSelf(TEST_TUBES.get());
         dropSelf(TRAFFIC_CONE.get());
+        dropSelf(TV_SCREEN.get());
         dropSelf(VENT_DUCT.get());
         dropSelf(VENT_HATCH.get());
         dropSelf(VENT_WALL.get());

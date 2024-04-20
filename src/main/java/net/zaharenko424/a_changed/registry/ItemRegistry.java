@@ -47,6 +47,7 @@ public class ItemRegistry {
     //BlockItems
     public static final DeferredItem<BlockItem> AIR_CONDITIONER_ITEM = ITEMS.registerSimpleBlockItem(AIR_CONDITIONER);
     public static final DeferredItem<BlockItem> BIG_LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_DOOR);
+    public static final DeferredItem<BlockItem> BIG_LAB_LAMP_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_LAMP);
     public static final DeferredItem<BlockItem> BIG_LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LIBRARY_DOOR);
     public static final DeferredItem<BlockItem> BIG_MAINTENANCE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_MAINTENANCE_DOOR);
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE);
@@ -85,6 +86,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> LAB_SLAB_ITEM = ITEMS.registerSimpleBlockItem(LAB_SLAB);
     public static final DeferredItem<BlockItem> LAB_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(LAB_STAIRS);
     public static final DeferredItem<BlockItem> LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LAB_DOOR);
+    public static final DeferredItem<BlockItem> LAB_LAMP_ITEM = ITEMS.registerSimpleBlockItem(LAB_LAMP);
     public static final DeferredItem<BlockItem> LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(LAB_TILE);
     public static final DeferredItem<BlockItem> LAB_TILE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(LAB_TILE_SLAB);
     public static final DeferredItem<BlockItem> LAB_TILE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(LAB_TILE_STAIRS);
@@ -125,6 +127,7 @@ public class ItemRegistry {
             return super.getAttributeModifiers(slot, stack);
         }
     });
+    public static final DeferredItem<BlockItem> TV_SCREEN_ITEM = ITEMS.registerSimpleBlockItem(TV_SCREEN);
     public static final DeferredItem<BlockItem> VENT_DUCT_ITEM = ITEMS.registerSimpleBlockItem(VENT_DUCT);
     public static final DeferredItem<BlockItem> VENT_HATCH_ITEM = ITEMS.registerSimpleBlockItem(VENT_HATCH);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);
