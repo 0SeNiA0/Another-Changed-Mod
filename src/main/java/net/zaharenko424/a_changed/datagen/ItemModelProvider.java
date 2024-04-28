@@ -65,7 +65,10 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(POWER_CELL.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
-        basicItem(UNTRANSFUR_SYRINGE_ITEM.getId());
+        basicItem(UNTRANSFUR_SYNTHESIZER_COMPONENTS.getId());
+        basicItem(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM.getId());
+        basicItem(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM.getId());
+        basicItem(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM.getId());
         basicItem(WHITE_LATEX_BASE.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
         basicItem(WHITE_LATEX_ITEM.getId());

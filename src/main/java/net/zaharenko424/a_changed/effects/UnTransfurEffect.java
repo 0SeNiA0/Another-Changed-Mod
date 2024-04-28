@@ -8,6 +8,7 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class UnTransfurEffect extends UnRemovableEffect {
+
     public UnTransfurEffect() {
         super(MobEffectCategory.NEUTRAL, 13816530);
     }

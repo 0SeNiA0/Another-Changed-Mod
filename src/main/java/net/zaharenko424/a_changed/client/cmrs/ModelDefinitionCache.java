@@ -8,6 +8,7 @@ import net.zaharenko424.a_changed.client.cmrs.model.DummyModel;
 import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
+import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
 import net.zaharenko424.a_changed.event.RegisterModelDefinitionsEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,6 +28,8 @@ public final class ModelDefinitionCache {
         modelCache.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
         modelCache.put(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
         modelCache.put(PileOfOrangesRenderer.LAYER, PileOfOrangesRenderer.bodyLayer());
+
+        modelCache.put(ChairRenderer.LAYER, ChairRenderer.bodyLayer());
 
         modelCache.put(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
 

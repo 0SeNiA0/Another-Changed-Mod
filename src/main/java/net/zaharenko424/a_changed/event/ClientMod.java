@@ -20,6 +20,7 @@ import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
+import net.zaharenko424.a_changed.client.renderer.misc.SeatRenderer;
 import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
 import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
@@ -105,7 +106,8 @@ public class ClientMod {
         event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
         event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
-        event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
+        event.registerEntityRenderer(SEAT_ENTITY.get(), SeatRenderer::new);//Dummy renderer
+        event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomEntityRenderer<>(a, BEI_FENG_TF.get().getModel(0)));
 

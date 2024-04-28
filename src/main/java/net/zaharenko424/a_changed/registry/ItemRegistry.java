@@ -73,6 +73,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> DARK_LATEX_ICE_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL_ICE);
     public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_F);
     public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_M);
+    public static final DeferredItem<BlockItem> EXPOSED_PIPES_ITEM = ITEMS.registerSimpleBlockItem(EXPOSED_PIPES);
     public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
     public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GREEN_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(GREEN_CRYSTAL);
@@ -107,6 +108,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> ORANGE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_LEAVES);
     public static final DeferredItem<BlockItem> ORANGE_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_SAPLING);
     public static final DeferredItem<BlockItem> PIPE_ITEM = ITEMS.registerSimpleBlockItem(PIPE);
+    public static final DeferredItem<BlockItem> ROTATING_CHAIR_ITEM = ITEMS.registerSimpleBlockItem(ROTATING_CHAIR);
     public static final DeferredItem<BlockItem> SCANNER_ITEM = ITEMS.registerSimpleBlockItem(SCANNER);
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(SMALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> SMART_SEWAGE_SYSTEM_ITEM = ITEMS.registerSimpleBlockItem(SMART_SEWAGE_SYSTEM);
@@ -142,6 +144,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> CAPACITOR_ITEM = ITEMS.registerSimpleBlockItem(CAPACITOR);
     public static final DeferredItem<BlockItem> COMPRESSOR_ITEM = ITEMS.registerSimpleBlockItem(COMPRESSOR);
     public static final DeferredItem<BlockItem> COPPER_WIRE_ITEM = ITEMS.registerSimpleBlockItem(COPPER_WIRE);
+    public static final DeferredItem<Wrench> COPPER_WRENCH = ITEMS.register("copper_wrench", ()-> new Wrench(AChanged.COPPER, new Item.Properties()));
     public static final DeferredItem<BlockItem> DERELICT_LATEX_ENCODER_ITEM = ITEMS.registerSimpleBlockItem(DERELICT_LATEX_ENCODER);
     public static final DeferredItem<BlockItem> DERELICT_LATEX_PURIFIER_ITEM = ITEMS.registerSimpleBlockItem(DERELICT_LATEX_PURIFIER);
     public static final DeferredItem<BlockItem> DNA_EXTRACTOR_ITEM = ITEMS.registerSimpleBlockItem(DNA_EXTRACTOR);
@@ -190,6 +193,9 @@ public class ItemRegistry {
     public static final DeferredItem<Item> LATEX_ENCODER_COMPONENTS = ITEMS.registerSimpleItem("latex_encoder_components");
     public static final DeferredItem<LatexManipulator> LATEX_MANIPULATOR = ITEMS.register("latex_manipulator", LatexManipulator::new);
     public static final DeferredItem<Item> LATEX_PURIFIER_COMPONENTS = ITEMS.registerSimpleItem("latex_purifier_components");
+    public static final DeferredItem<Item> LATEX_RESISTANT_COATING = ITEMS.registerSimpleItem("latex_resistant_coating");
+    public static final DeferredItem<Item> LATEX_RESISTANT_COMPOUND = ITEMS.registerSimpleItem("latex_resistant_compound");
+    public static final DeferredItem<Item> LATEX_RESISTANT_FABRIC = ITEMS.registerSimpleItem("latex_resistant_fabric");
     public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM = ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(.3f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
@@ -199,12 +205,11 @@ public class ItemRegistry {
     public static final DeferredItem<SyringeItem> SYRINGE_ITEM = ITEMS.register("syringe", SyringeItem::new);
     public static final DeferredItem<SyringeCoilGun> SYRINGE_COIL_GUN = ITEMS.register("syringe_coil_gun", SyringeCoilGun::new);
     public static final DeferredItem<UnTransfurBottle> UNTRANSFUR_BOTTLE_ITEM = ITEMS.register("untransfur_bottle", UnTransfurBottle::new);
-    public static final DeferredItem<UnTransfurSyringeItem> UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("untransfur_syringe", UnTransfurSyringeItem::new);
+    public static final DeferredItem<Item> UNTRANSFUR_SYNTHESIZER_COMPONENTS = ITEMS.registerSimpleItem("untransfur_synthesizer_components");
+    public static final DeferredItem<UnTransfurSyringeItem> UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("universal_untransfur_syringe", UnTransfurSyringeItem::new);
+    public static final DeferredItem<SpecializedUnTransfurSyringe> DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("dark_latex_untransfur_syringe", ()-> new SpecializedUnTransfurSyringe(new Item.Properties(), Latex.DARK));
+    public static final DeferredItem<SpecializedUnTransfurSyringe> WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM = ITEMS.register("white_latex_untransfur_syringe", ()-> new SpecializedUnTransfurSyringe(new Item.Properties(), Latex.WHITE));
     public static final DeferredItem<LatexItem> WHITE_LATEX_ITEM = ITEMS.register("white_latex", ()-> new LatexItem(TransfurRegistry.WHITE_LATEX_WOLF_M_TF,Latex.WHITE));
-    public static final DeferredItem<Wrench> COPPER_WRENCH = ITEMS.register("copper_wrench", ()-> new Wrench(AChanged.COPPER, new Item.Properties()));
-    public static final DeferredItem<Item> LATEX_RESISTANT_COATING = ITEMS.registerSimpleItem("latex_resistant_coating");
-    public static final DeferredItem<Item> LATEX_RESISTANT_COMPOUND = ITEMS.registerSimpleItem("latex_resistant_compound");
-    public static final DeferredItem<Item> LATEX_RESISTANT_FABRIC = ITEMS.registerSimpleItem("latex_resistant_fabric");
     public static final DeferredItem<BucketItem> LATEX_SOLVENT_BUCKET = ITEMS.register("latex_solvent_bucket", ()->new BucketItem(LATEX_SOLVENT_STILL,new Item.Properties().stacksTo(1)));
     public static final DeferredItem<BucketItem> WHITE_LATEX_BUCKET = ITEMS.register("white_latex_bucket", ()-> new BucketItem(WHITE_LATEX_STILL,new Item.Properties().stacksTo(1)));
     public static final DeferredItem<BucketItem> DARK_LATEX_BUCKET = ITEMS.register("dark_latex_bucket", ()-> new BucketItem(DARK_LATEX_STILL,new Item.Properties().stacksTo(1)));

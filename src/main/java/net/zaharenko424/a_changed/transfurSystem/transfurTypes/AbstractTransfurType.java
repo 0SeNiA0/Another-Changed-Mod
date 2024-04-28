@@ -10,7 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import org.jetbrains.annotations.Contract;
+import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 public abstract class AbstractTransfurType {
 
     public final ResourceLocation id;
+    public final Latex latex;
 
     protected final int primaryColor;
     protected final int secondaryColor;
@@ -37,6 +38,7 @@ public abstract class AbstractTransfurType {
 
     public AbstractTransfurType(@NotNull Properties properties){
         id = properties.location;
+        latex = properties.latex;
         primaryColor = properties.primaryColor;
         secondaryColor = properties.secondaryColor;
         eyeHeightStanding = properties.eyeHeightStanding;
@@ -98,6 +100,7 @@ public abstract class AbstractTransfurType {
 
     public static class Properties {
         ResourceLocation location;
+        Latex latex;
         int primaryColor = -1644826;
         int secondaryColor = -4934476;
         float eyeHeightStanding = 1.62f;
@@ -120,13 +123,13 @@ public abstract class AbstractTransfurType {
         Consumer<LivingEntity> onTransfur;
         Consumer<LivingEntity> onUnTransfur;
 
-        protected Properties(ResourceLocation resourceLocation){
+        protected Properties(ResourceLocation resourceLocation, Latex latex){
             location = resourceLocation;
+            this.latex = latex;
         }
 
-        @Contract(value = "_ -> new", pure = true)
-        public static @NotNull Properties of(ResourceLocation resourceLocation){
-            return new AbstractTransfurType.Properties(resourceLocation);
+        public static @NotNull Properties of(ResourceLocation resourceLocation, Latex latex){
+            return new AbstractTransfurType.Properties(resourceLocation, latex);
         }
 
         /**

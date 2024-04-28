@@ -72,6 +72,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         derelictMachineDrops(DERELICT_LATEX_ENCODER.get(), 1.5f);
         derelictMachineDrops(DERELICT_LATEX_PURIFIER.get(), 1);
         dropSelf(DNA_EXTRACTOR.get());
+        dropSelf(EXPOSED_PIPES.get());
         dropOther(FLASK.get(), BROKEN_FLASK);
         dropSelf(GENERATOR.get());
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
@@ -126,6 +127,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_WOOD.get());
         dropSelf(PIPE.get());
         add(POTTED_ORANGE_SAPLING.get(), createPotFlowerItemTable(ORANGE_SAPLING));
+        dropSelf(ROTATING_CHAIR.get());
         dropSelf(SCANNER.get());
         dropSelf(SMART_SEWAGE_SYSTEM.get());
         dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());

@@ -37,6 +37,7 @@ public class CreativeTabs {
                     output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
                     output.accept(CONNECTED_LAB_TILE_ITEM);
                     output.accept(LAB_BLOCK_ITEM);
+                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(LAB_TILE_ITEM);
                     output.accept(ORANGE_LAB_BLOCK_ITEM);
                     output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
@@ -62,14 +63,18 @@ public class CreativeTabs {
                     output.accept(BIG_LAB_LAMP_ITEM);
                     output.accept(TV_SCREEN_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
+
                     output.accept(CUP_ITEM);
                     output.accept(BROKEN_CUP_ITEM);
                     output.accept(FLASK_ITEM);
                     output.accept(BROKEN_FLASK_ITEM);
                     output.accept(TEST_TUBES_ITEM);
-                    output.accept(CHAIR_ITEM);
+
                     output.accept(TABLE_ITEM);
                     output.accept(COMPUTER_ITEM);
+                    output.accept(CHAIR_ITEM);
+                    output.accept(ROTATING_CHAIR_ITEM);
+
                     output.accept(CRYO_CHAMBER_ITEM);
                     output.accept(DANGER_SIGN_ITEM);
                     output.accept(GAS_TANK_ITEM);
@@ -120,6 +125,7 @@ public class CreativeTabs {
                     output.accept(LATEX_PURIFIER_COMPONENTS);
                     output.accept(LATEX_PURIFIER_ITEM);
                     output.accept(DERELICT_LATEX_PURIFIER_ITEM);
+                    output.accept(UNTRANSFUR_SYNTHESIZER_COMPONENTS);
                     //Wood
                     output.accept(ORANGE_BUTTON_ITEM);
                     output.accept(ORANGE_DOOR_ITEM);
@@ -167,7 +173,9 @@ public class CreativeTabs {
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
-                    output.accept(UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
                     output.accept(LATEX_MANIPULATOR);
 

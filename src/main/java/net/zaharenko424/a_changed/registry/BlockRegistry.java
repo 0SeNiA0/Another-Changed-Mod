@@ -78,6 +78,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
     public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_F = BLOCKS.register("dark_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_F_TF));
     public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_M = BLOCKS.register("dark_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_M_TF));
+    public static final DeferredBlock<AllDirectionalBlock> EXPOSED_PIPES = BLOCKS.register("exposed_pipes", ()-> new AllDirectionalBlock(decorProperties()));
     public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
     public static final DeferredBlock<GasTank> GAS_TANK = BLOCKS.register("gas_tank", ()-> new GasTank(softMetal().noLootTable().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<TallCrystal> GREEN_CRYSTAL = BLOCKS.register("green_crystal", ()-> new TallCrystal(decorProperties(),TransfurRegistry.BEI_FENG_TF));
@@ -115,6 +116,7 @@ public class BlockRegistry {
     public static final DeferredBlock<PileOfOranges> PILE_OF_ORANGES = BLOCKS.register("pile_of_oranges", ()-> new PileOfOranges(BlockBehaviour.Properties.of().noLootTable().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOL)));
     public static final DeferredBlock<Pipe> PIPE = BLOCKS.register("pipe", ()-> new Pipe(softMetal()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_ORANGE_SAPLING = BLOCKS.register("potted_orange_sapling", ()-> new FlowerPotBlock(()-> (FlowerPotBlock) Blocks.FLOWER_POT, ORANGE_SAPLING, BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING)));
+    public static final DeferredBlock<RotatingChair> ROTATING_CHAIR = BLOCKS.register("rotating_chair", ()-> new RotatingChair(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(softMetal().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<SmallCardboardBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", ()-> new SmallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY).noLootTable()));
     public static final DeferredBlock<SmartSewageSystem> SMART_SEWAGE_SYSTEM = BLOCKS.register("smart_sewage_system", ()-> new SmartSewageSystem(decorProperties()));

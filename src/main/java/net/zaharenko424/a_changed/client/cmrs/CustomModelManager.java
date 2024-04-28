@@ -249,7 +249,7 @@ public class CustomModelManager {
                 urlLoaded.put(url, modelId);
                 beingLoaded.remove(url);
                 return modelId;
-            } catch (IOException e){
+            } catch (IOException e){//TODO silence errors if no internet?
                 throw new RuntimeException(e);
             }
         }).exceptionally(err -> {

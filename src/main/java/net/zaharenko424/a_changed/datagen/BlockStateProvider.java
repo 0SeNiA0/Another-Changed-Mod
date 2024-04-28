@@ -78,6 +78,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_ENCODER);
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_PURIFIER);
         machineLikeWithItem(DNA_EXTRACTOR, true);
+        allDirectionalBlockWithItem(EXPOSED_PIPES);
         simpleBlockWithItemExisting(FLASK);
         rotatedDoublePartBlock(GAS_TANK,null);
         machineLikeWithItem(GENERATOR, false);
@@ -136,6 +137,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         pipe();
         simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
                 new ResourceLocation("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
+        blockExisting(ROTATING_CHAIR);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
@@ -195,6 +197,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private @NotNull ResourceLocation blockLoc(DeferredBlock<?> block){
         return blockLoc(block.getId());
+    }
+
+    private void blockExisting(DeferredBlock<?> block){
+        simpleBlock(block.get(), models().getExistingFile(blockLoc(block)));
     }
 
     private void blockWithItem(DeferredBlock<?> block){
@@ -257,6 +263,12 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile sign = models().sign(signBlock.getId().getPath(), texture);
         simpleBlock(signBlock.get(), sign);
         simpleBlock(wallSignBlock.get(), sign);
+    }
+
+    private void horizontalDirectionalBlock(DeferredBlock<? extends HorizontalDirectionalBlock> block){
+        ModelFile file = models().getExistingFile(blockLoc(block));
+        getVariantBuilder(block.get())
+                .forAllStates(state-> horizontalRotatedModelAr(file, state.getValue(HorizontalDirectionalBlock.FACING)));
     }
 
     private void horizontalDirectionalBlockWithItem(DeferredBlock<? extends HorizontalDirectionalBlock> block){

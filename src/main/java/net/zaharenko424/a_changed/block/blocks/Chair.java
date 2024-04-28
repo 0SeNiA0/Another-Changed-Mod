@@ -27,16 +27,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
+public class Chair extends HorizontalDirectionalBlock implements ISeatBlock<SeatEntity> {
 
-    private static final VoxelShape SHAPE_NORTH = Shapes.or(Shapes.box(0.4375, 0, 0.4375, 0.5625, 0.4375, 0.5625)
-            ,Shapes.box(0.125, 0.4375, 0.125, 0.875, 0.5625, 0.875)
-            ,Shapes.box(0.125, 0.5625, 0.75, 0.875, 1.125, 0.875)
-            ,Shapes.box(0.125, 0, 0.4375, 0.875, 0.125, 0.5625)
-            ,Shapes.box(0.4375, 0, 0.125, 0.5625, 0.125, 0.875));
-    private static final VoxelShape SHAPE_EAST = Utils.rotateShape(Direction.EAST,SHAPE_NORTH);
-    private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH,SHAPE_NORTH);
-    private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST,SHAPE_NORTH);
+    private static final VoxelShape SHAPE_NORTH, SHAPE_EAST, SHAPE_SOUTH, SHAPE_WEST;
 
     public Chair(Properties p_54120_) {
         super(p_54120_);
@@ -50,7 +43,7 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
-        return switch (p_60555_.getValue(FACING)){
+        return switch (p_60555_.getValue(FACING)) {
             case EAST -> SHAPE_EAST;
             case SOUTH -> SHAPE_SOUTH;
             case WEST -> SHAPE_WEST;
@@ -60,25 +53,41 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState p_60503_, @NotNull Level p_60504_, @NotNull BlockPos p_60505_, @NotNull Player p_60506_, @NotNull InteractionHand p_60507_, @NotNull BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
-        if(sit(p_60504_, p_60505_, Shapes.block().bounds().move(p_60505_), p_60506_,true)) return InteractionResult.SUCCESS;
+        if (p_60504_.isClientSide) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+        if (sit(p_60504_, p_60505_, Shapes.block().bounds().move(p_60505_), p_60506_, true))
+            return InteractionResult.SUCCESS;
         return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING,p_49820_.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, p_49820_.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
-        if(p_60567_.isClientSide) super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
-        p_60567_.addFreshEntity(new SeatEntity(p_60567_, p_60568_,true));
+    public void onRemove(BlockState pState, Level level, BlockPos pos, BlockState pNewState, boolean pMovedByPiston) {
+        super.onRemove(pState, level, pos, pNewState, pMovedByPiston);
+        removeSeat(level, pos);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(FACING);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        super.createBlockStateDefinition(pBuilder.add(FACING));
+    }
+
+    static {
+        SHAPE_NORTH = Shapes.or(
+                Shapes.box(0.125f, 0.0938f, 0.75f, 0.25f, 0.4375f, 0.875f),
+                Shapes.box(0.125f, 0.0938f, 0.125f, 0.25f, 0.4375f, 0.25f),
+                Shapes.box(0.75f, 0.0938f, 0.75f, 0.875f, 0.4375f, 0.875f),
+                Shapes.box(0.75f, 0.0938f, 0.125f, 0.875f, 0.4375f, 0.25f),
+                Shapes.box(0.125f, 0.4375f, 0.125f, 0.875f, 0.5625f, 0.875f),
+                Shapes.box(0.125f, 0.5625f, 0.75f, 0.875f, 1.125f, 0.875f),
+                Shapes.box(0.75f, 0, 0.125f, 0.875f, 0.0938f, 0.875f),
+                Shapes.box(0.125f, 0, 0.125f, 0.25f, 0.0938f, 0.875f));
+        SHAPE_EAST = Utils.rotateShape(Direction.EAST, SHAPE_NORTH);
+        SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH, SHAPE_NORTH);
+        SHAPE_WEST = Utils.rotateShape(Direction.WEST, SHAPE_NORTH);
     }
 }
