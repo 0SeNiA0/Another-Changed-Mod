@@ -14,6 +14,7 @@ import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.model.URLLoadedModel;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;
@@ -26,6 +27,7 @@ import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlay
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -40,7 +42,7 @@ public class ClientPacketHandler {
     }
 
     public void handleGrabSyncPacket(@NotNull ClientboundGrabSyncPacket packet, @NotNull IPayloadContext context){
-        context.workHandler().submitAsync(()->{
+        context.workHandler().submitAsync(()-> {
             Player player = Minecraft.getInstance().player;
             if(player == null) return;
             IGrabHandler handler = GrabCapability.nonNullOf(player);
@@ -82,20 +84,21 @@ public class ClientPacketHandler {
             LocalPlayer player = Minecraft.getInstance().player;
             if(player == null) return;
             ITransfurHandler handler = TransfurCapability.nonNullOf(player);
-            AbstractTransfurType transfurType = packet.transfurType();
+            AbstractTransfurType newTransfurType = packet.transfurType();
+            AbstractTransfurType handlerTf = handler.getTransfurType();
             if(!packet.isTransfurred()){
                 if(handler.isTransfurred()){
-                    CustomModelManager.getInstance().removeLocalPlayerModel(handler.getTransfurType().id);
+                    removeTransfurModel(player, handlerTf);
                     handler.unTransfur();
                     player.refreshDimensions();
-                } else handler.setTransfurProgress(packet.transfurProgress(), transfurType);
+                } else handler.setTransfurProgress(packet.transfurProgress(), newTransfurType);
                 return;
             }
-            if(transfurType != handler.getTransfurType()){
-                if(handler.isTransfurred()) CustomModelManager.getInstance().removeLocalPlayerModel(handler.getTransfurType().id);
-                CustomModelManager.getInstance().setLocalPlayerModel(transfurType.id, ()-> transfurType.getModel(0), 1);
+            if(newTransfurType != handlerTf){
+                if(handler.isTransfurred()) removeTransfurModel(player, handlerTf);
+                setTransfurModel(player, newTransfurType);
             }
-            handler.transfur(transfurType);
+            handler.transfur(newTransfurType);
             player.refreshDimensions();
         });
     }
@@ -109,22 +112,33 @@ public class ClientPacketHandler {
                 return;
             }
             ITransfurHandler handler = TransfurCapability.nonNullOf(player);
-            AbstractTransfurType transfurType = packet.transfurType();
+            AbstractTransfurType newTransfurType = packet.transfurType();
+            AbstractTransfurType handlerTf = handler.getTransfurType();
             if(!packet.isTransfurred()){
                 if(handler.isTransfurred()){
-                    CustomModelManager.getInstance().removePlayerModel(player, handler.getTransfurType().id);
+                    removeTransfurModel(player, handlerTf);
                     handler.unTransfur();
                     player.refreshDimensions();
-                } else handler.setTransfurProgress(packet.transfurProgress(), transfurType);
+                } else handler.setTransfurProgress(packet.transfurProgress(), newTransfurType);
                 return;
             }
-            if(transfurType != handler.getTransfurType()){
-                if(handler.isTransfurred()) CustomModelManager.getInstance().removePlayerModel(player, handler.getTransfurType().id);
-                CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, ()-> transfurType.getModel(0), 1);
+            if(newTransfurType != handler.getTransfurType()){
+                if(handler.isTransfurred()) removeTransfurModel(player, handlerTf);
+                setTransfurModel(player, newTransfurType);
             }
-            handler.transfur(transfurType);
+            handler.transfur(newTransfurType);
             player.refreshDimensions();
         });
+    }
+
+    private void removeTransfurModel(AbstractClientPlayer player, AbstractTransfurType transfurType){
+        if(transfurType instanceof Special) CustomModelManager.getInstance().removePlayerModel(player, player.getStringUUID());
+        else CustomModelManager.getInstance().removePlayerModel(player, transfurType.id);
+    }
+
+    private void setTransfurModel(AbstractClientPlayer player, AbstractTransfurType transfurType){
+        if(transfurType instanceof Special) CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
+        else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, ()-> transfurType.getModel(0), 1);
     }
 
     public void handleOpenTransfurScreen(@NotNull PlayPayloadContext context){

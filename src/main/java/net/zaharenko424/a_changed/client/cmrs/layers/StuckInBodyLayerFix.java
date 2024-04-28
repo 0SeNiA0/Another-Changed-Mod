@@ -30,9 +30,13 @@ public abstract class StuckInBodyLayerFix<E extends LivingEntity,M extends Hiera
         if(i <= 0) return;
         for (int j = 0; j < i; ++j) {
             poseStack.pushPose();
-            ModelPart modelpart = getParentModel().getRandomModelPart(randomsource);
-            ModelPart.Cube modelpart$cube = modelpart.getRandomCube(randomsource);
-            modelpart.translateAndRotate(poseStack);
+            ModelPart part;
+            do {
+                part = getParentModel().getRandomModelPart(randomsource);
+            } while (!part.hasCubes());
+
+            ModelPart.Cube modelpart$cube = part.getRandomCube(randomsource);
+            part.translateAndRotate(poseStack);
             float f = randomsource.nextFloat();
             float f1 = randomsource.nextFloat();
             float f2 = randomsource.nextFloat();

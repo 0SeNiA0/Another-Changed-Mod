@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 public class VoxelShapeCache {
     private final HashMap<Pair<Direction, Integer>, VoxelShape> shapes = new HashMap<>();
 
+    @Deprecated
     public VoxelShape getShape(Direction direction, int id, VoxelShape baseShape){
         return getShape(direction, id, ()-> baseShape);
     }

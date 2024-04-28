@@ -7,6 +7,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.block.ISeatBlock;
@@ -16,18 +17,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class SeatEntity extends Entity {
 
-    private static final EntityDataAccessor<Boolean> RENDER_PLAYER = SynchedEntityData.defineId(SeatEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> RENDER_PLAYER = SynchedEntityData.defineId(SeatEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public SeatEntity(@NotNull Level p_19871_) {
-        super(EntityRegistry.SEAT_ENTITY.get(), p_19871_);
+    protected SeatEntity(EntityType<?> entityType, Level level){
+        super(entityType, level);
         noPhysics = true;
     }
 
-    public SeatEntity(@NotNull Level level, @NotNull BlockPos pos, boolean renderPlayer){
-        super(EntityRegistry.SEAT_ENTITY.get(),level);
+    protected SeatEntity(EntityType<?> entityType, @NotNull Level level, @NotNull BlockPos pos, boolean renderPlayer){
+        this(entityType, level);
         setPos(pos.getCenter());
-        entityData.set(RENDER_PLAYER,renderPlayer);
-        noPhysics = true;
+        entityData.set(RENDER_PLAYER, renderPlayer);
+    }
+
+    public SeatEntity(@NotNull Level level) {
+        this(EntityRegistry.SEAT_ENTITY.get(), level);
+    }
+
+    public SeatEntity(@NotNull Level level, @NotNull BlockPos pos, boolean renderPlayer){
+        this(EntityRegistry.SEAT_ENTITY.get(), level, pos, renderPlayer);
     }
 
     public boolean renderPlayer(){
@@ -48,7 +56,7 @@ public class SeatEntity extends Entity {
     @Override
     protected void removePassenger(@NotNull Entity p_20352_) {
         super.removePassenger(p_20352_);
-        if(p_20352_ instanceof LivingEntity entity && !entity.hasEffect(MobEffects.INVISIBILITY))p_20352_.setInvisible(false);
+        if(p_20352_ instanceof LivingEntity entity && !entity.hasEffect(MobEffects.INVISIBILITY)) p_20352_.setInvisible(false);
     }
 
     private int tick = 0;

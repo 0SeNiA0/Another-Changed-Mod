@@ -116,6 +116,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.SPECIAL_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .addMiscIngredient(DARK_LATEX_BASE.toStack())
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
         LatexEncoderRecipeBuilder.of(TransfurRegistry.WHITE_LATEX_WOLF_F_TF.get())
                 .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
@@ -138,6 +144,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(WHITE_LATEX_ITEM), has(WHITE_LATEX_ITEM))
                 .save(out);
 
+        //Crafting recipes
+        Criterion<?> hasCopper = has(Tags.Items.INGOTS_COPPER);
+        Criterion<?> hasIron = has(Tags.Items.INGOTS_IRON);
+        Criterion<?> hasCopperPlates = has(ItemTagProvider.PLATES_COPPER);
+        Criterion<?> hasIronPlates = has(ItemTagProvider.PLATES_IRON);
+        Criterion<?> hasLRCoating = has(LATEX_RESISTANT_COATING);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, AIR_CONDITIONER_ITEM)
                 .pattern("IBI")
                 .pattern("BCB")
@@ -145,13 +158,18 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('B', Items.IRON_BARS)
                 .define('C', COPPER_COIL)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_DOOR_ITEM)
                 .requires(LAB_DOOR_ITEM)
                 .requires(LAB_DOOR_ITEM)
                 .unlockedBy(getHasName(LAB_DOOR_ITEM), has(LAB_DOOR_ITEM))
+                .save(out);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LAB_LAMP_ITEM)
+                .requires(LAB_LAMP_ITEM, 2)
+                .unlockedBy(getHasName(LAB_LAMP_ITEM), has(LAB_LAMP_ITEM))
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, BIG_LIBRARY_DOOR_ITEM)
@@ -168,9 +186,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         labBlock(BLUE_LAB_TILE_ITEM, Items.LIGHT_BLUE_CONCRETE, out);
 
-        stonecutting(BLUE_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem<?>[]{BOLTED_LAB_TILE_ITEM,CONNECTED_BLUE_LAB_TILE_ITEM},has(BLUE_LAB_TILE_ITEM),out);
-        stonecutting(BOLTED_BLUE_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem<?>[]{BLUE_LAB_TILE_ITEM,CONNECTED_BLUE_LAB_TILE_ITEM},has(BOLTED_BLUE_LAB_TILE_ITEM),out);
-        stonecutting(CONNECTED_BLUE_LAB_TILE_ITEM,RecipeCategory.BUILDING_BLOCKS,new DeferredItem<?>[]{BLUE_LAB_TILE_ITEM,BOLTED_BLUE_LAB_TILE_ITEM},has(CONNECTED_BLUE_LAB_TILE_ITEM),out);
+        stonecuttingAllToAll(new DeferredItem[]{BLUE_LAB_TILE_ITEM, BLUE_LAB_TILE_SLAB_ITEM, BLUE_LAB_TILE_STAIRS_ITEM,
+                BOLTED_BLUE_LAB_TILE_ITEM, CONNECTED_BLUE_LAB_TILE_ITEM}, RecipeCategory.BUILDING_BLOCKS, out);
 
 
         labBlock(BROWN_LAB_BLOCK_ITEM, Items.BROWN_CONCRETE, out);
@@ -217,13 +234,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(CARDBOARD), has(CARDBOARD))
                 .save(out);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, CHAIR_ITEM,3)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, CHAIR_ITEM, 3)
                 .pattern("I ")
                 .pattern("II")
                 .pattern("BB")
-                .define('I', Tags.Items.INGOTS_IRON)
+                .define('I', ItemTagProvider.PLATES_IRON)
                 .define('B', Items.IRON_BARS)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COMPRESSOR_ITEM)
@@ -234,7 +251,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('C', POWER_CELL)
                 .define('P', Items.PISTON)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         //TODO computer, make better?
@@ -244,10 +261,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("WGW")
                 .define('P', Tags.Items.GLASS_PANES)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .define('L', Items.REDSTONE_LAMP)
+                .define('L', LAB_LAMP_ITEM)
                 .define('W', ItemTagProvider.WIRES_COPPER)
                 .define('G', ItemTagProvider.PLATES_GOLD)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COPPER_COIL)
@@ -256,19 +273,27 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("CCC")
                 .define('C', ItemTagProvider.WIRES_COPPER)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COPPER_PLATE, 2)
                 .pattern("CCC")
                 .define('C', Tags.Items.INGOTS_COPPER)
-                .unlockedBy(getHasName(Items.COPPER_INGOT), has(Tags.Items.INGOTS_COPPER))
+                .unlockedBy(getHasName(Items.COPPER_INGOT), hasCopper)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COPPER_WIRE_ITEM, 12)
                 .pattern("CCC")
                 .define('C', ItemTagProvider.PLATES_COPPER)
-                .unlockedBy(getHasName(COPPER_PLATE), has(ItemTagProvider.PLATES_COPPER))
+                .unlockedBy(getHasName(COPPER_PLATE), hasCopperPlates)
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, COPPER_WRENCH)
+                .pattern("C C")
+                .pattern(" C ")
+                .pattern(" C ")
+                .define('C', ItemTagProvider.PLATES_COPPER)
+                .unlockedBy(getHasName(COPPER_PLATE), hasCopperPlates)
                 .save(out);
 
         //TODO cryo chamber?
@@ -317,7 +342,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('C', COPPER_COIL)
                 .define('P', POWER_CELL)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EMPTY_CANISTER, 4)
@@ -326,7 +351,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern(" I ")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, FLASK_ITEM, 3)
@@ -336,7 +361,14 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.GLASS), has(Tags.Items.GLASS))
                 .save(out);
 
-        //TODO gas tank
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GAS_TANK_ITEM)
+                .pattern(" I ")
+                .pattern("ILI")
+                .pattern("ILI")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('L', DARK_LATEX_ITEM)
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
+                .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GENERATOR_ITEM)
                 .pattern("III")
@@ -345,7 +377,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', POWER_CELL)
                 .define('F', Items.FURNACE)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GOLDEN_PLATE, 2)
@@ -363,19 +395,55 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.ORANGE_CONCRETE), has(Items.ORANGE_CONCRETE))
                 .save(out);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, HAZARD_LAB_BLOCK_ITEM,9)
-                .pattern("LLL")
-                .pattern("OOO")
-                .pattern("LLL")
-                .define('L', LAB_BLOCK_ITEM)
-                .define('O', ORANGE_LAB_BLOCK_ITEM)
-                .unlockedBy(getHasName(LAB_BLOCK_ITEM), has(LAB_BLOCK_ITEM))
+        stonecuttingAllToAll(new DeferredItem[]{HAZARD_BLOCK_ITEM, HAZARD_SLAB_ITEM, HAZARD_STAIRS_ITEM, HAZARD_LAB_BLOCK_ITEM},
+                RecipeCategory.BUILDING_BLOCKS, out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, HAZMAT_HELMET)
+                .pattern(" O ")
+                .pattern("FHF")
+                .pattern(" G ")
+                .define('O', Tags.Items.DYES_ORANGE)
+                .define('F', LATEX_RESISTANT_FABRIC)
+                .define('H', Items.IRON_HELMET)
+                .define('G', LATEX_RESISTANT_GLASS_ITEM)
+                .unlockedBy(getHasName(LATEX_RESISTANT_FABRIC), has(LATEX_RESISTANT_FABRIC))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, HAZMAT_CHESTPLATE)
+                .pattern(" O ")
+                .pattern("FCF")
+                .pattern(" F ")
+                .define('O', Tags.Items.DYES_ORANGE)
+                .define('F', LATEX_RESISTANT_FABRIC)
+                .define('C', Items.IRON_CHESTPLATE)
+                .unlockedBy(getHasName(LATEX_RESISTANT_FABRIC), has(LATEX_RESISTANT_FABRIC))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, HAZMAT_LEGGINGS)
+                .pattern(" O ")
+                .pattern("FLF")
+                .pattern(" F ")
+                .define('O', Tags.Items.DYES_ORANGE)
+                .define('F', LATEX_RESISTANT_FABRIC)
+                .define('L', Items.IRON_LEGGINGS)
+                .unlockedBy(getHasName(LATEX_RESISTANT_FABRIC), has(LATEX_RESISTANT_FABRIC))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, HAZMAT_BOOTS)
+                .pattern(" O ")
+                .pattern("FBF")
+                .pattern(" C ")
+                .define('O', Tags.Items.DYES_ORANGE)
+                .define('F', LATEX_RESISTANT_FABRIC)
+                .define('B', Items.IRON_BOOTS)
+                .define('C', LATEX_RESISTANT_COATING)
+                .unlockedBy(getHasName(LATEX_RESISTANT_FABRIC), has(LATEX_RESISTANT_FABRIC))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRON_PLATE, 2)
                 .pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IV_RACK_ITEM, 3)
@@ -384,7 +452,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("III")
                 .define('B', Items.IRON_BARS)
                 .define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, KEYPAD_ITEM)
@@ -395,17 +463,14 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('C', ItemTagProvider.PLATES_COPPER)
                 .define('B', ItemTags.STONE_BUTTONS)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
-
-        //TODO hazmat armor
 
         labBlock(LAB_BLOCK_ITEM, Items.QUARTZ_BLOCK, out);
 
-        stonecutting(BOLTED_LAB_TILE_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{CONNECTED_LAB_TILE_ITEM, LAB_BLOCK_ITEM, LAB_TILE_ITEM}, has(BOLTED_LAB_TILE_ITEM), out);
-        stonecutting(CONNECTED_LAB_TILE_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{BOLTED_LAB_TILE_ITEM, LAB_BLOCK_ITEM, LAB_TILE_ITEM}, has(CONNECTED_LAB_TILE_ITEM), out);
-        stonecutting(LAB_BLOCK_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{BOLTED_LAB_TILE_ITEM, CONNECTED_LAB_TILE_ITEM, LAB_TILE_ITEM}, has(LAB_BLOCK_ITEM), out);
-        stonecutting(LAB_TILE_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{BOLTED_LAB_TILE_ITEM, CONNECTED_LAB_TILE_ITEM, LAB_BLOCK_ITEM}, has(LAB_TILE_ITEM), out);
+        stonecuttingAllToAll(new DeferredItem[]{BOLTED_LAB_TILE_ITEM, CONNECTED_LAB_TILE_ITEM, EXPOSED_PIPES_ITEM, LAB_BLOCK_ITEM,
+                LAB_SLAB_ITEM, LAB_STAIRS_ITEM, LAB_TILE_ITEM, LAB_TILE_SLAB_ITEM, LAB_TILE_STAIRS_ITEM},
+                RecipeCategory.BUILDING_BLOCKS, out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LAB_DOOR_ITEM)
                 .pattern("III")
@@ -413,13 +478,28 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("III")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', Blocks.PISTON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LAB_DOOR_ITEM, 2)
                 .requires(BIG_LAB_DOOR_ITEM)
                 .unlockedBy(getHasName(BIG_LAB_DOOR_ITEM), has(BIG_LAB_DOOR_ITEM))
                 .save(out, LAB_DOOR_ITEM.getId().withSuffix("_from_big"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LAB_LAMP_ITEM, 4)
+                .pattern("IWI")
+                .pattern("GWG")
+                .pattern("GGG")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('W', ItemTagProvider.WIRES_COPPER)
+                .define('G', Tags.Items.GLASS)
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
+                .save(out);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LAB_LAMP_ITEM, 2)
+                .requires(BIG_LAB_LAMP_ITEM)
+                .unlockedBy(getHasName(BIG_LAB_LAMP_ITEM), has(BIG_LAB_LAMP_ITEM))
+                .save(out, LAB_LAMP_ITEM.getId().withSuffix("_from_big"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LASER_EMITTER_ITEM)
                 .pattern("III")
@@ -429,17 +509,17 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('L', Items.REDSTONE_LAMP)
                 .define('A', Tags.Items.GEMS_AMETHYST)
                 .define('G', Tags.Items.GLASS)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
-        //TODO latex container, replace with something like "latex resistant glass" or "latex resistant coating"
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LATEX_CONTAINER_ITEM)
-                .pattern("III")
+                .pattern("ICI")
                 .pattern(" G ")
-                .pattern("III")
+                .pattern("ICI")
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .define('G', Tags.Items.GLASS)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .define('C', LATEX_RESISTANT_COATING)
+                .define('G', LATEX_RESISTANT_GLASS_ITEM)
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LATEX_ENCODER_ITEM)
@@ -466,6 +546,47 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(LATEX_PURIFIER_COMPONENTS), has(LATEX_PURIFIER_COMPONENTS))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, LATEX_RESISTANT_BLOCK_ITEM, 8)
+                .pattern("CC")
+                .pattern("CC")
+                .define('C', LATEX_RESISTANT_COATING)
+                .unlockedBy(getHasName(LATEX_RESISTANT_COATING), hasLRCoating)
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LATEX_RESISTANT_COATING)
+                .pattern(" C ")
+                .pattern("CEC")
+                .pattern(" C ")
+                .define('C', LATEX_RESISTANT_COMPOUND)
+                .define('E', ItemTagProvider.PLATES_IRON)
+                .unlockedBy(getHasName(LATEX_RESISTANT_COMPOUND), has(LATEX_RESISTANT_COMPOUND))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LATEX_RESISTANT_FABRIC)
+                .pattern(" C ")
+                .pattern("CEC")
+                .pattern(" C ")
+                .define('C', LATEX_RESISTANT_COMPOUND)
+                .define('E', ItemTags.WOOL)
+                .unlockedBy(getHasName(LATEX_RESISTANT_COMPOUND), has(LATEX_RESISTANT_COMPOUND))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, LATEX_RESISTANT_GLASS_ITEM, 8)
+                .pattern(" C ")
+                .pattern("CGC")
+                .pattern(" C ")
+                .define('C', LATEX_RESISTANT_COATING)
+                .define('G', Tags.Items.GLASS)
+                .unlockedBy(getHasName(LATEX_RESISTANT_COATING), hasLRCoating)
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, LATEX_RESISTANT_GLASS_PANE_ITEM, 16)
+                .pattern("GGG")
+                .pattern("GGG")
+                .define('G', LATEX_RESISTANT_GLASS_ITEM)
+                .unlockedBy(getHasName(LATEX_RESISTANT_GLASS_ITEM), has(LATEX_RESISTANT_GLASS_ITEM))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, LIBRARY_DOOR_ITEM)
                 .pattern("IGI")
                 .pattern("PGP")
@@ -473,7 +594,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', Blocks.PISTON)
                 .define('G', Tags.Items.GLASS)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, LIBRARY_DOOR_ITEM, 2)
@@ -487,7 +608,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("IPI")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', Blocks.PISTON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, MAINTENANCE_DOOR_ITEM, 2)
@@ -500,7 +621,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("I I")
                 .pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, METAL_CAN_ITEM, 4)
@@ -509,7 +630,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("I")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', PIPE_ITEM)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, METAL_CAN_ITEM)
@@ -552,8 +673,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         labBlock(ORANGE_LAB_BLOCK_ITEM, Items.ORANGE_CONCRETE, out);
 
-        stonecutting(ORANGE_LAB_BLOCK_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{STRIPED_ORANGE_LAB_BLOCK_ITEM}, has(ORANGE_LAB_BLOCK_ITEM), out);
-        stonecutting(STRIPED_ORANGE_LAB_BLOCK_ITEM, RecipeCategory.BUILDING_BLOCKS, new DeferredItem[]{ORANGE_LAB_BLOCK_ITEM}, has(STRIPED_ORANGE_LAB_BLOCK_ITEM), out);
+        stonecuttingAllToAll(new DeferredItem<?>[]{ORANGE_LAB_BLOCK_ITEM, ORANGE_LAB_SLAB_ITEM, ORANGE_LAB_STAIRS_ITEM,
+                STRIPED_ORANGE_LAB_BLOCK_ITEM}, RecipeCategory.BUILDING_BLOCKS, out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ORANGE_PLANKS_ITEM, 4)
                 .requires(ORANGE_TREE_LOG_ITEM)
@@ -585,7 +706,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PIPE_ITEM, 8)
                 .pattern("III")
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PNEUMATIC_SYRINGE_RIFLE)
@@ -595,7 +716,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('E', EMPTY_CANISTER)
                 .define('P', PIPE_ITEM)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, POWER_CELL)
@@ -605,7 +726,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('W', COPPER_WIRE_ITEM)
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ROTATING_CHAIR_ITEM,3)
+                .pattern("I  ")
+                .pattern("III")
+                .pattern(" B ")
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('B', Items.IRON_BARS)
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, SCANNER_ITEM)
@@ -615,7 +745,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('O', Items.OBSERVER)
                 .define('P', POWER_CELL)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, SMALL_CARDBOARD_BOX_ITEM)
@@ -651,7 +781,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("I  ")
                 .define('I', Tags.Items.NUGGETS_IRON)
                 .define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TABLE_ITEM,3)
@@ -660,7 +790,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("B B")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('B', Items.IRON_BARS)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TALL_CARDBOARD_BOX_ITEM,1)
@@ -676,7 +806,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("I I")
                 .define('G', Tags.Items.GLASS)
                 .define('I', ItemTagProvider.PLATES_IRON)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TRAFFIC_CONE_ITEM,3)
@@ -687,20 +817,29 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(Items.ORANGE_CONCRETE), has(Items.ORANGE_CONCRETE))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TV_SCREEN_ITEM)
+                .pattern("WB")
+                .pattern("WC")
+                .define('W', ItemTagProvider.WIRES_COPPER)
+                .define('B', BIG_LAB_LAMP_ITEM)
+                .define('C', ItemTagProvider.PLATES_COPPER)
+                .unlockedBy(getHasName(COPPER_PLATE), hasCopperPlates)
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, VENT_DUCT_ITEM, 6)
                 .pattern("III")
                 .pattern("B B")
                 .pattern("III")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('B', Items.IRON_BARS)
-                .unlockedBy(getHasName(IRON_PLATE), has(ItemTagProvider.PLATES_IRON))
+                .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, VENT_HATCH_ITEM,2)
                 .pattern("IBI")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('B', Items.IRON_BARS)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON))
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         labBlock(VENT_WALL_ITEM, Items.GRAY_CONCRETE, out);
@@ -720,14 +859,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .save(out);
 
         labBlock(YELLOW_LAB_BLOCK_ITEM, Items.YELLOW_CONCRETE, out);
-    }
 
-    private void stonecutting(DeferredItem<?> material, RecipeCategory category, DeferredItem<?> @NotNull [] results, Criterion<?> criterion, RecipeOutput out){
-        for(DeferredItem<?> result : results) {
-            SingleItemRecipeBuilder.stonecutting((Ingredient.of(material)), category, result)
-                    .unlockedBy(getHasName(material), criterion)
-                    .save(out, result.getId().withSuffix("_stonecutting_from_" + material.getId().getPath()));
-        }
+        stonecuttingAllToAll(new DeferredItem[]{YELLOW_LAB_BLOCK_ITEM, YELLOW_LAB_SLAB_ITEM, YELLOW_LAB_STAIRS_ITEM},
+                RecipeCategory.BUILDING_BLOCKS, out);
     }
 
     private void labBlock(DeferredItem<?> result, Item material, RecipeOutput out){
@@ -754,5 +888,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .requires(block)
                 .unlockedBy(getHasName(block), has(block))
                 .save(out);
+    }
+
+    private void stonecuttingAllToAll(DeferredItem<?> @NotNull [] items, RecipeCategory category, RecipeOutput out){
+        for(DeferredItem<?> material : items){
+            for(DeferredItem<?> result : items){
+                if(material == result) continue;
+                SingleItemRecipeBuilder.stonecutting((Ingredient.of(material)), category, result)
+                        .unlockedBy(getHasName(material), has(material))
+                        .save(out, result.getId().withSuffix("_stonecutting_from_" + material.getId().getPath()));
+            }
+        }
     }
 }

@@ -6,10 +6,13 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
@@ -77,6 +81,9 @@ public class AChanged {
     public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
     public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
     public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
+
+    //Item tier
+    public static final SimpleTier COPPER = new SimpleTier(2, 128, 5, 1, 12, BlockTags.NEEDS_IRON_TOOL, ()-> Ingredient.of(Items.COPPER_INGOT));
 
     //Game rules
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));

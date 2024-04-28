@@ -7,7 +7,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.packets.ServerboundTryPasswordPacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,8 +30,8 @@ public class KeypadScreen extends Screen {
         super(Component.empty());
         passwordSet = isPasswordSet;
         this.pos = pos;
-        int a=isPasswordSet?length:MAX_SIZE;
-        for(int i = 0; i < a;i++){
+        int a = isPasswordSet?length:MAX_SIZE;
+        for(int i = 0; i < a; i++){
             charBoxes.add(new CharBox());
             if(isPasswordSet) charBoxes.get(i).num = 0;
         }
@@ -43,12 +45,12 @@ public class KeypadScreen extends Screen {
                 if(code.length < 4) return;
                 minecraft.setScreen(null);
                 sendPacket(code);
-            }).bounds(width/2-40,height/3+30,80,20).build());
+            }).bounds(width / 2 - 40,height / 3 + 30,80,20).build());
         } else {
             button = addRenderableWidget(Button.builder(Component.translatable("misc.a_changed.keypad_attempt"), button ->{
                 minecraft.setScreen(null);
                 sendPacket(getCode());
-            }).bounds(width/2-40,height/3+30,80,20).build());
+            }).bounds(width / 2 - 40,height / 3 + 30,80,20).build());
         }
         checkLength();
         recalculateCoordinates();
@@ -61,14 +63,14 @@ public class KeypadScreen extends Screen {
     private void recalculateCoordinates(){
         int halfWidth = width / 2;
         int a = halfWidth - (25 * charBoxes.size() / 2);
-        for(int i = 0; i < charBoxes.size();i++){
+        for(int i = 0; i < charBoxes.size(); i++){
             charBoxes.get(i).recalculate(a + i * 25,height / 3);
         }
     }
 
     public int[] getCode(){
         IntList list = new IntArrayList();
-        charBoxes.forEach(box->{
+        charBoxes.forEach(box -> {
             if(box.num != null) list.add((int)box.num);
         });
         return list.toIntArray();
@@ -83,7 +85,7 @@ public class KeypadScreen extends Screen {
             int i = Character.getNumericValue(character);
             if(i > 9 || i < 0) return false;
             CharBox box = charBoxes.get(selectedChar);
-            boolean b = box.num==null;
+            boolean b = box.num == null;
             box.num = i;
             if(b) checkLength();
             return true;
@@ -104,13 +106,13 @@ public class KeypadScreen extends Screen {
                 yield true;
             }
             case 259, 261 -> {
-                CharBox box=charBoxes.get(selectedChar);
+                CharBox box = charBoxes.get(selectedChar);
                 if(!passwordSet) {
                     box.num = null;
                     checkLength();
                     List<CharBox> newList = new ArrayList<>();
-                    charBoxes.forEach(charBox->{
-                        if(charBox.num!=null) newList.add(charBox);
+                    charBoxes.forEach(charBox -> {
+                        if(charBox.num != null) newList.add(charBox);
                     });
                     selectedChar = newList.size();
                     charBoxes.clear();
@@ -128,11 +130,11 @@ public class KeypadScreen extends Screen {
                 } else selectedChar = 0;
                 yield true;
             }
-            case 263 ->{
+            case 263 -> {
                 if(selectedChar>0) selectedChar--; else selectedChar = charBoxes.size()-1;
                 yield true;
             }
-            case 264 ->{
+            case 264 -> {
                 CharBox box = charBoxes.get(selectedChar);
                 if(box.num == null){
                     box.num = 9;
@@ -142,10 +144,10 @@ public class KeypadScreen extends Screen {
                 } else box.num--;
                 yield true;
             }
-            case 265 ->{
+            case 265 ->  {
                 CharBox box = charBoxes.get(selectedChar);
                 if(box.num == null){
-                    box.num=0;
+                    box.num = 0;
                     checkLength();
                 } else if(box.num == 9) {
                     box.num = 0;
@@ -158,7 +160,8 @@ public class KeypadScreen extends Screen {
 
     private void checkLength(){
         if(passwordSet) return;
-        if(getCode().length < 4) button.active = false; else if(!button.isActive()) button.active = true;
+        if(getCode().length < 4) button.active = false;
+        else if(!button.isActive()) button.active = true;
     }
 
     @Override
@@ -180,14 +183,23 @@ public class KeypadScreen extends Screen {
         return false;
     }
 
+    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/keypad");
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(guiGraphics, pMouseX, pMouseY, pPartialTick);
+        guiGraphics.blit(TEXTURE, width / 2 - 105, height / 3 - 21, 0, 0, 211, 84, 256, 128);
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         setFocused(null);
 
-        for(CharBox charBox:charBoxes){
-            guiGraphics.fill(charBox.x, charBox.y, charBox.x1, charBox.y1,-16777216);
-            if(charBox.num != null) guiGraphics.drawString(font,String.valueOf(charBox.num),charBox.x + 7,charBox.y + 9, 16777215);
+        for(CharBox charBox : charBoxes){
+            guiGraphics.blit(TEXTURE, charBox.x, charBox.y, 211, 0, 20, 25, 256, 128);
+            if(charBox.num != null) guiGraphics.drawString(font,
+                    String.valueOf(charBox.num),charBox.x + 7,charBox.y + 9, 16777215);
         }
 
         if(selectedChar != -1) {

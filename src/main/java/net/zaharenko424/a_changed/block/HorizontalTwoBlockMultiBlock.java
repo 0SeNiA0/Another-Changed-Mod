@@ -17,8 +17,8 @@ public abstract class HorizontalTwoBlockMultiBlock extends AbstractMultiBlock {
             0, new Part(0, 0, 0), 1, new Part(-1, 0, 0));
     public static final IntegerProperty PART = StateProperties.PART2;
 
-    public HorizontalTwoBlockMultiBlock(Properties p_54120_) {
-        super(p_54120_);
+    public HorizontalTwoBlockMultiBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -33,11 +33,11 @@ public abstract class HorizontalTwoBlockMultiBlock extends AbstractMultiBlock {
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        BlockState state = super.getStateForPlacement(p_49820_);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
         if(state == null) return null;
 
-        Direction direction = p_49820_.getClickedFace();
+        Direction direction = context.getClickedFace();
         if(direction.getAxis() == Direction.Axis.Y) return state;
         return state.setValue(FACING, direction);
     }

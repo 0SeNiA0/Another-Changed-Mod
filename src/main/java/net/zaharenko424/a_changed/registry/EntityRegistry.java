@@ -5,10 +5,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.entity.LatexBeast;
-import net.zaharenko424.a_changed.entity.SeatEntity;
-import net.zaharenko424.a_changed.entity.WaterLatexBeast;
+import net.zaharenko424.a_changed.entity.*;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,14 +13,17 @@ import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 
-public final class EntityRegistry {
+public class EntityRegistry {
 
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MODID);
 
     //Entities
     public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> SEAT_ENTITY =
             ENTITIES.register("seat_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) ->
-            new SeatEntity(b), MobCategory.MISC).sized(.1f, .1f).build(resourceLoc("chair_entity").toString()));
+            new SeatEntity(b), MobCategory.MISC).sized(0, 0).build(resourceLoc("seat_entity").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<RotatingChairEntity>> CHAIR_ENTITY =
+            ENTITIES.register("chair_entity", () -> EntityType.Builder.<RotatingChairEntity>of((a, b) ->
+            new RotatingChairEntity(b), MobCategory.MISC).sized(0, 0).build(resourceLoc("chair_entity").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> BEI_FENG =
             registerLatex("bei_feng", EntityType.Builder.of((a,b) ->

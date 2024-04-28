@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.zaharenko424.a_changed.block.blocks.Keypad;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
@@ -36,8 +37,10 @@ public class KeypadEntity extends BlockEntity {
     public void tryCode(int[] attempt){
         if(open) return;
         level.playSound(null, worldPosition, SoundRegistry.BUTTON_PRESSED.get(), SoundSource.BLOCKS);
-        if(Arrays.equals(code,attempt)){
-            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(UNLOCKED,true));
+        if(Arrays.equals(code, attempt)){
+            BlockState state = getBlockState();
+            level.setBlockAndUpdate(worldPosition, state.setValue(UNLOCKED,true));
+            level.updateNeighborsAt(worldPosition.relative(state.getValue(Keypad.FACING).getOpposite()), state.getBlock());
             open = true;
             level.playSound(null, worldPosition, SoundRegistry.KEYPAD_UNLOCKED.get(), SoundSource.BLOCKS);
             return;
@@ -57,7 +60,9 @@ public class KeypadEntity extends BlockEntity {
         if(ticksUntilReset == 0){
             ticksUntilReset = 200;
             open = false;
-            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(UNLOCKED,false));
+            BlockState state = getBlockState();
+            level.setBlockAndUpdate(worldPosition, state.setValue(UNLOCKED,false));
+            level.updateNeighborsAt(worldPosition.relative(state.getValue(Keypad.FACING).getOpposite()), state.getBlock());
         }
     }
 

@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -31,7 +32,7 @@ public abstract class AbstractLatexCat extends AbstractTransfurType {
     public static class CatProperties extends Properties {
 
         protected CatProperties(ResourceLocation resourceLocation) {
-            super(resourceLocation);
+            super(resourceLocation, Latex.WHITE);
             eyeHeight(1.75f,1.5f);
             airReductionModifier(1);
             swimSpeedModifier(-.5f);

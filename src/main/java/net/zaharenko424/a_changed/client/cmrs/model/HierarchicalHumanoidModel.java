@@ -48,7 +48,7 @@ public abstract class HierarchicalHumanoidModel<E extends LivingEntity> extends 
         leftArm = root.getChild("left_arm");
         rightLeg = root.getChild("right_leg");
         leftLeg = root.getChild("left_leg");
-        bodyParts = ImmutableList.copyOf(root.getAllParts().filter(part -> !part.isEmpty()).iterator());
+        bodyParts = ImmutableList.copyOf(root.getAllParts().filter(ModelPart::hasCubes).iterator());
     }
 
     public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {

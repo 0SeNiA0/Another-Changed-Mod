@@ -18,7 +18,7 @@ public class CubeDefinition {
         this.uv = uv;
     }
 
-    public ModelPart.Cube bake(int textureWidth, int textureHeight){
+    public ModelPart.Cube bake(float textureWidth, float textureHeight){
         return new ModelPart.Cube(origin.x, origin.y, origin.z, dimensions.x, dimensions.y,dimensions.z, inflate.x, inflate.y, inflate.z, mirror, uv, textureWidth, textureHeight);
     }
 }

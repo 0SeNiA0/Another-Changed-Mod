@@ -7,7 +7,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
@@ -28,13 +27,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
+import static net.zaharenko424.a_changed.AChanged.LOGGER;
+
 public class ServerPacketHandler {
 
     public static final ServerPacketHandler INSTANCE = new ServerPacketHandler();
 
     public void handleGrabPacket(ServerboundGrabPacket packet, @NotNull PlayPayloadContext context){
         if(context.player().isEmpty()) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
+            LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
@@ -53,7 +54,7 @@ public class ServerPacketHandler {
 
     public void handleGrabModePacket(ServerboundGrabModePacket packet, @NotNull PlayPayloadContext context){
         if(context.player().isEmpty()) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
+            LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
@@ -64,7 +65,7 @@ public class ServerPacketHandler {
 
     public void handleWantToBeGrabbedPacket(ServerboundWantToBeGrabbedPacket packet, @NotNull PlayPayloadContext context){
         if(context.player().isEmpty()) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
+            LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
@@ -74,7 +75,7 @@ public class ServerPacketHandler {
 
     public void handleTransfurChoicePacket(ServerboundTransfurChoicePacket packet, @NotNull PlayPayloadContext context){
         if(context.player().isEmpty()) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
+            LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
         ServerPlayer player = (ServerPlayer) context.player().get();
@@ -91,32 +92,32 @@ public class ServerPacketHandler {
     }
 
     public void handleEditNotePacket(@NotNull ServerboundEditNotePacket packet, @NotNull PlayPayloadContext context){
-        blockEntityInteract(context, packet.pos(), NoteEntity.class, ((player, noteEntity) ->
-                noteEntity.setText(packet.text(), packet.finalize_())));
+        blockEntityInteract(context, packet.pos(), NoteEntity.class, (player, noteEntity) ->
+                noteEntity.setText(packet.text(), packet.finalize_()));
     }
 
     public void handleTryPasswordPacket(@NotNull ServerboundTryPasswordPacket packet, @NotNull PlayPayloadContext context){
-        blockEntityInteract(context, packet.pos(), KeypadEntity.class, ((player, keypad) -> {
+        blockEntityInteract(context, packet.pos(), KeypadEntity.class, (player, keypad) -> {
             if(keypad.isCodeSet()){
                 keypad.tryCode(packet.attempt());
             } else keypad.setCode(packet.attempt());
-        }));
+        });
     }
 
     private <E extends BlockEntity> void blockEntityInteract(@NotNull PlayPayloadContext context, BlockPos pos, Class<E> clazz, BiConsumer<ServerPlayer, E> task){
         if(context.player().isEmpty()) {
-            AChanged.LOGGER.warn("Received a packet from player which is not on the server!");
+            LOGGER.warn("Received a packet from player which is not on the server!");
             return;
         }
         ServerPlayer sender = (ServerPlayer) context.player().get();
         if(sender.distanceToSqr(pos.getCenter()) > 64) {
-            AChanged.LOGGER.warn("Player " + sender + " tried to interact with " + clazz + " from more than 8 blocks away!");
+            LOGGER.warn("Player {} tried to interact with {} from more than 8 blocks away!", sender, clazz);
             return;
         }
         context.workHandler().submitAsync(()->{
             BlockEntity entity = sender.level().getBlockEntity(pos);
             if(entity == null || !clazz.isAssignableFrom(entity.getClass())){
-                AChanged.LOGGER.warn("Block position does not contain " + clazz + "! (" + pos + ")");
+                LOGGER.warn("Block position does not contain {}! ({})", clazz, pos);
                 return;
             }
             task.accept(sender, (E) entity);

@@ -37,28 +37,46 @@ public class CreativeTabs {
                     output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
                     output.accept(CONNECTED_LAB_TILE_ITEM);
                     output.accept(LAB_BLOCK_ITEM);
+                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(LAB_TILE_ITEM);
                     output.accept(ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
                     output.accept(VENT_WALL_ITEM);
                     output.accept(YELLOW_LAB_BLOCK_ITEM);
 
+                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
+                    output.accept(HAZARD_SLAB_ITEM);
+                    output.accept(LAB_SLAB_ITEM);
+                    output.accept(LAB_TILE_SLAB_ITEM);
+                    output.accept(ORANGE_LAB_SLAB_ITEM);
+                    output.accept(YELLOW_LAB_SLAB_ITEM);
+
+                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
+                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(LAB_STAIRS_ITEM);
+                    output.accept(LAB_TILE_STAIRS_ITEM);
+                    output.accept(ORANGE_LAB_STAIRS_ITEM);
+                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+
+                    output.accept(SMART_SEWAGE_SYSTEM_ITEM);
+                    output.accept(LAB_LAMP_ITEM);
+                    output.accept(BIG_LAB_LAMP_ITEM);
+                    output.accept(TV_SCREEN_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
-                    output.accept(BROKEN_CUP_ITEM);
-                    output.accept(BROKEN_FLASK_ITEM);
-                    output.accept(CARDBOARD_BOX_ITEM);
-                    output.accept(CHAIR_ITEM);
-                    output.accept(COMPUTER_ITEM);
-                    output.accept(CRYO_CHAMBER_ITEM);
+
                     output.accept(CUP_ITEM);
-                    output.accept(DANGER_SIGN_ITEM);
-                    output.accept(DARK_LATEX_ICE_ITEM);
-                    output.accept(DARK_LATEX_CRYSTAL_ITEM);
-                    output.accept(DARK_LATEX_CRYSTAL_SHARD);
+                    output.accept(BROKEN_CUP_ITEM);
                     output.accept(FLASK_ITEM);
-                    output.accept(GREEN_CRYSTAL_ITEM);
-                    output.accept(GREEN_CRYSTAL_SHARD);
+                    output.accept(BROKEN_FLASK_ITEM);
+                    output.accept(TEST_TUBES_ITEM);
+
+                    output.accept(TABLE_ITEM);
+                    output.accept(COMPUTER_ITEM);
+                    output.accept(CHAIR_ITEM);
+                    output.accept(ROTATING_CHAIR_ITEM);
+
+                    output.accept(CRYO_CHAMBER_ITEM);
+                    output.accept(DANGER_SIGN_ITEM);
                     output.accept(GAS_TANK_ITEM);
                     output.accept(IV_RACK_ITEM);
                     output.accept(KEYPAD_ITEM);
@@ -70,22 +88,28 @@ public class CreativeTabs {
                     output.accept(BIG_LIBRARY_DOOR_ITEM);
                     output.accept(MAINTENANCE_DOOR_ITEM);
                     output.accept(BIG_MAINTENANCE_DOOR_ITEM);
-                    output.accept(METAL_BOX_ITEM);
                     output.accept(NOTE_ITEM);
                     output.accept(NOTEPAD_ITEM);
                     output.accept(PIPE_ITEM);
                     output.accept(SCANNER_ITEM);
                     output.accept(SMALL_CARDBOARD_BOX_ITEM);
-                    output.accept(TABLE_ITEM);
+                    output.accept(CARDBOARD_BOX_ITEM);
                     output.accept(TALL_CARDBOARD_BOX_ITEM);
-                    output.accept(TEST_TUBES_ITEM);
+                    output.accept(METAL_BOX_ITEM);
                     output.accept(TRAFFIC_CONE_ITEM);
                     output.accept(VENT_DUCT_ITEM);
                     output.accept(VENT_HATCH_ITEM);
                     //Technology
+                    output.accept(COPPER_WRENCH);
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);
                     output.accept(IRON_PLATE);
+                    output.accept(LATEX_RESISTANT_COATING);
+                    output.accept(LATEX_RESISTANT_COMPOUND);
+                    output.accept(LATEX_RESISTANT_FABRIC);
+                    output.accept(LATEX_RESISTANT_BLOCK_ITEM);
+                    output.accept(LATEX_RESISTANT_GLASS_ITEM);
+                    output.accept(LATEX_RESISTANT_GLASS_PANE_ITEM);
                     output.accept(GENERATOR_ITEM);
                     output.accept(POWER_CELL);
                     output.accept(CAPACITOR_ITEM);
@@ -97,8 +121,11 @@ public class CreativeTabs {
                     output.accept(DNA_EXTRACTOR_ITEM);
                     output.accept(LATEX_ENCODER_COMPONENTS);
                     output.accept(LATEX_ENCODER_ITEM);
+                    output.accept(DERELICT_LATEX_ENCODER_ITEM);
                     output.accept(LATEX_PURIFIER_COMPONENTS);
                     output.accept(LATEX_PURIFIER_ITEM);
+                    output.accept(DERELICT_LATEX_PURIFIER_ITEM);
+                    output.accept(UNTRANSFUR_SYNTHESIZER_COMPONENTS);
                     //Wood
                     output.accept(ORANGE_BUTTON_ITEM);
                     output.accept(ORANGE_DOOR_ITEM);
@@ -134,6 +161,11 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_ITEM);
                     output.accept(DARK_LATEX_BLOCK_ITEM);
                     output.accept(WHITE_LATEX_BLOCK_ITEM);
+                    output.accept(DARK_LATEX_ICE_ITEM);
+                    output.accept(DARK_LATEX_CRYSTAL_ITEM);
+                    output.accept(DARK_LATEX_CRYSTAL_SHARD);
+                    output.accept(GREEN_CRYSTAL_ITEM);
+                    output.accept(GREEN_CRYSTAL_SHARD);
 
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);
@@ -141,7 +173,9 @@ public class CreativeTabs {
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
-                    output.accept(UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
                     output.accept(LATEX_MANIPULATOR);
 

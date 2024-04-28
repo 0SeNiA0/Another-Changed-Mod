@@ -10,7 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import org.jetbrains.annotations.Contract;
+import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,7 +20,10 @@ import java.util.function.Consumer;
 public abstract class AbstractTransfurType {
 
     public final ResourceLocation id;
+    public final Latex latex;
 
+    protected final int primaryColor;
+    protected final int secondaryColor;
     protected final float eyeHeightStanding;
     protected final float eyeHeightCrouching;
     protected final float eyeHeightSwimming;
@@ -35,6 +38,9 @@ public abstract class AbstractTransfurType {
 
     public AbstractTransfurType(@NotNull Properties properties){
         id = properties.location;
+        latex = properties.latex;
+        primaryColor = properties.primaryColor;
+        secondaryColor = properties.secondaryColor;
         eyeHeightStanding = properties.eyeHeightStanding;
         eyeHeightCrouching = properties.eyeHeightCrouching;
         eyeHeightSwimming = properties.eyeHeightSwimming;
@@ -50,6 +56,14 @@ public abstract class AbstractTransfurType {
 
     @OnlyIn(Dist.CLIENT)
     public abstract <E extends LivingEntity> CustomEntityModel<E> getModel(int modelVariant);
+
+    public int getPrimaryColor(){
+        return primaryColor;
+    }
+
+    public int getSecondaryColor(){
+        return secondaryColor;
+    }
 
     public float getEyeHeight(@NotNull Pose pose){
         return switch (pose) {
@@ -86,6 +100,9 @@ public abstract class AbstractTransfurType {
 
     public static class Properties {
         ResourceLocation location;
+        Latex latex;
+        int primaryColor = -1644826;
+        int secondaryColor = -4934476;
         float eyeHeightStanding = 1.62f;
         float eyeHeightCrouching = 1.27f;
         float eyeHeightSwimming = .4f;
@@ -106,13 +123,22 @@ public abstract class AbstractTransfurType {
         Consumer<LivingEntity> onTransfur;
         Consumer<LivingEntity> onUnTransfur;
 
-        protected Properties(ResourceLocation resourceLocation){
+        protected Properties(ResourceLocation resourceLocation, Latex latex){
             location = resourceLocation;
+            this.latex = latex;
         }
 
-        @Contract(value = "_ -> new", pure = true)
-        public static @NotNull Properties of(ResourceLocation resourceLocation){
-            return new AbstractTransfurType.Properties(resourceLocation);
+        public static @NotNull Properties of(ResourceLocation resourceLocation, Latex latex){
+            return new AbstractTransfurType.Properties(resourceLocation, latex);
+        }
+
+        /**
+         * Color in ARGB
+         */
+        public Properties colors(int primary, int secondary){
+            primaryColor = primary;
+            secondaryColor = secondary;
+            return this;
         }
 
         public Properties eyeHeight(float standing){

@@ -42,8 +42,11 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
         if(progress <= 0) return;
         pPoseStack.pushPose();
         pPoseStack.scale(1.02f, 1.02f, 1.02f);
+        int primaryColor = TransfurManager.getTransfurType(pEntity).getPrimaryColor();
         model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(mod$TEXTURE)),
-                pPackedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, progress / TransfurManager.TRANSFUR_TOLERANCE);
+                pPackedLight, OverlayTexture.NO_OVERLAY,
+                (0xFF & (primaryColor >> 16)) / 255f, (0xFF & (primaryColor >> 8)) / 255f, (0xFF & primaryColor) / 255f,
+                progress / TransfurManager.TRANSFUR_TOLERANCE);
         pPoseStack.popPose();
     }
 }

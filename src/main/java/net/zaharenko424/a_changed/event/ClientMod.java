@@ -15,18 +15,19 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
-import net.zaharenko424.a_changed.client.cmrs.Protogen;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
+import net.zaharenko424.a_changed.client.renderer.misc.SeatRenderer;
 import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
+import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -41,6 +42,7 @@ public class ClientMod {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
+
     }
 
     @SubscribeEvent
@@ -104,7 +106,8 @@ public class ClientMod {
         event.registerBlockEntityRenderer(BlockEntityRegistry.SIGN_ENTITY.get(), SignRenderer::new);
 
         event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
-        event.registerEntityRenderer(SEAT_ENTITY.get(), ChairRenderer::new);//Dummy renderer
+        event.registerEntityRenderer(SEAT_ENTITY.get(), SeatRenderer::new);//Dummy renderer
+        event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomEntityRenderer<>(a, BEI_FENG_TF.get().getModel(0)));
 
@@ -128,9 +131,10 @@ public class ClientMod {
     @SubscribeEvent
     public static void onLoadModelsToCache(LoadModelsToCacheEvent event){
         CustomModelManager modelManager = CustomModelManager.getInstance();
-        TRANSFUR_REGISTRY.stream().forEach(transfurType ->
-                modelManager.loadModel(transfurType.id, transfurType.getModel(0)));
-        modelManager.loadModel(AChanged.resourceLoc("0senia0"), new Protogen<>());
+        TRANSFUR_REGISTRY.stream().forEach(transfurType -> {
+            if (!(transfurType instanceof Special))
+                modelManager.registerModel(transfurType.id, transfurType.getModel(0));
+        });
     }
 
     @SubscribeEvent

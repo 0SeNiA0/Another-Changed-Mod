@@ -6,7 +6,15 @@ import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 
 public class URLLoadedModel <E extends LivingEntity> extends CustomEntityModel<E> {
 
+    private final boolean hasGlowParts;
+
     public URLLoadedModel(ModelPart root, ResourceLocation texture) {
         super(root, texture);
+        hasGlowParts = root.getAllParts().anyMatch(ModelPart::isGlowing);
+    }
+
+    @Override
+    public boolean hasGlowParts() {
+        return hasGlowParts;
     }
 }

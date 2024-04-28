@@ -41,7 +41,7 @@ public class TransfurManager {
         return TransfurCapability.nonNullOf(entity).getTransfurProgress();
     }
 
-    public static @Nullable AbstractTransfurType getTransfurType(@NotNull Player player){
+    public static @Nullable AbstractTransfurType getTransfurType(@NotNull LivingEntity player){
         ITransfurHandler handler = TransfurCapability.of(player);
         return handler == null ? null : handler.getTransfurType();
     }

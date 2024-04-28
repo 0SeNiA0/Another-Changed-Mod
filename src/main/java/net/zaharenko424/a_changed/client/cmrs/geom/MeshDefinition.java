@@ -10,7 +10,7 @@ public class MeshDefinition {
         this.quads = quads;
     }
 
-    public ModelPart.Mesh bake(int textureWidth, int textureHeight){
+    public ModelPart.Mesh bake(float textureWidth, float textureHeight){
         return new ModelPart.Mesh(vertices, quads, textureWidth, textureHeight);
     }
 }
