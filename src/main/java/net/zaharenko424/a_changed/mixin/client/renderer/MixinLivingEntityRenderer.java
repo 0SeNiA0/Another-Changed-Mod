@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client;
+package net.zaharenko424.a_changed.mixin.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
@@ -34,9 +34,12 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
         super(pContext);
     }
 
+    /**
+     *  Renders latex overlay depending on transfur progress
+     */
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-    private void test(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
+    private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
         if(pEntity.getCapability(TransfurCapability.CAPABILITY) == null) return;
         float progress = TransfurManager.getTransfurProgress(pEntity);
         if(progress <= 0) return;

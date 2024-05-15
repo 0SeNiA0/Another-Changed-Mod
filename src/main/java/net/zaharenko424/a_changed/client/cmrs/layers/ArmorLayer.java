@@ -17,8 +17,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.util.Utils;
 
 import javax.annotation.Nullable;
@@ -26,13 +26,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 
 @ParametersAreNonnullByDefault
-public class ArmorLayer<E extends LivingEntity, M extends CustomEntityModel<E>> extends RenderLayer<E,M> {
+public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E,M> {
 
     protected static final HashMap<String, ResourceLocation> ARMOR_LOCATION_CACHE = new HashMap<>();
     protected final TextureAtlas armorTrimAtlas;
     protected M model;
 
-    public ArmorLayer(CustomEntityRenderer<E> renderer, TextureAtlas armorTrimAtlas) {
+    public ArmorLayer(CustomHumanoidRenderer<E> renderer, TextureAtlas armorTrimAtlas) {
         super((RenderLayerParent<E, M>) renderer);
         this.armorTrimAtlas = armorTrimAtlas;
     }

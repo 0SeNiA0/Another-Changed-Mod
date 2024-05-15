@@ -50,6 +50,11 @@ public class BigLabLamp extends HorizontalTwoBlockMultiBlock {
         if (!pLevel.isClientSide) {
             if (pState.getValue(LIT) != pLevel.hasNeighborSignal(pPos)) {
                 pLevel.setBlock(pPos, pState.cycle(LIT), 2);
+                BlockPos pos = getMainPos(pState, pPos);
+                if(pos == pPos){
+                    pos = PARTS.get(1).toSecondaryPos(pos, pState.getValue(FACING));
+                }
+                pLevel.setBlock(pos, pLevel.getBlockState(pos).cycle(LIT), 2);
             }
         }
     }

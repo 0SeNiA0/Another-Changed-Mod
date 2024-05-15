@@ -10,15 +10,15 @@ import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public abstract class CustomEntityModel<E extends LivingEntity> extends HierarchicalHumanoidModel<E> {
+public abstract class CustomHumanoidModel<E extends LivingEntity> extends HierarchicalHumanoidModel<E> {
 
     protected final ResourceLocation texture;
 
-    public CustomEntityModel(ModelLayerLocation location, ResourceLocation texture) {
+    public CustomHumanoidModel(ModelLayerLocation location, ResourceLocation texture) {
         this(ModelDefinitionCache.INSTANCE.bake(location), texture);
     }
 
-    public CustomEntityModel(ModelPart root, ResourceLocation texture){
+    public CustomHumanoidModel(ModelPart root, ResourceLocation texture){
         super(root);
         if(!texture.getPath().startsWith("textures/")) this.texture = AChanged.textureLoc(texture.withPrefix("entity/"));
         else this.texture = texture;

@@ -334,6 +334,14 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(DARK_LATEX_ITEM), has(DARK_LATEX_ITEM))
                 .save(out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, DIAMOND_CHISEL)
+                .pattern(" D")
+                .pattern("S ")
+                .define('D', Tags.Items.GEMS_DIAMOND)
+                .define('S', Items.STICK)
+                .unlockedBy(getHasName(Items.DIAMOND), has(Tags.Items.GEMS_DIAMOND))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, DNA_EXTRACTOR_ITEM)
                 .pattern("GIG")
                 .pattern("ICI")
@@ -438,6 +446,14 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('B', Items.IRON_BOOTS)
                 .define('C', LATEX_RESISTANT_COATING)
                 .unlockedBy(getHasName(LATEX_RESISTANT_FABRIC), has(LATEX_RESISTANT_FABRIC))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IRON_CHISEL)
+                .pattern(" I")
+                .pattern("S ")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('S', Items.STICK)
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRON_PLATE, 2)

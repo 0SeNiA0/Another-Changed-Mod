@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 
-public class URLLoadedModel <E extends LivingEntity> extends CustomEntityModel<E> {
+public class URLLoadedModel <E extends LivingEntity> extends CustomHumanoidModel<E> {
 
     private final boolean hasGlowParts;
 

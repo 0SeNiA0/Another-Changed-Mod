@@ -13,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,6 +26,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
@@ -37,6 +37,7 @@ import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.item.Chisel;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -64,11 +65,17 @@ public class CommonEvent {
         TransfurTolerance.register(dispatcher);
     }
 
+    /**
+     * Load transfur tolerance value
+     */
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event){
         event.getServer().overworld().getDataStorage().computeIfAbsent(TransfurToleranceData.FACTORY, "transfur_tolerance");
     }
 
+    /**
+     * Send capability data to player
+     */
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
@@ -142,7 +149,7 @@ public class CommonEvent {
                 pos = pos.relative(direction);
                 if(!level.getBlockState(pos).canBeReplaced()) return;
             }
-            if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction),3)) return;
+            if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
             if(!player.isCreative()) player.getItemInHand(event.getHand()).shrink(1);
             denyEvent(event);
         }
@@ -152,6 +159,20 @@ public class CommonEvent {
         event.setUseBlock(Event.Result.DENY);
         event.setUseItem(Event.Result.DENY);
         event.setCanceled(true);
+    }
+
+    /**
+     * Handle chisel in survival
+     */
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event){
+        if(event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) return;
+        Player player = event.getEntity();
+        ItemStack item = player.getMainHandItem();
+        if(player.level().isClientSide || player.isCreative() || !(item.getItem() instanceof Chisel chisel)) return;
+        Level level = player.level();
+        BlockPos pos = event.getPos();
+        chisel.canAttackBlock(level.getBlockState(pos), level, pos, player);
     }
 
     @SubscribeEvent
@@ -183,6 +204,9 @@ public class CommonEvent {
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
     }
 
+    /**
+     * Reduce fall damage taken by cat transfurs
+     */
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event){
         LivingEntity entity = event.getEntity();
@@ -195,7 +219,7 @@ public class CommonEvent {
     }
 
     /**
-     * Server event
+     * Send data about remote player to other player
      */
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
@@ -208,7 +232,7 @@ public class CommonEvent {
     }
 
     /**
-     * Server event
+     * Clone capability data on respawn etc.
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){

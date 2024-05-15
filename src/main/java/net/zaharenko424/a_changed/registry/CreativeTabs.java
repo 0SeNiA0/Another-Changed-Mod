@@ -100,6 +100,8 @@ public class CreativeTabs {
                     output.accept(VENT_DUCT_ITEM);
                     output.accept(VENT_HATCH_ITEM);
                     //Technology
+                    output.accept(IRON_CHISEL);
+                    output.accept(DIAMOND_CHISEL);
                     output.accept(COPPER_WRENCH);
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);

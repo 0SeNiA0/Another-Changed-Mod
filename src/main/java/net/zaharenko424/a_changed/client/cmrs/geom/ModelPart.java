@@ -12,9 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -296,7 +294,7 @@ public class ModelPart {
         protected final ImmutableList<Vector3f> vertices;
         protected final Quad[] quads;
 
-        protected Mesh(ImmutableList<Vector3f> vertices, Quad[] quads){
+        public Mesh(ImmutableList<Vector3f> vertices, Quad[] quads){
             this.vertices = vertices;
             this.quads = quads;
         }
@@ -334,6 +332,62 @@ public class ModelPart {
             Matrix3f normal = pose.normal();
             for(Quad quad : this.quads) {
                 quad.compile(poseM, normal, consumer, light, overlay, r, g, b, alpha);
+            }
+        }
+    }
+
+    public static class SmoothMesh extends Mesh {
+
+        protected final ImmutableList<Vector3f> normals;
+
+        protected SmoothMesh(ImmutableList<Vector3f> vertices, ImmutableList<Vector3f> normals, Quad[] quads) {
+            super(vertices, quads);
+            if(vertices.size() != normals.size()) throw new IllegalStateException("Vertex count != normal count");
+            this.normals = normals;
+        }
+
+        public SmoothMesh(float[] vertices, float[] quads, float textureWidth, float textureHeight) {
+            super(vertices, quads, textureWidth, textureHeight);
+
+            HashMap<Vector3f, List<Vector3f>> map = new HashMap<>();
+            for(Quad quad : this.quads){
+                for(Vertex vert : quad.vertices){
+                    map.computeIfAbsent(vert.pos, a -> new ArrayList<>()).add(quad.normal);
+                }
+            }
+
+            List<Vector3f> list;
+            Vector3f[] buffer = new Vector3f[1];
+            ImmutableList.Builder<Vector3f> builder = new ImmutableList.Builder<>();
+            for(Vector3f pos : this.vertices){
+                list = map.get(pos);
+                if(list == null) {
+                    builder.add(new Vector3f());
+                    continue;
+                }
+                buffer[0] = new Vector3f();
+                list.forEach(normal -> buffer[0].add(normal));
+                buffer[0].div(list.size()).normalize();
+                builder.add(buffer[0]);
+            }
+            normals = builder.build();
+        }
+
+        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
+            Matrix4f poseM = pose.pose();
+            Matrix3f normal = pose.normal();
+            for(Quad quad : this.quads) {
+                Vector3f vector3f = normal.transform(new Vector3f(quad.normal));
+                for(Vertex vertex : quad.vertices) {
+                    Vector4f vector4f = poseM.transform(new Vector4f(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
+                    Vector3f vNormal = normals != null ? normal.transform(new Vector3f(normals.get(vertices.indexOf(vertex.pos)))) : vector3f;
+                    consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(),
+                            r, g, b, alpha,
+                            vertex.u, vertex.v,
+                            overlay, light,
+                            vNormal.x(), vNormal.y(), vNormal.z()
+                    );
+                }
             }
         }
     }

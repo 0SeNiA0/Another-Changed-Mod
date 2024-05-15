@@ -22,7 +22,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.layers.*;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.client.cmrs.model.DummyModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +31,11 @@ import org.joml.Vector3f;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class CustomEntityRenderer<E extends LivingEntity> extends LivingEntityRenderer<E, CustomEntityModel<E>> {
+public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntityRenderer<E, CustomHumanoidModel<E>> {
 
     protected final EntityRendererProvider.Context context;
 
-    public CustomEntityRenderer(EntityRendererProvider.Context context, CustomEntityModel<E> model){
+    public CustomHumanoidRenderer(EntityRendererProvider.Context context, CustomHumanoidModel<E> model){
         super(context,model,.5f);
         this.context = context;
         addLayers();
@@ -45,7 +45,7 @@ public class CustomEntityRenderer<E extends LivingEntity> extends LivingEntityRe
     /**
     Only use for creating latex renderer for players!
      */
-    public CustomEntityRenderer(EntityRendererProvider.Context context) {
+    public CustomHumanoidRenderer(EntityRendererProvider.Context context) {
         this(context, new DummyModel<>());
     }
 

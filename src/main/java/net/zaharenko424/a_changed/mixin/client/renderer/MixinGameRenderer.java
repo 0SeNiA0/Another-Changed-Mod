@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client;
+package net.zaharenko424.a_changed.mixin.client.renderer;
 
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.LivingEntity;

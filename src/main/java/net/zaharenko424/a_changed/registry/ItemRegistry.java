@@ -44,6 +44,8 @@ public class ItemRegistry {
         }
     });
 
+    public static final DeferredItem<BuildersWand> BUILDERS_WAND = ITEMS.register("builders_wand", ()-> new BuildersWand(new Item.Properties()));
+
     //BlockItems
     public static final DeferredItem<BlockItem> AIR_CONDITIONER_ITEM = ITEMS.registerSimpleBlockItem(AIR_CONDITIONER);
     public static final DeferredItem<BlockItem> BIG_LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_DOOR);
@@ -181,6 +183,7 @@ public class ItemRegistry {
     public static final DeferredItem<Item> COPPER_PLATE = ITEMS.registerSimpleItem("copper_plate");
     public static final DeferredItem<Item> DARK_LATEX_CRYSTAL_SHARD = ITEMS.registerSimpleItem("dark_latex_crystal_shard");
     public static final DeferredItem<LatexItem> DARK_LATEX_ITEM = ITEMS.register("dark_latex", ()-> new LatexItem(TransfurRegistry.DARK_LATEX_WOLF_M_TF, Latex.DARK));
+    public static final DeferredItem<Chisel> DIAMOND_CHISEL = ITEMS.register("diamond_chisel", ()-> new Chisel(Tiers.DIAMOND, new Item.Properties()));
     public static final DeferredItem<DNASample> DNA_SAMPLE = ITEMS.register("dna_sample", DNASample::new);
     public static final DeferredItem<Item> EMPTY_CANISTER = ITEMS.registerSimpleItem("empty_canister");
     public static final DeferredItem<Item> GOLDEN_PLATE = ITEMS.registerSimpleItem("golden_plate");
@@ -189,6 +192,7 @@ public class ItemRegistry {
     public static final DeferredItem<HazmatArmorItem> HAZMAT_CHESTPLATE = ITEMS.register("hazmat_chestplate", ()-> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_LEGGINGS = ITEMS.register("hazmat_leggings", ()-> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final DeferredItem<HazmatArmorItem> HAZMAT_BOOTS = ITEMS.register("hazmat_boots", ()-> new HazmatArmorItem(ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final DeferredItem<Chisel> IRON_CHISEL = ITEMS.register("iron_chisel", ()-> new Chisel(Tiers.IRON, new Item.Properties()));
     public static final DeferredItem<Item> IRON_PLATE = ITEMS.registerSimpleItem("iron_plate");
     public static final DeferredItem<Item> LATEX_ENCODER_COMPONENTS = ITEMS.registerSimpleItem("latex_encoder_components");
     public static final DeferredItem<LatexManipulator> LATEX_MANIPULATOR = ITEMS.register("latex_manipulator", LatexManipulator::new);

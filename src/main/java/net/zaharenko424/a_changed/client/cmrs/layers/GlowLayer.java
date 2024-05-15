@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class GlowLayer<E extends LivingEntity, M extends CustomEntityModel<E>> extends RenderLayer<E, M> {
+public class GlowLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E, M> {
 
     public GlowLayer(RenderLayerParent<E, M> pRenderer) {
         super(pRenderer);

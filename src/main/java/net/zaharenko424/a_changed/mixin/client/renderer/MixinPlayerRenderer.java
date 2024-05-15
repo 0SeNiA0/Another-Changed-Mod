@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client;
+package net.zaharenko424.a_changed.mixin.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PlayerModel;
@@ -7,12 +7,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
-import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
 import net.zaharenko424.a_changed.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,10 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerRenderer.class)
 public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
-    @Shadow public abstract void render(AbstractClientPlayer pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight);
-
     @Unique
-    private CustomEntityRenderer<AbstractClientPlayer> mod$renderer;
+    private CustomHumanoidRenderer<AbstractClientPlayer> mod$renderer;
 
     public MixinPlayerRenderer(EntityRendererProvider.Context p_174289_, PlayerModel<AbstractClientPlayer> p_174290_, float p_174291_) {
         super(p_174289_, p_174290_, p_174291_);
@@ -32,7 +29,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 
     @Inject(at = @At("RETURN"),method = "<init>")
     private void onInit(EntityRendererProvider.Context p_174557_, boolean p_174558_, CallbackInfo ci){
-        mod$renderer = new CustomEntityRenderer<>(p_174557_);
+        mod$renderer = new CustomHumanoidRenderer<>(p_174557_);
     }
 
     @Inject(at = @At("HEAD"),

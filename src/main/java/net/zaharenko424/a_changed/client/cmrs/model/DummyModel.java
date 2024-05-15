@@ -10,7 +10,7 @@ import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
-public class DummyModel<E extends LivingEntity> extends CustomEntityModel<E> {
+public class DummyModel<E extends LivingEntity> extends CustomHumanoidModel<E> {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(new ResourceLocation(AChanged.MODID,"dummy"),"main");
     public static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/dummy");

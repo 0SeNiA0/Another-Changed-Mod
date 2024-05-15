@@ -24,10 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
@@ -184,10 +181,9 @@ public class ClientEvent {
         return false;
     }
 
-    private static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,
-            double p_109786_, double p_109787_, double p_109788_,
-            float p_109789_, float p_109790_, float p_109791_, float p_109792_
-    ) {
+    public static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,
+                                   double p_109786_, double p_109787_, double p_109788_,
+                                   float r, float g, float b, float a) {
         PoseStack.Pose posestack$pose = p_109783_.last();
         p_109785_.forAllEdges(
                 (p_234280_, p_234281_, p_234282_, p_234283_, p_234284_, p_234285_) -> {
@@ -199,11 +195,11 @@ public class ClientEvent {
                     f1 /= f3;
                     f2 /= f3;
                     p_109784_.vertex(posestack$pose.pose(), (float)(p_234280_ + p_109786_), (float)(p_234281_ + p_109787_), (float)(p_234282_ + p_109788_))
-                            .color(p_109789_, p_109790_, p_109791_, p_109792_)
+                            .color(r, g, b, a)
                             .normal(posestack$pose.normal(), f, f1, f2)
                             .endVertex();
                     p_109784_.vertex(posestack$pose.pose(), (float)(p_234283_ + p_109786_), (float)(p_234284_ + p_109787_), (float)(p_234285_ + p_109788_))
-                            .color(p_109789_, p_109790_, p_109791_, p_109792_)
+                            .color(r, g, b, a)
                             .normal(posestack$pose.normal(), f, f1, f2)
                             .endVertex();
                 }

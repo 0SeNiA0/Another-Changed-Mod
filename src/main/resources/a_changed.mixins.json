@@ -18,13 +18,15 @@
     "MixinWanderingTrader"
   ],
   "client": [
-    "client.MixinFallingBlockRenderer",
-    "client.MixinFogRenderer",
-    "client.MixinGameRenderer",
+    "client.MixinBlockModelShaper",
     "client.MixinGui",
-    "client.MixinItemRenderer",
+    "client.MixinLevelRenderer",
     "client.MixinLightTexture",
-    "client.MixinLivingEntityRenderer",
-    "client.MixinPlayerRenderer"
+    "client.renderer.MixinFallingBlockRenderer",
+    "client.renderer.MixinFogRenderer",
+    "client.renderer.MixinGameRenderer",
+    "client.renderer.MixinItemRenderer",
+    "client.renderer.MixinLivingEntityRenderer",
+    "client.renderer.MixinPlayerRenderer"
   ]
 }

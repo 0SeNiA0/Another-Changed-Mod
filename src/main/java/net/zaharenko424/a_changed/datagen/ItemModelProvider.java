@@ -21,6 +21,8 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
     @Override
     protected void registerModels() {
+        basicItem(BUILDERS_WAND.getId());
+
         basicItem(BLACK_LATEX_SHORTS.getId());
         basicItem(BLOOD_SYRINGE.getId());
         basicItem(CARDBOARD.getId());
@@ -31,6 +33,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
+        basicItem(DIAMOND_CHISEL.getId());
         basicItem(DNA_SAMPLE.getId());
         basicItem(EMPTY_CANISTER.getId());
         basicItem(GOLDEN_PLATE.getId());
@@ -39,6 +42,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(HAZMAT_CHESTPLATE.getId());
         basicItem(HAZMAT_LEGGINGS.getId());
         basicItem(HAZMAT_BOOTS.getId());
+        basicItem(IRON_CHISEL.getId());
         basicItem(IRON_PLATE.getId());
         basicItem(LATEX_ENCODER_COMPONENTS.getId());
         basicItem(LATEX_MANIPULATOR.getId());

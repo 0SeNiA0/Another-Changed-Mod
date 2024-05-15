@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Latex;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public abstract class AbstractTransfurType {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract <E extends LivingEntity> CustomEntityModel<E> getModel(int modelVariant);
+    public abstract <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant);
 
     public int getPrimaryColor(){
         return primaryColor;

@@ -42,14 +42,7 @@ public class VentDuct extends ConnectedTextureBlock {
 
     public VentDuct(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(stateDefinition.any()
-                .setValue(UP,false)
-                .setValue(DOWN,false)
-                .setValue(NORTH,false)
-                .setValue(EAST,false)
-                .setValue(SOUTH,false)
-                .setValue(WEST,false)
-                .setValue(FLAGS, 0));
+        registerDefaultState(defaultBlockState().setValue(FLAGS, 0));
     }
 
     @Override
@@ -105,13 +98,13 @@ public class VentDuct extends ConnectedTextureBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return updateState(super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_), p_60544_, p_60545_);
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+        return updateState(state.setValue(propByDirection.get(direction), shouldConnectTo(neighborState, neighborPos, level, direction)), level, pos);
     }
 
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        return updateState(super.getStateForPlacement(p_49820_), p_49820_.getLevel(), p_49820_.getClickedPos());
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        return updateState(super.getStateForPlacement(context), context.getLevel(), context.getClickedPos());
     }
 
     private @NotNull BlockState updateState(BlockState state, LevelAccessor level, BlockPos pos){
@@ -149,8 +142,8 @@ public class VentDuct extends ConnectedTextureBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(FLAGS));
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST, FLAGS);
     }
 
     static {

@@ -11,12 +11,12 @@ import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-public class HypnoCatModel <E extends LivingEntity> extends CustomEntityModel<E> {
+public class HypnoCatModel <E extends LivingEntity> extends CustomHumanoidModel<E> {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(TransfurRegistry.HYPNO_CAT_TF.getId(), "main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/hypno_cat");

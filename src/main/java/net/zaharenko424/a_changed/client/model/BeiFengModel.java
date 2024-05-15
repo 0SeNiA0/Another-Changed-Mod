@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.client.cmrs.animation.Animations;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class BeiFengModel<E extends LivingEntity> extends CustomEntityModel<E> {
+public class BeiFengModel<E extends LivingEntity> extends CustomHumanoidModel<E> {
 
     public static ModelLayerLocation bodyLayer = new ModelLayerLocation(TransfurRegistry.BEI_FENG_TF.getId(),"main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/bei_feng");
