@@ -8,13 +8,14 @@ import net.zaharenko424.a_changed.client.model.BeiFengModel;
 import org.jetbrains.annotations.NotNull;
 
 public class BeiFeng extends AbstractTransfurType{
+
     public BeiFeng(@NotNull Properties properties) {
         super(properties.eyeHeight(1.75f,1.5f).maxHealthModifier(4));
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant) {
+    protected CustomHumanoidModel<LivingEntity> getModel_() {
         return new BeiFengModel<>();
     }
 }

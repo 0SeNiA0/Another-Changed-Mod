@@ -14,7 +14,7 @@ public class Special extends AbstractTransfurType {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant) {
+    public CustomHumanoidModel<LivingEntity> getModel_() {
         return null;
     }
 }

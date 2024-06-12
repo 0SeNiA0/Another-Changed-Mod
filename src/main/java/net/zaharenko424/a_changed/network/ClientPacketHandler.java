@@ -138,7 +138,7 @@ public class ClientPacketHandler {
 
     private void setTransfurModel(AbstractClientPlayer player, AbstractTransfurType transfurType){
         if(transfurType instanceof Special) CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
-        else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, ()-> transfurType.getModel(0), 1);
+        else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
     }
 
     public void handleOpenTransfurScreen(@NotNull PlayPayloadContext context){

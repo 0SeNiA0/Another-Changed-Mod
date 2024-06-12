@@ -189,6 +189,7 @@ public class CustomModelManager {
                     }
 
                     Vector3f inflation;
+                    boolean smooth;
                     while (c != ';') {//  ';' at the end of group definition!
                         switch (c) {
                             case 'a' -> groupBuilder.armor();
@@ -219,7 +220,13 @@ public class CustomModelManager {
                                     groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], inflation, uv);
                                 else groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], uv);
                             }
-                            case 'm' -> groupBuilder.addMesh(buf.readFloatArray(), buf.readFloatArray());
+                            case 'm' -> {
+                                if(buf.peekChar() == 's'){
+                                    smooth = true;
+                                    buf.skipChar();
+                                } else smooth = false;
+                                groupBuilder.addMesh(buf.readFloatArray(), buf.readFloatArray(), smooth);
+                            }
                         }
                         c = buf.readChar();
                     }

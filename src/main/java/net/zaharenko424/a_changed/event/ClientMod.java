@@ -109,23 +109,23 @@ public class ClientMod {
         event.registerEntityRenderer(SEAT_ENTITY.get(), SeatRenderer::new);//Dummy renderer
         event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);
 
-        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomHumanoidRenderer<>(a, BEI_FENG_TF.get().getModel(0)));
+        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomHumanoidRenderer<>(a, BEI_FENG_TF.get().getModel()));
 
-        event.registerEntityRenderer(BENIGN.get(), a -> new CustomHumanoidRenderer<>(a, BENIGN_TF.get().getModel(0)));
+        event.registerEntityRenderer(BENIGN.get(), a -> new CustomHumanoidRenderer<>(a, BENIGN_TF.get().getModel()));
 
-        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getModel(0)));
-        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getModel(0)));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getModel()));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getModel()));
 
-        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, GAS_WOLF_TF.get().getModel(0)));
+        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, GAS_WOLF_TF.get().getModel()));
 
-        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomHumanoidRenderer<>(a, HYPNO_CAT_TF.get().getModel(0)));
+        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomHumanoidRenderer<>(a, HYPNO_CAT_TF.get().getModel()));
 
-        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_F_TF.get().getModel(0)));
-        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_M_TF.get().getModel(0)));
+        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_F_TF.get().getModel()));
+        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_M_TF.get().getModel()));
 
-        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel(0)));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel(0)));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel(0)));
+        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel()));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel()));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel()));
     }
 
     @SubscribeEvent
@@ -133,7 +133,7 @@ public class ClientMod {
         CustomModelManager modelManager = CustomModelManager.getInstance();
         TRANSFUR_REGISTRY.stream().forEach(transfurType -> {
             if (!(transfurType instanceof Special))
-                modelManager.registerModel(transfurType.id, transfurType.getModel(0));
+                modelManager.registerModel(transfurType.id, transfurType.getModel());
         });
     }
 

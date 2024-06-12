@@ -42,7 +42,7 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
     private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
         if(pEntity.getCapability(TransfurCapability.CAPABILITY) == null) return;
         float progress = TransfurManager.getTransfurProgress(pEntity);
-        if(progress <= 0) return;
+        if(progress <= 0 || progress >= TransfurManager.TRANSFUR_TOLERANCE) return;
         pPoseStack.pushPose();
         pPoseStack.scale(1.02f, 1.02f, 1.02f);
         int primaryColor = TransfurManager.getTransfurType(pEntity).getPrimaryColor();

@@ -17,7 +17,7 @@ public class LatexShark extends AbstractWaterLatex {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant) {
+    protected CustomHumanoidModel<LivingEntity> getModel_() {
         return gender == Gender.FEMALE ? new LatexSharkFemaleModel<>() : new LatexSharkMaleModel<>();
     }
 }

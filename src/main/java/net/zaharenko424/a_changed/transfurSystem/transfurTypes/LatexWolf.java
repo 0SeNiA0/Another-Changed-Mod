@@ -17,7 +17,7 @@ public class LatexWolf extends AbstractTransfurType {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant) {
+    protected CustomHumanoidModel<LivingEntity> getModel_() {
         return gender != Gender.FEMALE ? new LatexWolfMaleModel<>(id) : new LatexWolfFemaleModel<>(id);
     }
 }

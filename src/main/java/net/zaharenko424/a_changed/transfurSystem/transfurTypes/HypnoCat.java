@@ -15,7 +15,7 @@ public class HypnoCat extends AbstractLatexCat {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant) {
+    protected  CustomHumanoidModel<LivingEntity> getModel_() {
         return new HypnoCatModel<>();
     }
 }

@@ -55,7 +55,16 @@ public abstract class AbstractTransfurType {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract <E extends LivingEntity> CustomHumanoidModel<E> getModel(int modelVariant);
+    private CustomHumanoidModel<LivingEntity> model;
+
+    @OnlyIn(Dist.CLIENT)
+    protected abstract CustomHumanoidModel<LivingEntity> getModel_();
+
+    @OnlyIn(Dist.CLIENT)
+    public final CustomHumanoidModel<LivingEntity> getModel(){
+        if(model == null) model = getModel_();
+        return model;
+    }
 
     public int getPrimaryColor(){
         return primaryColor;

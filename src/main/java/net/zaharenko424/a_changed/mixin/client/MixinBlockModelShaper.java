@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Mixin(BlockModelShaper.class)
@@ -19,12 +20,18 @@ public class MixinBlockModelShaper {
         return null;
     }
 
+    /**
+     * ignore state lock when creating block models
+     */
     @Inject(at = @At("HEAD"), method = "statePropertiesToString", cancellable = true)
     private static void onStatePropertiesToString(Map<Property<?>, Comparable<?>> pPropertyValues, CallbackInfoReturnable<String> cir){
-        if(!pPropertyValues.containsKey(StateProperties.LOCKED_STATE)) return;
+        if(!pPropertyValues.containsKey(StateProperties.LOCKED_STATE) && !pPropertyValues.containsKey(StateProperties.COVERED_BY)) return;
+        HashMap<Property<?>, Comparable<?>> map = new HashMap<>(pPropertyValues);
+        map.remove(StateProperties.LOCKED_STATE);
+        map.remove(StateProperties.COVERED_BY);
         StringBuilder stringbuilder = new StringBuilder();
 
-        for(Map.Entry<Property<?>, Comparable<?>> entry : pPropertyValues.entrySet()) {
+        for(Map.Entry<Property<?>, Comparable<?>> entry : map.entrySet()) {
             if (!stringbuilder.isEmpty()) {
                 stringbuilder.append(',');
             }

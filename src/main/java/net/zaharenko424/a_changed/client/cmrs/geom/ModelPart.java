@@ -293,6 +293,8 @@ public class ModelPart {
 
         protected final ImmutableList<Vector3f> vertices;
         protected final Quad[] quads;
+        //Object rig;
+        //List<Vector3f> defPositions
 
         public Mesh(ImmutableList<Vector3f> vertices, Quad[] quads){
             this.vertices = vertices;
@@ -328,11 +330,27 @@ public class ModelPart {
         }
 
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
+            //Modify all vertices using rig
+            /*
+            * PoseStack stack = new PoseStack
+            * applyRig(PoseStack, ...){
+            *   stack.addStuff(...)
+            *   for(vertices){
+            *       vertex.pos = stack.transform(...)
+            *   }
+            *
+            *   for(RigBone bone : rig.bones){
+            *     bone.applyRig()
+            *   }
+            * }
+            *
+            * */
             Matrix4f poseM = pose.pose();
             Matrix3f normal = pose.normal();
             for(Quad quad : this.quads) {
                 quad.compile(poseM, normal, consumer, light, overlay, r, g, b, alpha);
             }
+            //Reset vertices to default pos
         }
     }
 
