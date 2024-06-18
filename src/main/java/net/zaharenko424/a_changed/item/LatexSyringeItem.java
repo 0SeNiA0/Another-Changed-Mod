@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public class LatexSyringeItem extends AbstractSyringe{
         }
     }
 
-    public static @NotNull ItemStack encodeTransfur(@NotNull AbstractTransfurType transfurType){
+    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
         ItemStack syringe = new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
         CompoundTag tag = syringe.hasTag() ? syringe.getTag() : new CompoundTag();
         NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());

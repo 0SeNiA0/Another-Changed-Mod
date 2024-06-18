@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractWaterLatex;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +23,7 @@ public class MixinFogRenderer {
         if(instance.hasEffect(pEffect)) return true;
         if(pEffect != MobEffects.NIGHT_VISION || !(instance instanceof Player player)
                 || !TransfurManager.isTransfurred(player)) return false;
-        AbstractTransfurType transfurType = TransfurManager.getTransfurType(player);
+        TransfurType transfurType = TransfurManager.getTransfurType(player);
         return transfurType instanceof AbstractLatexCat
                 || (transfurType instanceof AbstractWaterLatex && player.isInWaterOrBubble());
     }

@@ -20,7 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +42,9 @@ public class LatexPuddle extends Block {
     private static final VoxelShape SHAPE_NESW = Shapes.box(0, 0, 0, 1, 0.0625, 1);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
     private static final HashMap<VoxelShape, AABB> AABB_CACHE = new HashMap<>();
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
 
-    public LatexPuddle(BlockBehaviour.Properties p_49795_, Supplier<? extends AbstractTransfurType> transfurType) {
+    public LatexPuddle(BlockBehaviour.Properties p_49795_, Supplier<? extends TransfurType> transfurType) {
         super(p_49795_.friction(.9f).speedFactor(.6f).jumpFactor(.6f));
         registerDefaultState(stateDefinition.any()
                 .setValue(NORTH,false)

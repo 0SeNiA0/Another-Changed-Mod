@@ -1,7 +1,7 @@
 package net.zaharenko424.a_changed.capability;
 
 import net.minecraft.nbt.CompoundTag;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -11,15 +11,16 @@ public interface ITransfurHandler {
 
     float getTransfurProgress();
 
-    void setTransfurProgress(float amount, AbstractTransfurType transfurType);
+    void setTransfurProgress(float amount, TransfurType transfurType);
 
-    @Nullable AbstractTransfurType getTransfurType();
+    @Nullable
+    TransfurType getTransfurType();
 
-    void setTransfurType(AbstractTransfurType transfurType);
+    void setTransfurType(TransfurType transfurType);
 
     boolean isTransfurred();
 
-    void transfur(AbstractTransfurType transfurType);
+    void transfur(TransfurType transfurType);
 
     void unTransfur();
 

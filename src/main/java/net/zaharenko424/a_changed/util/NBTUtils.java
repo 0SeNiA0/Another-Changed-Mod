@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +30,7 @@ public class NBTUtils {
         return tag != null && tag.contains(KEY);
     }
 
-    public static @Nullable AbstractTransfurType readTransfurType(CompoundTag tag){
+    public static @Nullable TransfurType readTransfurType(CompoundTag tag){
         if(!tag.contains(TransfurManager.TRANSFUR_TYPE_KEY)) return null;
         return TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
     }

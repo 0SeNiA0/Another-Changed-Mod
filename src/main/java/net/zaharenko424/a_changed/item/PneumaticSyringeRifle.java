@@ -16,7 +16,7 @@ import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    AbstractTransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
+    TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
         for(int i = 1; i < 9; i++){
             if(!handler.getStackInSlot(i).isEmpty()) return TransfurManager.getTransfurType(
                     Objects.requireNonNull(LatexSyringeItem.decodeTransfur(handler.extractItem(i, 1, simulate))));

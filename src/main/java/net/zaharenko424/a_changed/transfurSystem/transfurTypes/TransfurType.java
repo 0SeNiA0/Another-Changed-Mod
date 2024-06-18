@@ -6,18 +6,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public abstract class AbstractTransfurType {
+public abstract class TransfurType {
 
     public final ResourceLocation id;
     public final Latex latex;
@@ -36,7 +37,7 @@ public abstract class AbstractTransfurType {
     protected final Consumer<LivingEntity> onTransfur;
     protected final Consumer<LivingEntity> onUnTransfur;
 
-    public AbstractTransfurType(@NotNull Properties properties){
+    public TransfurType(@NotNull Properties properties, @Nullable MemorizingSupplier<CustomHumanoidModel<LivingEntity>> modelSupplier){
         id = properties.location;
         latex = properties.latex;
         primaryColor = properties.primaryColor;
@@ -52,18 +53,13 @@ public abstract class AbstractTransfurType {
         organic = properties.organic;
         onTransfur = properties.onTransfur;
         onUnTransfur = properties.onUnTransfur;
+        this.modelSupplier = modelSupplier;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private CustomHumanoidModel<LivingEntity> model;
+    public final Supplier<CustomHumanoidModel<LivingEntity>> modelSupplier;
 
-    @OnlyIn(Dist.CLIENT)
-    protected abstract CustomHumanoidModel<LivingEntity> getModel_();
-
-    @OnlyIn(Dist.CLIENT)
     public final CustomHumanoidModel<LivingEntity> getModel(){
-        if(model == null) model = getModel_();
-        return model;
+        return modelSupplier.get();
     }
 
     public int getPrimaryColor(){
@@ -138,7 +134,7 @@ public abstract class AbstractTransfurType {
         }
 
         public static @NotNull Properties of(ResourceLocation resourceLocation, Latex latex){
-            return new AbstractTransfurType.Properties(resourceLocation, latex);
+            return new TransfurType.Properties(resourceLocation, latex);
         }
 
         /**

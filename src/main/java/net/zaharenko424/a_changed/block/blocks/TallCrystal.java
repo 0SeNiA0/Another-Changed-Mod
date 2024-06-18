@@ -18,7 +18,7 @@ import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.block.NotRotatedMultiBlock;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,10 +35,10 @@ public class TallCrystal extends NotRotatedMultiBlock {
     private static final VoxelShape SHAPE1 = SHAPE0.move(0,-1,0);
     private static final AABB aabb0 = SHAPE0.bounds();
     private static final AABB aabb1 = SHAPE1.bounds();
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
     public static IntegerProperty PART = StateProperties.PART2;
 
-    public TallCrystal(Properties p_54120_, Supplier<? extends AbstractTransfurType> transfurType) {
+    public TallCrystal(Properties p_54120_, Supplier<? extends TransfurType> transfurType) {
         super(p_54120_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }

@@ -15,7 +15,7 @@ import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransf
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -33,12 +33,12 @@ import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.getTrans
 
 public class TransfurEvent {
 
-    public static final TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR_DEF = addTransfurProgress().build();
-    public static final TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR_CRYSTAL = addTransfurProgress()
+    public static final TriConsumer<LivingEntity, TransfurType, Float> ADD_TRANSFUR_DEF = addTransfurProgress().build();
+    public static final TriConsumer<LivingEntity, TransfurType, Float> ADD_TRANSFUR_CRYSTAL = addTransfurProgress()
             .onTFToleranceReached(transfur -> transfur.withSound(SoundRegistry.TRANSFUR_1.get())).build();
-    public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_DEF = transfur().build();
-    public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_TF = transfur().setResult(TransfurResult.TRANSFUR).build();
-    public static final BiConsumer<LivingEntity, AbstractTransfurType> TRANSFUR_DEATH = transfur().setResult(TransfurResult.DEATH).build();
+    public static final BiConsumer<LivingEntity, TransfurType> TRANSFUR_DEF = transfur().build();
+    public static final BiConsumer<LivingEntity, TransfurType> TRANSFUR_TF = transfur().setResult(TransfurResult.TRANSFUR).build();
+    public static final BiConsumer<LivingEntity, TransfurType> TRANSFUR_DEATH = transfur().setResult(TransfurResult.DEATH).build();
     public static final Consumer<ServerPlayer> UNTRANSFUR = unTransfur().build();
     public static final Consumer<ServerPlayer> UNTRANSFUR_SILENT = unTransfur().withSound(null).build();
     public static final Consumer<LivingEntity> RECALCULATE_PROGRESS = recalculate().build();
@@ -67,7 +67,7 @@ public class TransfurEvent {
         if(target.level().isClientSide) throw new IllegalStateException("Cannot run serverside only methods on client!");
     }
 
-    public static AbstractLatexBeast spawnLatex(@NotNull AbstractTransfurType transfurType,@NotNull ServerLevel level,@NotNull BlockPos pos){
+    public static AbstractLatexBeast spawnLatex(@NotNull TransfurType transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
         return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
     }
 
@@ -106,7 +106,7 @@ public class TransfurEvent {
             return this;
         }
 
-        public TriConsumer<LivingEntity, AbstractTransfurType, Float> build() {
+        public TriConsumer<LivingEntity, TransfurType, Float> build() {
             return  (target, transfurType, amount) -> {
                 platformCheck(target);
                 ITransfurHandler handler = TransfurCapability.of(target);
@@ -153,12 +153,12 @@ public class TransfurEvent {
             return this;
         }
 
-        public BiConsumer<LivingEntity, AbstractTransfurType> build(){
+        public BiConsumer<LivingEntity, TransfurType> build(){
             if(subEvent) throw new IllegalStateException("Cannot build sub event!");
             return this::transfur;
         }
 
-        void transfur(LivingEntity target, AbstractTransfurType transfurType) {
+        void transfur(LivingEntity target, TransfurType transfurType) {
             platformCheck(target);
             ITransfurHandler handler = TransfurCapability.of(target);
             if(handler == null) return;
@@ -173,7 +173,7 @@ public class TransfurEvent {
             target.discard();
         }
 
-        void transfurPlayer(ServerPlayer player, ITransfurHandler handler, AbstractTransfurType transfurType, ServerLevel level){
+        void transfurPlayer(ServerPlayer player, ITransfurHandler handler, TransfurType transfurType, ServerLevel level){
             if(player.isCreative() || player.isSpectator() || result == TransfurResult.TRANSFUR){
                 actuallyTransfurPlayer(player, handler, transfurType);
                 return;
@@ -198,7 +198,7 @@ public class TransfurEvent {
             }
         }
 
-        void actuallyTransfurPlayer(ServerPlayer player, ITransfurHandler handler, AbstractTransfurType transfurType){
+        void actuallyTransfurPlayer(ServerPlayer player, ITransfurHandler handler, TransfurType transfurType){
             if(handler.isTransfurred()) handler.getTransfurType().onUnTransfur(player);
             handler.transfur(transfurType);
             transfurType.onTransfur(player);

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.FluidRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.Latex;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +19,10 @@ import java.util.function.Supplier;
 
 public class LatexItem extends Item {
 
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
     private final Latex type;
 
-    public LatexItem(@NotNull Supplier<? extends AbstractTransfurType> transfurType, Latex type) {
+    public LatexItem(@NotNull Supplier<? extends TransfurType> transfurType, Latex type) {
         super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationMod(1).build()));
         this.transfurType = transfurType;
         this.type = type;
@@ -32,7 +32,7 @@ public class LatexItem extends Item {
         return type;
     }
 
-    private static TriConsumer<LivingEntity, AbstractTransfurType, Float> ADD_TRANSFUR;
+    private static TriConsumer<LivingEntity, TransfurType, Float> ADD_TRANSFUR;
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {

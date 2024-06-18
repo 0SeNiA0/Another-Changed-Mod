@@ -23,7 +23,7 @@ import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,12 +35,12 @@ import java.util.UUID;
 @ParametersAreNonnullByDefault
 public abstract class AbstractLatexBeast extends Monster {
 
-    public final @NotNull AbstractTransfurType transfurType;
+    public final @NotNull TransfurType transfurType;
     static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
     static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
     static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
 
-    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, AbstractTransfurType transfurType) {
+    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
         dimensions = transfurType.getPoseDimensions(Pose.STANDING);//TODO remove?

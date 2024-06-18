@@ -8,12 +8,12 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexBeast extends AbstractLatexBeast {
 
-    public LatexBeast(@NotNull EntityType<? extends Monster> p_21368_, @NotNull Level p_21369_, @NotNull AbstractTransfurType transfurType) {
+    public LatexBeast(@NotNull EntityType<? extends Monster> p_21368_, @NotNull Level p_21369_, @NotNull TransfurType transfurType) {
         super(p_21368_, p_21369_,transfurType);
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
     }

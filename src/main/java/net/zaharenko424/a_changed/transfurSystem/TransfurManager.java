@@ -12,7 +12,7 @@ import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,12 +41,12 @@ public class TransfurManager {
         return TransfurCapability.nonNullOf(entity).getTransfurProgress();
     }
 
-    public static @Nullable AbstractTransfurType getTransfurType(@NotNull LivingEntity player){
+    public static @Nullable TransfurType getTransfurType(@NotNull LivingEntity player){
         ITransfurHandler handler = TransfurCapability.of(player);
         return handler == null ? null : handler.getTransfurType();
     }
 
-    public static @Nullable AbstractTransfurType getTransfurType(@NotNull ResourceLocation transfurType){
+    public static @Nullable TransfurType getTransfurType(@NotNull ResourceLocation transfurType){
         return TransfurRegistry.TRANSFUR_REGISTRY.get(transfurType);
     }
 

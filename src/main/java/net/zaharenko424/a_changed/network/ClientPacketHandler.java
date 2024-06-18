@@ -26,7 +26,7 @@ import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTran
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,8 +84,8 @@ public class ClientPacketHandler {
             LocalPlayer player = Minecraft.getInstance().player;
             if(player == null) return;
             ITransfurHandler handler = TransfurCapability.nonNullOf(player);
-            AbstractTransfurType newTransfurType = packet.transfurType();
-            AbstractTransfurType handlerTf = handler.getTransfurType();
+            TransfurType newTransfurType = packet.transfurType();
+            TransfurType handlerTf = handler.getTransfurType();
             if(!packet.isTransfurred()){
                 if(handler.isTransfurred()){
                     removeTransfurModel(player, handlerTf);
@@ -112,8 +112,8 @@ public class ClientPacketHandler {
                 return;
             }
             ITransfurHandler handler = TransfurCapability.nonNullOf(player);
-            AbstractTransfurType newTransfurType = packet.transfurType();
-            AbstractTransfurType handlerTf = handler.getTransfurType();
+            TransfurType newTransfurType = packet.transfurType();
+            TransfurType handlerTf = handler.getTransfurType();
             if(!packet.isTransfurred()){
                 if(handler.isTransfurred()){
                     removeTransfurModel(player, handlerTf);
@@ -131,12 +131,12 @@ public class ClientPacketHandler {
         });
     }
 
-    private void removeTransfurModel(AbstractClientPlayer player, AbstractTransfurType transfurType){
+    private void removeTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
         if(transfurType instanceof Special) CustomModelManager.getInstance().removePlayerModel(player, player.getStringUUID());
         else CustomModelManager.getInstance().removePlayerModel(player, transfurType.id);
     }
 
-    private void setTransfurModel(AbstractClientPlayer player, AbstractTransfurType transfurType){
+    private void setTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
         if(transfurType instanceof Special) CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
         else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
     }

@@ -15,7 +15,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class Transfur {
@@ -45,7 +45,7 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        AbstractTransfurType transfur = TransfurManager.getTransfurType(transfurType);
+        TransfurType transfur = TransfurManager.getTransfurType(transfurType);
         if(transfur == null) return 0;
         TransfurEvent.TRANSFUR_TF.accept(player, transfur);
         return Command.SINGLE_SUCCESS;

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -66,7 +66,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
 
     abstract boolean hasAmmo(@NotNull IItemHandler handler);
 
-    abstract AbstractTransfurType useFirst(@NotNull IItemHandler handler, boolean simulate);
+    abstract TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate);
 
     abstract boolean hasFuel(ItemStack rifle, @NotNull IItemHandler inventory);
 

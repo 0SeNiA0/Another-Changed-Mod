@@ -6,7 +6,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TYPE_KEY;
 
-public record ClientboundRemotePlayerTransfurSyncPacket(UUID playerId, float transfurProgress, AbstractTransfurType transfurType, boolean isTransfurred) implements CustomPacketPayload {
+public record ClientboundRemotePlayerTransfurSyncPacket(UUID playerId, float transfurProgress, TransfurType transfurType, boolean isTransfurred) implements CustomPacketPayload {
 
     public static final ResourceLocation ID = AChanged.resourceLoc("remote_player_transfur_sync");
 

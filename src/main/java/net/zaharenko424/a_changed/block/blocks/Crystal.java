@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,9 +29,9 @@ public class Crystal extends Block {
 
     private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.75,.625);
     private static final AABB aabb = SHAPE.bounds();
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
 
-    public Crystal(Properties p_49795_, Supplier<? extends AbstractTransfurType> transfurType) {
+    public Crystal(Properties p_49795_, Supplier<? extends TransfurType> transfurType) {
         super(p_49795_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }

@@ -16,25 +16,25 @@ import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class SyringeProjectile extends AbstractArrow {
 
-    private AbstractTransfurType transfurType = null;
+    private TransfurType transfurType = null;
 
     public SyringeProjectile(Level pLevel) {
         super(EntityRegistry.SYRINGE_PROJECTILE.get(), pLevel, ItemStack.EMPTY);
         setBaseDamage(.01);
     }
 
-    public SyringeProjectile(Level level, LivingEntity shooter, AbstractTransfurType transfurType){
+    public SyringeProjectile(Level level, LivingEntity shooter, TransfurType transfurType){
         super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY);
         this.transfurType = transfurType;
         setBaseDamage(.01);
     }
 
-    public void setTransfurType(AbstractTransfurType transfurType){
+    public void setTransfurType(TransfurType transfurType){
         this.transfurType = transfurType;
     }
 

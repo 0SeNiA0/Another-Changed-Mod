@@ -16,7 +16,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class TransfurCapability {
         static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
 
         float transfurProgress = 0;
-        AbstractTransfurType transfurType = null;
+        TransfurType transfurType = null;
         boolean isTransfurred = false;
 
         static final int ticksUntilTFProgressDecrease = 200;
@@ -71,7 +71,7 @@ public class TransfurCapability {
         }
 
         @Override
-        public void setTransfurProgress(float amount, @NotNull AbstractTransfurType transfurType) {
+        public void setTransfurProgress(float amount, @NotNull TransfurType transfurType) {
             i0 = ticksUntilTFProgressDecrease;
             transfurProgress = amount;
             this.transfurType = transfurType;
@@ -79,12 +79,12 @@ public class TransfurCapability {
         }
 
         @Override
-        public @Nullable AbstractTransfurType getTransfurType() {
+        public @Nullable TransfurType getTransfurType() {
             return transfurType != null ? transfurType : null;
         }
 
         @Override
-        public void setTransfurType(@NotNull AbstractTransfurType transfurType) {
+        public void setTransfurType(@NotNull TransfurType transfurType) {
             this.transfurType = transfurType;
         }
 
@@ -94,7 +94,7 @@ public class TransfurCapability {
         }
 
         @Override
-        public void transfur(@NotNull AbstractTransfurType transfurType) {
+        public void transfur(@NotNull TransfurType transfurType) {
             transfurProgress = TRANSFUR_TOLERANCE;
             this.transfurType = transfurType;
             isTransfurred = true;
