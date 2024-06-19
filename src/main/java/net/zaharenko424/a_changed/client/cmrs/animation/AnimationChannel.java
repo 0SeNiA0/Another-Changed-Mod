@@ -8,10 +8,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public record AnimationChannel(AnimationChannel.Target target, Keyframe... keyframes) {
-    public AnimationChannel(AnimationChannel.Target target, Keyframe... keyframes) {
-        this.target = target;
-        this.keyframes = keyframes;
-    }
 
     public AnimationChannel.Target target() {
         return this.target;

@@ -13,7 +13,7 @@ import net.zaharenko424.a_changed.util.MemorizingSupplier;
 /**
  * Class for scamming server to not crash
  */
-public final class ClientOnly {
+final class ClientOnly {
 
     static MemorizingSupplier<CustomHumanoidModel<LivingEntity>> latexWolfModel(Gender gender, ResourceLocation loc){
         return MemorizingSupplier.of(()-> gender == Gender.FEMALE ? new LatexWolfFemaleModel<>(loc) : new LatexWolfMaleModel<>(loc));

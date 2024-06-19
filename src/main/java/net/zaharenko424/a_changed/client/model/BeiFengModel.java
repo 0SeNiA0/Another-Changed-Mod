@@ -7,6 +7,7 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.animation.Animations;
+import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
@@ -36,8 +37,8 @@ public class BeiFengModel<E extends LivingEntity> extends CustomHumanoidModel<E>
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch);
         if(!ears.isStarted()) ears.start((int) ageInTicks);
         if(!tail.isStarted()) tail.start((int) ageInTicks);
-        animate(ears, Animations.EAR_ANIM,ageInTicks);
-        animate(tail,Animations.TAIL_DRAGON,ageInTicks);
+        KeyframeAnimator.animate(ears, root(), Animations.EAR_ANIM, ageInTicks);
+        KeyframeAnimator.animate(tail, root(), Animations.TAIL_DRAGON, ageInTicks);
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

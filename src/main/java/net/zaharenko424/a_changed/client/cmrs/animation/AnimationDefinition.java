@@ -23,21 +23,21 @@ public record AnimationDefinition(float lengthInSeconds, boolean looping, Map<St
         }
 
         private Builder(float lengthSeconds) {
-            this.length = lengthSeconds;
+            length = lengthSeconds;
         }
 
         public AnimationDefinition.Builder looping() {
-            this.looping = true;
+            looping = true;
             return this;
         }
 
         public AnimationDefinition.Builder addAnimation(String group, AnimationChannel channel) {
-            this.animationByBone.computeIfAbsent(group, p_232278_ -> Lists.newArrayList()).add(channel);
+            animationByBone.computeIfAbsent(group, p_232278_ -> Lists.newArrayList()).add(channel);
             return this;
         }
 
         public AnimationDefinition build() {
-            return new AnimationDefinition(this.length, this.looping, this.animationByBone);
+            return new AnimationDefinition(length, looping, animationByBone);
         }
     }
 }

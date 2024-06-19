@@ -7,6 +7,7 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.animation.Animations;
+import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
@@ -33,8 +34,8 @@ public class LatexSharkFemaleModel <E extends LivingEntity> extends CustomHumano
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch);
         tail_swim.animateWhen(entity.isSwimming() && entity.isInWaterOrBubble(), (int) ageInTicks);
         tail_swing.animateWhen(entity.isInWaterOrBubble() || entity.walkDist != entity.walkDistO, (int) ageInTicks);
-        if(tail_swim.isStarted()) animate(tail_swim, Animations.TAIL_SHARK_SWIM, ageInTicks);
-        if(tail_swing.isStarted()) animate(tail_swing, Animations.TAIL_SHARK_SWING, ageInTicks);
+        if(tail_swim.isStarted()) KeyframeAnimator.animate(tail_swim, root(), Animations.TAIL_SHARK_SWIM, ageInTicks);
+        if(tail_swing.isStarted()) KeyframeAnimator.animate(tail_swing, root(), Animations.TAIL_SHARK_SWING, ageInTicks);
     }
 
     public static @NotNull ModelDefinition bodyLayer() {

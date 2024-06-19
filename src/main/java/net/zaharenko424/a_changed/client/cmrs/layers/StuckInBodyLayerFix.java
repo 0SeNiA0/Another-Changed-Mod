@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.model.HierarchicalHumanoidModel;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public abstract class StuckInBodyLayerFix<E extends LivingEntity,M extends HierarchicalHumanoidModel<E>> extends RenderLayer<E,M> {
+public abstract class StuckInBodyLayerFix<E extends LivingEntity,M extends CustomHumanoidModel<E>> extends RenderLayer<E,M> {
 
     public StuckInBodyLayerFix(RenderLayerParent<E, M> p_117346_) {
         super(p_117346_);

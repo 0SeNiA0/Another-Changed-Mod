@@ -102,7 +102,6 @@ public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntity
 
     private void setModelProperties(E entity){
         model.crouching = entity.isCrouching();
-        model.attackTime = entity.attackAnim;
 
         if(entity instanceof Player player && player.isSpectator()){
             model.setAllVisible(false);
