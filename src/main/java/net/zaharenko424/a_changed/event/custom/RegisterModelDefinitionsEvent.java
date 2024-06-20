@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.event;
+package net.zaharenko424.a_changed.event.custom;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.bus.api.Event;

@@ -7,15 +7,17 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "MixinEntity",
-    "MixinHurtByTargetGoal",
-    "MixinIronGolem",
-    "MixinLivingEntity",
-    "MixinPlayer",
+    "entity.MixinCreeper",
+    "entity.MixinEntity",
+    "entity.MixinIronGolem",
+    "entity.MixinLivingEntity",
+    "entity.MixinPlayer",
     "MixinServerGamePacketListenerImpl",
     "MixinSimpleBlockFeature",
-    "MixinVillagerHostileSensor",
-    "MixinWanderingTrader"
+    "entity.MixinWanderingTrader",
+    "entityai.MixinHurtByTargetGoal",
+    "entityai.MixinPhantomSweepAttackGoal",
+    "entityai.MixinVillagerHostileSensor"
   ],
   "client": [
     "client.MixinBlockModelShaper",

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin;
+package net.zaharenko424.a_changed.mixin.entityai;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.sensing.VillagerHostilesSensor;

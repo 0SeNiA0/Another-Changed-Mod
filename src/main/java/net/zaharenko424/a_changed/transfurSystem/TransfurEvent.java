@@ -7,10 +7,14 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.event.custom.AddTransfurProgressEvent;
+import net.zaharenko424.a_changed.event.custom.TransfurredEvent;
+import net.zaharenko424.a_changed.event.custom.UnTransfurredEvent;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
@@ -111,16 +115,23 @@ public class TransfurEvent {
                 platformCheck(target);
                 ITransfurHandler handler = TransfurCapability.of(target);
                 if(handler == null) return;
-
                 if(handler.isBeingTransfurred() || handler.isTransfurred()) return;
-                if(sound != null)
-                    target.level().playSound(null, target.blockPosition(), sound, SoundSource.PLAYERS);
-                float finalAmount = amount;
-                if (checkResistance) {
-                    float resistance = (float) target.getAttributeValue(LATEX_RESISTANCE);
-                    finalAmount *= 1 - resistance;
+
+                AddTransfurProgressEvent event = new AddTransfurProgressEvent(target, transfurType, amount);
+                NeoForge.EVENT_BUS.post(event);
+                if(event.isCanceled()) return;
+
+                float progress;
+                if(event.getProgressToAdd() > 0) {
+                    progress = event.getProgressToAdd();
+                } else {
+                    if (checkResistance) {
+                        float resistance = (float) target.getAttributeValue(LATEX_RESISTANCE);
+                        amount *= 1 - resistance;
+                    }
+                    progress = handler.getTransfurProgress() + amount;
                 }
-                float progress = handler.getTransfurProgress() + finalAmount;
+
                 if (progress >= TRANSFUR_TOLERANCE) {
                     transfur.transfur(target, transfurType);
                     return;
@@ -168,9 +179,11 @@ public class TransfurEvent {
                 transfurPlayer(player, handler, transfurType, level);
                 return;
             }
-            spawnLatex(transfurType, level, target.blockPosition()).copyEquipment(target);
+            AbstractLatexBeast latexBeast = spawnLatex(transfurType, level, target.blockPosition());
+            latexBeast.copyEquipment(target);
             if(sound != null) target.playSound(sound);
             target.discard();
+            NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, transfurType));
         }
 
         void transfurPlayer(ServerPlayer player, ITransfurHandler handler, TransfurType transfurType, ServerLevel level){
@@ -187,7 +200,8 @@ public class TransfurEvent {
                     updatePlayer(player, handler);
                     player.setInvulnerable(false);
                     player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
-                    spawnLatex(transfurType, level, player.blockPosition());
+                    AbstractLatexBeast latexBeast = spawnLatex(transfurType, level, player.blockPosition());
+                    NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, transfurType));
                 }
                 case PROMPT -> {
                     handler.setBeingTransfurred(true);
@@ -203,6 +217,7 @@ public class TransfurEvent {
             handler.transfur(transfurType);
             transfurType.onTransfur(player);
             updatePlayer(player, handler);
+            NeoForge.EVENT_BUS.post(new TransfurredEvent(player, transfurType));
         }
     }
 
@@ -224,8 +239,10 @@ public class TransfurEvent {
                 if(sound != null)
                     player.level().playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS);
                 if(handler.isTransfurred()) handler.getTransfurType().onUnTransfur(player);
+                TransfurType transfurType = handler.getTransfurType();
                 handler.unTransfur();
                 updatePlayer(player, handler);
+                if(transfurType != null) NeoForge.EVENT_BUS.post(new UnTransfurredEvent(player, transfurType));
             };
         }
     }

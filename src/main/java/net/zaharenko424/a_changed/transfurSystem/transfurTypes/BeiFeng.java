@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class BeiFeng extends TransfurType {
 
     public BeiFeng(@NotNull ResourceLocation loc) {
-        super(Properties.of(loc, Latex.WHITE).eyeHeight(1.75f,1.5f).maxHealthModifier(4),
+        super(Properties.of(loc, Latex.WHITE).eyeHeight(1.75f,1.5f).maxHealthModifier(4).colors(-11442787, -14013910),
                 FMLLoader.getDist().isClient() ? MemorizingSupplier.of(BeiFengModel::new) : null);
     }
 }

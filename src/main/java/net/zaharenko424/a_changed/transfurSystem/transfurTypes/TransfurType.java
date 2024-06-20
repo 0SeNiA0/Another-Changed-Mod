@@ -1,11 +1,16 @@
 package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Latex;
@@ -13,8 +18,10 @@ import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -29,9 +36,7 @@ public abstract class TransfurType {
     protected final float eyeHeightCrouching;
     protected final float eyeHeightSwimming;
     protected final ImmutableMap<Pose, EntityDimensions> dimensions;
-    public final float airReductionModifier;
-    public final int maxHealthModifier;
-    public final float swimSpeedModifier;
+    public final ImmutableMultimap<Attribute, AttributeModifier> modifiers;
     protected final Gender gender;
     protected final boolean organic;
     protected final Consumer<LivingEntity> onTransfur;
@@ -46,9 +51,7 @@ public abstract class TransfurType {
         eyeHeightCrouching = properties.eyeHeightCrouching;
         eyeHeightSwimming = properties.eyeHeightSwimming;
         dimensions = ImmutableMap.copyOf(properties.dimensions);
-        airReductionModifier = properties.airReductionModifier;
-        maxHealthModifier = properties.maxHealthModifier;
-        swimSpeedModifier = properties.swimSpeedModifier;
+        modifiers = ImmutableMultimap.copyOf(properties.modifiers);
         gender = properties.gender;
         organic = properties.organic;
         onTransfur = properties.onTransfur;
@@ -79,7 +82,7 @@ public abstract class TransfurType {
     }
 
     public EntityDimensions getPoseDimensions(Pose pose){
-        if(dimensions == null || dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 1.9f);
+        if(dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 1.9f);
         return dimensions.get(pose);
     }
 
@@ -103,15 +106,25 @@ public abstract class TransfurType {
         return Component.translatable("transfur."+ id.toLanguageKey());
     }
 
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
     public static class Properties {
-        ResourceLocation location;
-        Latex latex;
-        int primaryColor = -1644826;
-        int secondaryColor = -4934476;
-        float eyeHeightStanding = 1.62f;
-        float eyeHeightCrouching = 1.27f;
-        float eyeHeightSwimming = .4f;
-        Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
+
+        static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
+        static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
+        static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
+
+        protected ResourceLocation location;
+        protected Latex latex;
+        protected int primaryColor = -1644826;
+        protected int secondaryColor = -4934476;
+        protected float eyeHeightStanding = 1.62f;
+        protected float eyeHeightCrouching = 1.27f;
+        protected float eyeHeightSwimming = .4f;
+        protected Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
                 Pose.STANDING, EntityDimensions.scalable(.6f,1.9f),
                 Pose.SLEEPING, EntityDimensions.fixed(0.2f, 0.2f),
                 Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f),
@@ -120,13 +133,11 @@ public abstract class TransfurType {
                 Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f),
                 Pose.DYING, EntityDimensions.scalable(.2f,.2f)
         ));
-        float airReductionModifier = 0;
-        int maxHealthModifier = 0;
-        float swimSpeedModifier = 0;
-        Gender gender = Gender.NONE;
-        boolean organic = false;
-        Consumer<LivingEntity> onTransfur;
-        Consumer<LivingEntity> onUnTransfur;
+        protected Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+        protected Gender gender = Gender.NONE;
+        protected boolean organic = false;
+        protected Consumer<LivingEntity> onTransfur;
+        protected Consumer<LivingEntity> onUnTransfur;
 
         protected Properties(ResourceLocation resourceLocation, Latex latex){
             location = resourceLocation;
@@ -157,7 +168,7 @@ public abstract class TransfurType {
             return this;
         }
 
-        public Properties eyeHeight(float standing,float crouching, float swimming){
+        public Properties eyeHeight(float standing, float crouching, float swimming){
             eyeHeightStanding = standing;
             eyeHeightCrouching = crouching;
             eyeHeightSwimming = swimming;
@@ -175,24 +186,55 @@ public abstract class TransfurType {
         }
 
         /**
-         * Zero (default) -> no changes to minecraft logic.<p>modifier > 0 -> faster air depletion. <p>-1 < modifier < 0 -> slower depletion. <p>modifier <= -1 -> no depletion.
+         * @param attribute attribute to add modifier to.
+         * @param name name of the modifier. Must be unique!
+         * @param amount amount.
+         * @param op modifier operation.
          */
-        public Properties airReductionModifier(float airReductionModifier){
-            this.airReductionModifier = airReductionModifier;
-            return this;
+        public Properties addModifier(Attribute attribute, String name, double amount, AttributeModifier.Operation op){
+            return addModifier(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)), name, amount, op));
         }
 
-        public Properties maxHealthModifier(int maxHealthModifier){
-            this.maxHealthModifier = maxHealthModifier;
+        /**
+         * @param attribute attribute to add modifier to.
+         * @param uuid UUID of modifier. Must be unique!
+         * @param name name of the modifier.
+         * @param amount amount.
+         * @param op modifier operation.
+         */
+        public Properties addModifier(Attribute attribute, UUID uuid, String name, double amount, AttributeModifier.Operation op){
+            return addModifier(attribute, new AttributeModifier(uuid, name, amount, op));
+        }
+
+        /**
+         * Make sure that modifier uuid stays the same during single session.
+         * @param attribute attribute to add modifier to.
+         * @param modifier modifier to add.
+         */
+        public Properties addModifier(Attribute attribute, AttributeModifier modifier){
+            modifiers.put(attribute, modifier);
             return this;
         }
 
         /**
-         * Higher modifier -> higher swim speed <p> Attribute uses multiplyTotal operation
+         * Zero (default) -> no changes to minecraft logic. Operation - Addition.<p>modifier > 0 -> faster air depletion. <p>-1 < modifier < 0 -> slower depletion. <p>modifier <= -1 -> no depletion.
+         */
+        public Properties airReductionModifier(float airReductionModifier){
+            return addModifier(AChanged.AIR_DECREASE_SPEED.get(), airDecreaseSpeed, "a", airReductionModifier, AttributeModifier.Operation.ADDITION);
+        }
+
+        /**
+         * Operation - Addition
+         */
+        public Properties maxHealthModifier(int maxHealthModifier){
+            return addModifier(Attributes.MAX_HEALTH, healthModifier, "a", maxHealthModifier, AttributeModifier.Operation.ADDITION);
+        }
+
+        /**
+         * Higher modifier -> higher swim speed. <p> Operation - Multiply Total.
          */
         public Properties swimSpeedModifier(float swimSpeedModifier){
-            this.swimSpeedModifier = swimSpeedModifier;
-            return this;
+            return addModifier(NeoForgeMod.SWIM_SPEED.value(), swimSpeed, "a", swimSpeedModifier, AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
 
         public Properties gender(Gender gender){

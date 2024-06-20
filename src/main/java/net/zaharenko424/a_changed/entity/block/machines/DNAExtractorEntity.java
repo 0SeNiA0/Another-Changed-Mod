@@ -16,7 +16,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
+public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
     private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
 
@@ -58,8 +58,8 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    EnergyConsumer initEnergy() {
-        return new EnergyConsumer(25000, 256, 0);
+    ExtendedEnergyStorage initEnergy() {
+        return new ExtendedEnergyStorage(25000, 256, 0);
     }
 
     public int getRot(){
@@ -105,7 +105,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         }
 
         setActive(true);
-        energyStorage.consumeEnergy(64);
+        energyStorage.addEnergy(-64);
         rotationDeg = Mth.wrapDegrees(rotationDeg + 20);
 
         map.forEach((slot, r) -> {

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin;
+package net.zaharenko424.a_changed.mixin.entity;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;

@@ -16,7 +16,7 @@ import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
-import net.zaharenko424.a_changed.event.LoadModelsToCacheEvent;
+import net.zaharenko424.a_changed.event.custom.LoadModelsToCacheEvent;
 import net.zaharenko424.a_changed.util.FriendlierByteBuf;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;

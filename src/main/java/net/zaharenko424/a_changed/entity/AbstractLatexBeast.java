@@ -6,17 +6,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.ai.LatexTargetPlayerGoal;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
@@ -30,32 +26,36 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public abstract class AbstractLatexBeast extends Monster {
 
     public final @NotNull TransfurType transfurType;
-    static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
-    static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
-    static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
 
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
-        dimensions = transfurType.getPoseDimensions(Pose.STANDING);//TODO remove?
+        dimensions = transfurType.getPoseDimensions(Pose.STANDING);
         if(!hasBrain()) registerLatexGoals();
         AttributeMap map = getAttributes();
-        if(!map.hasModifier(AChanged.AIR_DECREASE_SPEED, airDecreaseSpeed) && transfurType.airReductionModifier != 0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", transfurType.airReductionModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(Attributes.MAX_HEALTH, healthModifier) && transfurType.maxHealthModifier != 0) map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier,"a", transfurType.maxHealthModifier, AttributeModifier.Operation.ADDITION));
-        if(!map.hasModifier(NeoForgeMod.SWIM_SPEED, swimSpeed) && transfurType.swimSpeedModifier != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", transfurType.swimSpeedModifier, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        addModifiers(map);
+
+        AttributeInstance[] instance = new AttributeInstance[1];
+        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
+            if(!map.hasAttribute(attribute)){
+                AChanged.LOGGER.error("Attempted to add transfur modifier to not existing attribute {} {}", attribute, transfurType);
+                return;
+            }
+
+            instance[0] = map.getInstance(attribute);
+            for(AttributeModifier modifier : modifiers){
+                instance[0].addTransientModifier(modifier);
+            }
+        });
+
         transfurType.onTransfur(this);
     }
 
     protected abstract boolean hasBrain();
-
-    protected void addModifiers(AttributeMap map){}
 
     protected static AttributeSupplier.@NotNull Builder baseAttributes(){
         return Mob.createMobAttributes()

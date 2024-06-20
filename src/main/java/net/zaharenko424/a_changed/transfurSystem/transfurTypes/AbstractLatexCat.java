@@ -20,18 +20,6 @@ public abstract class AbstractLatexCat extends TransfurType {
         super(properties, modelSupplier);
     }
 
-    @Override
-    public void onTransfur(LivingEntity entity) {
-        super.onTransfur(entity);
-        entity.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(new AttributeModifier(speedBuff, "cat_speed_buff", .2, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    }
-
-    @Override
-    public void onUnTransfur(LivingEntity entity) {
-        super.onUnTransfur(entity);
-        entity.getAttribute(Attributes.MOVEMENT_SPEED).removePermanentModifier(speedBuff);//TODO make non permanent?
-    }
-
     public static class CatProperties extends Properties {
 
         protected CatProperties(ResourceLocation resourceLocation, Latex latex) {
@@ -39,6 +27,7 @@ public abstract class AbstractLatexCat extends TransfurType {
             eyeHeight(1.75f,1.5f);
             airReductionModifier(1);
             swimSpeedModifier(-.5f);
+            addModifier(Attributes.MOVEMENT_SPEED, speedBuff, "cat_speed_buff", .2, AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
 
         public static @NotNull CatProperties of(ResourceLocation resourceLocation){

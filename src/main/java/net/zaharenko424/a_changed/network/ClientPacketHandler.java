@@ -6,6 +6,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
@@ -18,6 +19,8 @@ import net.zaharenko424.a_changed.client.cmrs.model.URLLoadedModel;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;
+import net.zaharenko424.a_changed.event.custom.TransfurredEvent;
+import net.zaharenko424.a_changed.event.custom.UnTransfurredEvent;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenNotePacket;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
@@ -91,6 +94,8 @@ public class ClientPacketHandler {
                     removeTransfurModel(player, handlerTf);
                     handler.unTransfur();
                     player.refreshDimensions();
+
+                    NeoForge.EVENT_BUS.post(new UnTransfurredEvent(player, handlerTf));
                 } else handler.setTransfurProgress(packet.transfurProgress(), newTransfurType);
                 return;
             }
@@ -98,8 +103,12 @@ public class ClientPacketHandler {
                 if(handler.isTransfurred()) removeTransfurModel(player, handlerTf);
                 setTransfurModel(player, newTransfurType);
             }
-            handler.transfur(newTransfurType);
-            player.refreshDimensions();
+            if(newTransfurType != handlerTf || !handler.isTransfurred()){
+                handler.transfur(newTransfurType);
+                player.refreshDimensions();
+
+                NeoForge.EVENT_BUS.post(new TransfurredEvent(player, newTransfurType));
+            }
         });
     }
 

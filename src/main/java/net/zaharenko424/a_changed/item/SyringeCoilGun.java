@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.SyringeCoilGunMenu;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -59,7 +59,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
 
     @Override
     void consumeFuel(@NotNull ItemStack rifle, @NotNull IItemHandler handler) {
-        ((EnergyConsumer)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).consumeEnergy(2000);
+        ((ExtendedEnergyStorage)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).addEnergy(-2000);
     }
 
     @Override

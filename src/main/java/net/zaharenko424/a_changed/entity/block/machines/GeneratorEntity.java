@@ -13,13 +13,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.zaharenko424.a_changed.capability.energy.EnergyGenerator;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.machines.GeneratorMenu;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyGenerator> {
+public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
     private int burnTicks;
     private int maxBurnTicks;
@@ -45,8 +45,8 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
     }
 
     @Override
-    EnergyGenerator initEnergy() {
-        return new EnergyGenerator(10000, 0, 64);
+    ExtendedEnergyStorage initEnergy() {
+        return new ExtendedEnergyStorage(10000, 0, 64);
     }
 
     public boolean isEmpty(){
@@ -72,7 +72,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ene
 
         if(burnTicks > 0){
             burnTicks--;
-            if(!energyStorage.isFull()) energyStorage.generateEnergy(16);
+            if(!energyStorage.isFull()) energyStorage.receiveEnergy(16, false);
             changed = true;
         } else if(!energyStorage.isFull()) {
             ItemStack fuel = inventory.getStackInSlot(0);

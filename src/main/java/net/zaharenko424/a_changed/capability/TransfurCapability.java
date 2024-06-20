@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.capabilities.EntityCapability;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -21,7 +20,6 @@ import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
@@ -43,9 +41,6 @@ public class TransfurCapability {
     public static class TransfurHandler implements ITransfurHandler {
 
         private final LivingEntity entity;
-        static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
-        static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
-        static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
 
         float transfurProgress = 0;
         TransfurType transfurType = null;
@@ -107,36 +102,57 @@ public class TransfurCapability {
         @Override
         public void unTransfur() {
             transfurProgress = 0;
-            transfurType = null;
             setBeingTransfurred(false);
             isTransfurred = false;
-            if(!entity.level().isClientSide) removeModifiers(entity.getAttributes());
+            if(!entity.level().isClientSide && transfurType != null) removeModifiers(entity.getAttributes());
+            transfurType = null;
         }
 
         private void addModifiers(AttributeMap map){
-            float f = transfurType.airReductionModifier;
-            int i = transfurType.maxHealthModifier;
-            if(f != 0) map.getInstance(AChanged.AIR_DECREASE_SPEED).addTransientModifier(new AttributeModifier(airDecreaseSpeed,"a", f, AttributeModifier.Operation.ADDITION));
-            if(i != 0) {
-                map.getInstance(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(healthModifier, "a", i, AttributeModifier.Operation.ADDITION));
-                if(i > 0) entity.setHealth(entity.getHealth() + i);
-            }
-            f = transfurType.swimSpeedModifier;
-            if(f != 0) map.getInstance(NeoForgeMod.SWIM_SPEED).addTransientModifier(new AttributeModifier(swimSpeed,"a", f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            AttributeInstance[] instance = new AttributeInstance[1];
+            transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
+                if(!map.hasAttribute(attribute)){
+                    AChanged.LOGGER.error("Attempted to add transfur modifier to not existing attribute {} {}", attribute, transfurType);
+                    return;
+                }
+
+                if(attribute == Attributes.MAX_HEALTH){
+                    float maxHealthO = entity.getMaxHealth();
+                    instance[0] = map.getInstance(attribute);
+                    for(AttributeModifier modifier : modifiers){
+                        instance[0].addTransientModifier(modifier);
+                    }
+                    float diff = entity.getMaxHealth() - maxHealthO;
+                    if(diff > 0) entity.setHealth(entity.getHealth() + diff);
+                    return;
+                }
+
+                instance[0] = map.getInstance(attribute);
+                for(AttributeModifier modifier : modifiers){
+                    instance[0].addTransientModifier(modifier);
+                }
+            });
         }
 
         private void removeModifiers(@NotNull AttributeMap map){
-            map.getInstance(AChanged.AIR_DECREASE_SPEED).removeModifier(airDecreaseSpeed);
+            AttributeInstance[] instance = new AttributeInstance[1];
+            transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
+                if(!map.hasAttribute(attribute)) return;
 
-            AttributeInstance instance = map.getInstance(Attributes.MAX_HEALTH);
-            if(instance.getModifier(healthModifier) != null) {
-                float modifier = (float) instance.getModifier(healthModifier).getAmount();
-                float max = entity.getMaxHealth();
-                if (modifier > 0 && entity.getHealth() > max - modifier) entity.setHealth(max - modifier);
-                instance.removeModifier(healthModifier);
-            }
-
-            map.getInstance(NeoForgeMod.SWIM_SPEED).removeModifier(swimSpeed);
+                if(attribute == Attributes.MAX_HEALTH){
+                    float maxHealthO = entity.getMaxHealth();
+                    instance[0] = map.getInstance(attribute);
+                    for(AttributeModifier modifier : modifiers){
+                        instance[0].removeModifier(modifier.getId());
+                    }
+                    if(entity.getMaxHealth() - maxHealthO < 0) entity.setHealth(entity.getMaxHealth());
+                    return;
+                }
+                instance[0] = map.getInstance(attribute);
+                for(AttributeModifier modifier : modifiers){
+                    instance[0].removeModifier(modifier.getId());
+                }
+            });
         }
 
         @Override
