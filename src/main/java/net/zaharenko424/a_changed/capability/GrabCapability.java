@@ -18,7 +18,6 @@ import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
-import net.zaharenko424.a_changed.network.packets.grab.ClientboundRemoteGrabSyncPacket;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
@@ -39,7 +38,7 @@ public class GrabCapability {
         return player.getCapability(CAPABILITY);
     }
 
-    public static @NotNull IGrabHandler nonNullOf(@NotNull Player player){
+    public static @NotNull IGrabHandler nonNullOf(@NotNull LivingEntity player){
         return Utils.nonNullOrThrow(player.getCapability(CAPABILITY), NO_CAPABILITY_EXC.get());
     }
 
@@ -47,7 +46,7 @@ public class GrabCapability {
 
         private static final int grabCooldown = 200;
         private static final int grabDuration = 100;
-        private final Player player;
+        private final Player holder;
         LivingEntity grabbedEntity;
         Player grabbedBy;
         GrabMode mode = GrabMode.ASSIMILATE;
@@ -56,7 +55,7 @@ public class GrabCapability {
         public GrabHandler(IAttachmentHolder holder){
             if(!(holder instanceof Player player1))
                 throw new IllegalStateException("Tried to create GrabHandler for unsupported holder: " + holder);
-            this.player = player1;
+            this.holder = player1;
         }
 
         @Override
@@ -70,7 +69,8 @@ public class GrabCapability {
         }
 
         private void grab(@NotNull LivingEntity target, boolean force){
-            if(player.level().isClientSide){
+            if(holder.level().isClientSide){
+
                 grabbedEntity = target;
                 return;
             }
@@ -78,20 +78,20 @@ public class GrabCapability {
             if(!force && (!canGrab() || !mode.checkTarget(target))) return;
             grabbedEntity = target;
             if(target instanceof ServerPlayer player1) {
-                nonNullOf(player1).setGrabbedBy(player);
+                nonNullOf(player1).setGrabbedBy(holder);
                 if(mode == GrabMode.FRIENDLY) {
                     player1.setGameMode(GameType.SPECTATOR);
                     player1.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB.get(), -1, 0, false, false));
                 }
             } else grabbedEntity.addTag("a_changed:grabbed");
             if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF.get(), grabDuration, 0, false, false));
-            if(mode.givesDebuffToSelf) player.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF.get(), -1, 0, false, false));
+            if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF.get(), -1, 0, false, false));
             updatePlayer();
         }
 
         @Override
         public void drop() {
-            if(player.level().isClientSide){
+            if(holder.level().isClientSide){
                 grabbedEntity = null;
                 return;
             }
@@ -109,25 +109,25 @@ public class GrabCapability {
                 if(mode.givesDebuffToTarget) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF.get());
             }
             grabbedEntity = null;
-            if(mode.givesDebuffToSelf) player.removeEffect(MobEffectRegistry.HOLDING_DEBUFF.get());
-            player.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN.get(), grabCooldown, 0, false, false));
+            if(mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF.get());
+            holder.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN.get(), grabCooldown, 0, false, false));
             updatePlayer();
         }
 
         @Override
         public boolean canGrab() {
-            return grabbedBy == null && !player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get()) && grabbedEntity == null;
+            return grabbedBy == null && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get()) && grabbedEntity == null;
         }
 
         @Override
-        public Player getGrabbedBy() {
+        public LivingEntity getGrabbedBy() {
             return grabbedBy;
         }
 
         @Override
         public void setGrabbedBy(@Nullable Player player) {
             grabbedBy = player;
-            if(this.player.level().isClientSide) return;
+            if(this.holder.level().isClientSide) return;
             if(grabbedEntity != null) drop();
             else updatePlayer();
         }
@@ -139,7 +139,7 @@ public class GrabCapability {
 
         @Override
         public void setGrabMode(@NotNull GrabMode mode) {
-            if(player.level().isClientSide){
+            if(holder.level().isClientSide){
                 this.mode = mode;
                 return;
             }
@@ -158,7 +158,7 @@ public class GrabCapability {
 
         @Override
         public void setWantsToBeGrabbed(boolean wantsToBeGrabbed){
-            if(player.level().isClientSide) {
+            if(holder.level().isClientSide) {
                 this.wantsToBeGrabbed = wantsToBeGrabbed;
                 return;
             }
@@ -191,54 +191,54 @@ public class GrabCapability {
             if(grabbedBy != null || grabbedEntity == null) return;
             if(!grabbedEntity.isAlive()) {
                 if(grabbedEntity.getRemovalReason() == Entity.RemovalReason.UNLOADED_WITH_PLAYER)
-                    player.displayClientMessage(Component.translatable("message.a_changed.grabbed_player_left"), true);
-                else player.displayClientMessage(Component.translatable("message.a_changed.grabbed_entity_died"), true);
+                    holder.displayClientMessage(Component.translatable("message.a_changed.grabbed_player_left"), true);
+                else holder.displayClientMessage(Component.translatable("message.a_changed.grabbed_entity_died"), true);
                 drop();
                 return;
             }
             if(mode == GrabMode.FRIENDLY){
-                ((ServerPlayer)grabbedEntity).setCamera(player);
+                ((ServerPlayer)grabbedEntity).setCamera(holder);
                 return;
             }
             hold();
             if(mode.givesDebuffToTarget && !grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
                 if(mode == GrabMode.ASSIMILATE) {
-                    grabbedEntity.hurt(DamageSources.assimilation(player, null), Integer.MAX_VALUE);
-                    player.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
-                    player.getFoodData().eat(6, 1);
+                    grabbedEntity.hurt(DamageSources.assimilation(holder, null), Integer.MAX_VALUE);
+                    holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
+                    holder.getFoodData().eat(6, 1);
                 } else if(mode == GrabMode.REPLICATE)
-                    TransfurEvent.TRANSFUR_TF.accept(grabbedEntity, TransfurManager.getTransfurType(player));
+                    TransfurEvent.TRANSFUR_TF.accept(grabbedEntity, TransfurManager.getTransfurType(holder));
                 drop();
             }
         }
 
         private void hold(){
-            float yaw = player.getYHeadRot();
-            float x = (float) ((-Mth.sin(Mth.DEG_TO_RAD * yaw) * 1.2) + player.getX());
-            float z = (float) ((Mth.cos(Mth.DEG_TO_RAD * yaw) * 1.2) + player.getZ());
+            float yaw = holder.getYHeadRot();
+            float x = (float) ((-Mth.sin(Mth.DEG_TO_RAD * yaw) * 1.2) + holder.getX());
+            float z = (float) ((Mth.cos(Mth.DEG_TO_RAD * yaw) * 1.2) + holder.getZ());
 
 
-            grabbedEntity.teleportTo(x, player.getY(), z);
-            grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
+            grabbedEntity.teleportTo(x, holder.getY(), z);
+            grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, holder.getEyePosition());
             grabbedEntity.setDeltaMovement(grabbedEntity.getDeltaMovement().with(Direction.Axis.Y, 0));
         }
 
         public void updatePlayer(){
-            if(player.level().isClientSide) return;
-            int id0 = grabbedEntity != null ? grabbedEntity.getId() : -1;
-            int id1 = grabbedBy != null ? grabbedBy.getId() : -1;
-
-            PacketDistributor.PLAYER.with((ServerPlayer) player)
-                    .send(new ClientboundGrabSyncPacket(id0, id1, mode, wantsToBeGrabbed));
-            PacketDistributor.TRACKING_ENTITY.with(player)
-                    .send(new ClientboundRemoteGrabSyncPacket(player.getUUID(), id0, id1, mode, wantsToBeGrabbed));
+            if(holder.level().isClientSide) return;
+            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(holder)
+                    .send(new ClientboundGrabSyncPacket(holder.getId(),
+                            grabbedEntity != null ? grabbedEntity.getId() : -1,
+                            grabbedBy != null ? grabbedBy.getId() : -1,
+                            mode, wantsToBeGrabbed));
         }
 
         @Override
         public void updateRemotePlayer(@NotNull ServerPlayer packetReceiver) {
             PacketDistributor.PLAYER.with(packetReceiver)
-                    .send(new ClientboundRemoteGrabSyncPacket(player.getUUID(), grabbedEntity != null ? grabbedEntity.getId() : -1,
-                    grabbedBy != null ? grabbedBy.getId() : -1, mode, wantsToBeGrabbed));
+                    .send(new ClientboundGrabSyncPacket(holder.getId(),
+                            grabbedEntity != null ? grabbedEntity.getId() : -1,
+                            grabbedBy != null ? grabbedBy.getId() : -1,
+                            mode, wantsToBeGrabbed));
         }
     }
 

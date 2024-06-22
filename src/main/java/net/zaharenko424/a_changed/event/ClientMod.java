@@ -12,6 +12,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.atest.TestModel;
+import net.zaharenko424.a_changed.atest.TestRenderer;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
@@ -24,6 +26,7 @@ import net.zaharenko424.a_changed.client.renderer.misc.SeatRenderer;
 import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
 import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
+import net.zaharenko424.a_changed.event.custom.LoadModelsToCacheEvent;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
@@ -126,6 +129,8 @@ public class ClientMod {
         event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel()));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel()));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel()));
+//TMP DON'T FORGET TO REMOVE
+        event.registerEntityRenderer(TEST.get(), a -> new TestRenderer<>(a, new TestModel<>()));
     }
 
     @SubscribeEvent

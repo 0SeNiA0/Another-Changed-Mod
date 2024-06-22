@@ -15,10 +15,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WanderingTrader.class)
 public abstract class MixinWanderingTrader extends AbstractVillager {
+
     public MixinWanderingTrader(EntityType<? extends AbstractVillager> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
+    /**
+     * Makes wandering trader scared of latex.
+     */
     @Inject(at = @At("RETURN"), method = "registerGoals")
     private void onRegisterGoals(CallbackInfo ci){
         goalSelector.addGoal(1, new AvoidEntityGoal<>(this, AbstractLatexBeast.class, 12, .5, .5, latex ->

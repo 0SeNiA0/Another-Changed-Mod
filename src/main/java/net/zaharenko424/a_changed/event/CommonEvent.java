@@ -39,7 +39,7 @@ import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.item.Chisel;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
@@ -223,11 +223,11 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof Player remotePlayer)) return;
+        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync!!
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
         PacketDistributor.PLAYER.with(player).send(
-                new ClientboundRemotePlayerTransfurSyncPacket(TransfurCapability.nonNullOf(remotePlayer), remotePlayer.getUUID()));
+                new ClientboundPlayerTransfurSyncPacket(remotePlayer.getId(), TransfurCapability.nonNullOf(remotePlayer)));
         GrabCapability.nonNullOf(remotePlayer).updateRemotePlayer(player);
     }
 

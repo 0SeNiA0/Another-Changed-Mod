@@ -10,8 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ItemRenderer.class)
-public class MixinItemRenderer {
+public abstract class MixinItemRenderer {
 
+    /**
+     * Easter egg. Probably will be removed at some point.
+     */
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 2), method = "render")
     private boolean renderProxy(@NotNull ItemStack instance, Item pItem){
         return instance.is(pItem) || instance.is(ItemRegistry.ABSOLUTE_SOLVER);

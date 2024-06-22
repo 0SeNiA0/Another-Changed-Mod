@@ -40,7 +40,7 @@ public class TransfurCapability {
 
     public static class TransfurHandler implements ITransfurHandler {
 
-        private final LivingEntity entity;
+        private final LivingEntity holder;
 
         float transfurProgress = 0;
         TransfurType transfurType = null;
@@ -50,6 +50,7 @@ public class TransfurCapability {
         static final int ticksBetweenTFProgressDecrease = 20;
         int i0 = 0;
 
+        //Server only data
         boolean isBeingTransfurred = false;
         static final int ticksUntilDeathTF = 400;
         int beingTransfurredTimer;
@@ -57,7 +58,7 @@ public class TransfurCapability {
         public TransfurHandler(IAttachmentHolder holder){
             if(!(holder instanceof LivingEntity living) || !living.getType().is(AChanged.TRANSFURRABLE_TAG))
                 throw new IllegalStateException("Tried to create TransfurHandler for unsupported holder: " + holder);
-            this.entity = living;
+            this.holder = living;
         }
 
         @Override
@@ -94,7 +95,7 @@ public class TransfurCapability {
             this.transfurType = transfurType;
             isTransfurred = true;
             setBeingTransfurred(false);
-            AttributeMap map = entity.getAttributes();
+            AttributeMap map = holder.getAttributes();
             removeModifiers(map);
             addModifiers(map);
         }
@@ -104,7 +105,7 @@ public class TransfurCapability {
             transfurProgress = 0;
             setBeingTransfurred(false);
             isTransfurred = false;
-            if(!entity.level().isClientSide && transfurType != null) removeModifiers(entity.getAttributes());
+            if(!holder.level().isClientSide && transfurType != null) removeModifiers(holder.getAttributes());
             transfurType = null;
         }
 
@@ -117,13 +118,13 @@ public class TransfurCapability {
                 }
 
                 if(attribute == Attributes.MAX_HEALTH){
-                    float maxHealthO = entity.getMaxHealth();
+                    float maxHealthO = holder.getMaxHealth();
                     instance[0] = map.getInstance(attribute);
                     for(AttributeModifier modifier : modifiers){
                         instance[0].addTransientModifier(modifier);
                     }
-                    float diff = entity.getMaxHealth() - maxHealthO;
-                    if(diff > 0) entity.setHealth(entity.getHealth() + diff);
+                    float diff = holder.getMaxHealth() - maxHealthO;
+                    if(diff > 0) holder.setHealth(holder.getHealth() + diff);
                     return;
                 }
 
@@ -140,12 +141,12 @@ public class TransfurCapability {
                 if(!map.hasAttribute(attribute)) return;
 
                 if(attribute == Attributes.MAX_HEALTH){
-                    float maxHealthO = entity.getMaxHealth();
+                    float maxHealthO = holder.getMaxHealth();
                     instance[0] = map.getInstance(attribute);
                     for(AttributeModifier modifier : modifiers){
                         instance[0].removeModifier(modifier.getId());
                     }
-                    if(entity.getMaxHealth() - maxHealthO < 0) entity.setHealth(entity.getMaxHealth());
+                    if(holder.getMaxHealth() - maxHealthO < 0) holder.setHealth(holder.getMaxHealth());
                     return;
                 }
                 instance[0] = map.getInstance(attribute);
@@ -172,8 +173,8 @@ public class TransfurCapability {
             transfurProgress = tag.getFloat(TRANSFUR_PROGRESS_KEY);
             if(tag.contains(TRANSFUR_TYPE_KEY)) transfurType = TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
             isTransfurred = tag.getBoolean(TRANSFURRED_KEY);
-            if(entity instanceof Player) setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
-            if(isTransfurred()) addModifiers(entity.getAttributes());
+            if(holder instanceof Player) setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
+            if(isTransfurred()) addModifiers(holder.getAttributes());
             return this;
         }
 
@@ -183,7 +184,7 @@ public class TransfurCapability {
             tag.putFloat(TRANSFUR_PROGRESS_KEY, transfurProgress);
             if(transfurType != null) tag.putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
             tag.putBoolean(TRANSFURRED_KEY, isTransfurred);
-            if(entity instanceof Player) tag.putBoolean(BEING_TRANSFURRED_KEY, isBeingTransfurred);
+            if(holder instanceof Player) tag.putBoolean(BEING_TRANSFURRED_KEY, isBeingTransfurred);
             return tag;
         }
 
@@ -194,7 +195,7 @@ public class TransfurCapability {
             if(isBeingTransfurred){
                 if(beingTransfurredTimer > 0){
                     beingTransfurredTimer--;
-                } else TransfurEvent.TRANSFUR_DEATH.accept(entity, transfurType);
+                } else TransfurEvent.TRANSFUR_DEATH.accept(holder, transfurType);
                 return;
             }
 
@@ -202,9 +203,9 @@ public class TransfurCapability {
                 i0--;
                 return;
             }
-            if(entity.tickCount % ticksBetweenTFProgressDecrease != 0) return;
+            if(holder.tickCount % ticksBetweenTFProgressDecrease != 0) return;
             transfurProgress = Math.max(0, transfurProgress - 1);
-            if(entity instanceof ServerPlayer player) TransfurEvent.updatePlayer(player);
+            if(holder instanceof ServerPlayer player) TransfurEvent.updatePlayer(player);
         }
     }
 

@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -55,17 +56,15 @@ public class CommonMod {
     public static void onRegisterPayload(RegisterPayloadHandlerEvent event){
         IPayloadRegistrar registrar = event.registrar(MODID);
 
-        //Lambda SHOULDN'T be replaced with method reference! -> server will crash
+        //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
         //Transfur tolerance update
         registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));
 
-        //Grab
-        registrar.common(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
+        //Grab sync
+        registrar.play(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleGrabSyncPacket(packet, context)));
-        registrar.play(ClientboundRemoteGrabSyncPacket.ID, ClientboundRemoteGrabSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemoteGrabSyncPacket(packet, context)));
         registrar.play(ServerboundGrabPacket.ID, ServerboundGrabPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleGrabPacket));
 
@@ -75,10 +74,8 @@ public class CommonMod {
         registrar.play(ServerboundWantToBeGrabbedPacket.ID, ServerboundWantToBeGrabbedPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleWantToBeGrabbedPacket));
 
-        //Transfur data
+        //Transfur sync
         registrar.play(ClientboundPlayerTransfurSyncPacket.ID, ClientboundPlayerTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handlePlayerTransfurSync(packet, context)));
-        registrar.play(ClientboundRemotePlayerTransfurSyncPacket.ID, ClientboundRemotePlayerTransfurSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet, context)));
 
         //Transfur screen
@@ -175,6 +172,8 @@ public class CommonMod {
         event.put(PURE_WHITE_LATEX_WOLF.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
+//TMP DON'T FORGET TO REMOVE
+        event.put(TEST.get(), Zombie.createAttributes().build());
     }
 
     @SubscribeEvent

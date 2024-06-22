@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +25,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
@@ -107,17 +111,18 @@ public class ClientEvent {
             return;
         }
 
+        Entity crosshairEntity = minecraft.crosshairPickEntity;
+
+        if(crosshairEntity == null || player.distanceTo(crosshairEntity) > 2.5) return;
+
         if(TransfurManager.isGrabbed(player)) {
             player.displayClientMessage(Component.translatable("message.a_changed.grabbed"),true);
             return;
         }
 
-        if(!(minecraft.crosshairPickEntity instanceof LivingEntity entity)
-                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG) || player.distanceTo(entity) > 2.5) return;
-
-        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
-            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
-                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+        if(!(crosshairEntity instanceof LivingEntity entity)
+                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG)) {
+            player.displayClientMessage(Component.translatable("message.a_changed.grabbed_wrong_entity"), true);
             return;
         }
 
@@ -137,6 +142,13 @@ public class ClientEvent {
                 return;
             }
         }
+
+        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
+            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
+                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+            return;
+        }
+
         PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(entity.getId()));
     }
 

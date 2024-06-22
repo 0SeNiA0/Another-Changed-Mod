@@ -227,6 +227,7 @@
 
   "message.a_changed.grab_cooldown": "Grab ability is on cooldown for %1$s s",
   "message.a_changed.grabbed": "You are already grabbed by someone!",
+  "message.a_changed.grabbed_wrong_entity": "Cannot grab this entity!",
   "message.a_changed.grabbed_entity_died": "Grabbed entity died",
   "message.a_changed.grabbed_player_left": "Grabbed player left",
   "message.a_changed.only_friendly_grab_players": "You can only friendly grab players!",

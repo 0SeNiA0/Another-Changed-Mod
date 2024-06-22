@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.atest.TestZombie;
 import net.zaharenko424.a_changed.entity.*;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,9 @@ import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 public class EntityRegistry {
 
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MODID);
+//TMP DON'T FORGET TO REMOVE
+    public static final DeferredHolder<EntityType<?>, EntityType<TestZombie>> TEST = ENTITIES.register("test_entity", ()->
+            EntityType.Builder.<TestZombie>of((a, b) -> new TestZombie(b), MobCategory.MISC).build(resourceLoc("test_entity").toString()));
 
     //Entities
     public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> SEAT_ENTITY =

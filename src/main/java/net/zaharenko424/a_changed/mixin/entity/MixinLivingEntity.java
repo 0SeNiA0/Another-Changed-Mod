@@ -32,12 +32,12 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
      * AIR_DECREASE_SPEED attribute injection
      */
     @Inject(at = @At("RETURN"), method = "decreaseAirSupply", cancellable = true)
-    private void onDecreaseAirSupply(int p_21303_, CallbackInfoReturnable<Integer> cir){
+    private void onDecreaseAirSupply(int currentAir, CallbackInfoReturnable<Integer> cir){
         float airDecrease = (float) getAttributeValue(AChanged.AIR_DECREASE_SPEED);
         if(airDecrease == 1) return;
         int i = EnchantmentHelper.getRespiration(self());
         if(airDecrease == 0 || (i > 0 && random.nextInt(i + 1) > 0)){
-            cir.setReturnValue(p_21303_);
+            cir.setReturnValue(currentAir);
             return;
         }
 
@@ -49,6 +49,6 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
             airReduction++;
         }
 
-        cir.setReturnValue(p_21303_ - airReduction);
+        cir.setReturnValue(currentAir - airReduction);
     }
 }

@@ -5,6 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.capability.GrabCapability;
+import net.zaharenko424.a_changed.capability.GrabbedData;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.capability.item.SyringeRifleItemHandlerCapability;
@@ -26,6 +27,8 @@ public class AttachmentRegistry {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<GrabCapability.GrabHandler>> GRAB_HANDLER = ATTACHMENTS
             .register("grab_handler", ()-> AttachmentType.builder(GrabCapability.GrabHandler::new)
                     .serialize(GrabCapability.Serializer.INSTANCE).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<GrabbedData>> GRABBED_DATA = ATTACHMENTS
+            .register("grabbed_data", ()-> AttachmentType.builder(GrabbedData::new).build());
 
     //Item energy
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ItemEnergyCapability.ItemEnergyStorage>> ITEM_ENERGY_HANDLER = ATTACHMENTS

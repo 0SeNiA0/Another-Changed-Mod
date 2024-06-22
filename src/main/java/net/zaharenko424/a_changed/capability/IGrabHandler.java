@@ -19,7 +19,7 @@ public interface IGrabHandler {
 
     boolean canGrab();
 
-    Player getGrabbedBy();
+    LivingEntity getGrabbedBy();
 
     void setGrabbedBy(@Nullable Player player);
 

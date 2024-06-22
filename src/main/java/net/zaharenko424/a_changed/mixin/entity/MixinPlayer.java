@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -29,6 +30,9 @@ public abstract class MixinPlayer extends LivingEntity {
         super(p_20966_, p_20967_);
     }
 
+    /**
+     * Apply transfur progress to the thing, that is being attacked by the player.
+     */
     @Redirect(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
     public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
         if(target.level().isClientSide) return target.hurt(p_19946_, damage);
@@ -62,11 +66,15 @@ public abstract class MixinPlayer extends LivingEntity {
         ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
     }
 
-    @Inject(at = @At("HEAD"), method = "canPlayerFitWithinBlocksAndEntitiesWhen", cancellable = true)
-    private void onCanFitWithinBlocksAndEntitiesWhen(Pose pPose, CallbackInfoReturnable<Boolean> cir){
-        if(pPose != Pose.SWIMMING && getFeetBlockState().getBlock() instanceof VentDuct duct
+    /**
+     * Make player "swim" in vents.
+     */
+    @ModifyReturnValue(at = @At("TAIL"), method = "canPlayerFitWithinBlocksAndEntitiesWhen")
+    private boolean onCanFitWithinBlocksAndEntitiesWhen(boolean original, Pose pose){
+        if(pose != Pose.SWIMMING && getFeetBlockState().getBlock() instanceof VentDuct duct
                 && duct.getShape(getFeetBlockState(), level(), blockPosition(), CollisionContext.empty()).bounds().move(blockPosition()).intersects(getBoundingBox())) {
-            cir.setReturnValue(false);
+            return false;
         }
+        return original;
     }
 }

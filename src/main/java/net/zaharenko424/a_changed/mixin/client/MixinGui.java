@@ -22,6 +22,9 @@ public abstract class MixinGui {
     @Unique
     private int mod$secondaryColor;
 
+    /**
+     * Manually render hearts.
+     */
     @Inject(at = @At("HEAD"), method = "renderHeart", cancellable = true)
     private void onRenderHeart(GuiGraphics guiGraphics, Gui.HeartType heartType, int pX, int pY, boolean hardcore, boolean halfHeart, boolean blinking, @NotNull CallbackInfo ci){
         if(heartType != Gui.HeartType.NORMAL && heartType != Gui.HeartType.CONTAINER) return;

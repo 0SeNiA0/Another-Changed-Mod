@@ -37,8 +37,8 @@ public class Crystal extends Block {
     }
 
     @Override
-    public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
-        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0) return;
+    public void entityInside(BlockState p_60495_, Level level, BlockPos p_60497_, Entity p_60498_) {
+        if(level.isClientSide || p_60498_.tickCount % 10 != 0) return;
         if(!p_60498_.getBoundingBox().intersects(aabb.move(p_60497_)) || !DamageSources.checkTarget(p_60498_)) return;
         TransfurEvent.ADD_TRANSFUR_CRYSTAL.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
     }

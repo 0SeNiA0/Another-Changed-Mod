@@ -7,18 +7,19 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.GrabMode;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientboundGrabSyncPacket(int targetId, int grabbedBy, GrabMode mode, boolean wantsToBeGrabbed) implements CustomPacketPayload {
+public record ClientboundGrabSyncPacket(int holderId, int targetId, int grabbedBy, GrabMode mode, boolean wantsToBeGrabbed) implements CustomPacketPayload {
 
     public static final ResourceLocation ID = AChanged.resourceLoc("grab_sync");
 
     public ClientboundGrabSyncPacket(@NotNull FriendlyByteBuf buf){
-        this(buf.readInt(), buf.readInt(), buf.readEnum(GrabMode.class), buf.readBoolean());
+        this(buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readEnum(GrabMode.class), buf.readBoolean());
     }
 
     @Override
     public void write(@NotNull FriendlyByteBuf buffer) {
-        buffer.writeInt(targetId);
-        buffer.writeInt(grabbedBy);
+        buffer.writeVarInt(holderId);
+        buffer.writeVarInt(targetId);
+        buffer.writeVarInt(grabbedBy);
         buffer.writeEnum(mode);
         buffer.writeBoolean(wantsToBeGrabbed);
     }

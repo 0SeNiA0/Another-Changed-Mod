@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(FallingBlockRenderer.class)
 public abstract class MixinFallingBlockRenderer extends EntityRenderer<FallingBlockEntity> {
+
     @Shadow @Final private BlockRenderDispatcher dispatcher;
 
     protected MixinFallingBlockRenderer(EntityRendererProvider.Context pContext) {

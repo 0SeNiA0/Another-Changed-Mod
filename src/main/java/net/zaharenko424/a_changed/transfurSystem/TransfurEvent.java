@@ -17,7 +17,6 @@ import net.zaharenko424.a_changed.event.custom.TransfurredEvent;
 import net.zaharenko424.a_changed.event.custom.UnTransfurredEvent;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -45,7 +44,15 @@ public class TransfurEvent {
     public static final BiConsumer<LivingEntity, TransfurType> TRANSFUR_DEATH = transfur().setResult(TransfurResult.DEATH).build();
     public static final Consumer<ServerPlayer> UNTRANSFUR = unTransfur().build();
     public static final Consumer<ServerPlayer> UNTRANSFUR_SILENT = unTransfur().withSound(null).build();
-    public static final Consumer<LivingEntity> RECALCULATE_PROGRESS = recalculate().build();
+    public static final Consumer<LivingEntity> RECALCULATE_PROGRESS = target -> {
+        platformCheck(target);
+        ITransfurHandler handler = TransfurCapability.of(target);
+        if(handler == null) return;
+
+        if(handler.isTransfurred() || handler.isBeingTransfurred()) return;
+        if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
+            new Transfur(false).build().accept(target, handler.getTransfurType());
+    };
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull AddTransfurProgress addTransfurProgress(){
@@ -62,11 +69,6 @@ public class TransfurEvent {
         return new UnTransfur();
     }
 
-    @Contract(value = " -> new", pure = true)
-    public static @NotNull Recalculate recalculate(){
-        return new Recalculate();
-    }
-
     static void platformCheck(@NotNull LivingEntity target){
         if(target.level().isClientSide) throw new IllegalStateException("Cannot run serverside only methods on client!");
     }
@@ -81,8 +83,7 @@ public class TransfurEvent {
 
     static void updatePlayer(@NotNull ServerPlayer player, @NotNull ITransfurHandler handler){
         player.refreshDimensions();
-        PacketDistributor.PLAYER.with(player).send(new ClientboundPlayerTransfurSyncPacket(handler));
-        PacketDistributor.TRACKING_ENTITY.with(player).send(new ClientboundRemotePlayerTransfurSyncPacket(handler, player.getUUID()));
+        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(player).send(new ClientboundPlayerTransfurSyncPacket(player.getId(), handler));
     }
 
     public static class AddTransfurProgress {
@@ -147,7 +148,6 @@ public class TransfurEvent {
 
         final boolean subEvent;
         SoundEvent sound = SoundRegistry.TRANSFUR.get();
-        boolean ignoreGameRules = false;
         TransfurResult result;
 
         Transfur(boolean subEvent){
@@ -243,21 +243,6 @@ public class TransfurEvent {
                 handler.unTransfur();
                 updatePlayer(player, handler);
                 if(transfurType != null) NeoForge.EVENT_BUS.post(new UnTransfurredEvent(player, transfurType));
-            };
-        }
-    }
-
-    public static class Recalculate {
-
-        public Consumer<LivingEntity> build() {
-            return target -> {
-                platformCheck(target);
-                ITransfurHandler handler = TransfurCapability.of(target);
-                if(handler == null) return;
-
-                if(handler.isTransfurred() || handler.isBeingTransfurred()) return;
-                if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
-                    new Transfur(false).build().accept(target, handler.getTransfurType());
             };
         }
     }
