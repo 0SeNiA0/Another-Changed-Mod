@@ -7,25 +7,34 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.GrabCapability;
@@ -47,6 +56,7 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
+import net.zaharenko424.a_changed.util.CoveredWith;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
@@ -112,6 +122,14 @@ public class CommonEvent {
         Direction direction = player.getDirection().getOpposite();
         BlockPos pos = event.getPos();
         if(!player.isCrouching()) {
+
+            if(handleLatexRMB(level, item, pos)){
+                if(!player.isCreative()) item.shrink(1);
+                denyEvent(event);
+                event.setCancellationResult(InteractionResult.CONSUME);
+                return;
+            }
+
             BlockState above = level.getBlockState(pos.above());
             if(above.getBlock() instanceof PileOfOranges oranges){
                 event.setCancellationResult(oranges.use(above, level, pos.above(), player, event.getHand(), event.getHitVec()));
@@ -120,39 +138,72 @@ public class CommonEvent {
             }
             return;
         }
+
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.above();
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
-                    entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+            handleBookRMB(level, player, item, pos);
             denyEvent(event);
             return;
         }
+
         if(item.is(ItemRegistry.ORANGE_ITEM)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.above();
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
-                entity.addOrange(event.getHitVec().getLocation(), (int) player.yHeadRot);
-                if(!player.isCreative()) item.shrink(1);
-            }));
+            handleOrangeRMB(level, player, event.getHitVec().getLocation(), item, pos);
             denyEvent(event);
             return;
         }
+
         if(item.is(Items.PAPER)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.relative(direction);
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
-            if(!player.isCreative()) player.getItemInHand(event.getHand()).shrink(1);
+            handlePaperRMB(level, player, item, pos, direction);
             denyEvent(event);
         }
+    }
+
+    static boolean handleLatexRMB(Level level, ItemStack item, BlockPos pos){
+        LatexCoveredData data = LatexCoveredData.of(level.getChunkAt(pos));
+        if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return false;
+        boolean consume = false;
+
+        if (item.is(ItemRegistry.DARK_LATEX_ITEM)) {
+            data.coverWith(pos, CoveredWith.DARK_LATEX);
+            consume = true;
+        }
+
+        if (item.is(ItemRegistry.WHITE_LATEX_ITEM)) {
+            data.coverWith(pos, CoveredWith.WHITE_LATEX);
+            consume = true;
+        }
+
+        return consume;
+    }
+
+    static void handleBookRMB(Level level, Player player, ItemStack item, BlockPos pos){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
+        level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
+                entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+    }
+
+    static void handleOrangeRMB(Level level, Player player, Vec3 hitVec, ItemStack item, BlockPos pos){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
+        level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
+            entity.addOrange(hitVec, (int) player.yHeadRot);
+            if(!player.isCreative()) item.shrink(1);
+        }));
+    }
+
+    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.relative(direction);
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
+        if(!player.isCreative()) item.shrink(1);
     }
 
     private static void denyEvent(PlayerInteractEvent.RightClickBlock event){
@@ -165,6 +216,7 @@ public class CommonEvent {
      * Handle chisel in survival
      */
     @SubscribeEvent
+    @Deprecated(forRemoval = true)
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event){
         if(event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) return;
         Player player = event.getEntity();
@@ -173,6 +225,37 @@ public class CommonEvent {
         Level level = player.level();
         BlockPos pos = event.getPos();
         chisel.canAttackBlock(level.getBlockState(pos), level, pos, player);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onBlockBreak(BlockEvent.BreakEvent event){
+        Level level = (Level) event.getLevel();
+        Player player = event.getPlayer();
+        if(level.isClientSide || player.isCreative() || !CommonHooks.isCorrectToolForDrops(event.getState(), player)) return;
+
+        BlockPos pos = event.getPos();
+        CoveredWith coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
+
+        if(coveredWith == CoveredWith.NOTHING) return;
+
+        Block.popResource(level, pos, coveredWith == CoveredWith.DARK_LATEX ? ItemRegistry.DARK_LATEX_ITEM.toStack()
+                : ItemRegistry.WHITE_LATEX_ITEM.toStack());
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onExplosion(ExplosionEvent.Detonate event){
+        Level level = event.getLevel();
+        if(level.isClientSide) return;
+
+        CoveredWith coveredWith;
+        for(BlockPos pos : event.getAffectedBlocks()){
+            coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
+
+            if(coveredWith == CoveredWith.NOTHING) return;
+
+            Block.popResource(level, pos, coveredWith == CoveredWith.DARK_LATEX ? ItemRegistry.DARK_LATEX_ITEM.toStack()
+                    : ItemRegistry.WHITE_LATEX_ITEM.toStack());
+        }
     }
 
     @SubscribeEvent
@@ -229,6 +312,14 @@ public class CommonEvent {
         PacketDistributor.PLAYER.with(player).send(
                 new ClientboundPlayerTransfurSyncPacket(remotePlayer.getId(), TransfurCapability.nonNullOf(remotePlayer)));
         GrabCapability.nonNullOf(remotePlayer).updateRemotePlayer(player);
+    }
+
+    /**
+     * Send data about latex coveredndess of the chunk.
+     */
+    @SubscribeEvent
+    public static void onChunkWatch(ChunkWatchEvent.Sent event){
+        PacketDistributor.PLAYER.with(event.getPlayer()).send(LatexCoveredData.of(event.getChunk()).getPacket(null));
     }
 
     /**

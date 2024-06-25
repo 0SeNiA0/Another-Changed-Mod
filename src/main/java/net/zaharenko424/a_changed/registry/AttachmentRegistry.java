@@ -5,7 +5,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.GrabbedData;
+import net.zaharenko424.a_changed.attachments.GrabbedData;
+import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.capability.item.SyringeRifleItemHandlerCapability;
@@ -34,6 +35,11 @@ public class AttachmentRegistry {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ItemEnergyCapability.ItemEnergyStorage>> ITEM_ENERGY_HANDLER = ATTACHMENTS
             .register("item_energy_handler", ()-> AttachmentType.builder(ItemEnergyCapability.ItemEnergyStorage::new)
                     .serialize(ItemEnergyCapability.Serializer.INSTANCE).build());
+
+    //Latex covered data
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LatexCoveredData>> LATEX_COVERED = ATTACHMENTS
+            .register("latex_covered", ()-> AttachmentType.builder(LatexCoveredData::new)
+                    .serialize(LatexCoveredData.Serializer.INSTANCE).build());
 
     //Pneumatic syringe rifle inv
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SyringeRifleItemHandlerCapability.PneumaticSyringeRifleItemHandler>> PNEUMATIC_SYRINGE_RIFLE_ITEM_HANDLER = ATTACHMENTS

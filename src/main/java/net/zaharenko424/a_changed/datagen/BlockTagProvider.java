@@ -48,6 +48,9 @@ public class BlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(), WHITE_LATEX_PUDDLE_F.get(),
                 WHITE_LATEX_PUDDLE_M.get());
 
+        tag(AChanged.LATEX_RESISTANT).add(LATEX_RESISTANT_BLOCK.get(), LATEX_RESISTANT_GLASS.get(), LATEX_RESISTANT_GLASS_PANE.get());
+        //TODO add more latex resistant stuff
+
         tag(AChanged.LASER_TRANSPARENT).addTags(BlockTags.REPLACEABLE, Tags.Blocks.GLASS, Tags.Blocks.GLASS_PANES, BlockTags.BUTTONS)
                 .add(DANGER_SIGN.get(), DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(), LATEX_RESISTANT_GLASS.get(),
                 LATEX_RESISTANT_GLASS_PANE.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());

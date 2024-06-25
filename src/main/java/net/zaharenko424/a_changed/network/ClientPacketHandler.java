@@ -2,12 +2,16 @@ package net.zaharenko424.a_changed.network;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
 import net.zaharenko424.a_changed.capability.ITransfurHandler;
@@ -17,6 +21,7 @@ import net.zaharenko424.a_changed.client.cmrs.model.URLLoadedModel;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;
+import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenNotePacket;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
@@ -26,6 +31,8 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class ClientPacketHandler {
 
@@ -38,7 +45,7 @@ public class ClientPacketHandler {
     }
 
     public void handleGrabSyncPacket(@NotNull ClientboundGrabSyncPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().submitAsync(()-> {
+        context.workHandler().submitAsync(() -> {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity holder)) {
                 AChanged.LOGGER.warn("No suitable holder for GrabCapability found with id {}!", packet.holderId());
@@ -68,7 +75,7 @@ public class ClientPacketHandler {
     }
 
     public void handleRemotePlayerTransfurSync(@NotNull ClientboundPlayerTransfurSyncPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().submitAsync(()-> {
+        context.workHandler().submitAsync(() -> {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity holder)) {
                 AChanged.LOGGER.warn("No suitable holder for TransfurCapability found with id {}!", packet.holderId());
@@ -109,18 +116,32 @@ public class ClientPacketHandler {
         else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
     }
 
+    public void handleLTCDataSync(ClientboundLTCDataPacket packet, PlayPayloadContext context){
+        context.workHandler().submitAsync(() -> {
+            LevelChunk chunk = minecraft.level.getChunk(packet.pos().x, packet.pos().z);
+            LatexCoveredData.of(chunk).readPacket(packet.flags(), packet.rawData());
+        });
+    }
+
+    public void updateChunkSections(Set<SectionPos> sections){
+        LevelRenderer levelRenderer = minecraft.levelRenderer;
+        for(SectionPos pos : sections){
+            levelRenderer.setSectionDirty(pos.x(), pos.y(), pos.z());
+        }
+    }
+
     public void handleOpenTransfurScreen(@NotNull PlayPayloadContext context){
-        context.workHandler().submitAsync(()->
+        context.workHandler().submitAsync(() ->
                 minecraft.setScreen(new TransfurScreen()));
     }
 
     public void handleOpenNotePacket(@NotNull ClientboundOpenNotePacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().submitAsync(()->
+        context.workHandler().submitAsync(() ->
                 minecraft.setScreen(new NoteScreen(packet.pos(), packet.text(), packet.finalized(), packet.guiId())));
     }
 
     public void handleOpenKeypadPacket(@NotNull ClientboundOpenKeypadPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().submitAsync(()->
+        context.workHandler().submitAsync(() ->
                 minecraft.setScreen(new KeypadScreen(packet.isPasswordSet(), packet.length(), packet.pos())));
     }
 }

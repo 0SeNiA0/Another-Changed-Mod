@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.mixin.entity;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.zaharenko424.a_changed.EntityAccessor;
+import net.zaharenko424.a_changed.EntityAccess;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public abstract class MixinEntity implements EntityAccessor {
+public abstract class MixinEntity implements EntityAccess {
 
     @ModifyReturnValue(at = @At("TAIL"), method = "getAirSupply")
     private int capAirSupply(int original){

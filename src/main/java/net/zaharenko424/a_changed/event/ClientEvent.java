@@ -53,6 +53,7 @@ import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.Utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -152,9 +153,9 @@ public class ClientEvent {
         PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(entity.getId()));
     }
 
-    private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
+    private static final List<Class<?>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
             Flask.class, LatexEncoder.class, MetalCan.class, PileOfOranges.class, TestTubes.class);
-    private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
+    private static final List<Class<?>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
             DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 
     @SubscribeEvent
@@ -164,12 +165,12 @@ public class ClientEvent {
         Vec3 cameraPos = event.getCamera().getPosition();
         Class<? extends Block> clazz = level.getBlockState(pos).getBlock().getClass();
 
-        if(containsClass(clazz, blocksNoOutline)){
+        if(Utils.containsClass(clazz, blocksNoOutline)){
             event.setCanceled(true);
             return;
         }
 
-        if(!level.getWorldBorder().isWithinBounds(pos) || !containsClass(clazz, blocksSolidOutline)) return;
+        if(!level.getWorldBorder().isWithinBounds(pos) || !Utils.containsClass(clazz, blocksSolidOutline)) return;
 
         renderShape(
                 event.getPoseStack(),
@@ -184,13 +185,6 @@ public class ClientEvent {
                 1F
         );
         event.setCanceled(true);
-    }
-
-    private static boolean containsClass(Class<? extends Block> clazz, List<Class<? extends Block>> list){
-        for (Class<? extends Block> block : list){
-            if(block.isAssignableFrom(clazz)) return true;
-        }
-        return false;
     }
 
     public static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,

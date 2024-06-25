@@ -45,7 +45,6 @@ public class ClientMod {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
         Sheets.addWoodType(AChanged.ORANGE);
-
     }
 
     @SubscribeEvent

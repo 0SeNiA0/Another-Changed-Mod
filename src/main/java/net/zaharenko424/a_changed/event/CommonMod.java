@@ -84,6 +84,10 @@ public class CommonMod {
         registrar.play(ServerboundTransfurChoicePacket.ID, ServerboundTransfurChoicePacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleTransfurChoicePacket));
 
+        //Latex coveredness of chunks
+        registrar.play(ClientboundLTCDataPacket.ID, ClientboundLTCDataPacket::new, handler ->
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleLTCDataSync(packet, context)));
+
         //Latex encoder
         registrar.play(ServerboundLatexEncoderScreenPacket.ID, ServerboundLatexEncoderScreenPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleLatexEncoderScreenPacket));

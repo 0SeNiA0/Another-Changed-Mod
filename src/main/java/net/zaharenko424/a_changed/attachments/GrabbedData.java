@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.capability;
+package net.zaharenko424.a_changed.attachments;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;

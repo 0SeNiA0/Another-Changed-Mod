@@ -153,4 +153,11 @@ public class Utils {
         }
         return false;
     }
+
+    public static boolean containsClass(Class<?> clazz, List<Class<?>> list){
+        for (Class<?> block : list){
+            if(block.isAssignableFrom(clazz)) return true;
+        }
+        return false;
+    }
 }
