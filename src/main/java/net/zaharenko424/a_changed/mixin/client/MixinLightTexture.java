@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = LightTexture.class)
-public class MixinLightTexture {
+public abstract class MixinLightTexture {
 
     /**
      * Enables night vision for certain latexes.

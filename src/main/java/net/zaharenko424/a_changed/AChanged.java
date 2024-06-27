@@ -90,6 +90,7 @@ public class AChanged {
 
     //Game rules
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
+    public static final GameRules.Key<GameRules.BooleanValue> DO_LATEX_SPREAD = GameRules.register("doLatexSpread", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> KEEP_TRANSFUR = GameRules.register("keepTransfurOnDeath", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> TRANSFUR_IS_DEATH = GameRules.register("transfurIsDeath", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
 

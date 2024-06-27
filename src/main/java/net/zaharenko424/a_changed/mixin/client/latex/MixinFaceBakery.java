@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(FaceBakery.class)
-public class MixinFaceBakery {
+public abstract class MixinFaceBakery {
 
     @ModifyReturnValue(at = @At(value = "TAIL"), method = "bakeQuad")
     private BakedQuad onBakeQuad(BakedQuad original, @Local BlockFaceUV uv){

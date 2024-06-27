@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -48,7 +49,11 @@ public class BlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(), WHITE_LATEX_PUDDLE_F.get(),
                 WHITE_LATEX_PUDDLE_M.get());
 
-        tag(AChanged.LATEX_RESISTANT).add(LATEX_RESISTANT_BLOCK.get(), LATEX_RESISTANT_GLASS.get(), LATEX_RESISTANT_GLASS_PANE.get());
+        tag(AChanged.LATEX_RESISTANT).add(Blocks.BARRIER, Blocks.BEDROCK, Blocks.CHAIN_COMMAND_BLOCK, Blocks.COMMAND_BLOCK,
+                Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.STRUCTURE_VOID, Blocks.LIGHT,
+
+
+                LATEX_RESISTANT_BLOCK.get(), LATEX_RESISTANT_GLASS.get(), LATEX_RESISTANT_GLASS_PANE.get());
         //TODO add more latex resistant stuff
 
         tag(AChanged.LASER_TRANSPARENT).addTags(BlockTags.REPLACEABLE, Tags.Blocks.GLASS, Tags.Blocks.GLASS_PANES, BlockTags.BUTTONS)

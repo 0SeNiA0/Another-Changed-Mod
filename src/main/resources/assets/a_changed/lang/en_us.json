@@ -156,6 +156,7 @@
   "entity.a_changed.white_latex_wolf_male": "White Latex Wolf",
 
   "gamerule.chooseTransfurOrDie": "Allow player to choose between being transfurred and dying",
+  "gamerule.doLatexSpread": "Enable/disable spreading of latex covered blocks",
   "gamerule.keepTransfurOnDeath": "Keep transfur on death",
   "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
 

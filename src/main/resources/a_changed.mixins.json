@@ -7,8 +7,11 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "MixinBlockBehaviour",
+    "MixinDebugStick",
     "MixinLevel",
     "MixinServerGamePacketListenerImpl",
+    "MixinServerLevel",
     "MixinSimpleBlockFeature",
     "entity.MixinCreeper",
     "entity.MixinEntity",
@@ -24,8 +27,9 @@
     "client.MixinBlockModelShaper",
     "client.MixinDebugScreenOverlay",
     "client.MixinGui",
-    "client.MixinLevelRenderer",
+    "client.renderer.MixinLevelRenderer",
     "client.MixinLightTexture",
+    "client.MixinMultiPlayerGameMode",
     "client.latex.MixinBakedQuad",
     "client.latex.MixinBlockRendererDispatcher",
     "client.latex.MixinFaceBakery",
@@ -34,6 +38,7 @@
     "client.renderer.MixinFogRenderer",
     "client.renderer.MixinGameRenderer",
     "client.renderer.MixinItemRenderer",
+    "client.renderer.MixinLevelRenderer",
     "client.renderer.MixinLivingEntityRenderer",
     "client.renderer.MixinPlayerRenderer"
   ]

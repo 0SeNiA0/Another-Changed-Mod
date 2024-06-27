@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
@@ -12,6 +14,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
+import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +33,17 @@ public class LatexCoveredData {
         return chunk.getData(AttachmentRegistry.LATEX_COVERED);
     }
 
+    public static boolean isLatex(BlockState state){
+        return state.is(BlockRegistry.DARK_LATEX_BLOCK) || state.is(BlockRegistry.WHITE_LATEX_BLOCK);
+    }
+
+    /**
+     * @return true if state cannot be latex covered.
+     */
+    public static boolean isStateNotCoverable(@NotNull BlockState state){
+        return state.isEmpty() || state.is(AChanged.LATEX_RESISTANT) || state.getBlock() instanceof LiquidBlock;
+    }
+
     private final LevelChunk holder;
     private HashMap<BlockPos, CoveredWith> latexCoveredBlocks;
     private HashSet<SectionPos> sectionsToUpdate;
@@ -39,24 +53,36 @@ public class LatexCoveredData {
         this.holder = chunk;
     }
 
+    public boolean isEmpty(){
+        return latexCoveredBlocks == null || latexCoveredBlocks.isEmpty();
+    }
+
+    /**
+     * Latex blocks return CoveredWith.NOTHING !
+     * @return CoveredWith.NOTHING if no data is present.
+     */
     public CoveredWith getCoveredWith(@NotNull BlockPos pos){
-        if(latexCoveredBlocks == null || !latexCoveredBlocks.containsKey(pos)) return CoveredWith.NOTHING;
-        return latexCoveredBlocks.get(pos);
+        if(latexCoveredBlocks == null) return CoveredWith.NOTHING;
+        return latexCoveredBlocks.getOrDefault(pos, CoveredWith.NOTHING);
     }
 
     public void coverWith(@NotNull BlockPos pos, @NotNull CoveredWith coverWith){
         if(holder.getLevel().isClientSide || !verifyPos(pos)) return;
-        if(holder.getBlockState(pos).is(AChanged.LATEX_RESISTANT) && coverWith != CoveredWith.NOTHING) return;
+        BlockState state = holder.getBlockState(pos);
+        if((isLatex(state) || isStateNotCoverable(state)) && coverWith != CoveredWith.NOTHING) return;
 
         if(coverWith == CoveredWith.NOTHING){
-            if(latexCoveredBlocks != null && latexCoveredBlocks.remove(pos) != null)
+            if(latexCoveredBlocks != null && latexCoveredBlocks.remove(pos) != null) {
+                holder.setUnsaved(true);
                 PacketDistributor.TRACKING_CHUNK.with(holder).send(getPacket(pos));
+            }
 
             return;
         }
 
         if(latexCoveredBlocks == null) latexCoveredBlocks = new HashMap<>();
         latexCoveredBlocks.put(pos, coverWith);
+        holder.setUnsaved(true);
 
         PacketDistributor.TRACKING_CHUNK.with(holder).send(getPacket(pos));
     }
@@ -86,7 +112,7 @@ public class LatexCoveredData {
     public ClientboundLTCDataPacket getPacket(@Nullable BlockPos pos){
         if(holder.getLevel().isClientSide) return null;
 
-        if(latexCoveredBlocks == null || latexCoveredBlocks.isEmpty()){
+        if(isEmpty()){
             if(pos == null) return new ClientboundLTCDataPacket(holder.getPos(), CLEAR_SYNC, new byte[0]);
             byte[] data = new byte[3];
             writeBlock(data, 0, pos.getX(), pos.getY(), pos.getZ(), CoveredWith.NOTHING);
@@ -150,12 +176,12 @@ public class LatexCoveredData {
         final int size = latexCoveredBlocks.size();
         byte[] rawData = new byte[size * 3];
 
-        int i = -1;
+        int i = 0;
         BlockPos pos;
         for(Map.Entry<BlockPos, CoveredWith> entry : latexCoveredBlocks.entrySet()){
             pos = entry.getKey();
-            i++;
             writeBlock(rawData, i * 3, pos.getX(), pos.getY(), pos.getZ(), entry.getValue());
+            i++;
         }
 
         return rawData;
@@ -185,7 +211,7 @@ public class LatexCoveredData {
 
         @Override
         public @Nullable ByteArrayTag write(@NotNull LatexCoveredData attachment) {
-            if(attachment.latexCoveredBlocks == null || attachment.latexCoveredBlocks.isEmpty()) return null;
+            if(attachment.isEmpty()) return null;
             return new ByteArrayTag(attachment.write());
         }
     }

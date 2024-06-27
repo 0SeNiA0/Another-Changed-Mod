@@ -30,7 +30,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
-import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
@@ -158,6 +157,9 @@ public class CommonEvent {
     }
 
     static boolean handleLatexRMB(Level level, ItemStack item, BlockPos pos){
+        BlockState state = level.getBlockState(pos);
+        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) return false;
+
         LatexCoveredData data = LatexCoveredData.of(level.getChunkAt(pos));
         if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return false;
         boolean consume = false;
@@ -242,22 +244,6 @@ public class CommonEvent {
                 : ItemRegistry.WHITE_LATEX_ITEM.toStack());
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onExplosion(ExplosionEvent.Detonate event){
-        Level level = event.getLevel();
-        if(level.isClientSide) return;
-
-        CoveredWith coveredWith;
-        for(BlockPos pos : event.getAffectedBlocks()){
-            coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
-
-            if(coveredWith == CoveredWith.NOTHING) return;
-
-            Block.popResource(level, pos, coveredWith == CoveredWith.DARK_LATEX ? ItemRegistry.DARK_LATEX_ITEM.toStack()
-                    : ItemRegistry.WHITE_LATEX_ITEM.toStack());
-        }
-    }
-
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event){
         if(event.getEntity().level().isClientSide) return;
@@ -319,7 +305,9 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event){
-        PacketDistributor.PLAYER.with(event.getPlayer()).send(LatexCoveredData.of(event.getChunk()).getPacket(null));
+        LatexCoveredData data = LatexCoveredData.of(event.getChunk());
+        if(data.isEmpty()) return;
+        PacketDistributor.PLAYER.with(event.getPlayer()).send(data.getPacket(null));
     }
 
     /**
