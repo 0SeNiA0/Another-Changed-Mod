@@ -14,10 +14,11 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.entity.ai.LatexTargetPlayerGoal;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
@@ -98,7 +99,8 @@ public abstract class AbstractLatexBeast extends Monster {
         if(!p_21372_.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
         doEnchantDamageEffects(this, p_21372_);
         setLastHurtMob(p_21372_);
-        TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_21372_, transfurType, 5f);
+        TransfurCapability.nonNullOf((LivingEntity) p_21372_)
+                .addTransfurProgress(5f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
         return true;
     }
 

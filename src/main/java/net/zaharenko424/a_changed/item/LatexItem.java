@@ -7,12 +7,12 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.FluidRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.Latex;
-import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -32,15 +32,15 @@ public class LatexItem extends Item {
         return type;
     }
 
-    private static TriConsumer<LivingEntity, TransfurType, Float> ADD_TRANSFUR;
+    private static TransfurContext ADD_TF_NO_CHECK;
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
         Player player= (Player) p_41411_;
         if(!p_41410_.isClientSide){
             if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            if(ADD_TRANSFUR == null) ADD_TRANSFUR = TransfurEvent.addTransfurProgress().checkResistance(false).build();
-            ADD_TRANSFUR.accept(player, transfurType.get(), 10f);
+            if(ADD_TF_NO_CHECK == null) ADD_TF_NO_CHECK = TransfurContext.ADD_PROGRESS_DEF.withCheckResistance(false);
+            TransfurCapability.nonNullOf(player).addTransfurProgress(10f, transfurType.get(), ADD_TF_NO_CHECK);
         }
         if(!player.isCreative()) p_41409_.shrink(1);
         return p_41409_;

@@ -25,7 +25,7 @@ import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenNotePacket;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
@@ -74,34 +74,22 @@ public class ClientPacketHandler {
         });
     }
 
-    public void handleRemotePlayerTransfurSync(@NotNull ClientboundPlayerTransfurSyncPacket packet, @NotNull PlayPayloadContext context){
+    public void handleRemotePlayerTransfurSync(@NotNull ClientboundTransfurSyncPacket packet, @NotNull PlayPayloadContext context){
         context.workHandler().submitAsync(() -> {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity holder)) {
                 AChanged.LOGGER.warn("No suitable holder for TransfurCapability found with id {}!", packet.holderId());
                 return;
             }
+
             ITransfurHandler handler = TransfurCapability.nonNullOf(holder);
 
-            TransfurType newTransfurType = packet.transfurType();
-            TransfurType handlerTf = handler.getTransfurType();
-
-            if(!packet.isTransfurred()){
-                if(handler.isTransfurred()){// Here holder is(should) always be player since otherwise it would have been dead.
-                    removeTransfurModel((AbstractClientPlayer) holder, handlerTf);
-                    handler.unTransfur();
-                    holder.refreshDimensions();
-                } else handler.setTransfurProgress(packet.transfurProgress(), newTransfurType);
-                return;
+            if(packet.transfurTypeO() != null) removeTransfurModel((AbstractClientPlayer) holder, packet.transfurTypeO());
+            if(packet.isTransfurred()){
+                setTransfurModel((AbstractClientPlayer) holder, packet.transfurType());
             }
 
-            // Non-player holder will never reach this \/, -> can safely cast.
-            if(newTransfurType != handler.getTransfurType()){
-                if(handler.isTransfurred()) removeTransfurModel((AbstractClientPlayer) holder, handlerTf);
-                setTransfurModel((AbstractClientPlayer) holder, newTransfurType);
-            }
-
-            handler.transfur(newTransfurType);
+            handler.loadSyncedData(packet.transfurProgress(), packet.isTransfurred(), packet.transfurType());
             holder.refreshDimensions();
         });
     }

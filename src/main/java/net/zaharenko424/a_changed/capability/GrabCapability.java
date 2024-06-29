@@ -20,7 +20,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +33,8 @@ public class GrabCapability {
     public static final ResourceLocation KEY = AChanged.resourceLoc("grab_capability");
     public static final EntityCapability<IGrabHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, IGrabHandler.class);
     public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Grab capability was expected but not found!");
+
+    public static final Serializer SERIALIZER = new Serializer();
 
     public static @Nullable IGrabHandler of(@NotNull LivingEntity player){
         return player.getCapability(CAPABILITY);
@@ -86,7 +88,7 @@ public class GrabCapability {
             } else grabbedEntity.addTag("a_changed:grabbed");
             if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF.get(), grabDuration, 0, false, false));
             if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF.get(), -1, 0, false, false));
-            updatePlayer();
+            syncClients();
         }
 
         @Override
@@ -111,7 +113,7 @@ public class GrabCapability {
             grabbedEntity = null;
             if(mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF.get());
             holder.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN.get(), grabCooldown, 0, false, false));
-            updatePlayer();
+            syncClients();
         }
 
         @Override
@@ -129,7 +131,7 @@ public class GrabCapability {
             grabbedBy = player;
             if(this.holder.level().isClientSide) return;
             if(grabbedEntity != null) drop();
-            else updatePlayer();
+            else syncClients();
         }
 
         @Override
@@ -148,7 +150,7 @@ public class GrabCapability {
                     || (grabbedEntity instanceof Player player1 && !TransfurManager.wantsToBeGrabbed(player1) && !mode.givesDebuffToTarget)) drop();
             this.mode = mode;
             if(grabbedEntity != null) grab(grabbedEntity, true);
-            else updatePlayer();
+            else syncClients();
         }
 
         @Override
@@ -168,22 +170,7 @@ public class GrabCapability {
                 if(!handler.grabMode().givesDebuffToTarget) handler.drop();
             }
             this.wantsToBeGrabbed = wantsToBeGrabbed;
-            updatePlayer();
-        }
-
-        @Override
-        public GrabHandler load(@NotNull CompoundTag tag) {
-            mode = GrabMode.valueOf(tag.getString("mode"));
-            wantsToBeGrabbed = tag.getBoolean("wantToBeGrabbed");
-            return this;
-        }
-
-        @Override
-        public CompoundTag save() {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("mode", mode.toString());
-            tag.putBoolean("wantToBeGrabbed", wantsToBeGrabbed);
-            return tag;
+            syncClients();
         }
 
         @Override
@@ -206,8 +193,10 @@ public class GrabCapability {
                     grabbedEntity.hurt(DamageSources.assimilation(holder, null), Integer.MAX_VALUE);
                     holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
                     holder.getFoodData().eat(6, 1);
-                } else if(mode == GrabMode.REPLICATE)
-                    TransfurEvent.TRANSFUR_TF.accept(grabbedEntity, TransfurManager.getTransfurType(holder));
+                } else if(mode == GrabMode.REPLICATE) {
+                    ITransfurHandler handler = TransfurCapability.of(grabbedEntity);
+                    if(handler != null) handler.transfur(TransfurManager.getTransfurType(holder), TransfurContext.TRANSFUR_TF);
+                }
                 drop();
             }
         }
@@ -223,39 +212,40 @@ public class GrabCapability {
             grabbedEntity.setDeltaMovement(grabbedEntity.getDeltaMovement().with(Direction.Axis.Y, 0));
         }
 
-        public void updatePlayer(){
+        public void syncClients(){
             if(holder.level().isClientSide) return;
-            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(holder)
-                    .send(new ClientboundGrabSyncPacket(holder.getId(),
-                            grabbedEntity != null ? grabbedEntity.getId() : -1,
-                            grabbedBy != null ? grabbedBy.getId() : -1,
-                            mode, wantsToBeGrabbed));
+            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(holder).send(packet());
         }
 
         @Override
-        public void updateRemotePlayer(@NotNull ServerPlayer packetReceiver) {
-            PacketDistributor.PLAYER.with(packetReceiver)
-                    .send(new ClientboundGrabSyncPacket(holder.getId(),
-                            grabbedEntity != null ? grabbedEntity.getId() : -1,
-                            grabbedBy != null ? grabbedBy.getId() : -1,
-                            mode, wantsToBeGrabbed));
+        public void syncClient(@NotNull ServerPlayer packetReceiver) {
+            PacketDistributor.PLAYER.with(packetReceiver).send(packet());
+        }
+
+        ClientboundGrabSyncPacket packet(){
+            return new ClientboundGrabSyncPacket(holder.getId(), grabbedEntity != null ? grabbedEntity.getId() : -1,
+                    grabbedBy != null ? grabbedBy.getId() : -1, mode, wantsToBeGrabbed);
         }
     }
 
     public static class Serializer implements IAttachmentSerializer<CompoundTag, GrabHandler> {
 
-        public static final Serializer INSTANCE = new Serializer();
-
         private Serializer() {}
 
         @Override
         public @NotNull GrabHandler read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
-            return new GrabHandler(holder).load(tag);
+            GrabHandler handler = new GrabHandler(holder);
+            handler.mode = GrabMode.valueOf(tag.getString("mode"));
+            handler.wantsToBeGrabbed = tag.getBoolean("wantToBeGrabbed");
+            return handler;
         }
 
         @Override
         public @Nullable CompoundTag write(@NotNull GrabHandler attachment) {
-            return attachment.save();
+            CompoundTag tag = new CompoundTag();
+            tag.putString("mode", attachment.mode.toString());
+            tag.putBoolean("wantToBeGrabbed", attachment.wantsToBeGrabbed);
+            return tag;
         }
     }
 }

@@ -12,8 +12,9 @@ import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public class Transfur {
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
         TransfurType transfur = TransfurManager.getTransfurType(transfurType);
         if(transfur == null) return 0;
-        TransfurEvent.TRANSFUR_TF.accept(player, transfur);
+        TransfurCapability.nonNullOf(player).transfur(transfur, TransfurContext.TRANSFUR_TF);
         return Command.SINGLE_SUCCESS;
     }
 }

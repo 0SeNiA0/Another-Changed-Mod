@@ -10,8 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.LOGGER;
@@ -61,7 +61,7 @@ public class TransfurTolerance {
                 .append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to " + tolerance);
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
-            if(DamageSources.checkTarget(entity)) TransfurEvent.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
+            if(DamageSources.checkTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
         PacketDistributor.ALL.noArg().send(new ClientboundTransfurToleranceSyncPacket());
         return Command.SINGLE_SUCCESS;

@@ -75,7 +75,7 @@ public class CommonMod {
                 handler.server(ServerPacketHandler.INSTANCE::handleWantToBeGrabbedPacket));
 
         //Transfur sync
-        registrar.play(ClientboundPlayerTransfurSyncPacket.ID, ClientboundPlayerTransfurSyncPacket::new, handler ->
+        registrar.play(ClientboundTransfurSyncPacket.ID, ClientboundTransfurSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet, context)));
 
         //Transfur screen

@@ -28,7 +28,7 @@ public class TransfurRegistry {
                     .of(resourceLoc("benign"), Latex.WHITE).organic(true).onTransfur(entity -> {//TODO replace with unremovable effects
                         entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, -1, 0, false, false, false));
                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, -1, 2, false, false, false));
-                    }).onUnTransfur(entity -> {//OR move to TransfurEvent as an exception & check for this TF
+                    }).onUnTransfur(entity -> {//OR move to TransfurHandler as an exception & check for this TF
                         entity.removeEffect(MobEffects.BLINDNESS);
                         entity.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
                     }).colors(-14211289, -14803426)));

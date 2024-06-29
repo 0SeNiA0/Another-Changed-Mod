@@ -248,7 +248,7 @@ public abstract class TransfurType {
         }
 
         /**
-         * Executed right after player was transfurred & in latex beast constructor
+         * Executed right after player was transfurred & in latex beast constructor. <p>Called serverside only.</p>
          */
         public Properties onTransfur(Consumer<LivingEntity> onTransfur){
             this.onTransfur = onTransfur;
@@ -256,7 +256,7 @@ public abstract class TransfurType {
         }
 
         /**
-         * Executed right before player is untransfurred
+         * Executed right before player is untransfurred. Transfur, when already transfurred, will trigger this too. <p>Called serverside only.</p>
          */
         public Properties onUnTransfur(Consumer<LivingEntity> onUnTransfur){
             this.onUnTransfur = onUnTransfur;

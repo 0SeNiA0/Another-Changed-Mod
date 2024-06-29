@@ -12,10 +12,11 @@ import net.zaharenko424.a_changed.capability.ITransfurHandler;
 import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -25,6 +26,8 @@ import java.util.Objects;
 
 @Mixin(Player.class)
 public abstract class MixinPlayer extends LivingEntity {
+
+    @Shadow public abstract void tick();
 
     public MixinPlayer(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
@@ -44,7 +47,8 @@ public abstract class MixinPlayer extends LivingEntity {
             float tfProgress = 5f;
             if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
             if(hasEffect(MobEffects.DAMAGE_BOOST)) tfProgress += getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() + 1;
-            TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) target, Objects.requireNonNull(handler.getTransfurType()), tfProgress);
+            TransfurCapability.nonNullOf((LivingEntity) target)
+                    .addTransfurProgress(tfProgress, Objects.requireNonNull(handler.getTransfurType()), TransfurContext.ADD_PROGRESS_DEF);
             return true;
         }
         return false;

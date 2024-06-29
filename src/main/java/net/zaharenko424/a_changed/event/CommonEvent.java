@@ -47,15 +47,15 @@ import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.item.Chisel;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundPlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
@@ -89,12 +89,14 @@ public class CommonEvent {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
+
         PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
-        TransfurEvent.updatePlayer(player);
-        player.refreshDimensions();
+
+        TransfurCapability.nonNullOf(player).syncClients();
         if(TransfurManager.isBeingTransfurred(player)) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
-        GrabCapability.nonNullOf(player).updatePlayer();
-        TransfurEvent.RECALCULATE_PROGRESS.accept(player);
+
+        GrabCapability.nonNullOf(player).syncClients();
+        TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
 
     @SubscribeEvent
@@ -252,22 +254,23 @@ public class CommonEvent {
         IGrabHandler grabHandler = GrabCapability.of(entity);
         if(grabHandler != null) grabHandler.tick();
 
-        ITransfurHandler transfurHandler = TransfurCapability.of(entity);
-        if(transfurHandler != null){
-            transfurHandler.tick();
-            if(!(entity instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player))){
+        ITransfurHandler tfHandler = TransfurCapability.of(entity);
+        if(tfHandler != null){
+            tfHandler.tick();
+            if(DamageSources.checkTarget(entity)){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
                     return;
                 }
             }
         }
+
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
@@ -292,12 +295,15 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync!!
+        if(!(event.getTarget() instanceof LivingEntity target)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
-        PacketDistributor.PLAYER.with(player).send(
-                new ClientboundPlayerTransfurSyncPacket(remotePlayer.getId(), TransfurCapability.nonNullOf(remotePlayer)));
-        GrabCapability.nonNullOf(remotePlayer).updateRemotePlayer(player);
+        ITransfurHandler handler = TransfurCapability.of(target);
+        if(handler != null) handler.syncClient(player);
+
+        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync?
+
+        GrabCapability.nonNullOf(remotePlayer).syncClient(player);
     }
 
     /**
@@ -316,21 +322,13 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
         if(!event.isWasDeath()) return;
-        boolean keepTf = event.getEntity().level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR);
-        ServerPlayer og = (ServerPlayer) event.getOriginal();
         ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        if(keepTf) TransfurCapability.nonNullOf(player).load(TransfurCapability.nonNullOf(og).save());
-        GrabCapability.nonNullOf(player).load(GrabCapability.nonNullOf(og).save());
 
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(keepTf) {
-                    if(!TransfurManager.isTransfurred(player)) TransfurEvent.UNTRANSFUR_SILENT.accept(player);
-                    else TransfurEvent.updatePlayer(player);
-                }
-                GrabCapability.nonNullOf(player).updatePlayer();
+                TransfurCapability.nonNullOf(player).syncClients();
+                GrabCapability.nonNullOf(player).syncClients();
             }
         },25);
     }

@@ -15,9 +15,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.GasTank;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.util.NBTUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -66,9 +67,9 @@ public class GasTankEntity extends BlockEntity {
         tick = 0;
         canister.hurt(1, level.random,null);
         level.playSound(null, worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
-        level.getEntitiesOfClass(LivingEntity.class,ab, DamageSources::checkTarget).forEach((entity -> {
+        level.getEntitiesOfClass(LivingEntity.class, ab, DamageSources::checkTarget).forEach((entity -> {
             if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get()) || isFullHazmat(entity)) return;
-            TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.GAS_WOLF_TF.get(), 5f);
+            TransfurCapability.nonNullOf(entity).addTransfurProgress(5f, TransfurRegistry.GAS_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
         }));
         if(isEmpty()) open = false;
     }

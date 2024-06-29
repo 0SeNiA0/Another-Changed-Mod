@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @ParametersAreNonnullByDefault
 public class Utils {
 
+    public static final ResourceLocation NULL_LOC = new ResourceLocation("null", "null");
+
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));
     }

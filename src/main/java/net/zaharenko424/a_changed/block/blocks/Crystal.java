@@ -15,8 +15,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.a_changed.capability.ITransfurHandler;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +42,8 @@ public class Crystal extends Block {
     public void entityInside(BlockState p_60495_, Level level, BlockPos p_60497_, Entity p_60498_) {
         if(level.isClientSide || p_60498_.tickCount % 10 != 0) return;
         if(!p_60498_.getBoundingBox().intersects(aabb.move(p_60497_)) || !DamageSources.checkTarget(p_60498_)) return;
-        TransfurEvent.ADD_TRANSFUR_CRYSTAL.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
+        ITransfurHandler handler = TransfurCapability.of((LivingEntity) p_60498_);
+        if(handler != null) handler.addTransfurProgress(5f, transfurType.get(), TransfurContext.ADD_PROGRESS_CRYSTAL);
     }
 
     @Override
