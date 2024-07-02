@@ -100,8 +100,7 @@ public class CreativeTabs {
                     output.accept(VENT_DUCT_ITEM);
                     output.accept(VENT_HATCH_ITEM);
                     //Technology
-                    output.accept(IRON_CHISEL);
-                    output.accept(DIAMOND_CHISEL);
+                    output.accept(STATE_KEY);
                     output.accept(COPPER_WRENCH);
                     output.accept(COPPER_PLATE);
                     output.accept(GOLDEN_PLATE);
@@ -205,6 +204,8 @@ public class CreativeTabs {
                     output.accept(LATEX_SHARK_F_EGG);
                     output.accept(LATEX_SHARK_M_EGG);
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
+                    output.accept(SNOW_LEOPARD_F_EGG);
+                    output.accept(SNOW_LEOPARD_M_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);
                 }).build());

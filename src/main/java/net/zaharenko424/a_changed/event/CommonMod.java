@@ -174,6 +174,10 @@ public class CommonMod {
         event.put(LATEX_SHARK_MALE.get(), WaterLatexBeast.createAttributes().build());
 
         event.put(PURE_WHITE_LATEX_WOLF.get(), LatexBeast.createAttributes().build());
+
+        event.put(SNOW_LEOPARD_FEMALE.get(), LatexBeast.createAttributes().build());
+        event.put(SNOW_LEOPARD_MALE.get(), LatexBeast.createAttributes().build());
+
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
 //TMP DON'T FORGET TO REMOVE
@@ -193,6 +197,10 @@ public class CommonMod {
         event.register(LATEX_SHARK_MALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
 
         event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
+        event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
         event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }

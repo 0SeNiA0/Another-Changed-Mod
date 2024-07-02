@@ -62,12 +62,20 @@ public class EntityRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> PURE_WHITE_LATEX_WOLF =
             registerLatex("pure_white_latex_wolf", EntityType.Builder.of((a, b) ->
             new LatexBeast(a, b, PURE_WHITE_LATEX_WOLF_TF.get()), MobCategory.MONSTER));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> SNOW_LEOPARD_FEMALE =
+            registerLatex("snow_leopard_female", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a, b, SNOW_LEOPARD_F_TF.get()), MobCategory.MONSTER));
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> SNOW_LEOPARD_MALE =
+            registerLatex("snow_leopard_male", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a, b, SNOW_LEOPARD_M_TF.get()), MobCategory.MONSTER));
+
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_MALE =
             registerLatex("white_latex_wolf_male", EntityType.Builder.of((a, b) ->
-            new LatexBeast(a,b, WHITE_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER));
+            new LatexBeast(a, b, WHITE_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER));
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_FEMALE =
             registerLatex("white_latex_wolf_female", EntityType.Builder.of((a, b) ->
-            new LatexBeast(a,b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
+            new LatexBeast(a, b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
 
     //Projectiles
     public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE_PROJECTILE = ENTITIES

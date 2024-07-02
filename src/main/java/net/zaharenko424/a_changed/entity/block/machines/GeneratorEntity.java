@@ -72,7 +72,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
         if(burnTicks > 0){
             burnTicks--;
-            if(!energyStorage.isFull()) energyStorage.receiveEnergy(16, false);
+            if(!energyStorage.isFull()) energyStorage.addEnergy(16);
             changed = true;
         } else if(!energyStorage.isFull()) {
             ItemStack fuel = inventory.getStackInSlot(0);

@@ -35,10 +35,17 @@ public final class ModelDefinitionCache {
 
         modelCache.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
 
+
         modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());
+
         modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.bodyLayer());
+
+        modelCache.put(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.bodyLayer());
+        modelCache.put(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.bodyLayer());
+
         modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.bodyLayer());
         modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.bodyLayer());
+
         modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
         modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
 

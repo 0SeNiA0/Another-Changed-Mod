@@ -1,7 +1,9 @@
 package net.zaharenko424.a_changed.item;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -61,6 +63,9 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         playSound(level, player);
 
         player.getCooldowns().addCooldown(rifle.getItem(), cooldown());
+
+        CriteriaTriggers.SHOT_CROSSBOW.trigger((ServerPlayer) player, rifle);
+
         return InteractionResultHolder.consume(rifle);
     }
 

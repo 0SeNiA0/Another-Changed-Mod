@@ -7,9 +7,11 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.datagen.advancement.AdvancementSubProvider;
 import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,5 +46,9 @@ public final class DatagenEvent {
         BlockTagProvider tagProvider = generator.addProvider(event.includeServer(),new BlockTagProvider(out,lookup,helper));
         generator.addProvider(event.includeServer(), new ItemTagProvider(out,lookup,tagProvider.contentsGetter(),helper));
         generator.addProvider(event.includeServer(), new EntityTypeTagProvider(out,lookup,helper));
+
+        generator.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, helper, List.of(
+                new AdvancementSubProvider()
+        )));
     }
 }

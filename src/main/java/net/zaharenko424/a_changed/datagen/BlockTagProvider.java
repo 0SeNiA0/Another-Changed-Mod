@@ -24,9 +24,6 @@ public class BlockTagProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
         tag(BlockTags.CEILING_HANGING_SIGNS).add(ORANGE_HANGING_SIGN.get());
 
-        tag(AChanged.CHISELABLE).addTags(BlockTags.SLABS, BlockTags.STAIRS)
-                .add(CARPET_BLOCK.get(), CONNECTED_BLUE_LAB_TILE.get(), CONNECTED_LAB_TILE.get(), COPPER_WIRE.get());
-
         tag(BlockTags.FENCE_GATES).add(ORANGE_FENCE_GATE.get());
 
         tag(BlockTags.MINEABLE_WITH_AXE).add(CARDBOARD_BOX.get(), ORANGE_TREE_LOG.get(), SMALL_CARDBOARD_BOX.get(),

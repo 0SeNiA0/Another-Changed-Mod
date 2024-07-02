@@ -5,6 +5,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
@@ -41,7 +42,7 @@ public class LatexCoveredData {
      * @return true if state cannot be latex covered.
      */
     public static boolean isStateNotCoverable(@NotNull BlockState state){
-        return state.isEmpty() || state.is(AChanged.LATEX_RESISTANT) || state.getBlock() instanceof LiquidBlock;
+        return state.isEmpty() || state.is(AChanged.LATEX_RESISTANT) || state.getRenderShape() != RenderShape.MODEL || state.getBlock() instanceof LiquidBlock;
     }
 
     private final LevelChunk holder;

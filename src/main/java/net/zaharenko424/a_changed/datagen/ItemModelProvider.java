@@ -33,7 +33,6 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(DARK_LATEX_BUCKET.getId());
         basicItem(DARK_LATEX_CRYSTAL_SHARD.getId());
         basicItem(DARK_LATEX_ITEM.getId());
-        basicItem(DIAMOND_CHISEL.getId());
         basicItem(DNA_SAMPLE.getId());
         basicItem(EMPTY_CANISTER.getId());
         basicItem(GOLDEN_PLATE.getId());
@@ -42,7 +41,6 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(HAZMAT_CHESTPLATE.getId());
         basicItem(HAZMAT_LEGGINGS.getId());
         basicItem(HAZMAT_BOOTS.getId());
-        basicItem(IRON_CHISEL.getId());
         basicItem(IRON_PLATE.getId());
         basicItem(LATEX_ENCODER_COMPONENTS.getId());
         basicItem(LATEX_MANIPULATOR.getId());
@@ -67,6 +65,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
         basicItem(ORANGE_JUICE_ITEM.getId());
         basicItem(POWER_CELL.getId());
+        basicItem(STATE_KEY.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYNTHESIZER_COMPONENTS.getId());
@@ -87,6 +86,8 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(LATEX_SHARK_F_EGG);
         spawnEgg(LATEX_SHARK_M_EGG);
         spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
+        spawnEgg(SNOW_LEOPARD_F_EGG);
+        spawnEgg(SNOW_LEOPARD_M_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);
         spawnEgg(WHITE_LATEX_WOLF_M_EGG);
     }

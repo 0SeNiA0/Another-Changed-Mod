@@ -5,6 +5,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -154,6 +155,11 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static <E extends MobEffectInstance> E makeUnremovable(E effect){
+        effect.getCures().clear();
+        return effect;
     }
 
     public static boolean containsClass(Class<?> clazz, List<Class<?>> list){

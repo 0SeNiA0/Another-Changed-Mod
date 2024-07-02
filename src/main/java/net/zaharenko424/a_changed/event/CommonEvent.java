@@ -45,7 +45,6 @@ import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.item.Chisel;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
@@ -214,21 +213,6 @@ public class CommonEvent {
         event.setUseBlock(Event.Result.DENY);
         event.setUseItem(Event.Result.DENY);
         event.setCanceled(true);
-    }
-
-    /**
-     * Handle chisel in survival
-     */
-    @SubscribeEvent
-    @Deprecated(forRemoval = true)
-    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event){
-        if(event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) return;
-        Player player = event.getEntity();
-        ItemStack item = player.getMainHandItem();
-        if(player.level().isClientSide || player.isCreative() || !(item.getItem() instanceof Chisel chisel)) return;
-        Level level = player.level();
-        BlockPos pos = event.getPos();
-        chisel.canAttackBlock(level.getBlockState(pos), level, pos, player);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

@@ -61,6 +61,16 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
         add(PURE_WHITE_LATEX_WOLF.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
+
+        LootTable.Builder snowLeopard = new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(LootItem.lootTableItem(Items.STRING)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))
+                        .add(LootItem.lootTableItem(Items.SNOWBALL)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 4)))));
+        add(SNOW_LEOPARD_FEMALE.get(), snowLeopard);
+        add(SNOW_LEOPARD_MALE.get(), snowLeopard);
+
         add(WHITE_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));

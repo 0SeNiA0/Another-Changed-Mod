@@ -47,8 +47,7 @@ public class TransfurCapability {
 
     public static final Serializer SERIALIZER = new Serializer();
     public static final IAttachmentCopyHandler<TransfurHandler> COPY_HANDLER = (holder, attachment) -> {
-        Level level = ((LivingEntity)holder).level();
-        if(level.isClientSide || (level.getGameRules().getBoolean(AChanged.KEEP_TRANSFUR) && attachment.isTransfurred())) {
+        if(((LivingEntity)holder).level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR) && attachment.isTransfurred()) {
             CompoundTag tag = SERIALIZER.write(attachment);
             return tag != null ? SERIALIZER.read(holder, tag) : null;
         }
@@ -154,7 +153,8 @@ public class TransfurCapability {
                 latexBeast.copyEquipment(holder);
                 if(onTransfurSound != null) holder.playSound(onTransfurSound);
                 holder.discard();
-                NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, transfurType));
+
+                NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, latexBeast, transfurType));
                 return;
             }
 
@@ -171,12 +171,11 @@ public class TransfurCapability {
                     : level.getGameRules().getBoolean(CHOOSE_TF_OR_DIE) ? TransfurResult.PROMPT
                     : TransfurResult.TRANSFUR){
                 case DEATH -> {
-                    //unTransfur(context);
-                    //syncClients();
                     player.setInvulnerable(false);
                     player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
                     AbstractLatexBeast latexBeast = TransfurUtils.spawnLatex(transfurType, (ServerLevel) level, player.blockPosition());
-                    NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, transfurType));
+
+                    NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, latexBeast, transfurType));
                 }
                 case PROMPT -> {
                     setBeingTransfurred(true);
@@ -193,7 +192,7 @@ public class TransfurCapability {
             if(isTransfurred()){
                 TransfurUtils.removeModifiers(holder, this.transfurType.modifiers);
                 this.transfurType.onUnTransfur(holder);
-                transfurTypeO = this.transfurType;//TMP
+                transfurTypeO = this.transfurType;//TMP needed to tell client what player model to remove
             }
 
             loadSyncedData(TRANSFUR_TOLERANCE, true, transfurType);
@@ -201,7 +200,8 @@ public class TransfurCapability {
             transfurType.onTransfur(holder);
 
             syncClients();
-            NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, transfurType));
+
+            NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType));
         }
 
         @Override
@@ -210,7 +210,7 @@ public class TransfurCapability {
 
             setBeingTransfurred(false);
 
-            transfurTypeO = transfurType;//TMP
+            transfurTypeO = transfurType;//TMP needed to tell client what player model to remove
             if(isTransfurred()) {
                 TransfurUtils.removeModifiers(holder, transfurType.modifiers);
                 transfurType.onUnTransfur(holder);
