@@ -231,6 +231,7 @@ public class ItemRegistry {
     public static final DeferredItem<SpawnEggItem> SNOW_LEOPARD_M_EGG = ITEMS.register("snow_leopard_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.SNOW_LEOPARD_MALE, -6513508, -263173, spawnEgg()));
     public static final DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_F_EGG = ITEMS.register("white_latex_wolf_female_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, 16777215, 13619151, spawnEgg()));
     public static final DeferredItem<SpawnEggItem> WHITE_LATEX_WOLF_M_EGG = ITEMS.register("white_latex_wolf_male_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.WHITE_LATEX_WOLF_MALE, 16777215, 13619151, spawnEgg()));
+    public static final DeferredItem<SpawnEggItem> YUFENG_DRAGON_EGG = ITEMS.register("yufeng_dragon_spawn_egg", ()-> new DeferredSpawnEggItem(EntityRegistry.YUFENG_DRAGON, -13686230, -14408668, spawnEgg()));
 
     private static Item.@NotNull Properties spawnEgg(){
         return new Item.Properties().rarity(Rarity.UNCOMMON);

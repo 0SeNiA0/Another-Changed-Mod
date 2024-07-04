@@ -77,10 +77,14 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
         add(WHITE_LATEX_WOLF_MALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
+
+        add(YUFENG_DRAGON.get(), new LootTable.Builder()//TODO add more drops?
+                .withPool(LootPool.lootPool()
+                        .add(latex(false))));
     }
 
     private LootPoolEntryContainer.@NotNull Builder<?> latex(boolean white){
-        return LootItem.lootTableItem(white?ItemRegistry.WHITE_LATEX_ITEM:ItemRegistry.DARK_LATEX_ITEM)
+        return LootItem.lootTableItem(white ? ItemRegistry.WHITE_LATEX_ITEM : ItemRegistry.DARK_LATEX_ITEM)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2)))
                 .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0,1)));
     }

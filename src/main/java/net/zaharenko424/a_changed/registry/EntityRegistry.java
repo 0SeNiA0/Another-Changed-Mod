@@ -77,6 +77,10 @@ public class EntityRegistry {
             registerLatex("white_latex_wolf_female", EntityType.Builder.of((a, b) ->
             new LatexBeast(a, b, WHITE_LATEX_WOLF_F_TF.get()), MobCategory.MONSTER));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> YUFENG_DRAGON =
+            registerLatex("yufeng_dragon", EntityType.Builder.of((a, b) ->
+            new LatexBeast(a, b, YUFENG_DRAGON_TF.get()), MobCategory.MONSTER));
+
     //Projectiles
     public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE_PROJECTILE = ENTITIES
             .register("syringe_projectile", ()-> EntityType.Builder.<SyringeProjectile>of((a, b)-> new SyringeProjectile(b), MobCategory.MISC).sized(.3f, .3f).build("syringe_projectile"));

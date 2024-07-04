@@ -49,6 +49,8 @@ public final class ModelDefinitionCache {
         modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
         modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
 
+        modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.bodyLayer());
+
         ModLoader.get().postEvent(new RegisterModelDefinitionsEvent(modelCache));
     }
 

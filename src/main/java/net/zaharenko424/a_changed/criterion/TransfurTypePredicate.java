@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractFlyingLatex;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractWaterLatex;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -41,7 +42,7 @@ public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optiona
     public enum Type {
         CAT(type -> type instanceof AbstractLatexCat),
         SWIMMING(type -> type instanceof AbstractWaterLatex),
-        FLYING(type -> false);
+        FLYING(type -> type instanceof AbstractFlyingLatex);
 
         private final Predicate<TransfurType> check;
 

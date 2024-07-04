@@ -208,6 +208,7 @@ public class CreativeTabs {
                     output.accept(SNOW_LEOPARD_M_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);
+                    output.accept(YUFENG_DRAGON_EGG);
                 }).build());
     }
 }

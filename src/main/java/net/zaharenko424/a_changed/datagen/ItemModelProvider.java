@@ -90,6 +90,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(SNOW_LEOPARD_M_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);
         spawnEgg(WHITE_LATEX_WOLF_M_EGG);
+        spawnEgg(YUFENG_DRAGON_EGG);
     }
 
     private @NotNull ResourceLocation blockLoc(@NotNull DeferredBlock<?> block){

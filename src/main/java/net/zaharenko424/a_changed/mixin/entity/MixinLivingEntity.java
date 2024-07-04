@@ -11,15 +11,20 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.capability.ITransfurHandler;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractFlyingLatex;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity implements ILivingEntityExtension {
@@ -61,5 +66,17 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     private SoundType onPlayBlockFallSound(SoundType original, @Local BlockPos pos){
         if(LatexCoveredData.of(level().getChunkAt(pos)).getCoveredWith(pos) == CoveredWith.NOTHING) return original;
         return BlockRegistry.DARK_LATEX_BLOCK.get().getSoundType(null);
+    }
+
+    /**
+     * Allows player to fly when transfurred as flying latex.
+     */
+    @ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setSharedFlag(IZ)V"), index = 1,
+            method = "updateFallFlying")
+    private boolean onUpdateFallFlying(boolean par2){
+        ITransfurHandler handler = TransfurCapability.of(self());
+        if(handler == null || !handler.isTransfurred() || !(handler.getTransfurType() instanceof AbstractFlyingLatex)) return par2;
+        gameEvent(GameEvent.ELYTRA_GLIDE);
+        return true;
     }
 }

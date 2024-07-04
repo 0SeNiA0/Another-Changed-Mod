@@ -132,6 +132,8 @@ public class ClientMod {
 
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel()));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel()));
+
+        event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomHumanoidRenderer<>(a, YUFENG_DRAGON_TF.get().getModel()));
 //TMP DON'T FORGET TO REMOVE
         event.registerEntityRenderer(TEST.get(), a -> new TestRenderer<>(a, new TestModel<>()));
     }

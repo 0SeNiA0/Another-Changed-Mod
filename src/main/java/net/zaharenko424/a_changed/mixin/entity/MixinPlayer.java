@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -14,20 +15,16 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractFlyingLatex;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
 @Mixin(Player.class)
 public abstract class MixinPlayer extends LivingEntity {
-
-    @Shadow public abstract void tick();
 
     public MixinPlayer(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
@@ -54,20 +51,24 @@ public abstract class MixinPlayer extends LivingEntity {
         return false;
     }
 
-    @Inject(at = @At("HEAD"), method = "getDimensions", cancellable = true)
-    private void onGetDimensions(Pose p_36166_, CallbackInfoReturnable<EntityDimensions> ci) {
-        ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY);
-        if(handler == null || !handler.isTransfurred()) return;
-        ci.cancel();
-        ci.setReturnValue(handler.getTransfurType().getPoseDimensions(p_36166_));
+    /**
+     * @return  dimensions of specified pose when transfurred.
+     */
+    @ModifyReturnValue(at = @At("RETURN"), method = "getDimensions")
+    private EntityDimensions onGetDimensions(EntityDimensions original, Pose pose) {
+        ITransfurHandler handler = TransfurCapability.of(this);
+        if(handler != null && handler.isTransfurred()) return handler.getTransfurType().getPoseDimensions(pose);
+        return original;
     }
 
-    @Inject(at = @At("HEAD"), method = "getStandingEyeHeight", cancellable = true)
-    private void onGetEyeHeight(Pose p_36259_, EntityDimensions p_36260_, CallbackInfoReturnable<Float> ci){
-        ITransfurHandler handler = getCapability(TransfurCapability.CAPABILITY);
-        if(handler == null || !handler.isTransfurred()) return;
-        ci.cancel();
-        ci.setReturnValue(handler.getTransfurType().getEyeHeight(p_36259_));
+    /**
+     * @return eye height of specified pose when transfurred.
+     */
+    @ModifyReturnValue(at = @At("RETURN"), method = "getStandingEyeHeight")
+    private float onGetEyeHeight(float original, Pose pose){
+        ITransfurHandler handler = TransfurCapability.of(this);
+        if(handler != null && handler.isTransfurred()) return handler.getTransfurType().getEyeHeight(pose);
+        return original;
     }
 
     /**
@@ -79,6 +80,17 @@ public abstract class MixinPlayer extends LivingEntity {
                 && duct.getShape(getFeetBlockState(), level(), blockPosition(), CollisionContext.empty()).bounds().move(blockPosition()).intersects(getBoundingBox())) {
             return false;
         }
+        return original;
+    }
+
+    /**
+     * Allows player to fly when transfurred as flying latex.
+     */
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;canElytraFly(Lnet/minecraft/world/entity/LivingEntity;)Z"),
+            method = "tryToStartFallFlying")
+    private boolean onTryStartFallFlyingCheck(boolean original){
+        ITransfurHandler handler = TransfurCapability.of(this);
+        if(handler != null && handler.isTransfurred() && handler.getTransfurType() instanceof AbstractFlyingLatex) return true;
         return original;
     }
 }

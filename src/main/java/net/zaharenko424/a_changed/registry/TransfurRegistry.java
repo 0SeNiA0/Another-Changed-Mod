@@ -73,4 +73,7 @@ public class TransfurRegistry {
     public static final DeferredHolder<TransfurType, LatexWolf> WHITE_LATEX_WOLF_M_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_male", ()-> new LatexWolf(TransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_male"), Latex.WHITE).gender(Gender.MALE)));
+
+    public static final DeferredHolder<TransfurType, YufengDragon> YUFENG_DRAGON_TF = TRANSFUR_TYPES
+            .register("yufeng_dragon", ()-> new YufengDragon(resourceLoc("yufeng_dragon")));
 }

@@ -180,6 +180,7 @@
   "entity.a_changed.snow_leopard_male": "Snow Leopard Male",
   "entity.a_changed.white_latex_wolf_female": "White Latex Wolf Female",
   "entity.a_changed.white_latex_wolf_male": "White Latex Wolf Male",
+  "entity.a_changed.yufeng_dragon": "Yufeng Dragon",
 
   "gamerule.chooseTransfurOrDie": "Allow player to choose between being transfurred and dying",
   "gamerule.doLatexSpread": "Enable/disable spreading of latex covered blocks",
@@ -249,6 +250,7 @@
   "item.a_changed.snow_leopard_male_spawn_egg": "Snow Leopard Male Spawn Egg",
   "item.a_changed.white_latex_wolf_female_spawn_egg": "White Latex Wolf Female Spawn Egg",
   "item.a_changed.white_latex_wolf_male_spawn_egg": "White Latex Wolf Male Spawn Egg",
+  "item.a_changed.yufeng_dragon_spawn_egg": "Yufeng Dragon Spawn Egg",
 
   "itemGroup.a_changed.main": "Another Changed Mod",
   "itemGroup.a_changed.transfurs": "Transfurs & Equipment",
@@ -308,5 +310,6 @@
   "transfur.a_changed.snow_leopard_female": "snow leopard female",
   "transfur.a_changed.snow_leopard_male": "snow leopard male",
   "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
-  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male"
+  "transfur.a_changed.white_latex_wolf_male": "white latex wolf male",
+  "transfur.a_changed.yufeng_dragon": "yufeng dragon"
 }
