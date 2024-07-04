@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +35,8 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     protected float mod$airDecreaseDecimals = 0;
 
     @Shadow public abstract double getAttributeValue(Holder<Attribute> p_251296_);
+
+    @Shadow public abstract boolean hasEffect(MobEffect pEffect);
 
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
@@ -74,8 +78,10 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     @ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setSharedFlag(IZ)V"), index = 1,
             method = "updateFallFlying")
     private boolean onUpdateFallFlying(boolean par2){
+        if(!getSharedFlag(7) || onGround() || isPassenger() || hasEffect(MobEffects.LEVITATION)) return false;
+
         ITransfurHandler handler = TransfurCapability.of(self());
-        if(handler == null || !handler.isTransfurred() || !(handler.getTransfurType() instanceof AbstractFlyingLatex)) return par2;
+        if( handler == null || !handler.isTransfurred() || !(handler.getTransfurType() instanceof AbstractFlyingLatex)) return par2;
         gameEvent(GameEvent.ELYTRA_GLIDE);
         return true;
     }

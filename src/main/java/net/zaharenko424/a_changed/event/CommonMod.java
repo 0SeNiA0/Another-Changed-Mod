@@ -29,8 +29,14 @@ import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
-import net.zaharenko424.a_changed.network.packets.grab.*;
-import net.zaharenko424.a_changed.network.packets.transfur.*;
+import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -116,10 +122,12 @@ public class CommonMod {
                 player.getData(AttachmentRegistry.GRAB_HANDLER));
         for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
             //Tag DOESN'T WORK for some reason (
-            //if(entityType.is(AChanged.TRANSFURRABLE_TAG))
-            if(transfurrable.contains(entityType))
-                event.registerEntity(CAPABILITY, entityType, (entity, context) -> entity instanceof LivingEntity living
-                        ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER) : null);
+            //Shotgun EVERYTHING and return null if entity isn't suitable
+
+            event.registerEntity(CAPABILITY, entityType, (entity, context) -> //TODO replace with attachment instead of capability+attachment ?
+                    entity instanceof LivingEntity living && living.getType().is(TRANSFURRABLE_TAG)
+                            ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER)
+                            : null);
         }
 
         //Item

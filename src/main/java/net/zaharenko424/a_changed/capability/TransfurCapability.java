@@ -158,10 +158,12 @@ public class TransfurCapability {
                 return;
             }
 
-            if(isTransfurred() && !player.isCreative()) return;
+            TransfurResult result = context.result();
+
+            if(isTransfurred() && !player.isCreative() && result != TransfurResult.TRANSFUR) return;
             if(onTransfurSound != null) level.playSound(null, player, onTransfurSound, SoundSource.PLAYERS,1,1);
 
-            TransfurResult result = context.result();
+
             if(player.isCreative() || player.isSpectator() || result == TransfurResult.TRANSFUR){
                 actuallyTransfur(transfurType);
                 return;
