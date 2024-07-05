@@ -66,70 +66,84 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         //Latex encoder recipes
         LatexEncoderRecipeBuilder.of(TransfurRegistry.BEI_FENG_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.BENIGN_TF.get())
-                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
-                .addMiscIngredient(BLACK_LATEX_SHORTS.get().getDefaultInstance())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.toStack())
+                .addMiscIngredient(BLACK_LATEX_SHORTS.toStack())
                 .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.DARK_LATEX_WOLF_F_TF.get())
-                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.DARK_LATEX_WOLF_M_TF.get())
-                .setLatexBaseIngredient(DARK_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(DARK_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(DARK_LATEX_BASE), has(DARK_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.HYPNO_CAT_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.CAT_DNA)
                 .addMiscIngredient(Items.GLOW_BERRIES.getDefaultInstance())
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .addMiscIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.LATEX_SHARK_F_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.COD_DNA)
                 .addDNASampleIngredient(DNATypeRegistry.SALMON_DNA)
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.LATEX_SHARK_M_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.COD_DNA)
                 .addDNASampleIngredient(DNATypeRegistry.SALMON_DNA)
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.SNOW_LEOPARD_F_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
+                .addDNASampleIngredient(DNATypeRegistry.CAT_DNA)
+                .addMiscIngredient(Items.SNOWBALL.getDefaultInstance())
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
+        LatexEncoderRecipeBuilder.of(TransfurRegistry.SNOW_LEOPARD_M_TF.get())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
+                .addDNASampleIngredient(DNATypeRegistry.CAT_DNA)
+                .addMiscIngredient(Items.SNOWBALL.getDefaultInstance())
+                .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
+                .save(out);
+
         LatexEncoderRecipeBuilder.of(TransfurRegistry.SPECIAL_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addMiscIngredient(DARK_LATEX_BASE.toStack())
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.WHITE_LATEX_WOLF_F_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
 
         LatexEncoderRecipeBuilder.of(TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get())
-                .setLatexBaseIngredient(WHITE_LATEX_BASE.get().getDefaultInstance())
+                .setLatexBaseIngredient(WHITE_LATEX_BASE.toStack())
                 .addDNASampleIngredient(DNATypeRegistry.WOLF_DNA)
                 .unlockedBy(getHasName(WHITE_LATEX_BASE), has(WHITE_LATEX_BASE))
                 .save(out);
@@ -752,6 +766,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("CCC")
                 .define('C', CARDBOARD)
                 .unlockedBy(getHasName(CARDBOARD), has(CARDBOARD))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, STATE_KEY)
+                .pattern("III")
+                .pattern("  I")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.IRON_INGOT), hasIron)
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, STUN_BATON)

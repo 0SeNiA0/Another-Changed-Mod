@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,6 +22,9 @@ public abstract class MixinGui {
     @Unique
     private int mod$secondaryColor;
 
+    /**
+     * Manually render hearts.
+     */
     @Inject(at = @At("HEAD"), method = "renderHeart", cancellable = true)
     private void onRenderHeart(GuiGraphics guiGraphics, Gui.HeartType heartType, int pX, int pY, boolean hardcore, boolean halfHeart, boolean blinking, @NotNull CallbackInfo ci){
         if(heartType != Gui.HeartType.NORMAL && heartType != Gui.HeartType.CONTAINER) return;
@@ -34,7 +37,7 @@ public abstract class MixinGui {
             mod$secondaryColor = 0;
             return;
         } else {
-            AbstractTransfurType transfurType = TransfurManager.getTransfurType(player);
+            TransfurType transfurType = TransfurManager.getTransfurType(player);
             mod$primaryColor = transfurType.getPrimaryColor();
             mod$secondaryColor = transfurType.getSecondaryColor();
         }

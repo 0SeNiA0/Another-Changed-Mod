@@ -7,6 +7,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.block.GrowingFruitBlock;
@@ -45,7 +47,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         ninePartMultiBlockDrops(BIG_LIBRARY_DOOR.get());
         ninePartMultiBlockDrops(BIG_MAINTENANCE_DOOR.get());
         dropSelf(BLUE_LAB_TILE.get());
-        dropSelf(BLUE_LAB_TILE_SLAB.get());
+        dropSlab(BLUE_LAB_TILE_SLAB);
         dropSelf(BLUE_LAB_TILE_STAIRS.get());
         dropSelf(BOLTED_BLUE_LAB_TILE.get());
         dropSelf(BOLTED_LAB_TILE.get());
@@ -77,18 +79,18 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(GENERATOR.get());
         doublePartCrystal(GREEN_CRYSTAL.get(), ItemRegistry.GREEN_CRYSTAL_SHARD);
         dropSelf(HAZARD_BLOCK.get());
-        dropSelf(HAZARD_SLAB.get());
+        dropSlab(HAZARD_SLAB);
         dropSelf(HAZARD_STAIRS.get());
         dropSelf(HAZARD_LAB_BLOCK.get());
         doublePartBlockDrops(IV_RACK.get());
         dropSelf(KEYPAD.get());
         dropSelf(LAB_BLOCK.get());
-        dropSelf(LAB_SLAB.get());
+        dropSlab(LAB_SLAB);
         dropSelf(LAB_STAIRS.get());
         fourPartMultiBlockDrops(LAB_DOOR.get());
         dropSelf(LAB_LAMP.get());
         dropSelf(LAB_TILE.get());
-        dropSelf(LAB_TILE_SLAB.get());
+        dropSlab(LAB_TILE_SLAB);
         dropSelf(LAB_TILE_STAIRS.get());
         dropSelf(LASER_EMITTER.get());
         doublePartBlockDrops(LATEX_CONTAINER.get());
@@ -112,14 +114,14 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_HANGING_SIGN.get());
         dropOther(ORANGE_WALL_HANGING_SIGN.get(), ORANGE_HANGING_SIGN);
         dropSelf(ORANGE_LAB_BLOCK.get());
-        dropSelf(ORANGE_LAB_SLAB.get());
+        dropSlab(ORANGE_LAB_SLAB);
         dropSelf(ORANGE_LAB_STAIRS.get());
         createOrangeLeavesDrops();
         dropSelf(ORANGE_PLANKS.get());
         dropSelf(ORANGE_PRESSURE_PLATE.get());
         dropSelf(ORANGE_SIGN.get());
         dropSelf(ORANGE_SAPLING.get());
-        dropSelf(ORANGE_SLAB.get());
+        dropSlab(ORANGE_SLAB);
         dropSelf(ORANGE_STAIRS.get());
         dropSelf(ORANGE_TRAPDOOR.get());
         dropSelf(ORANGE_TREE_LOG.get());
@@ -145,8 +147,12 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(WHITE_LATEX_PUDDLE_F.get());
         dropSelf(WHITE_LATEX_PUDDLE_M.get());
         dropSelf(YELLOW_LAB_BLOCK.get());
-        dropSelf(YELLOW_LAB_SLAB.get());
+        dropSlab(YELLOW_LAB_SLAB);
         dropSelf(YELLOW_LAB_STAIRS.get());
+    }
+
+    private void dropSlab(DeferredBlock<? extends SlabBlock> slab){
+        add(slab.get(), createSlabItemTable(slab.get()));
     }
 
     private void createOrangeLeavesDrops(){

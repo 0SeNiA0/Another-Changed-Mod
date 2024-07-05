@@ -61,16 +61,30 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
         add(PURE_WHITE_LATEX_WOLF.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
+
+        LootTable.Builder snowLeopard = new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(LootItem.lootTableItem(Items.STRING)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2))))
+                        .add(LootItem.lootTableItem(Items.SNOWBALL)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 4)))));
+        add(SNOW_LEOPARD_FEMALE.get(), snowLeopard);
+        add(SNOW_LEOPARD_MALE.get(), snowLeopard);
+
         add(WHITE_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
         add(WHITE_LATEX_WOLF_MALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
+
+        add(YUFENG_DRAGON.get(), new LootTable.Builder()//TODO add more drops?
+                .withPool(LootPool.lootPool()
+                        .add(latex(false))));
     }
 
     private LootPoolEntryContainer.@NotNull Builder<?> latex(boolean white){
-        return LootItem.lootTableItem(white?ItemRegistry.WHITE_LATEX_ITEM:ItemRegistry.DARK_LATEX_ITEM)
+        return LootItem.lootTableItem(white ? ItemRegistry.WHITE_LATEX_ITEM : ItemRegistry.DARK_LATEX_ITEM)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2)))
                 .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0,1)));
     }

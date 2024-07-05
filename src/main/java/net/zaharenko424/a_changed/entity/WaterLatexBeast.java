@@ -60,7 +60,7 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.ai.behaviour.SetRandomSwimTarget;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,7 +71,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
 
     public boolean wasTargetTransfurred = false;
 
-    public WaterLatexBeast(EntityType<? extends Monster> entityType, Level level, AbstractTransfurType transfurType) {
+    public WaterLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
         super(entityType, level, transfurType);
         //moveControl = new WaterLatexMoveControl(this);
         moveControl = new Control(this);

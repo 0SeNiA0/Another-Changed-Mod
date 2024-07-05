@@ -9,6 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public interface AnimationUtils {
+
     static void animateCrossbowHold(ModelPart p_102098_, ModelPart p_102099_, ModelPart p_102100_, boolean p_102101_) {
         ModelPart modelpart = p_102101_ ? p_102098_ : p_102099_;
         ModelPart modelpart1 = p_102101_ ? p_102099_ : p_102098_;

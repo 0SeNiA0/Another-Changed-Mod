@@ -13,16 +13,16 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.model.HierarchicalHumanoidModel;
-import net.zaharenko424.a_changed.client.cmrs.CustomEntityRenderer;
+import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class SpinAttackEffect<E extends LivingEntity,M extends HierarchicalHumanoidModel<E>> extends RenderLayer<E,M> {
+public class SpinAttackEffect<E extends LivingEntity,M extends CustomHumanoidModel<E>> extends RenderLayer<E,M> {
     private final ModelPart box;
 
-    public SpinAttackEffect(CustomEntityRenderer<E> renderer, EntityModelSet modelSet) {
+    public SpinAttackEffect(CustomHumanoidRenderer<E> renderer, EntityModelSet modelSet) {
         super((RenderLayerParent<E, M>) renderer);
         ModelPart modelpart = modelSet.bakeLayer(ModelLayers.PLAYER_SPIN_ATTACK);
         this.box = modelpart.getChild("box");

@@ -11,10 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,8 @@ public class LatexSyringeItem extends AbstractSyringe{
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player = (Player) pLivingEntity;
-        if(!pLevel.isClientSide) TransfurEvent.TRANSFUR_DEF.accept(player, TransfurManager.getTransfurType(Objects.requireNonNull(decodeTransfur(pStack))));
+        if(!pLevel.isClientSide)
+            TransfurCapability.nonNullOf(player).transfur(TransfurManager.getTransfurType(Objects.requireNonNull(decodeTransfur(pStack))), TransfurContext.TRANSFUR_DEF);
         return onUse(pStack, new ItemStack(ItemRegistry.SYRINGE_ITEM.get()), player);
     }
 
@@ -54,7 +56,7 @@ public class LatexSyringeItem extends AbstractSyringe{
         }
     }
 
-    public static @NotNull ItemStack encodeTransfur(@NotNull AbstractTransfurType transfurType){
+    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
         ItemStack syringe = new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
         CompoundTag tag = syringe.hasTag() ? syringe.getTag() : new CompoundTag();
         NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());

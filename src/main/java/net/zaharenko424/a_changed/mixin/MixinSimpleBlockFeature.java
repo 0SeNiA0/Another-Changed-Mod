@@ -18,10 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(SimpleBlockFeature.class)
 public abstract class MixinSimpleBlockFeature extends Feature<SimpleBlockConfiguration> {
+
     public MixinSimpleBlockFeature(Codec<SimpleBlockConfiguration> p_65786_) {
         super(p_65786_);
     }
 
+    /**
+     * Places tall crystals.
+     */
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",shift = At.Shift.AFTER), method = "place", locals = LocalCapture.CAPTURE_FAILHARD)
     private void onPlace(FeaturePlaceContext<SimpleBlockConfiguration> p_160341_, CallbackInfoReturnable<Boolean> cir, SimpleBlockConfiguration cfg, WorldGenLevel level, BlockPos blockPos, @NotNull BlockState state){
         if(state.hasProperty(StateProperties.PART2)) level.setBlock(blockPos.above(), state.setValue(StateProperties.PART2,1),2);

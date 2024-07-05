@@ -39,8 +39,8 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
     private static void damageType(BootstapContext<DamageType> context){
         context.register(DamageSources.assimilation, new DamageType("assimilation", DamageScaling.NEVER, 0));
         context.register(DamageSources.electricity, new DamageType("electricity", DamageScaling.NEVER, 0));
-        context.register(DamageSources.solvent,new DamageType("solvent", DamageScaling.ALWAYS,0));
-        context.register(DamageSources.transfur,new DamageType("transfur",DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
+        context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0));
+        context.register(DamageSources.transfur, new DamageType("transfur", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
     }
 
     private static void biome(BootstapContext<Biome> context){

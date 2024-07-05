@@ -7,26 +7,34 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
@@ -38,14 +46,15 @@ import net.zaharenko424.a_changed.commands.TransfurTolerance;
 import net.zaharenko424.a_changed.commands.UnTransfur;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundRemotePlayerTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
+import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
@@ -64,21 +73,29 @@ public class CommonEvent {
         TransfurTolerance.register(dispatcher);
     }
 
+    /**
+     * Load transfur tolerance value
+     */
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event){
         event.getServer().overworld().getDataStorage().computeIfAbsent(TransfurToleranceData.FACTORY, "transfur_tolerance");
     }
 
+    /**
+     * Send capability data to player
+     */
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
+
         PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
-        TransfurEvent.updatePlayer(player);
-        player.refreshDimensions();
+
+        TransfurCapability.nonNullOf(player).syncClients();
         if(TransfurManager.isBeingTransfurred(player)) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
-        GrabCapability.nonNullOf(player).updatePlayer();
-        TransfurEvent.RECALCULATE_PROGRESS.accept(player);
+
+        GrabCapability.nonNullOf(player).syncClients();
+        TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
 
     @SubscribeEvent
@@ -105,6 +122,14 @@ public class CommonEvent {
         Direction direction = player.getDirection().getOpposite();
         BlockPos pos = event.getPos();
         if(!player.isCrouching()) {
+
+            if(handleLatexRMB(level, item, pos)){
+                if(!player.isCreative()) item.shrink(1);
+                denyEvent(event);
+                event.setCancellationResult(InteractionResult.CONSUME);
+                return;
+            }
+
             BlockState above = level.getBlockState(pos.above());
             if(above.getBlock() instanceof PileOfOranges oranges){
                 event.setCancellationResult(oranges.use(above, level, pos.above(), player, event.getHand(), event.getHitVec()));
@@ -113,45 +138,96 @@ public class CommonEvent {
             }
             return;
         }
+
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.above();
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
-                    entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+            handleBookRMB(level, player, item, pos);
             denyEvent(event);
             return;
         }
+
         if(item.is(ItemRegistry.ORANGE_ITEM)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.above();
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
-            level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
-                entity.addOrange(event.getHitVec().getLocation(), (int) player.yHeadRot);
-                if(!player.isCreative()) item.shrink(1);
-            }));
+            handleOrangeRMB(level, player, event.getHitVec().getLocation(), item, pos);
             denyEvent(event);
             return;
         }
+
         if(item.is(Items.PAPER)){
-            if(!level.getBlockState(pos).canBeReplaced()) {
-                pos = pos.relative(direction);
-                if(!level.getBlockState(pos).canBeReplaced()) return;
-            }
-            if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction),3)) return;
-            if(!player.isCreative()) player.getItemInHand(event.getHand()).shrink(1);
+            handlePaperRMB(level, player, item, pos, direction);
             denyEvent(event);
         }
+    }
+
+    static boolean handleLatexRMB(Level level, ItemStack item, BlockPos pos){
+        BlockState state = level.getBlockState(pos);
+        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) return false;
+
+        LatexCoveredData data = LatexCoveredData.of(level.getChunkAt(pos));
+        if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return false;
+        boolean consume = false;
+
+        if (item.is(ItemRegistry.DARK_LATEX_ITEM)) {
+            data.coverWith(pos, CoveredWith.DARK_LATEX);
+            consume = true;
+        }
+
+        if (item.is(ItemRegistry.WHITE_LATEX_ITEM)) {
+            data.coverWith(pos, CoveredWith.WHITE_LATEX);
+            consume = true;
+        }
+
+        return consume;
+    }
+
+    static void handleBookRMB(Level level, Player player, ItemStack item, BlockPos pos){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
+        level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
+                entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+    }
+
+    static void handleOrangeRMB(Level level, Player player, Vec3 hitVec, ItemStack item, BlockPos pos){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
+        level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
+            entity.addOrange(hitVec, (int) player.yHeadRot);
+            if(!player.isCreative()) item.shrink(1);
+        }));
+    }
+
+    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.relative(direction);
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+        if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
+        if(!player.isCreative()) item.shrink(1);
     }
 
     private static void denyEvent(PlayerInteractEvent.RightClickBlock event){
         event.setUseBlock(Event.Result.DENY);
         event.setUseItem(Event.Result.DENY);
         event.setCanceled(true);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onBlockBreak(BlockEvent.BreakEvent event){
+        Level level = (Level) event.getLevel();
+        Player player = event.getPlayer();
+        if(level.isClientSide || player.isCreative() || !CommonHooks.isCorrectToolForDrops(event.getState(), player)) return;
+
+        BlockPos pos = event.getPos();
+        CoveredWith coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
+
+        if(coveredWith == CoveredWith.NOTHING) return;
+
+        Block.popResource(level, pos, coveredWith == CoveredWith.DARK_LATEX ? ItemRegistry.DARK_LATEX_ITEM.toStack()
+                : ItemRegistry.WHITE_LATEX_ITEM.toStack());
     }
 
     @SubscribeEvent
@@ -162,27 +238,31 @@ public class CommonEvent {
         IGrabHandler grabHandler = GrabCapability.of(entity);
         if(grabHandler != null) grabHandler.tick();
 
-        ITransfurHandler transfurHandler = TransfurCapability.of(entity);
-        if(transfurHandler != null){
-            transfurHandler.tick();
-            if(!(entity instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player))){
+        ITransfurHandler tfHandler = TransfurCapability.of(entity);
+        if(tfHandler != null){
+            tfHandler.tick();
+            if(DamageSources.checkTarget(entity)){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), 4f);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        TransfurEvent.ADD_TRANSFUR_DEF.accept(entity, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), 4f);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
                     return;
                 }
             }
         }
+
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
             entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
     }
 
+    /**
+     * Reduce fall damage taken by cat transfurs
+     */
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event){
         LivingEntity entity = event.getEntity();
@@ -195,39 +275,44 @@ public class CommonEvent {
     }
 
     /**
-     * Server event
+     * Send data about remote player to other player
      */
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof Player remotePlayer)) return;
+        if(!(event.getTarget() instanceof LivingEntity target)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
-        PacketDistributor.PLAYER.with(player).send(
-                new ClientboundRemotePlayerTransfurSyncPacket(TransfurCapability.nonNullOf(remotePlayer), remotePlayer.getUUID()));
-        GrabCapability.nonNullOf(remotePlayer).updateRemotePlayer(player);
+        ITransfurHandler handler = TransfurCapability.of(target);
+        if(handler != null) handler.syncClient(player);
+
+        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync?
+
+        GrabCapability.nonNullOf(remotePlayer).syncClient(player);
     }
 
     /**
-     * Server event
+     * Send data about latex coveredndess of the chunk.
+     */
+    @SubscribeEvent
+    public static void onChunkWatch(ChunkWatchEvent.Sent event){
+        LatexCoveredData data = LatexCoveredData.of(event.getChunk());
+        if(data.isEmpty()) return;
+        PacketDistributor.PLAYER.with(event.getPlayer()).send(data.getPacket(null));
+    }
+
+    /**
+     * Clone capability data on respawn etc.
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
         if(!event.isWasDeath()) return;
-        boolean keepTf = event.getEntity().level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR);
-        ServerPlayer og = (ServerPlayer) event.getOriginal();
         ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        if(keepTf) TransfurCapability.nonNullOf(player).load(TransfurCapability.nonNullOf(og).save());
-        GrabCapability.nonNullOf(player).load(GrabCapability.nonNullOf(og).save());
 
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(keepTf) {
-                    if(!TransfurManager.isTransfurred(player)) TransfurEvent.UNTRANSFUR_SILENT.accept(player);
-                    else TransfurEvent.updatePlayer(player);
-                }
-                GrabCapability.nonNullOf(player).updatePlayer();
+                TransfurCapability.nonNullOf(player).syncClients();
+                GrabCapability.nonNullOf(player).syncClients();
             }
         },25);
     }

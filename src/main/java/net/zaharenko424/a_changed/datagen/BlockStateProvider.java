@@ -6,7 +6,10 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
@@ -618,7 +621,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ModelFile c4x = cube(textureLoc,"_c4x","4c","4c","4c","4c","4c","4c");
         ModelFile c4angle = cube(textureLoc,"_c4angle","4c","4c","4c","3c_uwd","4c","3c_ued");
         ConfiguredModel middle = new ConfiguredModel(models().cubeAll(textureLoc+"_middle", textureLoc.withSuffix("4c")));
-        getVariantBuilder(block.get()).forAllStates(state -> {
+        getVariantBuilder(block.get()).forAllStatesExcept(state -> {
             boolean u = state.getValue(UP);
             boolean d = state.getValue(DOWN);
             boolean n = state.getValue(NORTH);
@@ -662,7 +665,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
             if(!u && !s)                return new ConfiguredModel[]{new ConfiguredModel(c4angle,-270,-270,false)};
 
             return new ConfiguredModel[]{middle};
-        });
+        }, LOCKED_STATE);
     }
 
     private ConfiguredModel cornerModel2(boolean u, boolean d, boolean n, boolean e, boolean s, boolean w, ModelFile file_ue){

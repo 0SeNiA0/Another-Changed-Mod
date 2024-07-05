@@ -1,35 +1,38 @@
 package net.zaharenko424.a_changed.capability;
 
-import net.minecraft.nbt.CompoundTag;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.minecraft.server.level.ServerPlayer;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 public interface ITransfurHandler {
 
     float getTransfurProgress();
 
-    void setTransfurProgress(float amount, AbstractTransfurType transfurType);
+    void addTransfurProgress(float amount, TransfurType transfurType, TransfurContext context);
 
-    @Nullable AbstractTransfurType getTransfurType();
+    @Nullable
+    TransfurType getTransfurType();
 
-    void setTransfurType(AbstractTransfurType transfurType);
+    void setTransfurType(TransfurType transfurType);
 
     boolean isTransfurred();
 
-    void transfur(AbstractTransfurType transfurType);
+    void transfur(TransfurType transfurType, TransfurContext context);
 
-    void unTransfur();
+    void unTransfur(TransfurContext context);
 
     boolean isBeingTransfurred();
 
     void setBeingTransfurred(boolean isBeingTransfurred);
 
-    ITransfurHandler load(CompoundTag tag);
-
-    CompoundTag save();
-
     void tick();
+
+    void syncClient(ServerPlayer packetReceiver);
+
+    void syncClients();
+
+    @ApiStatus.Internal
+    void loadSyncedData(float transfurProgress, boolean isTransfurred, TransfurType transfurType);
 }

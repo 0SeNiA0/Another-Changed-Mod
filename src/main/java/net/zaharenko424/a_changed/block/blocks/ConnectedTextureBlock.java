@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
 
-public class ConnectedTextureBlock extends Block {
+public abstract class ConnectedTextureBlock extends Block {
 
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
@@ -24,8 +24,8 @@ public class ConnectedTextureBlock extends Block {
     public static final ImmutableMap<Direction, BooleanProperty> propByDirection = ImmutableMap.of(
             Direction.UP, UP, Direction.DOWN, DOWN, Direction.NORTH, NORTH, Direction.EAST, EAST, Direction.SOUTH, SOUTH, Direction.WEST, WEST);
 
-    public ConnectedTextureBlock(Properties p_49795_) {
-        super(p_49795_);
+    public ConnectedTextureBlock(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any()
                 .setValue(UP,false)
                 .setValue(DOWN,false)
@@ -36,17 +36,17 @@ public class ConnectedTextureBlock extends Block {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return p_60541_.setValue(propByDirection.get(p_60542_), shouldConnectTo(p_60543_, p_60546_, p_60544_, p_60542_));
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+        return state.setValue(propByDirection.get(direction), shouldConnectTo(neighborState, neighborPos, level, direction));
     }
 
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         BlockState state = defaultBlockState();
-        Level level = p_49820_.getLevel();
+        Level level = context.getLevel();
         for(Direction direction : Direction.values()){
-            blockPos.setWithOffset(p_49820_.getClickedPos(), direction);
+            blockPos.setWithOffset(context.getClickedPos(), direction);
             if(shouldConnectTo(level.getBlockState(blockPos), blockPos, level, direction))
                 state = state.setValue(propByDirection.get(direction),true);
         }
@@ -58,7 +58,7 @@ public class ConnectedTextureBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
     }
 }

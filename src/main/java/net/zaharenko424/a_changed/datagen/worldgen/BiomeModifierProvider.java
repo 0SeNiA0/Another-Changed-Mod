@@ -10,6 +10,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -24,6 +25,7 @@ import java.util.List;
 public class BiomeModifierProvider {
 
     public static final ResourceKey<BiomeModifier> ADD_SURFACE_LATEX_SPAWNS = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "add_surface_latex_spawns");
+    public static final ResourceKey<BiomeModifier> ADD_SNOW_BIOME_LATEX_SPAWNS = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "add_snow_biome_latex_spawns");
     public static final ResourceKey<BiomeModifier> WATER_LATEX_SPAWNS_OCEAN = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "water_latex_spawns_ocean");
     public static final ResourceKey<BiomeModifier> WATER_LATEX_SPAWNS_RIVER = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "water_latex_spawns_river");
     public static final ResourceKey<BiomeModifier> ADD_ORANGE_TREE = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS,"add_orange_tree");
@@ -44,6 +46,14 @@ public class BiomeModifierProvider {
                         new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_MALE.get(), 10, 1, 2)
                 ))
         );
+
+        context.register(ADD_SNOW_BIOME_LATEX_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(
+                biomes.getOrThrow(Tags.Biomes.IS_SNOWY),
+                List.of(
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.SNOW_LEOPARD_FEMALE.get(), 20, 1, 3),
+                        new MobSpawnSettings.SpawnerData(EntityRegistry.SNOW_LEOPARD_MALE.get(), 20, 1, 3)
+                )
+        ));
 
         context.register(WATER_LATEX_SPAWNS_OCEAN, new BiomeModifiers.AddSpawnsBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OCEAN),

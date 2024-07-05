@@ -10,31 +10,32 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.EntityHitResult;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class SyringeProjectile extends AbstractArrow {
 
-    private AbstractTransfurType transfurType = null;
+    private TransfurType transfurType = null;
 
     public SyringeProjectile(Level pLevel) {
         super(EntityRegistry.SYRINGE_PROJECTILE.get(), pLevel, ItemStack.EMPTY);
         setBaseDamage(.01);
     }
 
-    public SyringeProjectile(Level level, LivingEntity shooter, AbstractTransfurType transfurType){
+    public SyringeProjectile(Level level, LivingEntity shooter, TransfurType transfurType){
         super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY);
         this.transfurType = transfurType;
         setBaseDamage(.01);
     }
 
-    public void setTransfurType(AbstractTransfurType transfurType){
+    public void setTransfurType(TransfurType transfurType){
         this.transfurType = transfurType;
     }
 
@@ -46,8 +47,8 @@ public class SyringeProjectile extends AbstractArrow {
         Block.popResource(level(), blockPosition(), ItemRegistry.SYRINGE_ITEM.get().getDefaultInstance());
         if(transfurType == null || !DamageSources.checkTarget(entity)) return;
         entity.hurt(DamageSources.transfur(this, getOwner()), .5f);
-        LivingEntity living = (LivingEntity) entity;
-        TransfurEvent.ADD_TRANSFUR_DEF.accept(living, transfurType, 10f);
+        TransfurCapability.nonNullOf((LivingEntity) entity)
+                .addTransfurProgress(10f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
     }
 
     @Override

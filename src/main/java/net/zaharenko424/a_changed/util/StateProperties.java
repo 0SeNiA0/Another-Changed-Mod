@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.util;
 
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class StateProperties {
@@ -11,4 +12,7 @@ public class StateProperties {
     public static final IntegerProperty PART9 = IntegerProperty.create("part", 0, 8);
     public static final IntegerProperty PART12 = IntegerProperty.create("part", 0, 11);
     public static final BooleanProperty UNLOCKED = BooleanProperty.create("unlocked");
+
+    public static final BooleanProperty LOCKED_STATE = BooleanProperty.create("locked_state");
+    public static final EnumProperty<CoveredWith> COVERED_WITH = EnumProperty.create("covered_with", CoveredWith.class);
 }

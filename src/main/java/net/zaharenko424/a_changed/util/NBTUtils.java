@@ -1,10 +1,11 @@
 package net.zaharenko424.a_changed.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +30,20 @@ public class NBTUtils {
         return tag != null && tag.contains(KEY);
     }
 
-    public static @Nullable AbstractTransfurType readTransfurType(CompoundTag tag){
+    public static @Nullable TransfurType readTransfurType(CompoundTag tag){
         if(!tag.contains(TransfurManager.TRANSFUR_TYPE_KEY)) return null;
         return TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
+    }
+
+    public static void putBlockPos(CompoundTag tag, BlockPos pos){
+        tag.putInt("x", pos.getX());
+        tag.putInt("y", pos.getY());
+        tag.putInt("z", pos.getZ());
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull BlockPos getBlockPos(CompoundTag tag){
+        return new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
     }
 
     public static void putAABB(CompoundTag tag, AABB aabb){

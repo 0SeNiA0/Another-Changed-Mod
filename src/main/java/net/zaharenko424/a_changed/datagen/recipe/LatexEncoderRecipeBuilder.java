@@ -21,7 +21,7 @@ import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +45,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
         ingredients.set(0, PartialNBTIngredientFix.of(ItemRegistry.SYRINGE_ITEM.get(), null));
     }
 
-    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull AbstractTransfurType transfurType){
+    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull TransfurType transfurType){
         return new LatexEncoderRecipeBuilder(LatexSyringeItem.encodeTransfur(transfurType), transfurType.getGender());
     }
 

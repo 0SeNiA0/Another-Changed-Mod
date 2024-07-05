@@ -10,8 +10,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +52,7 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
     }
 
     protected void use(ItemStack item, ServerPlayer player){
-        TransfurEvent.UNTRANSFUR.accept(player);
+        TransfurCapability.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
         if(player.getRandom().nextFloat() > .5) giveDebuffs(player, 1);
     }
 

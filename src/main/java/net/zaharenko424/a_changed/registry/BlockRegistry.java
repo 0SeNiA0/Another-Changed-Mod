@@ -65,11 +65,11 @@ public class BlockRegistry {
     public static final DeferredBlock<Block> BROWN_LAB_BLOCK = BLOCKS.registerSimpleBlock("brown_lab_block", decorProperties().mapColor(DyeColor.BROWN));
     public static final DeferredBlock<CannedOranges> CANNED_ORANGES = BLOCKS.register("canned_oranges", ()-> new CannedOranges(BlockBehaviour.Properties.of().noLootTable().strength(2).mapColor(MapColor.METAL).noOcclusion().sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<CardboardBox> CARDBOARD_BOX = BLOCKS.register("cardboard_box", ()-> new CardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
-    public static final DeferredBlock<ConnectedTextureBlock> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new ConnectedTextureBlock(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
+    public static final DeferredBlock<ConnectedTextureBlockImpl> CARPET_BLOCK = BLOCKS.register("carpet_block", ()-> new ConnectedTextureBlockImpl(BlockBehaviour.Properties.of().mapColor(DyeColor.ORANGE).strength(.8f).sound(SoundType.WOOL).ignitedByLava()));
     public static final DeferredBlock<Chair> CHAIR = BLOCKS.register("chair", ()-> new Chair(decorProperties().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Computer> COMPUTER = BLOCKS.register("computer", ()-> new Computer(decorProperties()));
-    public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_BLUE_LAB_TILE = BLOCKS.register("connected_blue_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.LIGHT_BLUE)));
-    public static final DeferredBlock<ConnectedTextureBlock> CONNECTED_LAB_TILE = BLOCKS.register("connected_lab_tile", ()-> new ConnectedTextureBlock(decorProperties().mapColor(DyeColor.WHITE)));
+    public static final DeferredBlock<ConnectedTextureBlockImpl> CONNECTED_BLUE_LAB_TILE = BLOCKS.register("connected_blue_lab_tile", ()-> new ConnectedTextureBlockImpl(decorProperties().mapColor(DyeColor.LIGHT_BLUE)));
+    public static final DeferredBlock<ConnectedTextureBlockImpl> CONNECTED_LAB_TILE = BLOCKS.register("connected_lab_tile", ()-> new ConnectedTextureBlockImpl(decorProperties().mapColor(DyeColor.WHITE)));
     public static final DeferredBlock<CryoChamber> CRYO_CHAMBER = BLOCKS.register("cryo_chamber", ()-> new CryoChamber(metalDoorProperties()));
     public static final DeferredBlock<Cup> CUP = BLOCKS.register("cup", ()-> new Cup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.4f)));
     public static final DeferredBlock<DangerSign> DANGER_SIGN = BLOCKS.register("danger_sign", ()-> new DangerSign(softMetal()));

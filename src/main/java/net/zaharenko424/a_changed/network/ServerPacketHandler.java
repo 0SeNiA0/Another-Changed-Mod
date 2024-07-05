@@ -21,8 +21,9 @@ import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -82,8 +83,9 @@ public class ServerPacketHandler {
         ITransfurHandler handler = TransfurCapability.nonNullOf(player);
         if(!handler.isBeingTransfurred()) return;
 
-        if(packet.becomeTransfur()) TransfurEvent.TRANSFUR_TF.accept(player, handler.getTransfurType());
-        else TransfurEvent.TRANSFUR_DEATH.accept(player, handler.getTransfurType());
+        TransfurType transfurType = handler.getTransfurType();
+        if(packet.becomeTransfur()) handler.transfur(transfurType, TransfurContext.TRANSFUR_TF);
+        else handler.transfur(transfurType, TransfurContext.TRANSFUR_DEATH);
     }
 
     public void handleLatexEncoderScreenPacket(@NotNull ServerboundLatexEncoderScreenPacket packet, PlayPayloadContext context){

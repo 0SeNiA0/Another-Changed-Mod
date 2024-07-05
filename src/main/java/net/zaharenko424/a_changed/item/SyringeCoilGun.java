@@ -13,10 +13,10 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.SyringeCoilGunMenu;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +44,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     }
 
     @Override
-    AbstractTransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
+    TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
         for(int i = 0; i < 4; i++){
             if(!handler.getStackInSlot(i).isEmpty()) return TransfurManager.getTransfurType(
                     Objects.requireNonNull(LatexSyringeItem.decodeTransfur(handler.extractItem(i, 1, simulate))));
@@ -59,7 +59,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
 
     @Override
     void consumeFuel(@NotNull ItemStack rifle, @NotNull IItemHandler handler) {
-        ((EnergyConsumer)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).consumeEnergy(2000);
+        ((ExtendedEnergyStorage)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).addEnergy(-2000);
     }
 
     @Override

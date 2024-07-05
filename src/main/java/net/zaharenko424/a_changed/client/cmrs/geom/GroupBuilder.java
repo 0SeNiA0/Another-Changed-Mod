@@ -31,13 +31,17 @@ public class GroupBuilder {
     }
 
     public GroupBuilder addMesh(float[] vertices, float[] quads){
+        return addMesh(vertices, quads, false);
+    }
+
+    public GroupBuilder addMesh(float[] vertices, float[] quads, boolean smooth){
         if(vertices.length % 3 != 0){
             throw new IllegalArgumentException("Vertices in mesh are defined incorrectly!");
         }
         if(quads.length % 12 != 0){
             throw new IllegalArgumentException("Quads in mesh are defined incorrectly!");
         }
-        meshes.add(new MeshDefinition(vertices, quads));
+        meshes.add(new MeshDefinition(vertices, quads, smooth));
         return this;
     }
 

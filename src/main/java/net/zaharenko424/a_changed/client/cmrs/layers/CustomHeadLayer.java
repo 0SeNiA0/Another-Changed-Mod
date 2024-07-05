@@ -22,12 +22,12 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomEntityModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class CustomHeadLayer <E extends LivingEntity, M extends CustomEntityModel<E>> extends RenderLayer<E, M> {
+public class CustomHeadLayer <E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E, M> {
     private final float scaleX;
     private final float scaleY;
     private final float scaleZ;

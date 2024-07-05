@@ -8,12 +8,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
-import net.zaharenko424.a_changed.client.cmrs.model.HierarchicalHumanoidModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ArrowLayer<E extends LivingEntity,M extends HierarchicalHumanoidModel<E>> extends StuckInBodyLayerFix<E,M>{
+public class ArrowLayer<E extends LivingEntity,M extends CustomHumanoidModel<E>> extends StuckInBodyLayerFix<E, M>{
 
     private final EntityRenderDispatcher dispatcher;
 

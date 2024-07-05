@@ -104,7 +104,6 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
-    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
 
     // Example mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -115,7 +114,7 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
-    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.20.4:1.13"
+    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.20.4:1.14.1"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar

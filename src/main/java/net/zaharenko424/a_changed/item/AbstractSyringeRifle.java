@@ -1,7 +1,9 @@
 package net.zaharenko424.a_changed.item;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -14,7 +16,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -61,12 +63,15 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         playSound(level, player);
 
         player.getCooldowns().addCooldown(rifle.getItem(), cooldown());
+
+        CriteriaTriggers.SHOT_CROSSBOW.trigger((ServerPlayer) player, rifle);
+
         return InteractionResultHolder.consume(rifle);
     }
 
     abstract boolean hasAmmo(@NotNull IItemHandler handler);
 
-    abstract AbstractTransfurType useFirst(@NotNull IItemHandler handler, boolean simulate);
+    abstract TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate);
 
     abstract boolean hasFuel(ItemStack rifle, @NotNull IItemHandler inventory);
 

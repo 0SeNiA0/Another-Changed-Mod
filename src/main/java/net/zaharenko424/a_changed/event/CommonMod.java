@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,8 +29,14 @@ import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
-import net.zaharenko424.a_changed.network.packets.grab.*;
-import net.zaharenko424.a_changed.network.packets.transfur.*;
+import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
+import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
+import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -55,17 +62,15 @@ public class CommonMod {
     public static void onRegisterPayload(RegisterPayloadHandlerEvent event){
         IPayloadRegistrar registrar = event.registrar(MODID);
 
-        //Lambda SHOULDN'T be replaced with method reference! -> server will crash
+        //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
         //Transfur tolerance update
         registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));
 
-        //Grab
-        registrar.common(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
+        //Grab sync
+        registrar.play(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleGrabSyncPacket(packet, context)));
-        registrar.play(ClientboundRemoteGrabSyncPacket.ID, ClientboundRemoteGrabSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemoteGrabSyncPacket(packet, context)));
         registrar.play(ServerboundGrabPacket.ID, ServerboundGrabPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleGrabPacket));
 
@@ -75,10 +80,8 @@ public class CommonMod {
         registrar.play(ServerboundWantToBeGrabbedPacket.ID, ServerboundWantToBeGrabbedPacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleWantToBeGrabbedPacket));
 
-        //Transfur data
-        registrar.play(ClientboundPlayerTransfurSyncPacket.ID, ClientboundPlayerTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handlePlayerTransfurSync(packet, context)));
-        registrar.play(ClientboundRemotePlayerTransfurSyncPacket.ID, ClientboundRemotePlayerTransfurSyncPacket::new, handler ->
+        //Transfur sync
+        registrar.play(ClientboundTransfurSyncPacket.ID, ClientboundTransfurSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet, context)));
 
         //Transfur screen
@@ -86,6 +89,10 @@ public class CommonMod {
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenTransfurScreen(context)));
         registrar.play(ServerboundTransfurChoicePacket.ID, ServerboundTransfurChoicePacket::new, handler ->
                 handler.server(ServerPacketHandler.INSTANCE::handleTransfurChoicePacket));
+
+        //Latex coveredness of chunks
+        registrar.play(ClientboundLTCDataPacket.ID, ClientboundLTCDataPacket::new, handler ->
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleLTCDataSync(packet, context)));
 
         //Latex encoder
         registrar.play(ServerboundLatexEncoderScreenPacket.ID, ServerboundLatexEncoderScreenPacket::new, handler ->
@@ -115,10 +122,12 @@ public class CommonMod {
                 player.getData(AttachmentRegistry.GRAB_HANDLER));
         for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
             //Tag DOESN'T WORK for some reason (
-            //if(entityType.is(AChanged.TRANSFURRABLE_TAG))
-            if(transfurrable.contains(entityType))
-                event.registerEntity(CAPABILITY, entityType, (entity, context) -> entity instanceof LivingEntity living
-                        ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER) : null);
+            //Shotgun EVERYTHING and return null if entity isn't suitable
+
+            event.registerEntity(CAPABILITY, entityType, (entity, context) -> //TODO replace with attachment instead of capability+attachment ?
+                    entity instanceof LivingEntity living && living.getType().is(TRANSFURRABLE_TAG)
+                            ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER)
+                            : null);
         }
 
         //Item
@@ -173,8 +182,16 @@ public class CommonMod {
         event.put(LATEX_SHARK_MALE.get(), WaterLatexBeast.createAttributes().build());
 
         event.put(PURE_WHITE_LATEX_WOLF.get(), LatexBeast.createAttributes().build());
+
+        event.put(SNOW_LEOPARD_FEMALE.get(), LatexBeast.createAttributes().build());
+        event.put(SNOW_LEOPARD_MALE.get(), LatexBeast.createAttributes().build());
+
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
+
+        event.put(YUFENG_DRAGON.get(), LatexBeast.createAttributes().build());
+//TMP DON'T FORGET TO REMOVE
+        event.put(TEST.get(), Zombie.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -190,7 +207,13 @@ public class CommonMod {
         event.register(LATEX_SHARK_MALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
 
         event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
+        event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
         event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
+        event.register(YUFENG_DRAGON.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }
 }

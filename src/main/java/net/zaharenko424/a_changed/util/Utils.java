@@ -5,6 +5,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @ParametersAreNonnullByDefault
 public class Utils {
+
+    public static final ResourceLocation NULL_LOC = new ResourceLocation("null", "null");
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));
@@ -150,6 +153,18 @@ public class Utils {
             if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areAttachmentsCompatible(itemstack)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public static <E extends MobEffectInstance> E makeUnremovable(E effect){
+        effect.getCures().clear();
+        return effect;
+    }
+
+    public static boolean containsClass(Class<?> clazz, List<Class<?>> list){
+        for (Class<?> block : list){
+            if(block.isAssignableFrom(clazz)) return true;
         }
         return false;
     }

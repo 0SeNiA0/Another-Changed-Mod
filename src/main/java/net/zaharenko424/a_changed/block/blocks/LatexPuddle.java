@@ -18,9 +18,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +43,9 @@ public class LatexPuddle extends Block {
     private static final VoxelShape SHAPE_NESW = Shapes.box(0, 0, 0, 1, 0.0625, 1);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
     private static final HashMap<VoxelShape, AABB> AABB_CACHE = new HashMap<>();
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
 
-    public LatexPuddle(BlockBehaviour.Properties p_49795_, Supplier<? extends AbstractTransfurType> transfurType) {
+    public LatexPuddle(BlockBehaviour.Properties p_49795_, Supplier<? extends TransfurType> transfurType) {
         super(p_49795_.friction(.9f).speedFactor(.6f).jumpFactor(.6f));
         registerDefaultState(stateDefinition.any()
                 .setValue(NORTH,false)
@@ -105,7 +106,7 @@ public class LatexPuddle extends Block {
     public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
         if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0 || !DamageSources.checkTarget(p_60498_)) return;
         if(p_60498_.getBoundingBox().intersects(AABB_CACHE.computeIfAbsent(getShape(p_60495_, p_60496_, p_60497_, CollisionContext.empty()), shape -> shape.bounds().expandTowards(0, .1, 0)).move(p_60497_)))
-            TransfurEvent.ADD_TRANSFUR_DEF.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
+            TransfurCapability.nonNullOf((LivingEntity) p_60498_).addTransfurProgress(5f, transfurType.get(), TransfurContext.ADD_PROGRESS_DEF);
     }
 
     @Override

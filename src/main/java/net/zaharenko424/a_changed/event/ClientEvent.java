@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +53,7 @@ import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.Utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -110,17 +112,18 @@ public class ClientEvent {
             return;
         }
 
+        Entity crosshairEntity = minecraft.crosshairPickEntity;
+
+        if(crosshairEntity == null || player.distanceTo(crosshairEntity) > 2.5) return;
+
         if(TransfurManager.isGrabbed(player)) {
             player.displayClientMessage(Component.translatable("message.a_changed.grabbed"),true);
             return;
         }
 
-        if(!(minecraft.crosshairPickEntity instanceof LivingEntity entity)
-                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG) || player.distanceTo(entity) > 2.5) return;
-
-        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
-            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
-                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+        if(!(crosshairEntity instanceof LivingEntity entity)
+                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG)) {
+            player.displayClientMessage(Component.translatable("message.a_changed.grabbed_wrong_entity"), true);
             return;
         }
 
@@ -140,12 +143,19 @@ public class ClientEvent {
                 return;
             }
         }
+
+        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
+            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
+                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+            return;
+        }
+
         PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(entity.getId()));
     }
 
-    private static final List<Class<? extends Block>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
+    private static final List<Class<?>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
             Flask.class, LatexEncoder.class, MetalCan.class, PileOfOranges.class, TestTubes.class);
-    private static final List<Class<? extends Block>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
+    private static final List<Class<?>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
             DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 
     @SubscribeEvent
@@ -155,12 +165,12 @@ public class ClientEvent {
         Vec3 cameraPos = event.getCamera().getPosition();
         Class<? extends Block> clazz = level.getBlockState(pos).getBlock().getClass();
 
-        if(containsClass(clazz, blocksNoOutline)){
+        if(Utils.containsClass(clazz, blocksNoOutline)){
             event.setCanceled(true);
             return;
         }
 
-        if(!level.getWorldBorder().isWithinBounds(pos) || !containsClass(clazz, blocksSolidOutline)) return;
+        if(!level.getWorldBorder().isWithinBounds(pos) || !Utils.containsClass(clazz, blocksSolidOutline)) return;
 
         renderShape(
                 event.getPoseStack(),
@@ -177,17 +187,9 @@ public class ClientEvent {
         event.setCanceled(true);
     }
 
-    private static boolean containsClass(Class<? extends Block> clazz, List<Class<? extends Block>> list){
-        for (Class<? extends Block> block : list){
-            if(block.isAssignableFrom(clazz)) return true;
-        }
-        return false;
-    }
-
-    private static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,
-            double p_109786_, double p_109787_, double p_109788_,
-            float p_109789_, float p_109790_, float p_109791_, float p_109792_
-    ) {
+    public static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,
+                                   double p_109786_, double p_109787_, double p_109788_,
+                                   float r, float g, float b, float a) {
         PoseStack.Pose posestack$pose = p_109783_.last();
         p_109785_.forAllEdges(
                 (p_234280_, p_234281_, p_234282_, p_234283_, p_234284_, p_234285_) -> {
@@ -199,11 +201,11 @@ public class ClientEvent {
                     f1 /= f3;
                     f2 /= f3;
                     p_109784_.vertex(posestack$pose.pose(), (float)(p_234280_ + p_109786_), (float)(p_234281_ + p_109787_), (float)(p_234282_ + p_109788_))
-                            .color(p_109789_, p_109790_, p_109791_, p_109792_)
+                            .color(r, g, b, a)
                             .normal(posestack$pose.normal(), f, f1, f2)
                             .endVertex();
                     p_109784_.vertex(posestack$pose.pose(), (float)(p_234283_ + p_109786_), (float)(p_234284_ + p_109787_), (float)(p_234285_ + p_109788_))
-                            .color(p_109789_, p_109790_, p_109791_, p_109792_)
+                            .color(r, g, b, a)
                             .normal(posestack$pose.normal(), f, f1, f2)
                             .endVertex();
                 }

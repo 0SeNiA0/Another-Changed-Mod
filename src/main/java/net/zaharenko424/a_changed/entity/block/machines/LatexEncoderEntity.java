@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.item.SyringeItem;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
+public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
     public static final int MAX_PROGRESS = 300;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 7);
@@ -63,8 +63,8 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    EnergyConsumer initEnergy() {
-        return new EnergyConsumer(50000, 256, 0);
+    ExtendedEnergyStorage initEnergy() {
+        return new ExtendedEnergyStorage(50000, 256, 0);
     }
 
     public int getProgress(){
@@ -105,7 +105,7 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
             return;
         }
 
-        energyStorage.consumeEnergy(96);
+        energyStorage.addEnergy(-96);
         setActive(true);
 
         if(progress < MAX_PROGRESS){

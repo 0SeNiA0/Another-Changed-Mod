@@ -26,9 +26,4 @@ public class Wrench extends TieredItem implements Vanishable {
         if(result.consumesAction() && (player == null || !player.isCreative())) context.getItemInHand().hurt(2, level.random, player);
         return result;
     }
-
-    @Override
-    public boolean isValidRepairItem(@NotNull ItemStack pStack, @NotNull ItemStack repairCandidate) {
-        return repairCandidate.is(Items.COPPER_INGOT);
-    }
 }

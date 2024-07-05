@@ -8,10 +8,9 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.CommandBlock;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 public class UnTransfur {
 
@@ -26,15 +25,13 @@ public class UnTransfur {
 
     }
 
-    private static final Consumer<ServerPlayer> unTransfur = TransfurEvent.unTransfur().build();
-
     static boolean check(@NotNull CommandSourceStack stack){
         return stack.getLevel().getBlockState(BlockPos.containing(stack.getPosition())).getBlock() instanceof CommandBlock
                 || stack.hasPermission(Commands.LEVEL_ADMINS);
     }
 
     private static int execute(@NotNull ServerPlayer player){
-        unTransfur.accept(player);
+        TransfurCapability.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
         return Command.SINGLE_SUCCESS;
     }
 }

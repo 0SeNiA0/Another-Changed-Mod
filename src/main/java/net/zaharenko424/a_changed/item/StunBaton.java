@@ -15,7 +15,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +60,8 @@ public class StunBaton extends SwordItem {
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity pTarget, @NotNull LivingEntity pAttacker) {
         CompoundTag tag = stack.getOrCreateTag();
         if(!tag.contains("enabled")) return true;
-        EnergyConsumer storage = (EnergyConsumer) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        storage.consumeEnergy(500);
+        ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        storage.addEnergy(-500);
 
         pTarget.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF.get(), 80, 0, false, false));
 

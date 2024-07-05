@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.capability;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +18,7 @@ public interface IGrabHandler {
 
     boolean canGrab();
 
-    Player getGrabbedBy();
+    LivingEntity getGrabbedBy();
 
     void setGrabbedBy(@Nullable Player player);
 
@@ -31,13 +30,9 @@ public interface IGrabHandler {
 
     void setWantsToBeGrabbed(boolean wantsToBeGrabbed);
 
-    IGrabHandler load(CompoundTag tag);
-
-    CompoundTag save();
-
     void tick();
 
-    void updatePlayer();
+    void syncClients();
 
-    void updateRemotePlayer(ServerPlayer packetReceiver);
+    void syncClient(ServerPlayer packetReceiver);
 }

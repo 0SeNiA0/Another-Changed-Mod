@@ -15,7 +15,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
+public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
     public static final int MAX_PROGRESS = 120;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
@@ -54,8 +54,8 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
     }
 
     @Override
-    EnergyConsumer initEnergy() {
-        return new EnergyConsumer(10000, 128, 0);
+    ExtendedEnergyStorage initEnergy() {
+        return new ExtendedEnergyStorage(10000, 128, 0);
     }
 
     public int getProgress(){
@@ -92,7 +92,7 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, En
         }
 
         setActive(true);
-        energyStorage.consumeEnergy(32);
+        energyStorage.addEnergy(-32);
         if(level.getGameTime() % 20 == 0)
             level.playSound(null, worldPosition, SoundRegistry.COMPRESSOR.get(), SoundSource.BLOCKS, .5f, 1);
 

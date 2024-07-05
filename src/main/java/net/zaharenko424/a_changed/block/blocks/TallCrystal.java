@@ -16,9 +16,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock;
 import net.zaharenko424.a_changed.block.NotRotatedMultiBlock;
+import net.zaharenko424.a_changed.capability.ITransfurHandler;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,10 +37,10 @@ public class TallCrystal extends NotRotatedMultiBlock {
     private static final VoxelShape SHAPE1 = SHAPE0.move(0,-1,0);
     private static final AABB aabb0 = SHAPE0.bounds();
     private static final AABB aabb1 = SHAPE1.bounds();
-    private final Supplier<? extends AbstractTransfurType> transfurType;
+    private final Supplier<? extends TransfurType> transfurType;
     public static IntegerProperty PART = StateProperties.PART2;
 
-    public TallCrystal(Properties p_54120_, Supplier<? extends AbstractTransfurType> transfurType) {
+    public TallCrystal(Properties p_54120_, Supplier<? extends TransfurType> transfurType) {
         super(p_54120_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }
@@ -59,11 +61,12 @@ public class TallCrystal extends NotRotatedMultiBlock {
     }
 
     @Override
-    public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
-        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0) return;
+    public void entityInside(BlockState p_60495_, Level level, BlockPos p_60497_, Entity p_60498_) {
+        if(level.isClientSide || p_60498_.tickCount % 10 != 0) return;
         if(!p_60498_.getBoundingBox().intersects((p_60495_.getValue(PART) == 0 ? aabb0 : aabb1).move(p_60497_))
                 || !DamageSources.checkTarget(p_60498_)) return;
-        TransfurEvent.ADD_TRANSFUR_CRYSTAL.accept((LivingEntity) p_60498_, transfurType.get(), 5f);
+        ITransfurHandler handler = TransfurCapability.of((LivingEntity) p_60498_);
+        if(handler != null) handler.addTransfurProgress(5f, transfurType.get(), TransfurContext.ADD_PROGRESS_CRYSTAL);
     }
 
     @Override

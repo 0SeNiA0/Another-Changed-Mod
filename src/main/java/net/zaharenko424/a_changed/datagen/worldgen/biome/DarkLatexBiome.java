@@ -35,6 +35,7 @@ public class DarkLatexBiome {
 
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.DARK_LATEX_WOLF_FEMALE.get(), 100, 1, 3));
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.DARK_LATEX_WOLF_MALE.get(), 100, 1, 3));
+        spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.YUFENG_DRAGON.get(), 50, 1, 2));
 
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 

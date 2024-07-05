@@ -9,7 +9,7 @@ import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.event.RegisterModelDefinitionsEvent;
+import net.zaharenko424.a_changed.event.custom.RegisterModelDefinitionsEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -35,12 +35,21 @@ public final class ModelDefinitionCache {
 
         modelCache.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
 
+
         modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());
+
         modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.bodyLayer());
+
+        modelCache.put(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.bodyLayer());
+        modelCache.put(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.bodyLayer());
+
         modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.bodyLayer());
         modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.bodyLayer());
+
         modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
         modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
+
+        modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.bodyLayer());
 
         ModLoader.get().postEvent(new RegisterModelDefinitionsEvent(modelCache));
     }

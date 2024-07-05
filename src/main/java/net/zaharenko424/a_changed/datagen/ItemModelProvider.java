@@ -21,6 +21,8 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
     @Override
     protected void registerModels() {
+        basicItem(BUILDERS_WAND.getId());
+
         basicItem(BLACK_LATEX_SHORTS.getId());
         basicItem(BLOOD_SYRINGE.getId());
         basicItem(CARDBOARD.getId());
@@ -63,6 +65,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
         basicItem(ORANGE_JUICE_ITEM.getId());
         basicItem(POWER_CELL.getId());
+        basicItem(STATE_KEY.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYNTHESIZER_COMPONENTS.getId());
@@ -83,8 +86,11 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(LATEX_SHARK_F_EGG);
         spawnEgg(LATEX_SHARK_M_EGG);
         spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
+        spawnEgg(SNOW_LEOPARD_F_EGG);
+        spawnEgg(SNOW_LEOPARD_M_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);
         spawnEgg(WHITE_LATEX_WOLF_M_EGG);
+        spawnEgg(YUFENG_DRAGON_EGG);
     }
 
     private @NotNull ResourceLocation blockLoc(@NotNull DeferredBlock<?> block){

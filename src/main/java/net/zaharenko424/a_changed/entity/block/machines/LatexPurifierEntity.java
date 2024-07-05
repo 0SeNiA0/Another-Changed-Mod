@@ -14,7 +14,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
-import net.zaharenko424.a_changed.capability.energy.EnergyConsumer;
+import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler, EnergyConsumer> {
+public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
     public static final int MAX_PROGRESS = 160;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
@@ -57,8 +57,8 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
     }
 
     @Override
-    EnergyConsumer initEnergy() {
-        return new EnergyConsumer(25000, 256, 0);
+    ExtendedEnergyStorage initEnergy() {
+        return new ExtendedEnergyStorage(25000, 256, 0);
     }
 
     public int getProgress(){
@@ -93,7 +93,7 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         }
 
         setActive(true);
-        energyStorage.consumeEnergy(48);
+        energyStorage.addEnergy(-48);
 
         if(progress < MAX_PROGRESS) {
             progress++;

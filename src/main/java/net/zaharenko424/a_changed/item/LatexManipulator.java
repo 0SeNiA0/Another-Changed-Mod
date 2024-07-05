@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -13,9 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.transfurSystem.TransfurEvent;
+import net.zaharenko424.a_changed.capability.ITransfurHandler;
+import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractTransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,13 +44,14 @@ public class LatexManipulator extends Item {
                 //success, save tf
             } else return InteractionResultHolder.pass(manipulator);
         } else {
+            ITransfurHandler handler = TransfurCapability.nonNullOf(player);
             if(TransfurManager.isTransfurred(player)){
-                TransfurEvent.UNTRANSFUR.accept((ServerPlayer) player);
+                handler.unTransfur(TransfurContext.UNTRANSFUR);
                 //success unTF
             } else if(NBTUtils.hasModTag(tag)) {
-                AbstractTransfurType transfurType = decodeTransfurType(NBTUtils.modTag(tag));
+                TransfurType transfurType = decodeTransfurType(NBTUtils.modTag(tag));
                 if(transfurType == null) return InteractionResultHolder.pass(manipulator);
-                TransfurEvent.TRANSFUR_TF.accept(player, transfurType);
+                handler.transfur(transfurType, TransfurContext.TRANSFUR_TF);
                 //success, tf
             } else return InteractionResultHolder.pass(manipulator);
         }
@@ -65,7 +67,7 @@ public class LatexManipulator extends Item {
         pTooltipComponents.add(Component.translatable("tooltip.a_changed.latex_manipulator", decodeTransfurType(NBTUtils.modTag(tag)).fancyName()).withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
-    private AbstractTransfurType decodeTransfurType(@NotNull CompoundTag modTag){
+    private TransfurType decodeTransfurType(@NotNull CompoundTag modTag){
         return TransfurManager.getTransfurType(new ResourceLocation(modTag.getString(TransfurManager.TRANSFUR_TYPE_KEY)));
     }
 }
