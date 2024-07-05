@@ -15,7 +15,7 @@
   "advancements.a_changed.cat_transfur.description": "Get transfurred into cat latex",
   "advancements.a_changed.swimming_transfur.title": "Drowned fear them",
   "advancements.a_changed.swimming_transfur.description": "Get transfurred into water latex",
-  "advancements.a_changed.flying_transfur.title": "Who need elytra?",
+  "advancements.a_changed.flying_transfur.title": "Who needs elytra?",
   "advancements.a_changed.flying_transfur.description": "Get transfurred into flying latex",
 
   "advancements.a_changed.ranged_transfur.title": "Ranged transfurring",
@@ -291,6 +291,7 @@
   "tooltip.a_changed.blood_syringe": "Blood of %1$s",
   "tooltip.a_changed.latex_manipulator": "Saved transfur: %1$s",
   "tooltip.a_changed.notes": "Shift right click on a wall to place a note",
+  "tooltip.a_changed.state_key": "(Un)locks state of connected lab blocks & carpet",
   "tooltip.a_changed.stun_baton_off": "Disabled",
   "tooltip.a_changed.stun_baton_on": "Enabled",
   "tooltip.a_changed.syringe_rifle_air": "Enough compressed air for %1$s shots",
@@ -309,6 +310,7 @@
   "transfur.a_changed.pure_white_latex_wolf": "pure white latex wolf",
   "transfur.a_changed.snow_leopard_female": "snow leopard female",
   "transfur.a_changed.snow_leopard_male": "snow leopard male",
+  "transfur.a_changed.special": "special",
   "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
   "transfur.a_changed.white_latex_wolf_male": "white latex wolf male",
   "transfur.a_changed.yufeng_dragon": "yufeng dragon"

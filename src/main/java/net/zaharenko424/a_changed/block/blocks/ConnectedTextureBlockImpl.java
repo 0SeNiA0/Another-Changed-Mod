@@ -26,6 +26,12 @@ public class ConnectedTextureBlockImpl extends ConnectedTextureBlock {
     }
 
     @Override
+    protected boolean shouldConnectTo(@NotNull BlockState state, BlockPos pos, LevelAccessor level, Direction direction) {
+        return super.shouldConnectTo(state, pos, level, direction)
+                && (state.getValue(LOCKED_STATE) ? state.getValue(propByDirection.get(direction.getOpposite())) : true);
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST, StateProperties.LOCKED_STATE);
     }
