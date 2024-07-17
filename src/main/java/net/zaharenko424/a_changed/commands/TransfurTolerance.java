@@ -11,6 +11,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,9 @@ public class TransfurTolerance {
     private static int set(@NotNull CommandSourceStack source , float tolerance){
         if(TransfurManager.TRANSFUR_TOLERANCE == tolerance) return Command.SINGLE_SUCCESS;
         TransfurManager.TRANSFUR_TOLERANCE = tolerance;
+
+        source.getLevel().getServer().overworld().getDataStorage().get(TransfurToleranceData.FACTORY, "transfur_tolerance").setDirty();
+
         if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set")
                 .append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to " + tolerance);
