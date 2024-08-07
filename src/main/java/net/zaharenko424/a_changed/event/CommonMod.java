@@ -64,6 +64,10 @@ public class CommonMod {
 
         //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
+        //Smooth look
+        registrar.play(ClientboundSmoothLookPacket.ID, ClientboundSmoothLookPacket::new, handler ->
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleSmoothLookPacket(packet, context)));
+
         //Transfur tolerance update
         registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));

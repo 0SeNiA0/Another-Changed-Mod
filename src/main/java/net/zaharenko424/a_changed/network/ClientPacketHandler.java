@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.IGrabHandler;
@@ -24,6 +25,7 @@ import net.zaharenko424.a_changed.client.screen.TransfurScreen;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenNotePacket;
+import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -39,6 +41,11 @@ public class ClientPacketHandler {
     public static final ClientPacketHandler INSTANCE = new ClientPacketHandler();
 
     private final Minecraft minecraft = Minecraft.getInstance();
+
+    public void handleSmoothLookPacket(ClientboundSmoothLookPacket packet, PlayPayloadContext context){
+        context.workHandler().submitAsync(()->
+                ((LocalPlayerExtension)minecraft.player).mod$lerpLookAt(packet.xRot(), packet.yRot(), packet.speed(), packet.ticks()));
+    }
 
     public void handleTransfurToleranceSync(@NotNull ClientboundTransfurToleranceSyncPacket packet){
         TransfurManager.TRANSFUR_TOLERANCE = packet.transfurTolerance();

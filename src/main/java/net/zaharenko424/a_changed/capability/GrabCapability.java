@@ -1,9 +1,9 @@
 package net.zaharenko424.a_changed.capability;
 
 import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -22,6 +22,7 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -202,14 +203,24 @@ public class GrabCapability {
         }
 
         private void hold(){
+            float distance = 1.2f;
+            if(mode == GrabMode.ASSIMILATE){
+                distance -= getTarget().hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())
+                        ? 1 - (float) getTarget().getEffect(MobEffectRegistry.GRABBED_DEBUFF.get()).getDuration() / grabDuration
+                        : 1;
+            }
+
             float yaw = holder.getYHeadRot();
-            float x = (float) ((-Mth.sin(Mth.DEG_TO_RAD * yaw) * 1.2) + holder.getX());
-            float z = (float) ((Mth.cos(Mth.DEG_TO_RAD * yaw) * 1.2) + holder.getZ());
+            float x = (float) ((-Mth.sin(Mth.DEG_TO_RAD * yaw) * distance) + holder.getX());
+            float z = (float) ((Mth.cos(Mth.DEG_TO_RAD * yaw) * distance) + holder.getZ());
 
+            grabbedEntity.fallDistance = 0;
+            grabbedEntity.setDeltaMovement( x - grabbedEntity.getX(), holder.getY() - grabbedEntity.getY(), z - grabbedEntity.getZ());
 
-            grabbedEntity.teleportTo(x, holder.getY(), z);
-            grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, holder.getEyePosition());
-            grabbedEntity.setDeltaMovement(grabbedEntity.getDeltaMovement().with(Direction.Axis.Y, 0));
+            if(grabbedEntity instanceof ServerPlayer player) {
+                PacketDistributor.PLAYER.with(player).send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
+                TransfurUtils.smoothLookAt(player, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), false, .6f);
+            } else grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, holder.getEyePosition());
         }
 
         public void syncClients(){

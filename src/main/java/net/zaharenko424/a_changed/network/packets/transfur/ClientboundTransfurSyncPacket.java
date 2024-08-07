@@ -23,7 +23,10 @@ public record ClientboundTransfurSyncPacket(int holderId, float transfurProgress
         buffer.writeVarInt(holderId);
         buffer.writeFloat(transfurProgress);
         buffer.writeBoolean(isTransfurred);
-        buffer.writeResourceLocation(transfurType.id);
+
+        if(transfurType != null) {
+            buffer.writeResourceLocation(transfurType.id);
+        } else buffer.writeResourceLocation(Utils.NULL_LOC);
 
         if(transfurTypeO != null) {
             buffer.writeResourceLocation(transfurTypeO.id);
