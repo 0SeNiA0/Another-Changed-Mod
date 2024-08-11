@@ -12,8 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,8 +27,8 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.block.doors.BigLabDoor;
@@ -43,15 +41,12 @@ import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.smalldecor.Flask;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
-import net.zaharenko424.a_changed.capability.GrabMode;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen;
-import net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen;
+import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
 import net.zaharenko424.a_changed.commands.RemoveModel;
 import net.zaharenko424.a_changed.commands.SetModel;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.Utils;
 
@@ -63,18 +58,20 @@ import java.util.List;
 public class ClientEvent {
 
     @SubscribeEvent
-    public static void onKeyPress(InputEvent.Key event){
+    public static void onKeyPress(InputEvent.Key event){//TODO potentially add shortcuts for abilities 1-6 and ability menu shortcut?
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if(Keybindings.GRAB_KEY.consumeClick() && TransfurManager.isTransfurred(player)) {
-            grabLogic(minecraft, player);
-            return;
-        }
 
-        if(Keybindings.GRAB_MODE_KEY.consumeClick() && minecraft.screen == null){
-            if(TransfurManager.isTransfurred(player)) {
-                if(!TransfurManager.isOrganic(player)) minecraft.setScreen(new GrabModeSelectionScreen());
-            } else minecraft.setScreen(new WantToBeGrabbedScreen());
+        if(player == null) return;
+
+        TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        Ability ability = handler.getSelectedAbility();
+        if(ability != null) {// no abilities selected -> tf type has no abilities so no need for screen
+            if(Keybindings.ABILITY_SELECTION.isDown() && TransfurManager.isTransfurred(player)){//TMP allow non tf players if more abilities are added for them
+                if(!TransfurManager.getTransfurType(player).abilities.isEmpty()){
+                    minecraft.setScreen(new AbilitySelectionScreen());
+                }
+            } else ability.inputTick(player, minecraft);
         }
     }
 
@@ -101,56 +98,6 @@ public class ClientEvent {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         SetModel.register(dispatcher);
         RemoveModel.register(dispatcher);
-    }
-
-    private static void grabLogic(Minecraft minecraft, Player player){
-        if(TransfurManager.isHoldingEntity(player)){
-            if(player.isCrouching()){
-                PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(-10));
-                return;
-            }
-            return;
-        }
-
-        Entity crosshairEntity = minecraft.crosshairPickEntity;
-
-        if(crosshairEntity == null || player.distanceTo(crosshairEntity) > 2.5) return;
-
-        if(TransfurManager.isGrabbed(player)) {
-            player.displayClientMessage(Component.translatable("message.a_changed.grabbed"),true);
-            return;
-        }
-
-        if(!(crosshairEntity instanceof LivingEntity entity)
-                || !entity.getType().is(AChanged.TRANSFURRABLE_TAG)) {
-            player.displayClientMessage(Component.translatable("message.a_changed.grabbed_wrong_entity"), true);
-            return;
-        }
-
-        GrabMode mode = TransfurManager.getGrabMode(player);
-        if(!mode.checkTarget(entity)) {
-            player.displayClientMessage(Component.translatable("message.a_changed.only_friendly_grab_players"), true);
-            return;
-        }
-        if(entity instanceof Player player1){
-            if(TransfurManager.isBeingTransfurred(player1) || TransfurManager.isTransfurred(player1)) return;
-            if(TransfurManager.isGrabbed(player1)){
-                player.displayClientMessage(Component.translatable("message.a_changed.player_already_grabbed"), true);
-                return;
-            }
-            if(!mode.givesDebuffToTarget && !TransfurManager.wantsToBeGrabbed(player1)){
-                player.displayClientMessage(Component.translatable("message.a_changed.player_doesnt_want_to_be_grabbed"), true);
-                return;
-            }
-        }
-
-        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
-            player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
-                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
-            return;
-        }
-
-        PacketDistributor.SERVER.noArg().send(new ServerboundGrabPacket(entity.getId()));
     }
 
     private static final List<Class<?>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,

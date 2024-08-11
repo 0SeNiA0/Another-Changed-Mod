@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public interface DamageSources {
     }
 
     static boolean checkTarget(Entity target){
-        return target instanceof LivingEntity entity && entity.getCapability(TransfurCapability.CAPABILITY) != null
+        return target instanceof LivingEntity entity && TransfurHandler.of(entity) != null
                 && (!(target instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player)));
     }
 }

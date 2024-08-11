@@ -15,8 +15,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -32,10 +31,9 @@ import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.getTrans
 
 public class TransfurUtils {
 
-
     public static final Consumer<LivingEntity> RECALCULATE_PROGRESS = target -> {
         if(target.level().isClientSide) throw new IllegalStateException("Cannot run serverside only methods on client!");
-        ITransfurHandler handler = TransfurCapability.of(target);
+        TransfurHandler handler = TransfurHandler.of(target);
         if(handler == null) return;
 
         if(handler.isTransfurred() || handler.isBeingTransfurred()) return;

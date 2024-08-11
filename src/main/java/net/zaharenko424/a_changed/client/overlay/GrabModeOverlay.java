@@ -6,9 +6,9 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.gui.overlay.IGuiOverlay;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
-import static net.zaharenko424.a_changed.client.screen.GrabModeSelectionScreen.*;
-import static net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen.nope;
-import static net.zaharenko424.a_changed.client.screen.WantToBeGrabbedScreen.yes;
+import static net.zaharenko424.a_changed.client.screen.ability.GrabAbilityLatexScreen.*;
+import static net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen.nope;
+import static net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen.yes;
 
 public class GrabModeOverlay {
 

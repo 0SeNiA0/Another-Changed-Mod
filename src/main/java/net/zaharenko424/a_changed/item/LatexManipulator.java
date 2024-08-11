@@ -12,8 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -44,7 +43,7 @@ public class LatexManipulator extends Item {
                 //success, save tf
             } else return InteractionResultHolder.pass(manipulator);
         } else {
-            ITransfurHandler handler = TransfurCapability.nonNullOf(player);
+            TransfurHandler handler = TransfurHandler.nonNullOf(player);
             if(TransfurManager.isTransfurred(player)){
                 handler.unTransfur(TransfurContext.UNTRANSFUR);
                 //success unTF

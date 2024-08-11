@@ -1,25 +1,30 @@
-package net.zaharenko424.a_changed.client.screen;
+package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
+import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
-public class WantToBeGrabbedScreen extends AbstractRadialMenuScreen {
+public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
 
     public static final ResourceLocation yes = AChanged.textureLoc("gui/want_to_be_grabbed");
     public static final ResourceLocation nope = AChanged.textureLoc("gui/dont_want_to_be_grabbed");
 
-    public WantToBeGrabbedScreen() {
+    public GrabAbilityPlayerScreen() {
         super(Component.empty());
     }
 
@@ -30,7 +35,12 @@ public class WantToBeGrabbedScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        currentlyActive = TransfurManager.wantsToBeGrabbed(minecraft.player) ? 0 : 1;
+        if(TransfurManager.isTransfurred(minecraft.player)) {
+            minecraft.setScreen(new GrabAbilityLatexScreen());
+            return;
+        }
+
+        currentlyActive = GrabData.dataOf(minecraft.player).wantsToBeGrabbed() ? 0 : 1;
 
         int halfWidth = width / 2;
         int halfHeight = height / 2;
@@ -55,14 +65,22 @@ public class WantToBeGrabbedScreen extends AbstractRadialMenuScreen {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
-        PacketDistributor.SERVER.noArg().send(new ServerboundWantToBeGrabbedPacket(currentlyActive == 0));
+
+        PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+                new FriendlyByteBuf(Unpooled.buffer()).writeByte(1).writeBoolean(currentlyActive == 0)));
+
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         return true;
     }
 
     @Override
     public void tick() {
-        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Keybindings.GRAB_MODE_KEY.getKey().getValue())) Minecraft.getInstance().setScreen(null);
+        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Keybindings.ABILITY_SELECTION.getKey().getValue())) Minecraft.getInstance().setScreen(null);
+        if(TransfurManager.isTransfurred(minecraft.player)) {
+            minecraft.setScreen(new GrabAbilityLatexScreen());
+            return;
+        }
+        currentlyActive = GrabData.dataOf(minecraft.player).wantsToBeGrabbed() ? 0 : 1;
     }
 
     @Override

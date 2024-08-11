@@ -36,10 +36,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
-import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.IGrabHandler;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.commands.GiveDNASample;
 import net.zaharenko424.a_changed.commands.Transfur;
 import net.zaharenko424.a_changed.commands.TransfurTolerance;
@@ -91,10 +88,13 @@ public class CommonEvent {
 
         PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
 
-        TransfurCapability.nonNullOf(player).syncClients();
-        if(TransfurManager.isBeingTransfurred(player)) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
+        TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        handler.syncClients();
+        if(handler.isBeingTransfurred()) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
 
-        GrabCapability.nonNullOf(player).syncClients();
+        //GrabCapability.nonNullOf(player).syncClients();
+        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
+
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
 
@@ -102,15 +102,15 @@ public class CommonEvent {
     public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
         Player player = event.getEntity();
         if(player.level().isClientSide) return;
-        IGrabHandler handler = GrabCapability.of(player);
-        if(handler == null) return;
-        if(handler.getTarget() != null) handler.drop();
+
+        TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().deactivate(player);
     }
 
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(TransfurManager.isHoldingEntity(player)) GrabCapability.nonNullOf(player).drop();
+        if(TransfurManager.isHoldingEntity(player)) AbilityRegistry.GRAB_ABILITY.get().deactivate(player);
     }
 
     @SubscribeEvent
@@ -235,10 +235,7 @@ public class CommonEvent {
         if(event.getEntity().level().isClientSide) return;
         LivingEntity entity = event.getEntity();
 
-        IGrabHandler grabHandler = GrabCapability.of(entity);
-        if(grabHandler != null) grabHandler.tick();
-
-        ITransfurHandler tfHandler = TransfurCapability.of(entity);
+        TransfurHandler tfHandler = TransfurHandler.of(entity);
         if(tfHandler != null){
             tfHandler.tick();
             if(DamageSources.checkTarget(entity)){
@@ -282,12 +279,13 @@ public class CommonEvent {
         if(!(event.getTarget() instanceof LivingEntity target)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
-        ITransfurHandler handler = TransfurCapability.of(target);
-        if(handler != null) handler.syncClient(player);
+        TransfurHandler handler = TransfurHandler.of(target);
+        if(handler != null) {
+            handler.syncClient(player);
+            if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(target).syncClient(player);
+        }
 
-        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync?
-
-        GrabCapability.nonNullOf(remotePlayer).syncClient(player);
+        //GrabCapability.nonNullOf(remotePlayer).syncClient(player);
     }
 
     /**
@@ -311,8 +309,10 @@ public class CommonEvent {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                TransfurCapability.nonNullOf(player).syncClients();
-                GrabCapability.nonNullOf(player).syncClients();
+                TransfurHandler handler = TransfurHandler.nonNullOf(player);
+                handler.syncClients();
+                //GrabCapability.nonNullOf(player).syncClients();
+                if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
             }
         },25);
     }

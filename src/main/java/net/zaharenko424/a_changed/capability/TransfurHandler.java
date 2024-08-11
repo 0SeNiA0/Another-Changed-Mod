@@ -12,37 +12,41 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.IAttachmentCopyHandler;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.event.custom.AddTransfurProgressEvent;
 import net.zaharenko424.a_changed.event.custom.TransfurredEvent;
 import net.zaharenko424.a_changed.event.custom.UnTransfurredEvent;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurResult;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
-public class TransfurCapability {
+public class TransfurHandler implements AbilityHolder {
 
-    public static final ResourceLocation KEY = AChanged.resourceLoc("transfur_capability");
-    public static final EntityCapability<ITransfurHandler, Void> CAPABILITY = EntityCapability.createVoid(KEY, ITransfurHandler.class);
     public static final Supplier<RuntimeException> NO_CAPABILITY_EXC = ()-> new RuntimeException("Transfur capability was expected but not found!");
 
     public static final Serializer SERIALIZER = new Serializer();
@@ -54,24 +58,24 @@ public class TransfurCapability {
         return null;
     };
 
-    public static @Nullable ITransfurHandler of(@NotNull LivingEntity entity){
-        return entity.getCapability(CAPABILITY);
+    public static @Nullable TransfurHandler of(@NotNull LivingEntity entity){
+        if(!entity.getType().is(TRANSFURRABLE_TAG)) return null;
+        return entity.getData(AttachmentRegistry.TRANSFUR_HANDLER);
     }
 
-    public static @NotNull ITransfurHandler nonNullOf(@NotNull LivingEntity entity){
-        return Utils.nonNullOrThrow(entity.getCapability(CAPABILITY), NO_CAPABILITY_EXC.get());
+    public static @NotNull TransfurHandler nonNullOf(@NotNull LivingEntity entity){
+        return Utils.nonNullOrThrow(of(entity), NO_CAPABILITY_EXC.get());
     }
-
-    public static class TransfurHandler implements ITransfurHandler {
 
         private final LivingEntity holder;
 
         //Synced data
-        float transfurProgress = 0;
-        TransfurType transfurType = null;
-        boolean isTransfurred = false;
+        private Ability selectedAbility;
+        private float transfurProgress = 0;
+        private TransfurType transfurType = null;
+        private boolean isTransfurred = false;
 
-        //Synced, runtime only (used to tell client to remove model)
+        //Synced, runtime only (used to tell client which model to remove)
         TransfurType transfurTypeO = null;
 
         static final int ticksUntilTFProgressDecrease = 200;
@@ -83,18 +87,42 @@ public class TransfurCapability {
         static final int ticksUntilDeathTF = 400;
         int beingTransfurredTimer;
 
+        @ApiStatus.Internal
         public TransfurHandler(IAttachmentHolder holder){
             if(!(holder instanceof LivingEntity living) || !living.getType().is(AChanged.TRANSFURRABLE_TAG))
                 throw new IllegalStateException("Tried to create TransfurHandler for unsupported holder: " + holder);
             this.holder = living;
+            if(living instanceof Player && !living.level().isClientSide) selectedAbility = AbilityRegistry.GRAB_ABILITY.get();//make sure that players have access to (don't)wantToBeGrabbed screen
         }
 
         @Override
+        public Ability getSelectedAbility(){
+            return selectedAbility;
+        }
+
+        @Override
+        public List<? extends Ability> getAllowedAbilities() {
+            return isTransfurred() ? transfurType.abilities : List.of();
+        }
+
+        @Override
+        public void selectAbility(Ability ability) {
+            if(!isTransfurred() || !transfurType.abilities.contains(ability) || ability == selectedAbility) return;
+
+            if(holder.level().isClientSide){
+                PacketDistributor.SERVER.noArg().send(new ServerboundSelectAbilityPacket(AbilityUtils.abilityIdOf(ability)));
+                return;
+            }
+
+            if(selectedAbility != null) selectedAbility.unselect(holder);
+            selectedAbility = ability;
+            syncClients();
+        }
+
         public float getTransfurProgress() {
             return transfurProgress;
         }
 
-        @Override
         public void addTransfurProgress(float amount, @NotNull TransfurType transfurType, @NotNull TransfurContext context) {
             if(holder.level().isClientSide) return;
             if(isBeingTransfurred() || isTransfurred()) return;
@@ -126,22 +154,18 @@ public class TransfurCapability {
             syncClients();
         }
 
-        @Override
         public @Nullable TransfurType getTransfurType() {
             return transfurType;
         }
 
-        @Override
         public void setTransfurType(@NotNull TransfurType transfurType) {
             this.transfurType = transfurType;
         }
 
-        @Override
         public boolean isTransfurred() {
             return isTransfurred && transfurType != null;
         }
 
-        @Override
         public void transfur(@NotNull TransfurType transfurType, @NotNull TransfurContext context) {
             Level level = holder.level();
             if(level.isClientSide) return;
@@ -194,10 +218,12 @@ public class TransfurCapability {
             if(isTransfurred()){
                 TransfurUtils.removeModifiers(holder, this.transfurType.modifiers);
                 this.transfurType.onUnTransfur(holder);
-                transfurTypeO = this.transfurType;//TMP needed to tell client what player model to remove
+                transfurTypeO = this.transfurType;// <- needed to tell client what player model to remove
             }
 
-            loadSyncedData(TRANSFUR_TOLERANCE, true, transfurType);
+            loadSyncedData(transfurType.abilities.isEmpty() ? null : transfurType.abilities.get(0),
+                    TRANSFUR_TOLERANCE, true, transfurType);
+
             TransfurUtils.addModifiers(holder, transfurType);
             transfurType.onTransfur(holder);
 
@@ -206,7 +232,6 @@ public class TransfurCapability {
             NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType));
         }
 
-        @Override
         public void unTransfur(@NotNull TransfurContext context) {
             if(holder.level().isClientSide) return;
 
@@ -218,7 +243,7 @@ public class TransfurCapability {
                 transfurType.onUnTransfur(holder);
             }
 
-            loadSyncedData(0, false, null);
+            loadSyncedData(AbilityRegistry.GRAB_ABILITY.get(),0, false, null);//TMP assign grab ability to be able to switch (don't)wantToBeGrabbed
             syncClients();
 
             if(context.sound() != null)
@@ -227,12 +252,10 @@ public class TransfurCapability {
             if(transfurTypeO != null) NeoForge.EVENT_BUS.post(new UnTransfurredEvent((Player) holder, transfurTypeO));
         }
 
-        @Override
         public boolean isBeingTransfurred() {
             return isBeingTransfurred;
         }
 
-        @Override
         public void setBeingTransfurred(boolean isBeingTransfurred) {
             if(this.isBeingTransfurred != isBeingTransfurred){
                 beingTransfurredTimer = isBeingTransfurred ? ticksUntilDeathTF : 0;
@@ -240,9 +263,13 @@ public class TransfurCapability {
             this.isBeingTransfurred = isBeingTransfurred;
         }
 
-        @Override
         public void tick() {
-            if(isTransfurred() || transfurProgress <= 0) return;
+            if(isTransfurred()){
+                if(selectedAbility != null) selectedAbility.serverTick(holder);
+                return;
+            }
+
+            if(transfurProgress <= 0) return;
 
             if(isBeingTransfurred){
                 if(beingTransfurredTimer > 0){
@@ -271,17 +298,18 @@ public class TransfurCapability {
         }
 
         ClientboundTransfurSyncPacket packet(){
-            return new ClientboundTransfurSyncPacket(holder.getId(), transfurProgress, isTransfurred, transfurType,
-                    holder instanceof Player ? transfurTypeO : null);
+            return new ClientboundTransfurSyncPacket(holder.getId(),
+                    selectedAbility != null ? AbilityRegistry.ABILITY_REGISTRY.getKey(selectedAbility) : Utils.NULL_LOC, transfurProgress,
+                    isTransfurred, transfurType, holder instanceof Player ? transfurTypeO : null);
         }
 
         @ApiStatus.Internal
-        public void loadSyncedData(float transfurProgress, boolean isTransfurred, TransfurType transfurType){
+        public void loadSyncedData(@Nullable Ability ability, float transfurProgress, boolean isTransfurred, TransfurType transfurType){
+            this.selectedAbility = ability;
             this.transfurProgress = transfurProgress;
             this.isTransfurred = isTransfurred;
             this.transfurType = transfurType;
         }
-    }
 
     public static class Serializer implements IAttachmentSerializer<CompoundTag, TransfurHandler> {
 
@@ -291,7 +319,8 @@ public class TransfurCapability {
         public @NotNull TransfurHandler read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
             TransfurHandler handler = new TransfurHandler(holder);
 
-            handler.loadSyncedData(tag.getFloat(TRANSFUR_PROGRESS_KEY), tag.getBoolean(TRANSFURRED_KEY),
+            handler.loadSyncedData(tag.contains("ability") ? AbilityRegistry.ABILITY_REGISTRY.get(new ResourceLocation(tag.getString("ability"))) : null,
+                    tag.getFloat(TRANSFUR_PROGRESS_KEY), tag.getBoolean(TRANSFURRED_KEY),
                     TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY))));
 
             if(holder instanceof Player) handler.setBeingTransfurred(tag.getBoolean(BEING_TRANSFURRED_KEY));
@@ -303,6 +332,8 @@ public class TransfurCapability {
         @Override
         public @Nullable CompoundTag write(@NotNull TransfurHandler attachment) {
             CompoundTag tag = new CompoundTag();
+            if(attachment.selectedAbility != null) tag.putString("ability", AbilityRegistry.ABILITY_REGISTRY.getKey(attachment.selectedAbility).toString());
+
             tag.putFloat(TRANSFUR_PROGRESS_KEY, attachment.transfurProgress);
 
             TransfurType transfurType = attachment.transfurType;

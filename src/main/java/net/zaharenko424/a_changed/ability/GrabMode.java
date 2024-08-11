@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.capability;
+package net.zaharenko424.a_changed.ability;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

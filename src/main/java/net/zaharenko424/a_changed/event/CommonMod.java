@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.event;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -20,7 +19,6 @@ import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
@@ -29,10 +27,7 @@ import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
-import net.zaharenko424.a_changed.network.packets.grab.ClientboundGrabSyncPacket;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabPacket;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundWantToBeGrabbedPacket;
+import net.zaharenko424.a_changed.network.packets.ability.*;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -47,7 +42,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 import static net.zaharenko424.a_changed.AChanged.*;
-import static net.zaharenko424.a_changed.capability.TransfurCapability.CAPABILITY;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = AChanged.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -64,6 +58,22 @@ public class CommonMod {
 
         //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
+        //Ability
+        registrar.play(ServerboundActivateAbilityPacket.ID, ServerboundActivateAbilityPacket::new, handler ->
+                handler.server(ServerPacketHandler.INSTANCE::handleActivateAbilityPacket));
+
+        registrar.play(ServerboundDeactivateAbilityPacket.ID, ServerboundDeactivateAbilityPacket::new, handler ->
+                handler.server(ServerPacketHandler.INSTANCE::handleDeactivateAbilityPacket));
+
+        registrar.play(ServerboundSelectAbilityPacket.ID, ServerboundSelectAbilityPacket::new, handler ->
+                handler.server(ServerPacketHandler.INSTANCE::handleSelectAbilityPacket));
+
+        registrar.play(ClientboundAbilitySyncPacket.ID, ClientboundAbilitySyncPacket::new, handler ->
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleAbilitySyncPacket(packet, context)));
+
+        registrar.play(ServerboundAbilityPacket.ID, ServerboundAbilityPacket::new, handler ->
+                handler.server(ServerPacketHandler.INSTANCE::handleAbilityPacket));
+
         //Smooth look
         registrar.play(ClientboundSmoothLookPacket.ID, ClientboundSmoothLookPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleSmoothLookPacket(packet, context)));
@@ -72,21 +82,9 @@ public class CommonMod {
         registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
                 handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));
 
-        //Grab sync
-        registrar.play(ClientboundGrabSyncPacket.ID, ClientboundGrabSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleGrabSyncPacket(packet, context)));
-        registrar.play(ServerboundGrabPacket.ID, ServerboundGrabPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleGrabPacket));
-
-        //Grab modes
-        registrar.play(ServerboundGrabModePacket.ID, ServerboundGrabModePacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleGrabModePacket));
-        registrar.play(ServerboundWantToBeGrabbedPacket.ID, ServerboundWantToBeGrabbedPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleWantToBeGrabbedPacket));
-
         //Transfur sync
         registrar.play(ClientboundTransfurSyncPacket.ID, ClientboundTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleRemotePlayerTransfurSync(packet, context)));
+                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurSyncPacket(packet, context)));
 
         //Transfur screen
         registrar.play(ClientboundOpenTransfurScreenPacket.ID, a -> new ClientboundOpenTransfurScreenPacket(), handler ->
@@ -122,18 +120,6 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event){
-        event.registerEntity(GrabCapability.CAPABILITY, EntityType.PLAYER, (player, context) ->
-                player.getData(AttachmentRegistry.GRAB_HANDLER));
-        for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE){
-            //Tag DOESN'T WORK for some reason (
-            //Shotgun EVERYTHING and return null if entity isn't suitable
-
-            event.registerEntity(CAPABILITY, entityType, (entity, context) -> //TODO replace with attachment instead of capability+attachment ?
-                    entity instanceof LivingEntity living && living.getType().is(TRANSFURRABLE_TAG)
-                            ? living.getData(AttachmentRegistry.TRANSFUR_HANDLER)
-                            : null);
-        }
-
         //Item
         event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
                 ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
@@ -154,7 +140,6 @@ public class CommonMod {
         registerMachineEntityCaps(event, BlockEntityRegistry.GENERATOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_ENCODER_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.LATEX_PURIFIER_ENTITY.get());
-
     }
 
     private static void registerMachineEntityCaps(RegisterCapabilitiesEvent event, BlockEntityType<? extends AbstractMachineEntity<?,?>> type){

@@ -63,7 +63,11 @@ public class ClientMod {
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){
         event.register(Keybindings.GRAB_KEY);
-        event.register(Keybindings.GRAB_MODE_KEY);
+        event.register(Keybindings.ABILITY_SELECTION);
+
+        event.register(Keybindings.QUICK_SELECT_ABILITY_1);
+        event.register(Keybindings.QUICK_SELECT_ABILITY_2);
+        event.register(Keybindings.QUICK_SELECT_ABILITY_3);
     }
 
     @SubscribeEvent

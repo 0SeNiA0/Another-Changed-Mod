@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.effects;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,6 +22,6 @@ public class UnTransfurEffect extends UnRemovableEffect {
     @Override
     public void applyEffectTick(LivingEntity p_19467_, int p_19468_) {
         if(p_19467_ instanceof ServerPlayer player)
-            TransfurCapability.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
+            TransfurHandler.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
     }
 }

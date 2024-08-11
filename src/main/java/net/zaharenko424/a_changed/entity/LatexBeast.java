@@ -60,7 +60,7 @@ public class LatexBeast extends AbstractLatexBeast {
 
         if(hypnotisedBy != null && hypnotisedBy != this && hypnotisedBy.isAlive()) return;
 
-        float speed = .6f;
+        float speed = .5f;
 
         if(TransfurUtils.smoothLookAt(player, EntityAnchorArgument.Anchor.EYES, getEyePosition(), true, speed)){
             hypnotisedBy = this;

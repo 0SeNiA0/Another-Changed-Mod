@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static net.zaharenko424.a_changed.registry.AbilityRegistry.ABILITIES;
 import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
@@ -133,5 +134,6 @@ public class AChanged {
         SOUNDS.register(modEventBus);
         ATTACHMENTS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
+        ABILITIES.register(modEventBus);
     }
 }

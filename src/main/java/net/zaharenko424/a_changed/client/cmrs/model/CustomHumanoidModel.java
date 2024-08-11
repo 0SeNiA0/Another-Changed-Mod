@@ -17,7 +17,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabMode;
+import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;

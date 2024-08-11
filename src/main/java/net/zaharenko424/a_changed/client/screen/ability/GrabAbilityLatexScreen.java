@@ -1,23 +1,28 @@
-package net.zaharenko424.a_changed.client.screen;
+package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.GrabMode;
+import net.zaharenko424.a_changed.attachments.GrabData;
+import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.network.packets.grab.ServerboundGrabModePacket;
+import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
+public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
 
     private static final List<GrabMode> grabMode = List.of(GrabMode.NONE, GrabMode.FRIENDLY, GrabMode.ASSIMILATE, GrabMode.REPLICATE);
     public static final ResourceLocation none = AChanged.textureLoc("gui/grab_none");
@@ -25,7 +30,7 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
     public static final ResourceLocation assimilate = AChanged.textureLoc("gui/grab_assimilate");
     public static final ResourceLocation replicate = AChanged.textureLoc("gui/grab_replicate");
 
-    public GrabModeSelectionScreen() {
+    public GrabAbilityLatexScreen() {
         super(Component.empty());
     }
 
@@ -36,7 +41,12 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        currentlyActive = grabMode.indexOf(GrabCapability.nonNullOf(minecraft.player).grabMode());
+        if(!TransfurManager.isTransfurred(minecraft.player)) {
+            minecraft.setScreen(new GrabAbilityPlayerScreen());
+            return;
+        }
+
+        currentlyActive = grabMode.indexOf(GrabData.dataOf(minecraft.player).getMode());
 
         int halfWidth = width / 2;
         int halfHeight = height / 2;
@@ -65,14 +75,25 @@ public class GrabModeSelectionScreen extends AbstractRadialMenuScreen {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
-        PacketDistributor.SERVER.noArg().send(new ServerboundGrabModePacket(grabMode.get(currentlyActive)));
+
+        PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+                new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(0).writeEnum(grabMode.get(currentlyActive))));
+
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         return true;
     }
 
     @Override
     public void tick() {
-        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Keybindings.GRAB_MODE_KEY.getKey().getValue())) Minecraft.getInstance().setScreen(null);
+        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Keybindings.ABILITY_SELECTION.getKey().getValue())) {
+            minecraft.setScreen(null);
+            return;
+        }
+        if(!TransfurManager.isTransfurred(minecraft.player)) {
+            minecraft.setScreen(new GrabAbilityPlayerScreen());
+            return;
+        }
+        currentlyActive = grabMode.indexOf(GrabData.dataOf(minecraft.player).getMode());
     }
 
     @Override
