@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.block.KeypadEntity;
@@ -48,8 +47,6 @@ public class ServerPacketHandler {
             if(selected == null) return;
 
             selected.activate(player, packet.oneShot(), packet.additionalData());
-            if(packet.additionalData().isReadable())
-                AChanged.LOGGER.error("Received packet is too big. {} bytes remaining!", packet.additionalData().readableBytes());
         });
     }
 
@@ -81,11 +78,8 @@ public class ServerPacketHandler {
     }
 
     public void handleAbilityPacket(ServerboundAbilityPacket packet, PlayPayloadContext context){
-        context.workHandler().execute(() -> {
-            packet.ability().handleData(context.player().get(), packet.buffer(), context);
-            if(packet.buffer().isReadable())
-                AChanged.LOGGER.error("Received packet is too big. {} bytes remaining!", packet.buffer().readableBytes());
-        });
+        context.workHandler().execute(() ->
+                packet.ability().handleData(context.player().get(), packet.buffer(), context));
     }
 
     public void handleTransfurChoicePacket(ServerboundTransfurChoicePacket packet, @NotNull PlayPayloadContext context){

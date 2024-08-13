@@ -61,7 +61,7 @@ public class StunBaton extends SwordItem {
         CompoundTag tag = stack.getOrCreateTag();
         if(!tag.contains("enabled")) return true;
         ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        storage.addEnergy(-500);
+        if(!(pTarget instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
 
         pTarget.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF.get(), 80, 0, false, false));
 

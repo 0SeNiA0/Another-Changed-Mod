@@ -116,6 +116,7 @@ public class TransfurHandler implements AbilityHolder {
 
             if(selectedAbility != null) selectedAbility.unselect(holder);
             selectedAbility = ability;
+            selectedAbility.select(holder);
             syncClients();
         }
 

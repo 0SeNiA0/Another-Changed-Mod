@@ -73,7 +73,7 @@ public class HypnosisAbility implements Ability {
         }
     }
 
-    private static final float speed = .6f;
+    private static final float speed = .5f;
     private static final double playerHypnosisRange = 16;
     private static final double playerHypnosisRangeSqr = 16 * 16;
 

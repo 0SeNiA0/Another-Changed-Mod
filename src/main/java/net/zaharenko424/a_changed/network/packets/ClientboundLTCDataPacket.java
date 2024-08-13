@@ -19,6 +19,7 @@ public record ClientboundLTCDataPacket(ChunkPos pos, byte flags, byte[] rawData)
     public void write(@NotNull FriendlyByteBuf buf) {
         buf.writeVarInt(pos.x);
         buf.writeVarInt(pos.z);
+        buf.writeByte(flags);
         buf.writeByteArray(rawData);
     }
 

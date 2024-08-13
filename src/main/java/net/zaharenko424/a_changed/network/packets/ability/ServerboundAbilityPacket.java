@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.network.packets.ability;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,7 @@ public record ServerboundAbilityPacket(ResourceLocation abilityId, FriendlyByteB
     public static final ResourceLocation ID = AChanged.resourceLoc("serverbound_ability_sync");
 
     public ServerboundAbilityPacket(@NotNull FriendlyByteBuf buf){
-        this(buf.readResourceLocation(), new FriendlyByteBuf(buf.readBytes(buf.readableBytes())));
+        this(buf.readResourceLocation(), new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())));
     }
 
     public Ability ability(){
@@ -25,7 +26,14 @@ public record ServerboundAbilityPacket(ResourceLocation abilityId, FriendlyByteB
     @Override
     public void write(@NotNull FriendlyByteBuf buf) {
         buf.writeResourceLocation(abilityId);
-        buf.writeBytes(buffer);
+            //If backing array is not fully used, copy the used part to dummy and write that.
+        if(buffer.readableBytes() == buffer.array().length) {
+            buf.writeByteArray(buffer.array());
+        } else {
+            byte[] dummy = new byte[buffer.readableBytes()];
+            System.arraycopy(buffer.array(), 0, dummy, 0, dummy.length);
+            buf.writeByteArray(dummy);
+        }
     }
 
     @Override

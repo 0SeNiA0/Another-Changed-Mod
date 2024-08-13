@@ -37,7 +37,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
     }
 
     public boolean isFull(){
-        return energy == capacity;
+        return energy >= capacity;
     }
 
     public int getMaxReceive(){

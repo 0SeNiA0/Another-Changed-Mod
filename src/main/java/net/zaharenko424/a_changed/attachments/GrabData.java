@@ -65,11 +65,13 @@ public class GrabData implements AbilityData {
     }
 
     public void setMode(GrabMode mode) {
+        if(this.mode == mode) return;
         if(((this.mode == GrabMode.FRIENDLY || mode == GrabMode.FRIENDLY) && this.mode != mode)
                 || (grabbedEntity instanceof Player player1 && !TransfurManager.wantsToBeGrabbed(player1) && !mode.givesDebuffToTarget)) drop();
         this.mode = mode;
-        if(grabbedEntity != null) grab(grabbedEntity, true);
-        else syncClients();
+        if(grabbedEntity != null) {
+            grab(grabbedEntity, true);
+        } else syncClients();
     }
 
     public boolean wantsToBeGrabbed() {

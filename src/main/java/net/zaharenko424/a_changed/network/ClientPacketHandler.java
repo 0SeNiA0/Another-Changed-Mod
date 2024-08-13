@@ -52,8 +52,6 @@ public class ClientPacketHandler {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity living)) return;
             packet.ability().handleData(living, packet.buffer(), context);
-            if(packet.buffer().isReadable())
-                throw new IllegalStateException("Received packet is too big. " + packet.buffer().readableBytes() + " bytes remaining!");
         });
     }
 

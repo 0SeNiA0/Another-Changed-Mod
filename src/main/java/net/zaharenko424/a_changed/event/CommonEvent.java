@@ -284,8 +284,6 @@ public class CommonEvent {
             handler.syncClient(player);
             if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(target).syncClient(player);
         }
-
-        //GrabCapability.nonNullOf(remotePlayer).syncClient(player);
     }
 
     /**

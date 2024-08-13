@@ -74,7 +74,7 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
     public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
-        currentlyActive = selectedButton;
+        currentlyActive = selectedButton;//TODO test -> might have problems when high ping but then again tick() changes it right after anyway
 
         PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                 new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(0).writeEnum(grabMode.get(currentlyActive))));

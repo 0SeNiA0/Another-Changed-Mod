@@ -44,7 +44,14 @@ public interface Ability {
     void deactivate(@NotNull LivingEntity holder);
 
     /**
-     * Called serverside when player unselects this ability.
+     * Called serverside when the ability is selected.
+     */
+    default void select(@NotNull LivingEntity holder){
+        getAbilityData(holder).syncClients();
+    }
+
+    /**
+     * Called serverside when the ability is unselected.
      */
     default void unselect(@NotNull LivingEntity holder){
         deactivate(holder);
