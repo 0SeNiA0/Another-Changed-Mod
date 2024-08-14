@@ -5,15 +5,23 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Targeting;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.HypnosisData;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.util.TransfurUtils;
@@ -24,15 +32,18 @@ import java.util.List;
 
 public class HypnosisAbility implements Ability {
 
+    public static final ResourceLocation activated = AChanged.textureLoc("gui/ability_activated");
+
     @Override
     public boolean isActive() {
         return true;
     }
 
     @Override
-    public void drawIcon(@NotNull LivingEntity holder, @NotNull GuiGraphics graphics, int x, int y) {
+    public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
         graphics.drawCenteredString(Minecraft.getInstance().font, "Hypnosis", x + 16, y + 6, Color.MAGENTA.getRGB());
         graphics.drawCenteredString(Minecraft.getInstance().font, "<img placeholder>", x + 16, y + 16, Color.MAGENTA.getRGB());
+        if(overlay && getAbilityData(player).isActivated()) graphics.blit(activated,x - 8, y - 8, 0, 0, 48, 48, 48, 48);
         //TODO add icon
     }
 
@@ -48,27 +59,27 @@ public class HypnosisAbility implements Ability {
 
     @Override
     public void activate(@NotNull LivingEntity holder, boolean oneShot, @NotNull FriendlyByteBuf additionalData) {
-
+        getAbilityData(holder).setActivated(true);
     }
 
     @Override
     public void deactivate(@NotNull LivingEntity holder) {
-
+        getAbilityData(holder).setActivated(false);
     }
 
     @Override
     public void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft) {
-        HypnosisData hypnosisData = localPlayer.getData(AttachmentRegistry.HYPNOSIS_DATA);
+        HypnosisData hypnosisData = getAbilityData(localPlayer);
 
-        if(Keybindings.GRAB_KEY.isDown()) {       //TODO placeholder keybinding
+        if(Keybindings.ABILITY_KEY.isDown()) {
             if(!hypnosisData.isActivated()) {
                 hypnosisData.setActivated(true);
-                //send packet
+                PacketDistributor.SERVER.noArg().send(new ServerboundActivateAbilityPacket(false, null));
             }
         } else {
             if(hypnosisData.isActivated()){
                 hypnosisData.setActivated(false);
-                //sendPacket
+                PacketDistributor.SERVER.noArg().send(new ServerboundDeactivateAbilityPacket());
             }
         }
     }
@@ -79,6 +90,7 @@ public class HypnosisAbility implements Ability {
 
     @Override
     public void serverTick(@NotNull LivingEntity holder) {
+        if(!getAbilityData(holder).isActivated()) return;
         HypnosisData hypnosisData;
         LivingEntity hypnotisedBy;
         if(holder instanceof Targeting latex){
@@ -105,7 +117,17 @@ public class HypnosisAbility implements Ability {
                 DamageSources.checkTarget(entity) && entity.distanceToSqr(holder) <= playerHypnosisRangeSqr);
         targets.remove(holder);//TODO add a limit for how many entities can be selected?
 
+        Vec3 playerPos = holder.getEyePosition();
+        Vec3 targetPos;
+        Vec2 lookAngles;
         for(LivingEntity target : targets){
+            targetPos = target.getEyePosition();
+
+            //check if player can see the target
+            if(holder.level().clip(new ClipContext(playerPos, targetPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, target)).getType() != HitResult.Type.MISS) continue;
+            lookAngles = TransfurUtils.targetLookAngles(playerPos, targetPos);
+            if(lookAngles.x > 50 || lookAngles.y > 50) continue;//TODO test if ok
+
             hypnosisData = target.getData(AttachmentRegistry.HYPNOSIS_DATA);
             hypnotisedBy = hypnosisData.getHypnotisedBy();
             if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) continue;
@@ -119,5 +141,10 @@ public class HypnosisAbility implements Ability {
                 hypnosisData.setHypnotisedBy(null);
             }
         }
+    }
+
+    @Override
+    public HypnosisData getAbilityData(@NotNull LivingEntity holder) {
+        return HypnosisData.dataOf(holder);
     }
 }

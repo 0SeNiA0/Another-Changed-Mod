@@ -31,6 +31,7 @@ import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.TransfurUtils;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 public class GrabAbility implements Ability {
@@ -43,14 +44,17 @@ public class GrabAbility implements Ability {
     }
 
     @Override
-    public void drawIcon(@NotNull LivingEntity holder, @NotNull GuiGraphics graphics, int x, int y) {
-        graphics.blit(icon, x, y, 0, 0, 32, 32, 32, 32);
+    public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
+        if(getAbilityData(player).isActivated())
+            graphics.blit(HypnosisAbility.activated, x - 8, y - 8, 0, 0, 48, 48, 48, 48);
+        graphics.blit(getAbilityData(player).getMode().texture,
+                x, y, 0, 0, 32, 32, 32, 32);
     }
 
     @Override
     public Screen getScreen(@NotNull Player holder) {
         return FMLLoader.getDist().isClient() ?// More anti-crashing magic below
-                TransfurManager.isTransfurred(holder) ? Client.get(GrabAbilityLatexScreen::new) : Client.get(GrabAbilityPlayerScreen::new)
+                TransfurManager.isTransfurred(holder) ? Utils.get(GrabAbilityLatexScreen::new) : Utils.get(GrabAbilityPlayerScreen::new)
                 : null;//TODO what to do with organic latexes?
     }
 
@@ -93,7 +97,7 @@ public class GrabAbility implements Ability {
 
     @Override
     public void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft) {
-        if(Keybindings.GRAB_KEY.consumeClick() && TransfurManager.isTransfurred(localPlayer)) {
+        if(Keybindings.ABILITY_KEY.consumeClick() && TransfurManager.isTransfurred(localPlayer)) {
             if(TransfurManager.isOrganic(localPlayer)) return;//TMP ignore organic players for now
             clientGrabLogic(localPlayer, minecraft);
             return;
@@ -102,7 +106,7 @@ public class GrabAbility implements Ability {
         if(Keybindings.ABILITY_SELECTION.isDown() && minecraft.screen == null){
             if(TransfurManager.isTransfurred(localPlayer)) {
                 AChanged.LOGGER.warn("That's not supposed to happen ...");
-            } else minecraft.setScreen(Client.get(GrabAbilityPlayerScreen::new));//Magic
+            } else minecraft.setScreen(Utils.get(GrabAbilityPlayerScreen::new));//Magic
         }
     }
 

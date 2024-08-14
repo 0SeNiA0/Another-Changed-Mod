@@ -9,10 +9,13 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+
 public class FallFlyingAbility implements PassiveAbility {
 
     @Override
-    public void drawIcon(@NotNull LivingEntity holder, @NotNull GuiGraphics graphics, int x, int y) {
+    public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
+        graphics.drawCenteredString(Minecraft.getInstance().font, "Fall Flying", x + 16, y + 12, Color.YELLOW.getRGB());
         //TODO
     }
 
@@ -29,4 +32,9 @@ public class FallFlyingAbility implements PassiveAbility {
 
     @Override
     public void serverTick(@NotNull LivingEntity holder) {}
+
+    @Override
+    public AbilityData getAbilityData(@NotNull LivingEntity holder) {
+        return null;
+    }
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -105,12 +106,18 @@ public abstract class AbstractLatexBeast extends Monster {
     }
 
     public void copyEquipment(LivingEntity copyFrom){
-        if(copyFrom instanceof Player) return;
         for(EquipmentSlot slot : EquipmentSlot.values()){
-            if(copyFrom.hasItemInSlot(slot)) setItemSlot(slot, copyFrom.getItemBySlot(slot));
+            if(!copyFrom.hasItemInSlot(slot)) continue;
+            setItemSlot(slot, copyFrom.getItemBySlot(slot));
+            copyFrom.setItemSlot(slot, ItemStack.EMPTY);
         }
-        Arrays.fill(this.armorDropChances, 0.1f);
-        Arrays.fill(this.handDropChances, 0.1f);
+        if(copyFrom instanceof Player){
+            Arrays.fill(this.armorDropChances, 1);
+            Arrays.fill(this.handDropChances, 1);
+        } else {
+            Arrays.fill(this.armorDropChances, 0.1f);
+            Arrays.fill(this.handDropChances, 0.1f);
+        }
     }
 
     @Nullable

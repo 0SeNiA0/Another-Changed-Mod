@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.util.Latex;
 import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractFlyingLatex extends TransfurType {
 
     public AbstractFlyingLatex(@NotNull Properties properties, @Nullable MemorizingSupplier<CustomHumanoidModel<LivingEntity>> modelSupplier) {
-        super(properties, modelSupplier);
+        super(properties.addAbility(AbilityRegistry.FALL_FLYING_ABILITY), modelSupplier);
     }
 
     public static class FlyingProperties extends Properties {

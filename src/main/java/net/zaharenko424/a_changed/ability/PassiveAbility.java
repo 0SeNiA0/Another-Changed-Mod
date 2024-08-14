@@ -18,5 +18,8 @@ public interface PassiveAbility extends Ability {
     default void deactivate(@NotNull LivingEntity holder) {}
 
     @Override
+    default void select(@NotNull LivingEntity holder) {}
+
+    @Override
     default void unselect(@NotNull LivingEntity holder) {}
 }

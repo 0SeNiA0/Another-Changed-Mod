@@ -20,7 +20,7 @@ public interface Ability {
     /**
      * Called to draw the icon of this ability. x & y - coordinates of top left corner.
      */
-    void drawIcon(@NotNull LivingEntity holder, @NotNull GuiGraphics graphics, int x, int y);
+    void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay);
 
     /**
      * @return screen that will be shown to player when opening menu of this ability.
@@ -70,7 +70,5 @@ public interface Ability {
     /**
      * @return ability data or null if there is no data.
      */
-    default AbilityData getAbilityData(@NotNull LivingEntity holder){
-        return null;
-    }
+    AbilityData getAbilityData(@NotNull LivingEntity holder);
 }

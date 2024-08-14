@@ -201,6 +201,7 @@ public class TransfurHandler implements AbilityHolder {
                     player.setInvulnerable(false);
                     player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
                     AbstractLatexBeast latexBeast = TransfurUtils.spawnLatex(transfurType, (ServerLevel) level, player.blockPosition());
+                    latexBeast.copyEquipment(holder);
 
                     NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, latexBeast, transfurType));
                 }

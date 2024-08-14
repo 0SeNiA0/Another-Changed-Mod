@@ -15,6 +15,10 @@ public interface AbilityHolder {
      */
     List<? extends Ability> getAllowedAbilities();
 
+    default boolean hasAbility(DeferredHolder<Ability, ? extends Ability> ability) {
+        return getAllowedAbilities().contains(ability.get());
+    }
+
     default void selectAbility(ResourceLocation abilityId){
         selectAbility(AbilityUtils.abilityOf(abilityId));
     }

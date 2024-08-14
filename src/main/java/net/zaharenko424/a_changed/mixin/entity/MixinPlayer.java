@@ -14,7 +14,6 @@ import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractFlyingLatex;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -88,8 +87,7 @@ public abstract class MixinPlayer extends LivingEntity {
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;canElytraFly(Lnet/minecraft/world/entity/LivingEntity;)Z"),
             method = "tryToStartFallFlying")
     private boolean onTryStartFallFlyingCheck(boolean original){
-        TransfurHandler handler = TransfurHandler.of(this);
-        if(handler != null && handler.isTransfurred() && handler.getTransfurType() instanceof AbstractFlyingLatex) return true;
+        if(TransfurManager.hasFallFlyingAbility(this)) return true;
         return original;
     }
 }

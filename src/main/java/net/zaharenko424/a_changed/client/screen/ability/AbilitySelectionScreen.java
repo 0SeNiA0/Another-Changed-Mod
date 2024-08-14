@@ -93,7 +93,7 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
             radCenter = (maxRad - minRad) / 2 + minRad;
             x = (int) (Mth.cos(radCenter) * radius + halfWidth);
             y = (int) (Mth.sin(radCenter) * radius + halfHeight);
-            transfurType.abilities.get(i).drawIcon(minecraft.player, guiGraphics, x - 16, y - 16);
+            transfurType.abilities.get(i).drawIcon(minecraft.player, guiGraphics, x - 16, y - 16, false);
         }
     }
 

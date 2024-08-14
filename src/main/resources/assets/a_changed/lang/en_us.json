@@ -187,7 +187,7 @@
   "gamerule.keepTransfurOnDeath": "Keep transfur on death",
   "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
 
-  "key.a_changed.grab": "Grab key",
+  "key.a_changed.ability_key": "Ability key",
   "key.a_changed.ability_selection": "Ability selection menu/ability menu (in some cases)",
   "key.a_changed.quick_select_ability_1": "Quick select first active ability",
   "key.a_changed.quick_select_ability_2": "Quick select second active ability",

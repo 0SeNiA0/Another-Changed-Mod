@@ -62,7 +62,7 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){
-        event.register(Keybindings.GRAB_KEY);
+        event.register(Keybindings.ABILITY_KEY);
         event.register(Keybindings.ABILITY_SELECTION);
 
         event.register(Keybindings.QUICK_SELECT_ABILITY_1);
@@ -72,7 +72,7 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterGui(RegisterGuiOverlaysEvent event){
-        event.registerBelowAll(AChanged.resourceLoc("grab_mode"), GrabModeOverlay.OVERLAY);
+        event.registerBelowAll(AChanged.resourceLoc("ability_overlay"), AbilityOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("transfur"), TransfurOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("pure_white_latex"), PureWhiteLatexOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("hazmat"), HazmatOverlay.OVERLAY);

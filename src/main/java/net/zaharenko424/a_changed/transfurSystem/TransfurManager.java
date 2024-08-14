@@ -11,6 +11,7 @@ import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
@@ -72,6 +73,11 @@ public class TransfurManager {
 
     public static boolean wantsToBeGrabbed(@NotNull Player player){
         return GrabData.dataOf(player).wantsToBeGrabbed();
+    }
+
+    public static boolean hasFallFlyingAbility(LivingEntity entity){
+        TransfurHandler handler = TransfurHandler.of(entity);
+        return handler != null && handler.hasAbility(AbilityRegistry.FALL_FLYING_ABILITY);
     }
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(@NotNull ResourceLocation transfurType){

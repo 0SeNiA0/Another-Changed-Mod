@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 public class Utils {
@@ -167,5 +168,12 @@ public class Utils {
             if(block.isAssignableFrom(clazz)) return true;
         }
         return false;
+    }
+
+    /**
+     * A way to scam Java/Minecraft to not crash trying to load client only stuff.
+     */
+    public static  <T> T get(Supplier<T> supplier){
+        return supplier.get();
     }
 }

@@ -36,9 +36,10 @@ public class GrabData implements AbilityData {
     private LivingEntity grabbedBy;
     private GrabMode mode = GrabMode.ASSIMILATE;
     private boolean wantsToBeGrabbed;
+    private boolean activated;
 
     public GrabData(IAttachmentHolder holder){
-        if(!(holder instanceof LivingEntity entity)) throw new IllegalArgumentException();//TODO add more checks?
+        if(!(holder instanceof LivingEntity entity)) throw new IllegalArgumentException();
         this.holder = entity;
     }
 
@@ -89,6 +90,10 @@ public class GrabData implements AbilityData {
         syncClients();
     }
 
+    public boolean isActivated() {
+        return activated;
+    }
+
     public static final int grabCooldown = 200;
     public static final int grabDuration = 100;
 
@@ -114,6 +119,7 @@ public class GrabData implements AbilityData {
 
         if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF.get(), grabDuration, 0, false, false));
         if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF.get(), -1, 0, false, false));
+        activated = true;
         syncClients();
     }
 
@@ -133,6 +139,7 @@ public class GrabData implements AbilityData {
         grabbedEntity = null;
         if(mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF.get());
         holder.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN.get(), grabCooldown, 0, false, false));
+        activated = false;
         syncClients();
     }
 
@@ -145,16 +152,17 @@ public class GrabData implements AbilityData {
         PacketDistributor.PLAYER.with(packetReceiver).send(updatePacket());
     }
 
-    private ClientboundAbilitySyncPacket updatePacket(){
+    private ClientboundAbilitySyncPacket updatePacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(16));
         buf.writeVarInt(grabbedEntity != null ? grabbedEntity.getId() : -1);
         buf.writeVarInt(grabbedBy != null ? grabbedBy.getId() : -1);
         buf.writeEnum(mode);
         buf.writeBoolean(wantsToBeGrabbed);
+        buf.writeBoolean(activated);
         return new ClientboundAbilitySyncPacket(holder.getId(), AbilityRegistry.GRAB_ABILITY.getId(), buf);
     }
 
-    public void fromPacket(FriendlyByteBuf buf){
+    public void fromPacket(FriendlyByteBuf buf) {
         Level level = holder.level();
         if(!level.isClientSide) return;
 
@@ -164,6 +172,7 @@ public class GrabData implements AbilityData {
         grabbedBy = id == -1 ? null : level.getEntity(id) instanceof LivingEntity entity ? entity : null;
         mode = buf.readEnum(GrabMode.class);
         wantsToBeGrabbed = buf.readBoolean();
+        activated = buf.readBoolean();
     }
 
     public static class Serializer implements IAttachmentSerializer<CompoundTag, GrabData> {
@@ -174,6 +183,7 @@ public class GrabData implements AbilityData {
         public @NotNull GrabData read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
             GrabData data = new GrabData(holder);
             if(!(holder instanceof Player)) return data;
+
             data.mode = GrabMode.valueOf(tag.getString("mode"));
             data.wantsToBeGrabbed = tag.getBoolean("wantToBeGrabbed");
             return data;
@@ -181,8 +191,9 @@ public class GrabData implements AbilityData {
 
         @Override
         public @Nullable CompoundTag write(@NotNull GrabData data) {
+            if(!(data.holder instanceof Player)) return null;
+
             CompoundTag tag = new CompoundTag();
-            if(!(data.holder instanceof Player)) return tag;
             tag.putString("mode", data.mode.toString());
             tag.putBoolean("wantToBeGrabbed", data.wantsToBeGrabbed);
             return tag;

@@ -10,9 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.ability.GrabMode;
+import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
@@ -25,10 +24,10 @@ import java.util.List;
 public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
 
     private static final List<GrabMode> grabMode = List.of(GrabMode.NONE, GrabMode.FRIENDLY, GrabMode.ASSIMILATE, GrabMode.REPLICATE);
-    public static final ResourceLocation none = AChanged.textureLoc("gui/grab_none");
-    public static final ResourceLocation friendly = AChanged.textureLoc("gui/grab_friendly");
-    public static final ResourceLocation assimilate = AChanged.textureLoc("gui/grab_assimilate");
-    public static final ResourceLocation replicate = AChanged.textureLoc("gui/grab_replicate");
+    public static final ResourceLocation none = GrabMode.NONE.texture;
+    public static final ResourceLocation friendly = GrabMode.FRIENDLY.texture;
+    public static final ResourceLocation assimilate = GrabMode.ASSIMILATE.texture;
+    public static final ResourceLocation replicate = GrabMode.REPLICATE.texture;
 
     public GrabAbilityLatexScreen() {
         super(Component.empty());
