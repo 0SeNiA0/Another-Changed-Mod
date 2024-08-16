@@ -15,15 +15,38 @@ import java.util.List;
 
 public abstract class AbstractRadialMenuScreen extends Screen {
 
+    protected int halfWidth = width / 2;
+    protected int halfHeight = height / 2;
     protected List<RadialButton> buttons = new ArrayList<>();
     protected int selectedButton = -1;
     protected int currentlyActive;
+    protected int radius;
+    protected int innerRadius;
 
-    protected AbstractRadialMenuScreen(Component pTitle) {
+    protected AbstractRadialMenuScreen(Component pTitle, int radius, int innerRadius) {
         super(pTitle);
+        this.radius = radius;
+        this.innerRadius = innerRadius;
     }
 
-    protected abstract int buttonOffsetDeg();
+    @Override
+    protected void init() {
+        super.init();
+        halfWidth = width / 2;
+        halfHeight = height / 2;
+    }
+
+    protected int buttonOffsetDeg(){
+        return 4;
+    }
+
+    protected int buttonColor(int button){
+        if(button == selectedButton && button == currentlyActive) return -16711808;
+        if(button == selectedButton) return Color.GRAY.getRGB();
+        if(button == currentlyActive) return Color.GREEN.getRGB();
+
+        return Color.BLACK.getRGB();
+    }
 
     protected void addRadialButton(float minDeg, float maxDeg, int radius, int innerRadius, int centerX, int centerY){
         float minRad = Mth.DEG_TO_RAD * (minDeg + buttonOffsetDeg());
@@ -53,21 +76,36 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         }
     }
 
+    /**
+     * x, y -> coordinates of top left corner.
+     * @param button index of button.
+     */
+    protected abstract void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button);
+
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+        RadialButton button;
+        final int radius = this.radius - (this.radius - innerRadius) / 2;
+        float minRad, maxRad;
+        float radCenter;
         int color, size, x, y;
         for (int i = 0; i < buttons.size(); i++) {
-            if(i == selectedButton && i == currentlyActive) color = -16711808;
-            else if(i == selectedButton) color = Color.GRAY.getRGB();
-            else if(i == currentlyActive) color = Color.GREEN.getRGB();
-            else color = Color.BLACK.getRGB();
+            button = buttons.get(i);
+            color = buttonColor(i);
             size = i == selectedButton ? 2 : 1;
-            for(Pair<Integer, Integer> pos : buttons.get(i).pixels){
+            for(Pair<Integer, Integer> pos : button.pixels){
                 x = pos.getLeft();
                 y = pos.getRight();
                 guiGraphics.fill(x - size, y - size, x + size, y + size, color);
             }
+
+            minRad = button.radMin();
+            maxRad = button.radMax();
+            if(minRad > maxRad) maxRad += 2 * Mth.PI;//TMP temporary fix. save clamped & non clamped rad values in buttons?
+            radCenter = (maxRad - minRad) / 2 + minRad;
+
+            renderIcon(guiGraphics, (int) (Mth.cos(radCenter) * radius + halfWidth) - 16, (int) (Mth.sin(radCenter) * radius + halfHeight) - 16, pPartialTick, i);
         }
     }
 

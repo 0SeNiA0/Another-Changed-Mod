@@ -6,7 +6,7 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.NotNull;
 
-public class SnowLeopard extends AbstractLatexCat {
+public class SnowLeopard extends TransfurType {
 
     public SnowLeopard(@NotNull ResourceLocation loc, @NotNull Gender gender) {
         super(CatProperties.of(loc).gender(gender).maxHealthModifier(4).colors(-6513508, -263173)

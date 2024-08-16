@@ -20,6 +20,11 @@ public class FallFlyingAbility implements PassiveAbility {
     }
 
     @Override
+    public boolean hasScreen() {
+        return false;
+    }
+
+    @Override
     public Screen getScreen(@NotNull Player holder) {
         return null;
     }

@@ -198,10 +198,10 @@ public class TransfurHandler implements AbilityHolder {
                     : level.getGameRules().getBoolean(CHOOSE_TF_OR_DIE) ? TransfurResult.PROMPT
                     : TransfurResult.TRANSFUR){
                 case DEATH -> {
-                    player.setInvulnerable(false);
-                    player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
                     AbstractLatexBeast latexBeast = TransfurUtils.spawnLatex(transfurType, (ServerLevel) level, player.blockPosition());
                     latexBeast.copyEquipment(holder);
+                    player.setInvulnerable(false);
+                    player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
 
                     NeoForge.EVENT_BUS.post(new TransfurredEvent(latexBeast, latexBeast, transfurType));
                 }

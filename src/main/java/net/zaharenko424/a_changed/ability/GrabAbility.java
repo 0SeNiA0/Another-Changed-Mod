@@ -45,10 +45,21 @@ public class GrabAbility implements Ability {
 
     @Override
     public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
-        if(getAbilityData(player).isActivated())
-            graphics.blit(HypnosisAbility.activated, x - 8, y - 8, 0, 0, 48, 48, 48, 48);
-        graphics.blit(getAbilityData(player).getMode().texture,
-                x, y, 0, 0, 32, 32, 32, 32);
+        GrabData holderData = getAbilityData(player);
+        if(TransfurManager.isTransfurred(player)) {
+            if(holderData.isActivated())
+                graphics.blit(HypnosisAbility.activated, x - 8, y - 8, 0, 0, 48, 48, 48, 48);
+            graphics.blit(holderData.getMode().texture,
+                    x, y, 0, 0, 32, 32, 32, 32);
+        } else {
+            graphics.blit(holderData.wantsToBeGrabbed() ? GrabAbilityPlayerScreen.yes : GrabAbilityPlayerScreen.nope,
+                    x, y, 0, 0, 32, 32, 32, 32);
+        }
+    }
+
+    @Override
+    public boolean hasScreen() {
+        return true;
     }
 
     @Override

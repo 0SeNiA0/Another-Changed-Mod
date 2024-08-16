@@ -7,7 +7,7 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 
-public class HypnoCat extends AbstractLatexCat {
+public class HypnoCat extends TransfurType {
 
     public HypnoCat(@NotNull ResourceLocation loc) {
         super(CatProperties.of(loc).maxHealthModifier(4).colors(-13421773, -2621626)

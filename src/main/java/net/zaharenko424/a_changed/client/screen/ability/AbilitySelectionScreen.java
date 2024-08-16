@@ -3,11 +3,9 @@ package net.zaharenko424.a_changed.client.screen.ability;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
@@ -17,54 +15,47 @@ import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbili
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.AbilityUtils;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.util.List;
 
 public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
+
+    private static final int radius = 100;
+    private static final int innerRadius = radius - 40;
 
     private TransfurType transfurType;
     private Ability selected;
 
     public AbilitySelectionScreen() {
-        super(Component.empty());
-    }
-
-    @Override
-    protected int buttonOffsetDeg() {
-        return 4;
+        super(Component.empty(), radius, innerRadius);
     }
 
     @Override
     protected void init() {
+        super.init();
         if(!TransfurManager.isTransfurred(minecraft.player)){//TMP potentially remove this in future if non tf players will have more abilities
             minecraft.setScreen(null);
             return;
         }
         transfurType = TransfurManager.getTransfurType(minecraft.player);
 
-        int halfWidth = width / 2;
-        int halfHeight = height / 2;
-
-        int radius = 100;
-        int innerRadius = radius - 40;
-
         buttons.clear();
 
-        List<? extends Ability> abilities1 = transfurType.abilities;
-        int amount = abilities1.size();
+        List<? extends Ability> abilities = transfurType.abilities;
+        int amount = abilities.size();
 
         if(amount == 0) {
             minecraft.setScreen(null);
             return;
         }
-        if(amount == 1) {
-            minecraft.setScreen(abilities1.get(0).getScreen(minecraft.player));
+        if(amount == 1 && abilities.get(0).hasScreen()) {
+            minecraft.setScreen(abilities.get(0).getScreen(minecraft.player));
             return;
         }
         selected = TransfurHandler.nonNullOf(minecraft.player).getSelectedAbility();
-        currentlyActive = abilities1.indexOf(selected);
+        currentlyActive = abilities.indexOf(selected);
 
         int sizeDeg = 360 / amount;
         //int i = 90 - sizeDeg / 2;
@@ -76,25 +67,14 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
-        RadialButton button;
-        int halfWidth = width / 2;
-        int halfHeight = height / 2;
-        final int radius = 80;
-        float minRad, maxRad;
-        float radCenter;
-        int x, y;
-        for(int i = 0; i < buttons.size(); i++){
-            button = buttons.get(i);
-            minRad = button.radMin();
-            maxRad = button.radMax();
-            if(minRad > maxRad) maxRad += 2 * Mth.PI;//TMP temporary fix. save clamped & non clamped rad values in buttons?
-            radCenter = (maxRad - minRad) / 2 + minRad;
-            x = (int) (Mth.cos(radCenter) * radius + halfWidth);
-            y = (int) (Mth.sin(radCenter) * radius + halfHeight);
-            transfurType.abilities.get(i).drawIcon(minecraft.player, guiGraphics, x - 16, y - 16, false);
-        }
+    protected int buttonColor(int button) {
+        if(button == selectedButton && !transfurType.abilities.get(selectedButton).isActive()) return Color.ORANGE.getRGB();
+        return super.buttonColor(button);
+    }
+
+    @Override
+    protected void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button) {
+        transfurType.abilities.get(button).drawIcon(minecraft.player, guiGraphics, x, y, false);
     }
 
     @Override
@@ -104,15 +84,15 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
 
         if(selectedButton == currentlyActive){
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            Screen screen = selected.getScreen(minecraft.player);
-            if(screen != null) minecraft.setScreen(screen);
+            if(selected.hasScreen()) minecraft.setScreen(selected.getScreen(minecraft.player));
             return true;
         }
 
-        if(pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+        Ability selected = transfurType.abilities.get(selectedButton);
+
+        if(pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT || !selected.isActive()){
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            Screen screen = transfurType.abilities.get(selectedButton).getScreen(minecraft.player);
-            if(screen != null) minecraft.setScreen(screen);
+            if(selected.hasScreen()) minecraft.setScreen(selected.getScreen(minecraft.player));
             return true;
         }
 
@@ -145,5 +125,10 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
                 currentlyActive = transfurType.abilities.indexOf(selected);
             }
         }
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }

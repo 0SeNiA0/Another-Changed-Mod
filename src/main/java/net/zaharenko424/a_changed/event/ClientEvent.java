@@ -65,14 +65,39 @@ public class ClientEvent {
         if(player == null) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        List<? extends Ability> abilities = handler.getAllowedAbilities();
+        if(quickAbilitySelect(handler, abilities)) return;
+
         Ability ability = handler.getSelectedAbility();
         if(ability != null) {// no abilities selected -> tf type has no abilities so no need for screen
             if(Keybindings.ABILITY_SELECTION.isDown() && TransfurManager.isTransfurred(player)){//TMP allow non tf players if more abilities are added for them
-                if(!TransfurManager.getTransfurType(player).abilities.isEmpty()){
+                if(!abilities.isEmpty()){
                     minecraft.setScreen(new AbilitySelectionScreen());
                 }
             } else ability.inputTick(player, minecraft);
         }
+    }
+
+    private static boolean quickAbilitySelect(TransfurHandler handler, List<? extends Ability> abilities){
+        if(Keybindings.QUICK_SELECT_ABILITY_1.consumeClick() && !abilities.isEmpty()){
+            if(abilities.get(0).isActive()) {
+                handler.selectAbility(abilities.get(0));
+                return true;
+            }
+        }
+        if(Keybindings.QUICK_SELECT_ABILITY_2.consumeClick() && abilities.size() > 1){
+            if(abilities.get(1).isActive()) {
+                handler.selectAbility(abilities.get(1));
+                return true;
+            }
+        }
+        if(Keybindings.QUICK_SELECT_ABILITY_3.consumeClick() && abilities.size() > 2){
+            if(abilities.get(2).isActive()) {
+                handler.selectAbility(abilities.get(2));
+                return true;
+            }
+        }
+        return false;
     }
 
     @SubscribeEvent

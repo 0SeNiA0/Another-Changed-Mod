@@ -17,24 +17,27 @@ import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import org.jetbrains.annotations.NotNull;
 
 public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
 
+    private static final int radius = 100;
+    private static final int innerRadius = radius - 40;
     public static final ResourceLocation yes = AChanged.textureLoc("gui/want_to_be_grabbed");
     public static final ResourceLocation nope = AChanged.textureLoc("gui/dont_want_to_be_grabbed");
 
     public GrabAbilityPlayerScreen() {
-        super(Component.empty());
+        super(Component.empty(), radius, innerRadius);
     }
 
     @Override
     protected int buttonOffsetDeg() {
+
         return 6;
     }
 
     @Override
     protected void init() {
+        super.init();
         if(TransfurManager.isTransfurred(minecraft.player)) {
             minecraft.setScreen(new GrabAbilityLatexScreen());
             return;
@@ -45,19 +48,14 @@ public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
         int halfWidth = width / 2;
         int halfHeight = height / 2;
 
-        int radius = 100;
-        int innerRadius = radius - 40;
-
         buttons.clear();
         addRadialButton(90, 270, radius, innerRadius, halfWidth, halfHeight);
         addRadialButton(270, 450, radius, innerRadius, halfWidth, halfHeight);
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
-        guiGraphics.blit(yes, width / 2 - 95, height / 2 - 16, 0, 0, 32, 32, 32, 32);
-        guiGraphics.blit(nope, width / 2 - 32 + 95, height / 2 - 16, 0, 0, 32, 32, 32, 32);
+    protected void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button) {
+        guiGraphics.blit(button == 0 ? yes : nope, x, y, 0, 0, 32, 32, 32, 32);
     }
 
     @Override

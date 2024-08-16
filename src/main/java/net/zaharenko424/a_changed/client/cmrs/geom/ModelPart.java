@@ -375,7 +375,7 @@ public class ModelPart {
             }
 
             List<Vector3f> list;
-            Vector3f[] buffer = new Vector3f[1];
+            Vector3f[] buffer = {new Vector3f()};
             ImmutableList.Builder<Vector3f> builder = new ImmutableList.Builder<>();
             for(Vector3f pos : this.vertices){
                 list = map.get(pos);
@@ -383,7 +383,7 @@ public class ModelPart {
                     builder.add(new Vector3f());
                     continue;
                 }
-                buffer[0] = new Vector3f();
+                buffer[0].set(0);
                 list.forEach(normal -> buffer[0].add(normal));
                 buffer[0].div(list.size()).normalize();
                 builder.add(buffer[0]);
@@ -394,16 +394,19 @@ public class ModelPart {
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
             Matrix4f poseM = pose.pose();
             Matrix3f normal = pose.normal();
+            Vector3f vector3f = new Vector3f();
+            Vector4f pos = new Vector4f();
+            Vector3f vector3f1 = new Vector3f();
             for(Quad quad : this.quads) {
-                Vector3f vector3f = normal.transform(new Vector3f(quad.normal));
+                if(normals == null) normal.transform(vector3f.set(quad.normal));
                 for(Vertex vertex : quad.vertices) {
-                    Vector4f vector4f = poseM.transform(new Vector4f(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
-                    Vector3f vNormal = normals != null ? normal.transform(new Vector3f(normals.get(vertices.indexOf(vertex.pos)))) : vector3f;
-                    consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(),
+                    poseM.transform(pos.set(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
+                    if(normals != null) normal.transform(vector3f1.set(normals.get(vertices.indexOf(vertex.pos)))); else vector3f1.set(vector3f);
+                    consumer.vertex(pos.x(), pos.y(), pos.z(),
                             r, g, b, alpha,
                             vertex.u, vertex.v,
                             overlay, light,
-                            vNormal.x(), vNormal.y(), vNormal.z()
+                            vector3f1.x(), vector3f1.y(), vector3f1.z()
                     );
                 }
             }
@@ -507,9 +510,10 @@ public class ModelPart {
 
         public void compile(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha){
             Vector3f vector3f = normal.transform(new Vector3f(this.normal));
+            Vector4f pos = new Vector4f();
             for(Vertex vertex : vertices) {
-                Vector4f vector4f = pose.transform(new Vector4f(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
-                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(),
+                pose.transform(pos.set(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
+                consumer.vertex(pos.x(), pos.y(), pos.z(),
                         r, g, b, alpha,
                         vertex.u, vertex.v,
                         overlay, light,

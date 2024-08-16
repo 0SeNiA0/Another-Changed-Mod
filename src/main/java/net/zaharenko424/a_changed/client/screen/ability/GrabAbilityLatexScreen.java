@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.ability.GrabMode;
@@ -17,29 +16,22 @@ import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
 
     private static final List<GrabMode> grabMode = List.of(GrabMode.NONE, GrabMode.FRIENDLY, GrabMode.ASSIMILATE, GrabMode.REPLICATE);
-    public static final ResourceLocation none = GrabMode.NONE.texture;
-    public static final ResourceLocation friendly = GrabMode.FRIENDLY.texture;
-    public static final ResourceLocation assimilate = GrabMode.ASSIMILATE.texture;
-    public static final ResourceLocation replicate = GrabMode.REPLICATE.texture;
+    private static final int radius = 100;
+    private static final int innerRadius = radius - 40;
 
     public GrabAbilityLatexScreen() {
-        super(Component.empty());
-    }
-
-    @Override
-    protected int buttonOffsetDeg() {
-        return 4;
+        super(Component.empty(), radius, innerRadius);
     }
 
     @Override
     protected void init() {
+        super.init();
         if(!TransfurManager.isTransfurred(minecraft.player)) {
             minecraft.setScreen(new GrabAbilityPlayerScreen());
             return;
@@ -50,9 +42,6 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
         int halfWidth = width / 2;
         int halfHeight = height / 2;
 
-        int radius = 100;
-        int innerRadius = radius - 40;
-
         buttons.clear();
         addRadialButton(45, 135, radius, innerRadius, halfWidth, halfHeight);
         addRadialButton(135, 225, radius, innerRadius, halfWidth, halfHeight);
@@ -61,12 +50,8 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
-        guiGraphics.blit(none, width / 2 - 16, height / 2 - 32 + 95, 0, 0, 32, 32, 32, 32);
-        guiGraphics.blit(friendly, width / 2 - 95, height / 2 - 16, 0, 0, 32, 32, 32, 32);
-        guiGraphics.blit(assimilate, width / 2 - 16, height / 2 - 95, 0, 0, 32, 32, 32, 32);
-        guiGraphics.blit(replicate, width / 2 - 32 + 95, height / 2 - 16, 0, 0, 32, 32, 32, 32);
+    protected void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button) {
+        guiGraphics.blit(grabMode.get(button).texture, x, y, 0, 0, 32, 32, 32, 32);
     }
 
     @Override

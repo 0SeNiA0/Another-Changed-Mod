@@ -8,7 +8,7 @@ public class LatexWolf extends TransfurType {
 
     public LatexWolf(@NotNull Properties properties){
         super(properties.eyeHeight(1.75f,1.5f).maxHealthModifier(4)
-                .addAbility(AbilityRegistry.GRAB_ABILITY),
+                .addAbility(AbilityRegistry.GRAB_ABILITY).addAbility(AbilityRegistry.WOLF_PASSIVE),
                 FMLLoader.getDist().isClient() ? ClientOnly.latexWolfModel(properties.gender, properties.location) : null);
     }
 }

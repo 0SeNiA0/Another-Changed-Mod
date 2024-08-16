@@ -6,7 +6,7 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.NotNull;
 
-public class LatexShark extends AbstractWaterLatex {
+public class LatexShark extends TransfurType {
 
     public LatexShark(@NotNull ResourceLocation loc, @NotNull Gender gender) {
         super(WaterLatexProperties.of(loc).gender(gender).maxHealthModifier(8).colors(-6908266, -1644826)

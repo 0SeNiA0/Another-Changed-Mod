@@ -49,7 +49,6 @@ import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 
@@ -264,11 +263,25 @@ public class CommonEvent {
     public static void onLivingHurt(LivingHurtEvent event){
         LivingEntity entity = event.getEntity();
         if(event.getSource().is(DamageTypeTags.IS_FALL)){
-            if((entity instanceof Player player && TransfurManager.isTransfurred(player)
-                        && TransfurManager.getTransfurType(player) instanceof AbstractLatexCat)
-                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType instanceof AbstractLatexCat))
+            if((entity instanceof Player player && TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player))
+                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())))
                 event.setAmount(event.getAmount() / 2);
         }
+    }
+
+    /**
+     * Transfurs the entity if it died from tf attack.
+     */
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event){
+        LivingEntity entity = event.getEntity();
+        if(entity.level().isClientSide) return;
+        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTarget(entity)) return;
+
+        TransfurHandler handler = TransfurHandler.nonNullOf(entity);
+        if(handler.getTransfurProgress() == 0 || handler.getTransfurType() == null) return;
+
+        handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
     }
 
     /**

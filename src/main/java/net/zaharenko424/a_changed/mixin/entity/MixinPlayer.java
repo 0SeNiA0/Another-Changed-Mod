@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.mixin.entity;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -41,7 +40,6 @@ public abstract class MixinPlayer extends LivingEntity {
         if(target.hurt(DamageSources.transfur(null, this), damage)){
             float tfProgress = 5f;
             if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
-            if(hasEffect(MobEffects.DAMAGE_BOOST)) tfProgress += getEffect(MobEffects.DAMAGE_BOOST).getAmplifier() + 1;
             TransfurHandler.nonNullOf((LivingEntity) target)
                     .addTransfurProgress(tfProgress, Objects.requireNonNull(handler.getTransfurType()), TransfurContext.ADD_PROGRESS_DEF);
             return true;

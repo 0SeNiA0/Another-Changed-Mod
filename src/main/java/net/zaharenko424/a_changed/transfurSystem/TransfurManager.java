@@ -5,7 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
@@ -75,9 +77,31 @@ public class TransfurManager {
         return GrabData.dataOf(player).wantsToBeGrabbed();
     }
 
+    public static boolean hasAbility(DeferredHolder<Ability, ? extends Ability> ability, LivingEntity holder){
+        return hasAbility(ability.get(), holder);
+    }
+
+    public static boolean hasAbility(Ability ability, LivingEntity holder){
+        if(holder instanceof AbstractLatexBeast latex) return latex.transfurType.abilities.contains(ability);
+
+        TransfurHandler handler = TransfurHandler.of(holder);
+        return handler != null && handler.hasAbility(ability);
+    }
+
+    public static boolean hasCatAbility(LivingEntity entity){
+        return hasAbility(AbilityRegistry.CAT_PASSIVE, entity);
+    }
+
     public static boolean hasFallFlyingAbility(LivingEntity entity){
-        TransfurHandler handler = TransfurHandler.of(entity);
-        return handler != null && handler.hasAbility(AbilityRegistry.FALL_FLYING_ABILITY);
+        return hasAbility(AbilityRegistry.FALL_FLYING_PASSIVE, entity);
+    }
+
+    public static boolean hasFishAbility(LivingEntity entity){
+        return hasAbility(AbilityRegistry.FISH_PASSIVE, entity);
+    }
+
+    public static boolean hasWolfAbility(LivingEntity entity){
+        return hasAbility(AbilityRegistry.WOLF_PASSIVE, entity);
     }
 
     public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(@NotNull ResourceLocation transfurType){

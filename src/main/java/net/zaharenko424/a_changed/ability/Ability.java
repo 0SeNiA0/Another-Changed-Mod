@@ -22,6 +22,8 @@ public interface Ability {
      */
     void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay);
 
+    boolean hasScreen();
+
     /**
      * @return screen that will be shown to player when opening menu of this ability.
      */

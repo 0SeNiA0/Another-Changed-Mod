@@ -19,6 +19,10 @@ public interface AbilityHolder {
         return getAllowedAbilities().contains(ability.get());
     }
 
+    default boolean hasAbility(Ability ability){
+        return getAllowedAbilities().contains(ability);
+    }
+
     default void selectAbility(ResourceLocation abilityId){
         selectAbility(AbilityUtils.abilityOf(abilityId));
     }

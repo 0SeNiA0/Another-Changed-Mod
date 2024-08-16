@@ -6,8 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractWaterLatex;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +38,9 @@ public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optiona
     }
 
     public enum Type {
-        CAT(type -> type instanceof AbstractLatexCat),
-        SWIMMING(type -> type instanceof AbstractWaterLatex),
-        FLYING(type -> type.abilities.contains(AbilityRegistry.FALL_FLYING_ABILITY.get()));
+        CAT(type -> type.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())),
+        SWIMMING(type -> type.abilities.contains(AbilityRegistry.FISH_PASSIVE.get())),
+        FLYING(type -> type.abilities.contains(AbilityRegistry.FALL_FLYING_PASSIVE.get()));
 
         private final Predicate<TransfurType> check;
 
