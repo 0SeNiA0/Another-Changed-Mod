@@ -22,6 +22,10 @@ public class EntityRegistry {
             EntityType.Builder.<TestZombie>of((a, b) -> new TestZombie(b), MobCategory.MISC).build(resourceLoc("test_entity").toString()));
 
     //Entities
+    public static final DeferredHolder<EntityType<?>, EntityType<RoombaEntity>> ROOMBA_ENTITY =
+            ENTITIES.register("roomba", () -> EntityType.Builder.<RoombaEntity>of((a, b) ->
+            new RoombaEntity(b), MobCategory.CREATURE).sized(.9f, .5f).build(resourceLoc("roomba").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> SEAT_ENTITY =
             ENTITIES.register("seat_entity", () -> EntityType.Builder.<SeatEntity>of((a, b) ->
             new SeatEntity(b), MobCategory.MISC).sized(0, 0).build(resourceLoc("seat_entity").toString()));

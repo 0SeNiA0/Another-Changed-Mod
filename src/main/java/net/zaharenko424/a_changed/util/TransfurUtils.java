@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
@@ -50,7 +51,7 @@ public class TransfurUtils {
                 return;
             }
 
-            if(attribute == Attributes.MAX_HEALTH){
+            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
                 float maxHealthO = holder.getMaxHealth();
                 instance[0] = map.getInstance(attribute);
                 for(AttributeModifier modifier : modifiers){
@@ -74,7 +75,7 @@ public class TransfurUtils {
         modifierMap.asMap().forEach((attribute, modifiers) -> {
             if(!map.hasAttribute(attribute)) return;
 
-            if(attribute == Attributes.MAX_HEALTH){
+            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
                 float maxHealthO = holder.getMaxHealth();
                 instance[0] = map.getInstance(attribute);
                 for(AttributeModifier modifier : modifiers){
@@ -83,6 +84,7 @@ public class TransfurUtils {
                 if(holder.getMaxHealth() - maxHealthO < 0) holder.setHealth(holder.getMaxHealth());
                 return;
             }
+
             instance[0] = map.getInstance(attribute);
             for(AttributeModifier modifier : modifiers){
                 instance[0].removeModifier(modifier.getId());

@@ -47,6 +47,7 @@ public class HypnosisData implements AbilityData {
     }
 
     public void setActivated(boolean activated) {
+        if(this.activated == activated) return;
         this.activated = activated;
         syncClients();
     }

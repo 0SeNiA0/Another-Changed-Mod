@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.commands;
+package net.zaharenko424.a_changed.commands.client;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;

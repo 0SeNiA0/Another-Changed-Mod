@@ -15,7 +15,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
@@ -401,7 +400,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     }
 
     protected void poseRightArm(E entity) {
-        if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
+        if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
             rightArm.xRot = Mth.PI / 1.9f;
             rightArm.yRot = 0.1F + head.yRot;
             return;
@@ -444,7 +443,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     }
 
     protected void poseLeftArm(E entity) {//TODO for some reason doesn't work for remote players ...
-        if(entity instanceof Player player && TransfurManager.isHoldingEntity(player) && TransfurManager.getGrabMode(player) != GrabMode.FRIENDLY){
+        if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
             leftArm.xRot = Mth.PI / 1.9f;
             leftArm.yRot = -0.1F + head.yRot;
             return;

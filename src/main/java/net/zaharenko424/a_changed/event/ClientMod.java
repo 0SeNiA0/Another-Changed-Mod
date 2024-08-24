@@ -19,6 +19,7 @@ import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
+import net.zaharenko424.a_changed.client.renderer.RoombaRenderer;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
@@ -114,6 +115,8 @@ public class ClientMod {
         event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(SEAT_ENTITY.get(), SeatRenderer::new);//Dummy renderer
         event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);
+
+        event.registerEntityRenderer(ROOMBA_ENTITY.get(), RoombaRenderer::new);
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomHumanoidRenderer<>(a, BEI_FENG_TF.get().getModel()));
 

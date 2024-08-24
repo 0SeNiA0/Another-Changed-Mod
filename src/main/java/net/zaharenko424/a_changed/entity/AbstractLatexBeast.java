@@ -6,58 +6,77 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.*;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.ability.GrabAbility;
+import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.ai.LatexTargetPlayerGoal;
-import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
-import net.zaharenko424.a_changed.worldgen.Biomes;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.List;
 
+/**
+ * Latex entity contract -> result of getAllowedAbilities() should stay the same throughout the runtime.
+ */
 @ParametersAreNonnullByDefault
-public abstract class AbstractLatexBeast extends Monster {
+public abstract class AbstractLatexBeast extends Monster implements AbilityHolder {
 
     public final @NotNull TransfurType transfurType;
+    protected Ability selectedAbility;
 
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
         dimensions = transfurType.getPoseDimensions(Pose.STANDING);
-        if(!hasBrain()) registerLatexGoals();
-        AttributeMap map = getAttributes();
 
-        AttributeInstance[] instance = new AttributeInstance[1];
-        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
-            if(!map.hasAttribute(attribute)){
-                AChanged.LOGGER.error("Attempted to add transfur modifier to not existing attribute {} {}", attribute, transfurType);
-                return;
-            }
-
-            instance[0] = map.getInstance(attribute);
-            for(AttributeModifier modifier : modifiers){
-                instance[0].addTransientModifier(modifier);
-            }
-        });
-
+        TransfurUtils.addModifiers(this, transfurType);
         transfurType.onTransfur(this);
+
+        if(transfurType.abilities.contains(AbilityRegistry.GRAB_ABILITY.get())) {
+            selectedAbility = AbilityRegistry.GRAB_ABILITY.get();
+            ((GrabAbility) selectedAbility).getAbilityData(this).setMode(GrabMode.REPLICATE);//do replicate because ASSIMILATE would be too OP
+        }
     }
 
-    protected abstract boolean hasBrain();
+    public static boolean isNonSurvivalOrTF(LivingEntity entity){
+        return (entity instanceof Player pl && (pl.isCreative() || pl.isSpectator() || TransfurManager.isBeingTransfurred(pl)))
+                || TransfurManager.isTransfurred(entity);
+    }
+
+    public static boolean isNonSurvivalOrNonTF(LivingEntity entity){
+        return (entity instanceof Player pl && (pl.isCreative() || pl.isSpectator() || TransfurManager.isBeingTransfurred(pl)))
+                || !TransfurManager.isTransfurred(entity);
+    }
+
+    @Override
+    public Ability getSelectedAbility() {
+        return selectedAbility;
+    }
+
+    @Override
+    public List<? extends Ability> getAllowedAbilities() {
+        return transfurType.abilities;
+    }
+
+    @Override
+    public void selectAbility(Ability ability) {}
 
     protected static AttributeSupplier.@NotNull Builder baseAttributes(){
         return Mob.createMobAttributes()
@@ -68,20 +87,9 @@ public abstract class AbstractLatexBeast extends Monster {
                 .add(Attributes.ARMOR, 2.0);
     }
 
-    protected void registerLatexGoals(){
-        if(!transfurType.isOrganic()){
-            targetSelector.addGoal(1, new LatexTargetPlayerGoal(this, true, player -> !TransfurManager.isTransfurred((Player) player) && !TransfurManager.isBeingTransfurred((Player) player)));
-            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, true, mob -> mob.getType().is(AChanged.TRANSFURRABLE_TAG)));
-        }
-    }
-
     public static boolean checkLatexBeastSpawnRules(EntityType<? extends AbstractLatexBeast> p_219014_, ServerLevelAccessor p_219015_, MobSpawnType p_219016_, BlockPos p_219017_, RandomSource p_219018_){
         return p_219015_.getDifficulty() != Difficulty.PEACEFUL
-                && (
-                        isDarkEnoughToSpawn(p_219015_, p_219017_, p_219018_)
-                        || ((p_219015_.getBiome(p_219017_).is(Biomes.DARK_LATEX_BIOME) && (p_219014_ == EntityRegistry.DARK_LATEX_WOLF_FEMALE.get() || p_219014_ == EntityRegistry.DARK_LATEX_WOLF_MALE.get()))
-                                || (p_219015_.getBiome(p_219017_).is(Biomes.WHITE_LATEX_BIOME) && (p_219014_ == EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get() || p_219014_ == EntityRegistry.WHITE_LATEX_WOLF_MALE.get())))
-                )
+                && isDarkEnoughToSpawn(p_219015_, p_219017_, p_219018_)
                 && checkMobSpawnRules(p_219014_, p_219015_, p_219016_, p_219017_, p_219018_);
     }
 
@@ -91,16 +99,16 @@ public abstract class AbstractLatexBeast extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(Entity p_21372_) {
-        if(level().isClientSide || !DamageSources.checkTarget(p_21372_)) return super.doHurtTarget(p_21372_);
+    public boolean doHurtTarget(Entity target) {
+        if(level().isClientSide || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
 
         int i = EnchantmentHelper.getFireAspect(this);
-        if (i > 0) p_21372_.setSecondsOnFire(i * 4);
+        if (i > 0) target.setSecondsOnFire(i * 4);
 
-        if(!p_21372_.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
-        doEnchantDamageEffects(this, p_21372_);
-        setLastHurtMob(p_21372_);
-        TransfurHandler.nonNullOf((LivingEntity) p_21372_)
+        if(!target.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
+        doEnchantDamageEffects(this, target);
+        setLastHurtMob(target);
+        TransfurHandler.nonNullOf((LivingEntity) target)
                 .addTransfurProgress(5f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
         return true;
     }

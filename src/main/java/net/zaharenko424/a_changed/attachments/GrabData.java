@@ -98,8 +98,15 @@ public class GrabData implements AbilityData {
     public static final int grabDuration = 100;
 
     public boolean canGrab(LivingEntity potentialTarget) {//TODO limit grabbable entities to transfurrable & latexes(?)
-        return getGrabbedBy() == null && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get()) && getGrabbedEntity() == null
-                && (potentialTarget.getType().is(AChanged.TRANSFURRABLE_TAG) || potentialTarget instanceof LatexBeast);
+        return potentialTarget != null && getGrabbedBy() == null && getGrabbedEntity() == null
+                && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())
+                && (potentialTarget.getType().is(AChanged.TRANSFURRABLE_TAG) || potentialTarget instanceof LatexBeast)
+                && mode.checkTarget(potentialTarget);
+    }
+
+    public static boolean canGrab(LivingEntity holder, LivingEntity potentialTarget){
+        GrabData data = dataOf(holder);
+        return data.canGrab(potentialTarget);
     }
 
     public void grab(@NotNull LivingEntity target) {
@@ -108,7 +115,7 @@ public class GrabData implements AbilityData {
     }
 
     private void grab(@NotNull LivingEntity target, boolean force){
-        if(!force && (!canGrab(target) || !mode.checkTarget(target))) return;
+        if(!force && !canGrab(target)) return;
 
         grabbedEntity = target;
         dataOf(grabbedEntity).setGrabbedBy(holder);

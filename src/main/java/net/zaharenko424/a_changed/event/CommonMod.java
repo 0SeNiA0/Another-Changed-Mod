@@ -22,6 +22,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.LatexBeast;
+import net.zaharenko424.a_changed.entity.RoombaEntity;
 import net.zaharenko424.a_changed.entity.WaterLatexBeast;
 import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
@@ -159,6 +160,8 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
+        event.put(ROOMBA_ENTITY.get(), RoombaEntity.createAttributes().build());
+
         event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
         event.put(BENIGN.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
@@ -186,8 +189,8 @@ public class CommonMod {
     @SubscribeEvent
     public static void onSpawnPlacementRegister(SpawnPlacementRegisterEvent event){
         event.register(BEI_FENG.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(GAS_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
 
         event.register(HYPNO_CAT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
@@ -195,13 +198,13 @@ public class CommonMod {
         event.register(LATEX_SHARK_FEMALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(LATEX_SHARK_MALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
 
-        event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
 
         event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
 
-        event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
 
         event.register(YUFENG_DRAGON.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }

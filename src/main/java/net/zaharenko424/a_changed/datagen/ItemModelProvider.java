@@ -86,6 +86,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(LATEX_SHARK_F_EGG);
         spawnEgg(LATEX_SHARK_M_EGG);
         spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
+        spawnEgg(ROOMBA_SPAWN_EGG);
         spawnEgg(SNOW_LEOPARD_F_EGG);
         spawnEgg(SNOW_LEOPARD_M_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);

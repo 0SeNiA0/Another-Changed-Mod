@@ -188,6 +188,8 @@ public class CreativeTabs {
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
                     output.accept(SYRINGE_COIL_GUN);
 
+                    output.accept(ROOMBA_SPAWN_EGG);
+
                     TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
 
                     output.accept(DARK_LATEX_PUDDLE_F_ITEM);

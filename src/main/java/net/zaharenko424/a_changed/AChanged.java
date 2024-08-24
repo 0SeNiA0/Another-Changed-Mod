@@ -12,9 +12,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -25,10 +25,6 @@ import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.criterion.TransfurTrigger;
-import net.zaharenko424.a_changed.recipe.CompressorRecipe;
-import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
-import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
-import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -45,8 +41,10 @@ import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUIDS;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUID_TYPES;
 import static net.zaharenko424.a_changed.registry.ItemRegistry.ITEMS;
+import static net.zaharenko424.a_changed.registry.MemoryTypeRegistry.MEMORY_TYPES;
 import static net.zaharenko424.a_changed.registry.MenuRegistry.MENU_TYPES;
 import static net.zaharenko424.a_changed.registry.MobEffectRegistry.EFFECTS;
+import static net.zaharenko424.a_changed.registry.RecipeSerializerRegistry.RECIPE_SERIALIZERS;
 import static net.zaharenko424.a_changed.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_TYPES;
 
@@ -58,10 +56,14 @@ public class AChanged {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     //Registries
+    public static final DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(BuiltInRegistries.ACTIVITY, MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
     public static final DeferredRegister<CriterionTrigger<?>> TRIGGER_TYPES = DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES, MODID);
+
+    //Activities
+    public static final DeferredHolder<Activity, Activity> TRANSFUR_ATTACK = ACTIVITIES.register("transfur_attack", () -> new Activity("transfur_attack"));
+    public static final DeferredHolder<Activity, Activity> TRANSFUR_HOLD = ACTIVITIES.register("transfur_hold", () -> new Activity("transfur_hold"));
 
     //Attributes
     /**
@@ -74,12 +76,6 @@ public class AChanged {
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
-
-    //Recipe serializers (these are actually needed)
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompressorRecipe>> COMPRESSOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("compressor", ()-> CompressorRecipe.Serializer.INSTANCE);
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DNAExtractorRecipe>> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("dna_extractor", ()-> DNAExtractorRecipe.Serializer.INSTANCE);
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexEncoderRecipe>> LATEX_ENCODER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_encoder", ()-> LatexEncoderRecipe.Serializer.INSTANCE);
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LatexPurifierRecipe>> LATEX_PURIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("latex_purifier", ()-> LatexPurifierRecipe.Serializer.INSTANCE);
 
     //Trigger types
     public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED = TRIGGER_TYPES.register("player_transfurred", TransfurTrigger::new);
@@ -117,23 +113,25 @@ public class AChanged {
     }
 
     public AChanged(IEventBus modEventBus) {
+        ABILITIES.register(modEventBus);
+        ACTIVITIES.register(modEventBus);
+        ATTACHMENTS.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
-        TRANSFUR_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        TRANSFUR_TYPES.register(modEventBus);
         DNA_TYPES.register(modEventBus);
         EFFECTS.register(modEventBus);
         ENTITIES.register(modEventBus);
         FLUIDS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
         ITEMS.register(modEventBus);
+        MEMORY_TYPES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
         SOUNDS.register(modEventBus);
-        ATTACHMENTS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
-        ABILITIES.register(modEventBus);
     }
 }

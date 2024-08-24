@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 public class GrabAbility implements Ability {
 
     public static final ResourceLocation icon = AChanged.textureLoc("gui/grab_assimilate");
+    public static final float CLOSE_ENOUGH = (float) (2.5 * 2.5);
 
     @Override
     public boolean isActive() {
@@ -89,16 +90,19 @@ public class GrabAbility implements Ability {
         if(!additionalData.isReadable()) {
             getAbilityData(holder).drop();
         } else {
-            int targetId = additionalData.readVarInt();
-            Entity entity0 = holder.level().getEntity(targetId);
-
-            if(!(entity0 instanceof LivingEntity entity) || TransfurManager.isGrabbed(entity) || holder.distanceTo(entity) > 3 ) return;
-
-            GrabData holderData = GrabData.dataOf(holder);
-            if(entity0 instanceof Player player1
-                    && (!holderData.getMode().givesDebuffToTarget && !TransfurManager.wantsToBeGrabbed(player1))) return;
-            holderData.grab(entity);
+            int target = additionalData.readVarInt();
+            if(!(holder.level().getEntity(target) instanceof LivingEntity living)) return;
+            activate(holder, living);
         }
+    }
+
+    public void activate(@NotNull LivingEntity holder, LivingEntity entity){
+        if(TransfurManager.isGrabbed(entity) || holder.distanceTo(entity) > 3 ) return;
+
+        GrabData holderData = GrabData.dataOf(holder);
+        if(entity instanceof Player player1
+                && (!holderData.getMode().givesDebuffToTarget && !TransfurManager.wantsToBeGrabbed(player1))) return;
+        holderData.grab(entity);
     }
 
     @Override
@@ -175,7 +179,7 @@ public class GrabAbility implements Ability {
 
         Entity crosshairEntity = minecraft.crosshairPickEntity;
 
-        if(crosshairEntity == null || player.distanceTo(crosshairEntity) > 2.5) return;
+        if(crosshairEntity == null || player.distanceToSqr(crosshairEntity) > CLOSE_ENOUGH) return;
 
         if(TransfurManager.isGrabbed(player)) {
             player.displayClientMessage(Component.translatable("message.a_changed.grabbed"),true);

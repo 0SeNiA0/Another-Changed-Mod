@@ -45,8 +45,9 @@ public class TransfurManager {
         return TransfurHandler.nonNullOf(entity).getTransfurProgress();
     }
 
-    public static @Nullable TransfurType getTransfurType(@NotNull LivingEntity player){
-        TransfurHandler handler = TransfurHandler.of(player);
+    public static @Nullable TransfurType getTransfurType(@NotNull LivingEntity entity){
+        if(entity instanceof AbstractLatexBeast latex) return latex.transfurType;
+        TransfurHandler handler = TransfurHandler.of(entity);
         return handler == null ? null : handler.getTransfurType();
     }
 

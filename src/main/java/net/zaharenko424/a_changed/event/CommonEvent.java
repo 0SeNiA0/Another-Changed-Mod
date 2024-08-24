@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
@@ -37,11 +38,9 @@ import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.commands.GiveDNASample;
-import net.zaharenko424.a_changed.commands.Transfur;
-import net.zaharenko424.a_changed.commands.TransfurTolerance;
-import net.zaharenko424.a_changed.commands.UnTransfur;
+import net.zaharenko424.a_changed.commands.*;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
@@ -64,17 +63,20 @@ public class CommonEvent {
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         GiveDNASample.register(dispatcher);
+        LatexGrabChance.register(dispatcher);
         Transfur.register(dispatcher);
         UnTransfur.register(dispatcher);
         TransfurTolerance.register(dispatcher);
     }
 
     /**
-     * Load transfur tolerance value
+     * Load saved data.
      */
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event){
-        event.getServer().overworld().getDataStorage().computeIfAbsent(TransfurToleranceData.FACTORY, "transfur_tolerance");
+        ServerLevel level = event.getServer().overworld();
+        GrabChanceData.of(level);
+        TransfurToleranceData.of(level);
     }
 
     /**

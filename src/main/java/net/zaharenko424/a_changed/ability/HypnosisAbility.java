@@ -22,10 +22,10 @@ import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
-import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
@@ -58,12 +58,10 @@ public class HypnosisAbility implements Ability {
     }
 
     @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull PlayPayloadContext context) {
-
-    }
+    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull PlayPayloadContext context) {}
 
     @Override
-    public void activate(@NotNull LivingEntity holder, boolean oneShot, @NotNull FriendlyByteBuf additionalData) {
+    public void activate(@NotNull LivingEntity holder, boolean oneShot, @Nullable FriendlyByteBuf additionalData) {
         getAbilityData(holder).setActivated(true);
     }
 
@@ -95,14 +93,14 @@ public class HypnosisAbility implements Ability {
 
     @Override
     public void serverTick(@NotNull LivingEntity holder) {
-        if(!getAbilityData(holder).isActivated()) return;
+        if(holder instanceof Player && !getAbilityData(holder).isActivated()) return;// Don't check activatedness for mobs. Only used for overlay
         HypnosisData hypnosisData;
         LivingEntity hypnotisedBy;
         if(holder instanceof Targeting latex){
             LivingEntity target = latex.getTarget();
             if(!DamageSources.checkTarget(target)) return;
 
-            hypnosisData = target.getData(AttachmentRegistry.HYPNOSIS_DATA);
+            hypnosisData = HypnosisData.dataOf(target);
             hypnotisedBy = hypnosisData.getHypnotisedBy();
             if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) return;
 
@@ -133,7 +131,7 @@ public class HypnosisAbility implements Ability {
             lookAngles = TransfurUtils.targetLookAngles(playerPos, targetPos);
             if(lookAngles.x > 50 || lookAngles.y > 50) continue;//TODO test if ok
 
-            hypnosisData = target.getData(AttachmentRegistry.HYPNOSIS_DATA);
+            hypnosisData = HypnosisData.dataOf(target);
             hypnotisedBy = hypnosisData.getHypnotisedBy();
             if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) continue;
 
