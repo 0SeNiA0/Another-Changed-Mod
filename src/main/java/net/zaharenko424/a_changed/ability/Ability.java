@@ -65,9 +65,19 @@ public interface Ability {
     void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft);
 
     /**
+     * Handles client input while the ability is unselected.
+     */
+    default void inputTickUnselected(@NotNull Player localPlayer, @NotNull Minecraft minecraft){}
+
+    /**
      * Ticks ability serverside. Called only when the ability is selected.
      */
     void serverTick(@NotNull LivingEntity holder);
+
+    /**
+     * Ticks ability serverside. Called only when the ability is unselected.
+     */
+    default void serverTickUnselected(@NotNull LivingEntity holder){}
 
     /**
      * @return ability data or null if there is no data.

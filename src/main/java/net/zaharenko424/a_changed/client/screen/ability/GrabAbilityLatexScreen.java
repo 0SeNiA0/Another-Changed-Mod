@@ -22,11 +22,9 @@ import java.util.List;
 public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
 
     private static final List<GrabMode> grabMode = List.of(GrabMode.NONE, GrabMode.FRIENDLY, GrabMode.ASSIMILATE, GrabMode.REPLICATE);
-    private static final int radius = 100;
-    private static final int innerRadius = radius - 40;
 
     public GrabAbilityLatexScreen() {
-        super(Component.empty(), radius, innerRadius);
+        super(Component.empty(), 100, 60);
     }
 
     @Override
@@ -43,10 +41,10 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
         int halfHeight = height / 2;
 
         buttons.clear();
-        addRadialButton(45, 135, radius, innerRadius, halfWidth, halfHeight);
-        addRadialButton(135, 225, radius, innerRadius, halfWidth, halfHeight);
-        addRadialButton(225, 315, radius, innerRadius, halfWidth, halfHeight);
-        addRadialButton(315, 405, radius, innerRadius, halfWidth, halfHeight);
+        addRadialButton(45, 135, halfWidth, halfHeight);
+        addRadialButton(135, 225, halfWidth, halfHeight);
+        addRadialButton(225, 315, halfWidth, halfHeight);
+        addRadialButton(315, 405, halfWidth, halfHeight);
     }
 
     @Override
@@ -58,7 +56,7 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
     public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
         if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
-        currentlyActive = selectedButton;//TODO test -> might have problems when high ping but then again tick() changes it right after anyway
+        currentlyActive = selectedButton;
 
         PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                 new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(0).writeEnum(grabMode.get(currentlyActive))));

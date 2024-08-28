@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,9 +47,13 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         return Color.BLACK.getRGB();
     }
 
-    protected void addRadialButton(float minDeg, float maxDeg, int radius, int innerRadius, int centerX, int centerY){
-        float minRad = Mth.DEG_TO_RAD * (minDeg + buttonOffsetDeg());
-        float maxRad = Mth.DEG_TO_RAD * (maxDeg - buttonOffsetDeg());
+    protected void addRadialButton(float minDeg, float maxDeg, int centerX, int centerY){
+        buttons.add(makeButton(minDeg, maxDeg, radius, innerRadius, centerX, centerY, buttonOffsetDeg()));
+    }
+
+    protected RadialButton makeButton(float minDeg, float maxDeg, int radius, int innerRadius, int centerX, int centerY, float buttonOffsetDeg){
+        float minRad = Mth.DEG_TO_RAD * (minDeg + buttonOffsetDeg);
+        float maxRad = Mth.DEG_TO_RAD * (maxDeg - buttonOffsetDeg);
 
         HashSet<Pair<Integer, Integer>> data = new HashSet<>();
 
@@ -61,7 +64,7 @@ public abstract class AbstractRadialMenuScreen extends Screen {
 
         if(maxRad > 2 * Mth.PI) maxRad -= 2 * Mth.PI;
 
-        buttons.add(new RadialButton(minRad, maxRad, data, null));
+        return new RadialButton(minRad, maxRad, data);
     }
 
     protected void arc(float minRad, float maxRad, int radius, float precision, int centerX, int centerY, HashSet<Pair<Integer, Integer>> data){
@@ -136,5 +139,5 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         selectedButton = -1;
     }
 
-    protected record RadialButton(float radMin, float radMax, HashSet<Pair<Integer, Integer>> pixels, @Nullable Runnable onClick){}
+    protected record RadialButton(float radMin, float radMax, HashSet<Pair<Integer, Integer>> pixels){}
 }

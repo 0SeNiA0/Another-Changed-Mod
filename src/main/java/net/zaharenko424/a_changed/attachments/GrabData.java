@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -56,6 +57,8 @@ public class GrabData implements AbilityData {
     }
 
     public void setGrabbedBy(LivingEntity grabbedBy) {
+        if(holder.level().isClientSide) return;
+
         this.grabbedBy = grabbedBy;
         if(grabbedEntity != null) drop();
         else syncClients();
@@ -66,7 +69,9 @@ public class GrabData implements AbilityData {
     }
 
     public void setMode(GrabMode mode) {
+        if(holder.level().isClientSide) return;
         if(this.mode == mode) return;
+
         if(((this.mode == GrabMode.FRIENDLY || mode == GrabMode.FRIENDLY) && this.mode != mode)
                 || (grabbedEntity instanceof Player player1 && !TransfurManager.wantsToBeGrabbed(player1) && !mode.givesDebuffToTarget)) drop();
         this.mode = mode;
@@ -80,22 +85,31 @@ public class GrabData implements AbilityData {
     }
 
     public void setWantsToBeGrabbed(boolean wantsToBeGrabbed) {
-        if(holder.level().isClientSide) return;
+        if(holder.level().isClientSide || wantsToBeGrabbed == this.wantsToBeGrabbed) return;
 
-        if(this.wantsToBeGrabbed != wantsToBeGrabbed && !wantsToBeGrabbed && grabbedBy != null){
-            GrabData data = dataOf(grabbedBy);
-            if(!data.mode.givesDebuffToTarget) data.drop();
-        }
+        if(!wantsToBeGrabbed) escape(false);
+
         this.wantsToBeGrabbed = wantsToBeGrabbed;
         syncClients();
+    }
+
+    public void escape(boolean force){
+        if(holder.level().isClientSide || grabbedBy == null) return;
+
+        GrabData data = dataOf(grabbedBy);
+        GrabMode mode = data.getMode();
+        if(!mode.givesDebuffToTarget || force) {
+            if(mode.givesDebuffToTarget) data.holder.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
+            data.drop();
+        }
     }
 
     public boolean isActivated() {
         return activated;
     }
 
-    public static final int grabCooldown = 200;
-    public static final int grabDuration = 100;
+    public static final int grabCooldown = 160;
+    public static final int grabDuration = 160;
 
     public boolean canGrab(LivingEntity potentialTarget) {//TODO limit grabbable entities to transfurrable & latexes(?)
         return potentialTarget != null && getGrabbedBy() == null && getGrabbedEntity() == null
@@ -131,6 +145,7 @@ public class GrabData implements AbilityData {
     }
 
     public void drop() {
+        if(holder.level().isClientSide) return;
         if(grabbedEntity == null) return;
 
         if(grabbedEntity.isAlive()){

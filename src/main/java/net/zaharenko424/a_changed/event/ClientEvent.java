@@ -75,6 +75,11 @@ public class ClientEvent {
                     minecraft.setScreen(new AbilitySelectionScreen());
                 }
             } else ability.inputTick(player, minecraft);
+
+            handler.getAllowedAbilities().forEach(abilityUnselected -> {
+                if(abilityUnselected == ability) return;
+                abilityUnselected.inputTickUnselected(player, minecraft);
+            });
         }
     }
 

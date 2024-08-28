@@ -101,12 +101,12 @@ public class TransfurHandler implements AbilityHolder {
         }
 
         @Override
-        public List<? extends Ability> getAllowedAbilities() {
+        public @NotNull List<? extends Ability> getAllowedAbilities() {
             return isTransfurred() ? transfurType.abilities : List.of();
         }
 
         @Override
-        public void selectAbility(Ability ability) {
+        public void selectAbility(@NotNull Ability ability) {
             if(!isTransfurred() || !transfurType.abilities.contains(ability) || ability == selectedAbility) return;
 
             if(holder.level().isClientSide){
@@ -266,12 +266,16 @@ public class TransfurHandler implements AbilityHolder {
         }
 
         public void tick() {
-            if(isTransfurred()){
-                if(selectedAbility != null) selectedAbility.serverTick(holder);
-                return;
+            if(selectedAbility != null) {
+                selectedAbility.serverTick(holder);
+
+                getAllowedAbilities().forEach(abilityUnselected -> {
+                    if (abilityUnselected == selectedAbility) return;
+                    abilityUnselected.serverTickUnselected(holder);
+                });
             }
 
-            if(transfurProgress <= 0) return;
+            if(isTransfurred() || transfurProgress <= 0) return;
 
             if(isBeingTransfurred){
                 if(beingTransfurredTimer > 0){

@@ -46,7 +46,7 @@ public abstract class SoundAbilityScreen extends AbstractRadialMenuScreen {
         int i = 90 + sizeDeg / 2;
 
         for(int ii = 0; ii < amount; ii++){
-            addRadialButton(i, i += sizeDeg, radius, innerRadius, halfWidth, halfHeight);
+            addRadialButton(i, i += sizeDeg, halfWidth, halfHeight);
         }
     }
 

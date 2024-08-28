@@ -71,7 +71,7 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     }
 
     @Override
-    public List<? extends Ability> getAllowedAbilities() {
+    public @NotNull List<? extends Ability> getAllowedAbilities() {
         return transfurType.abilities;
     }
 

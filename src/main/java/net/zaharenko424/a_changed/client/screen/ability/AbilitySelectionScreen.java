@@ -22,14 +22,11 @@ import java.util.List;
 
 public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
 
-    private static final int radius = 100;
-    private static final int innerRadius = radius - 40;
-
     private TransfurType transfurType;
     private Ability selected;
 
     public AbilitySelectionScreen() {
-        super(Component.empty(), radius, innerRadius);
+        super(Component.empty(), 100, 60);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
         int i = 90 + sizeDeg / 2;
 
         for(int ii = 0; ii < amount; ii++){
-            addRadialButton(i, i += sizeDeg, radius, innerRadius, halfWidth, halfHeight);
+            addRadialButton(i, i += sizeDeg, halfWidth, halfHeight);
         }
     }
 

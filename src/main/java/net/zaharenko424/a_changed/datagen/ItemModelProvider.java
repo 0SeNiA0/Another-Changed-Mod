@@ -65,6 +65,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
         basicItem(ORANGE_JUICE_ITEM.getId());
         basicItem(POWER_CELL.getId());
+        basicItem(STABILIZED_LATEX_SYRINGE.getId());
         basicItem(STATE_KEY.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
@@ -85,6 +86,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(HYPNO_CAT_EGG);
         spawnEgg(LATEX_SHARK_F_EGG);
         spawnEgg(LATEX_SHARK_M_EGG);
+        spawnEgg(MILK_PUDDING);
         spawnEgg(PURE_WHITE_LATEX_WOLF_EGG);
         spawnEgg(ROOMBA_SPAWN_EGG);
         spawnEgg(SNOW_LEOPARD_F_EGG);

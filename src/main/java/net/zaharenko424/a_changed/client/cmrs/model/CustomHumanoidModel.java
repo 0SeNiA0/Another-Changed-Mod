@@ -401,7 +401,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
 
     protected void poseRightArm(E entity) {
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
-            rightArm.xRot = Mth.PI / 1.9f;
+            rightArm.xRot = Mth.PI / 2f + head.xRot;
             rightArm.yRot = 0.1F + head.yRot;
             return;
         }
@@ -442,9 +442,9 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         }
     }
 
-    protected void poseLeftArm(E entity) {//TODO for some reason doesn't work for remote players ...
+    protected void poseLeftArm(E entity) {
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
-            leftArm.xRot = Mth.PI / 1.9f;
+            leftArm.xRot = Mth.PI / 2f + head.xRot;
             leftArm.yRot = -0.1F + head.yRot;
             return;
         }

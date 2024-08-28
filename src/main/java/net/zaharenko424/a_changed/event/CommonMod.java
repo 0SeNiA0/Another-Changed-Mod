@@ -20,10 +20,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.entity.LatexBeast;
-import net.zaharenko424.a_changed.entity.RoombaEntity;
-import net.zaharenko424.a_changed.entity.WaterLatexBeast;
+import net.zaharenko424.a_changed.entity.*;
 import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
@@ -160,6 +157,7 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onEntityAttributes(@NotNull EntityAttributeCreationEvent event){
+        event.put(MILK_PUDDING.get(), MilkPuddingEntity.createAttributes().build());
         event.put(ROOMBA_ENTITY.get(), RoombaEntity.createAttributes().build());
 
         event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
@@ -188,6 +186,8 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onSpawnPlacementRegister(SpawnPlacementRegisterEvent event){
+        event.register(MILK_PUDDING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MilkPuddingEntity::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+
         event.register(BEI_FENG.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
         event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);

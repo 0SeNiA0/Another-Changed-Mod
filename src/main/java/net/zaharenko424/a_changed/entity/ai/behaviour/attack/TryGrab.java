@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 public class TryGrab<E extends Mob> extends DelayedBehaviour<E> {
 
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT), Pair.of(MemoryModuleType.ATTACK_COOLING_DOWN, MemoryStatus.VALUE_ABSENT));
+    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT), Pair.of(MemoryTypeRegistry.GRAB_ATTEMPT_COOLDOWN.get(), MemoryStatus.VALUE_ABSENT));
 
     protected Function<E, Integer> attackIntervalSupplier = entity -> 20;
 
@@ -63,8 +63,11 @@ public class TryGrab<E extends Mob> extends DelayedBehaviour<E> {
 
         if(!GrabData.canGrab(entity, target)) return false;
 
-        return entity.getSensing().hasLineOfSight(this.target) && isCloseEnoughForGrab(entity, this.target)
-                && entity.getRandom().nextFloat() <= GrabChanceData.of(level).getGrabChance();
+        if(entity.getSensing().hasLineOfSight(this.target) && isCloseEnoughForGrab(entity, this.target)
+                && entity.getRandom().nextFloat() <= GrabChanceData.of(level).getGrabChance()) return true;
+
+        BrainUtils.setForgettableMemory(entity, MemoryTypeRegistry.GRAB_ATTEMPT_COOLDOWN.get(), true, attackIntervalSupplier.apply(entity));
+        return false;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class TryGrab<E extends Mob> extends DelayedBehaviour<E> {
 
     @Override
     protected void doDelayedAction(E entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackIntervalSupplier.apply(entity));
+        BrainUtils.setForgettableMemory(entity, MemoryTypeRegistry.GRAB_ATTEMPT_COOLDOWN.get(), true, attackIntervalSupplier.apply(entity));
 
         if(this.target == null) return;
 

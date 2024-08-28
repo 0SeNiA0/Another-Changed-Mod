@@ -24,8 +24,11 @@ import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityLatexScreen;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen;
+import net.zaharenko424.a_changed.client.screen.ability.GrabEscapeScreen;
+import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -33,6 +36,7 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 public class GrabAbility implements Ability {
 
@@ -82,6 +86,10 @@ public class GrabAbility implements Ability {
         switch(buf.readByte()){
             case 0 -> holderData.setMode(buf.readEnum(GrabMode.class));
             case 1 -> holderData.setWantsToBeGrabbed(buf.readBoolean());
+            case 2 -> {
+                holderData.escape(buf.readBoolean());
+                holderData.syncClient((ServerPlayer) holder);
+            }
         }
     }
 
@@ -112,16 +120,26 @@ public class GrabAbility implements Ability {
 
     @Override
     public void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft) {
-        if(Keybindings.ABILITY_KEY.consumeClick() && TransfurManager.isTransfurred(localPlayer)) {
-            if(TransfurManager.isOrganic(localPlayer)) return;//TMP ignore organic players for now
-            clientGrabLogic(localPlayer, minecraft);
-            return;
+        if(Keybindings.ABILITY_KEY.consumeClick()) {
+            if(TransfurManager.isTransfurred(localPlayer) && !TransfurManager.isOrganic(localPlayer)) {//TMP ignore organic players for now
+                clientGrabLogic(localPlayer, minecraft);
+                return;
+            }
+
+            GrabData data = getAbilityData(localPlayer);
+            LivingEntity grabbedBy = data.getGrabbedBy();
+            if(grabbedBy != null) {
+                if(getAbilityData(grabbedBy).getMode().givesDebuffToTarget) {
+                    if(minecraft.screen == null) minecraft.setScreen(new GrabEscapeScreen(localPlayer.getRandom()));
+                } else {//TODO make grabbed entities follow where you are looking at
+                    PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+                            new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(false)));
+                }
+            }
         }
 
-        if(Keybindings.ABILITY_SELECTION.isDown() && minecraft.screen == null){
-            if(TransfurManager.isTransfurred(localPlayer)) {
-                AChanged.LOGGER.warn("That's not supposed to happen ...");
-            } else minecraft.setScreen(Utils.get(GrabAbilityPlayerScreen::new));//Magic
+        if(Keybindings.ABILITY_SELECTION.isDown() && minecraft.screen == null){// will only happen for non tf players
+             minecraft.setScreen(Utils.get(GrabAbilityPlayerScreen::new));//Magic
         }
     }
 
@@ -129,15 +147,21 @@ public class GrabAbility implements Ability {
     public void serverTick(@NotNull LivingEntity holder) {
         GrabData holderData = GrabData.dataOf(holder);
 
+        if(holderData.getGrabbedBy() != null){
+            if(holder instanceof Player) ((Player) holder).displayClientMessage(Component.translatable("message.a_changed.try_escape_tip", Component.keybind(Keybindings.ABILITY_KEY.getName())), true);
+            return;
+        }
+        if(!TransfurManager.isTransfurred(holder)) return;
+
         LivingEntity grabbedEntity = holderData.getGrabbedEntity();
         GrabMode mode = holderData.getMode();
 
-        if(holderData.getGrabbedBy() != null || grabbedEntity == null) return;
+        if(grabbedEntity == null) return;
         if(!grabbedEntity.isAlive()) {
             if(holder instanceof Player player) {
-                if (grabbedEntity.getRemovalReason() == Entity.RemovalReason.UNLOADED_WITH_PLAYER)
-                    player.displayClientMessage(Component.translatable("message.a_changed.grabbed_player_left"), true);
-                else player.displayClientMessage(Component.translatable("message.a_changed.grabbed_entity_died"), true);
+                Entity.RemovalReason reason = grabbedEntity.getRemovalReason();
+                if(reason == Entity.RemovalReason.UNLOADED_WITH_PLAYER) player.displayClientMessage(Component.translatable("message.a_changed.grabbed_player_left"), true);
+                if(reason != Entity.RemovalReason.DISCARDED) player.displayClientMessage(Component.translatable("message.a_changed.grabbed_entity_died"), true);
             }
             holderData.drop();
             return;
@@ -150,7 +174,9 @@ public class GrabAbility implements Ability {
 
         if(TransfurManager.isTransfurred(grabbedEntity)) return;//TMP make possible to hold latexes ?
 
-        if(mode.givesDebuffToTarget && !grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
+        if(!mode.givesDebuffToTarget) return;
+
+        if(!grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
             if(mode == GrabMode.ASSIMILATE) {
                 grabbedEntity.hurt(DamageSources.assimilation(holder, null), Integer.MAX_VALUE);
                 holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
@@ -160,6 +186,9 @@ public class GrabAbility implements Ability {
                 if(handler != null) handler.transfur(TransfurManager.getTransfurType(holder), TransfurContext.TRANSFUR_TF);
             }
             holderData.drop();
+        } else if(mode == GrabMode.REPLICATE){
+            TransfurHandler handler = TransfurHandler.of(grabbedEntity);
+            handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF.get()).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.ADD_PROGRESS_DEF);
         }
     }
 
@@ -219,6 +248,8 @@ public class GrabAbility implements Ability {
                 new FriendlyByteBuf(Unpooled.buffer(4)).writeVarInt(entity.getId())));
     }
 
+    private static final float TELEPORT_THRESHOLD = 2.5f * 2.5f;
+
     private void hold(LivingEntity holder, LivingEntity grabbedEntity, GrabMode mode){
         float distance = 1.2f;
         if(mode == GrabMode.ASSIMILATE){
@@ -228,11 +259,15 @@ public class GrabAbility implements Ability {
         }
 
         float yaw = holder.getYHeadRot();
-        float x = (float) ((-Mth.sin(Mth.DEG_TO_RAD * yaw) * distance) + holder.getX());
-        float z = (float) ((Mth.cos(Mth.DEG_TO_RAD * yaw) * distance) + holder.getZ());
+        Vector3f pos = new Vector3f(-Mth.sin(Mth.DEG_TO_RAD * yaw), -Mth.sin(Mth.DEG_TO_RAD * holder.getXRot()), Mth.cos(Mth.DEG_TO_RAD * yaw))
+                .mul(distance).normalize(distance)
+                .add((float) holder.getX(), (float) (holder.getY() + .5), (float) holder.getZ())
+                .sub((float) grabbedEntity.getX(), (float) grabbedEntity.getY(), (float) grabbedEntity.getZ());
 
         grabbedEntity.fallDistance = 0;
-        grabbedEntity.setDeltaMovement(x - grabbedEntity.getX(), holder.getY() - grabbedEntity.getY(), z - grabbedEntity.getZ());
+        if(pos.lengthSquared() >= TELEPORT_THRESHOLD){
+            grabbedEntity.teleportRelative(pos.x, pos.y, pos.z);
+        } else grabbedEntity.setDeltaMovement(pos.x, pos.y, pos.z);
 
         if(grabbedEntity instanceof ServerPlayer player) {
             PacketDistributor.PLAYER.with(player).send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));

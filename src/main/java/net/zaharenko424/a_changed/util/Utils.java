@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 public class Utils {
 
     public static final ResourceLocation NULL_LOC = new ResourceLocation("null", "null");
+    public static final String NULL_STR = "null";
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));

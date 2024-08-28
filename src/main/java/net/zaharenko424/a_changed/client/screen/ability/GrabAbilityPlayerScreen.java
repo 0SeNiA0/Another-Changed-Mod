@@ -20,18 +20,15 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 
 public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
 
-    private static final int radius = 100;
-    private static final int innerRadius = radius - 40;
     public static final ResourceLocation yes = AChanged.textureLoc("gui/want_to_be_grabbed");
     public static final ResourceLocation nope = AChanged.textureLoc("gui/dont_want_to_be_grabbed");
 
     public GrabAbilityPlayerScreen() {
-        super(Component.empty(), radius, innerRadius);
+        super(Component.empty(), 100, 60);
     }
 
     @Override
     protected int buttonOffsetDeg() {
-
         return 6;
     }
 
@@ -45,12 +42,9 @@ public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
 
         currentlyActive = GrabData.dataOf(minecraft.player).wantsToBeGrabbed() ? 0 : 1;
 
-        int halfWidth = width / 2;
-        int halfHeight = height / 2;
-
         buttons.clear();
-        addRadialButton(90, 270, radius, innerRadius, halfWidth, halfHeight);
-        addRadialButton(270, 450, radius, innerRadius, halfWidth, halfHeight);
+        addRadialButton(90, 270, halfWidth, halfHeight);
+        addRadialButton(270, 450, halfWidth, halfHeight);
     }
 
     @Override

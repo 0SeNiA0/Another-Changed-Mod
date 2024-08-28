@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -27,8 +28,9 @@ public class RoombaEntity extends PathfinderMob {
     protected void registerGoals() {
         WaterAvoidingRandomStrollGoal goal = new WaterAvoidingRandomStrollGoal(this, .5);
         goal.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        goalSelector.addGoal(1, goal);
-        goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        goalSelector.addGoal(0, goal);
+        goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        goalSelector.addGoal(2, new RandomLookAroundGoal(this));
     }
 
     public static AttributeSupplier.Builder createAttributes(){

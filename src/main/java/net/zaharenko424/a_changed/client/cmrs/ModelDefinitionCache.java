@@ -36,6 +36,7 @@ public final class ModelDefinitionCache {
         modelCache.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
 
 
+        modelCache.put(MilkPuddingModel.bodyLayer, MilkPuddingModel.bodyLayer());
         modelCache.put(RoombaModel.bodyLayer, RoombaModel.bodyLayer());
 
         modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());

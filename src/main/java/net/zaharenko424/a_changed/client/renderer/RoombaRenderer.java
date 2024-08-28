@@ -13,7 +13,7 @@ public class RoombaRenderer extends CustomMobRenderer<RoombaEntity, RoombaModel>
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/roomba");
 
     public RoombaRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext, new RoombaModel(), .8f);
+        super(pContext, new RoombaModel(), .6f);
     }
 
     @Override

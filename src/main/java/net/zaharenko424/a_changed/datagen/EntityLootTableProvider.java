@@ -32,6 +32,10 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
                                 .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))));
 
+        add(MILK_PUDDING.get(), new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(latex(true))));
+
         add(BEI_FENG.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));
@@ -40,7 +44,7 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
 
         add(DARK_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
-                        .add(latex(false))));//TODO finish loot tables
+                        .add(latex(false))));
         add(DARK_LATEX_WOLF_MALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));
@@ -49,25 +53,25 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(ItemRegistry.ORANGE_ITEM)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))));
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F))))));
 
         add(HYPNO_CAT.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(Items.GLOW_BERRIES)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F))))
                         .add(LootItem.lootTableItem(Items.STRING)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))));
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F))))));
 
         LootTable.Builder shork = new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(Items.COD)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F))))
                         .add(LootItem.lootTableItem(Items.SALMON)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))));
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F)))));
         add(LATEX_SHARK_FEMALE.get(), shork);
         add(LATEX_SHARK_MALE.get(), shork);
 
@@ -79,10 +83,10 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(Items.STRING)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F))))
                         .add(LootItem.lootTableItem(Items.SNOWBALL)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 4)))
-                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))));
+                                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 2.0F)))));
         add(SNOW_LEOPARD_FEMALE.get(), snowLeopard);
         add(SNOW_LEOPARD_MALE.get(), snowLeopard);
 
@@ -93,7 +97,7 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));
 
-        add(YUFENG_DRAGON.get(), new LootTable.Builder()//TODO add more drops?
+        add(YUFENG_DRAGON.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));
     }
@@ -101,7 +105,7 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
     private LootPoolEntryContainer.@NotNull Builder<?> latex(boolean white){
         return LootItem.lootTableItem(white ? ItemRegistry.WHITE_LATEX_ITEM : ItemRegistry.DARK_LATEX_ITEM)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2)))
-                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0,1)));
+                .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0,2)));
     }
 
     @Override
