@@ -130,7 +130,7 @@ public class GrabAbility implements Ability {
             LivingEntity grabbedBy = data.getGrabbedBy();
             if(grabbedBy != null) {
                 if(getAbilityData(grabbedBy).getMode().givesDebuffToTarget) {
-                    if(minecraft.screen == null) minecraft.setScreen(new GrabEscapeScreen(localPlayer.getRandom()));
+                    if(minecraft.screen == null) minecraft.setScreen(Utils.get(()-> new GrabEscapeScreen(localPlayer.getRandom())));
                 } else {//TODO make grabbed entities follow where you are looking at
                     PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                             new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(false)));
