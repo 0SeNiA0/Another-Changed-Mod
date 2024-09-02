@@ -137,6 +137,8 @@
   "block.a_changed.yellow_lab_slab": "Yellow Lab Slab",
   "block.a_changed.yellow_lab_stairs": "Yellow Lab Stairs",
 
+  "command.latex_grab_chance.get": "Latex grab chance is ",
+  "command.latex_grab_chance.set": "Latex grab chance is set to ",
   "command.transfur_tolerance.get": "Transfur tolerance is ",
   "command.transfur_tolerance.set": "Transfur tolerance is set to ",
 

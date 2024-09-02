@@ -45,7 +45,7 @@ public class LatexGrabChance {
     private static int get(@NotNull CommandSourceStack source){
         float chance = GrabChanceData.of(source.getLevel()).getGrabChance();
         if(source.isPlayer()) {
-            source.sendSystemMessage(Component.translatable("command.transfur_tolerance.get").append(String.valueOf(chance)));
+            source.sendSystemMessage(Component.translatable("command.latex_grab_chance.get").append(String.valueOf(chance)));
         } else LOGGER.info("Latex grab chance is {}", chance);
         return Command.SINGLE_SUCCESS;
     }
@@ -56,7 +56,7 @@ public class LatexGrabChance {
         if(data.getGrabChance() == chance) return Command.SINGLE_SUCCESS;
         data.setGrabChance(chance);
 
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set").append(String.valueOf(chance)));
+        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.latex_grab_chance.set").append(String.valueOf(chance)));
         LOGGER.info("Latex grab chance is set to {}", chance);
 
         return Command.SINGLE_SUCCESS;
