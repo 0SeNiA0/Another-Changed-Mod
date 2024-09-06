@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
+import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class Retaliate<E extends Mob> extends ExtendedBehaviour<E> {
+public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E> {
 
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.HURT_BY, MemoryStatus.VALUE_PRESENT));
 
@@ -114,7 +114,7 @@ public class Retaliate<E extends Mob> extends ExtendedBehaviour<E> {
     @Override
     protected void start(E entity) {
         BrainUtils.setTargetOfEntity(entity, this.toTarget);
-        if(DamageSources.checkTarget(toTarget)) BrainUtils.setMemory(entity, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get(), true);
+        if(!entity.transfurType.isOrganic() && DamageSources.checkTarget(toTarget)) BrainUtils.setMemory(entity, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get(), true);
         BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
 
         this.toTarget = null;

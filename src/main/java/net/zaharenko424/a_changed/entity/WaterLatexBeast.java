@@ -168,16 +168,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends WaterLatexBeast> getIdleTasks() {// not swimming
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<>(
-                        new TargetTransfurrable<>(),
-                        new Retaliate<>(),
-                        new OneRandomBehaviour<>(
-                                new SetPlayerLookTarget<>()
-                                        .predicate(player -> player.isAlive() && distanceToSqr(player) < LOOK_RANGE_SQR)
-                                        .stopIf(entity -> !entity.isAlive() || distanceToSqr(entity) > LOOK_RANGE_SQR)
-                                        .runFor(entity -> random.nextInt(60, 120)),
-                                new SetRandomLookTarget<>())
-                ),
+                targetRetaliateLook(LOOK_RANGE_SQR),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>().dontAvoidWater(),
                         new SeekRandomNearbyPosition<>().validPositions((latex, state) -> state.is(Blocks.WATER)),//try find water

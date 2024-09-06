@@ -14,11 +14,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -98,9 +104,23 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
         return transfurType.getPoseDimensions(pPose);
     }
 
+    @SuppressWarnings("unchecked")
+    protected <E extends AbstractLatexBeast> FirstApplicableBehaviour<E> targetRetaliateLook(float lookRangeSqr){
+        return new FirstApplicableBehaviour<>(
+                new TargetTransfurrable<E>().startCondition(latex -> !latex.transfurType.isOrganic()),
+                new Retaliate<>(),
+                new OneRandomBehaviour<>(
+                        new SetPlayerLookTarget<E>()
+                                .predicate(player -> player.isAlive() && distanceToSqr(player) < lookRangeSqr)
+                                .stopIf(latex -> !latex.isAlive() || distanceToSqr(latex) > lookRangeSqr)
+                                .runFor(latex -> latex.random.nextInt(60, 120)),
+                        new SetRandomLookTarget<>())
+        );
+    }
+
     @Override
     public boolean doHurtTarget(Entity target) {
-        if(level().isClientSide || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
+        if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
 
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) target.setSecondsOnFire(i * 4);
@@ -120,8 +140,9 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
             copyFrom.setItemSlot(slot, ItemStack.EMPTY);
         }
         if(copyFrom instanceof Player){
-            Arrays.fill(this.armorDropChances, 1);
-            Arrays.fill(this.handDropChances, 1);
+            Arrays.fill(this.armorDropChances, 2);
+            Arrays.fill(this.handDropChances, 2);
+            setPersistenceRequired();
         } else {
             Arrays.fill(this.armorDropChances, 0.1f);
             Arrays.fill(this.handDropChances, 0.1f);

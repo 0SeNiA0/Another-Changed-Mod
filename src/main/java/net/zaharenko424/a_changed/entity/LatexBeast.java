@@ -30,8 +30,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
@@ -42,8 +40,6 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -93,7 +89,6 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
 
     @Override
     protected void customServerAiStep() {
-        super.customServerAiStep();
         tickBrain(this);
     }
 
@@ -125,16 +120,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends LatexBeast> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<>(
-                        new TargetTransfurrable<>(),
-                        new Retaliate<>(),
-                        new OneRandomBehaviour<>(
-                                new SetPlayerLookTarget<>()
-                                        .predicate(player -> player.isAlive() && distanceToSqr(player) < LOOK_RANGE_SQR)
-                                        .stopIf(entity -> !entity.isAlive() || distanceToSqr(entity) > LOOK_RANGE_SQR)
-                                        .runFor(entity -> random.nextInt(60, 120)),
-                                new SetRandomLookTarget<>())
-                ),
+                targetRetaliateLook(LOOK_RANGE_SQR),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>().speedModifier(.8f).setRadius(16),// non swimming
                         new Idle<>().runFor(entity -> random.nextInt(60, 90)) // Don't walk anywhere
