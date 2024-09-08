@@ -8,7 +8,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.CommandBlock;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ public class UnTransfur {
     }
 
     private static int execute(@NotNull ServerPlayer player){
-        TransfurCapability.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
+        TransfurHandler.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
         return Command.SINGLE_SUCCESS;
     }
 }

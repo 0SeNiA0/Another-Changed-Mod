@@ -17,10 +17,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractFlyingLatex;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -46,7 +44,7 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
      * AIR_DECREASE_SPEED attribute injection
      */
     @ModifyReturnValue(at = @At("RETURN"), method = "decreaseAirSupply")
-    private int a(int original, @Local(argsOnly = true) int currentAir){
+    private int onDecreaseAirSupply(int original, @Local(argsOnly = true) int currentAir){
         float airDecrease = (float) getAttributeValue(AChanged.AIR_DECREASE_SPEED);
         if(airDecrease == 0) return currentAir;
         if(airDecrease == 1) return original;
@@ -80,8 +78,7 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     private boolean onUpdateFallFlying(boolean par2){
         if(!getSharedFlag(7) || onGround() || isPassenger() || hasEffect(MobEffects.LEVITATION)) return false;
 
-        ITransfurHandler handler = TransfurCapability.of(self());
-        if( handler == null || !handler.isTransfurred() || !(handler.getTransfurType() instanceof AbstractFlyingLatex)) return par2;
+        if(!TransfurManager.hasFallFlyingAbility(self())) return par2;
         gameEvent(GameEvent.ELYTRA_GLIDE);
         return true;
     }

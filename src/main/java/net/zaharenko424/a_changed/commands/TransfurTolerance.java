@@ -11,6 +11,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ public class TransfurTolerance {
                                         .then(
                                                 Commands.literal("DEFAULT")
                                                         .executes(
-                                                                context->set(context.getSource(),20)
+                                                                context->set(context.getSource(), TransfurManager.DEF_TRANSFUR_TOLERANCE)
                                                         )
                                         )
                         )
@@ -48,18 +49,20 @@ public class TransfurTolerance {
     }
 
     private static int get(@NotNull CommandSourceStack source){
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.get")
-                .append(String.valueOf(TransfurManager.TRANSFUR_TOLERANCE)));
-        else LOGGER.info("Transfur tolerance is " + TransfurManager.TRANSFUR_TOLERANCE);
+        if(source.isPlayer()) {
+            source.sendSystemMessage(Component.translatable("command.transfur_tolerance.get").append(String.valueOf(TransfurManager.TRANSFUR_TOLERANCE)));
+        } else LOGGER.info("Transfur tolerance is {}", TransfurManager.TRANSFUR_TOLERANCE);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int set(@NotNull CommandSourceStack source , float tolerance){
         if(TransfurManager.TRANSFUR_TOLERANCE == tolerance) return Command.SINGLE_SUCCESS;
         TransfurManager.TRANSFUR_TOLERANCE = tolerance;
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set")
-                .append(String.valueOf(tolerance)));
-        LOGGER.info("Transfur tolerance is set to " + tolerance);
+
+        TransfurToleranceData.setDirty(source.getLevel());
+
+        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set").append(String.valueOf(tolerance)));
+        LOGGER.info("Transfur tolerance is set to {}", tolerance);
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
             if(DamageSources.checkTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));

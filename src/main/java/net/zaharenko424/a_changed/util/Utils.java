@@ -24,11 +24,13 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 public class Utils {
 
     public static final ResourceLocation NULL_LOC = new ResourceLocation("null", "null");
+    public static final String NULL_STR = "null";
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
         return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));
@@ -167,5 +169,12 @@ public class Utils {
             if(block.isAssignableFrom(clazz)) return true;
         }
         return false;
+    }
+
+    /**
+     * A way to scam Java/Minecraft to not crash trying to load client only stuff.
+     */
+    public static  <T> T get(Supplier<T> supplier){
+        return supplier.get();
     }
 }

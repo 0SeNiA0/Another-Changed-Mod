@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.GrabMode;
+import net.zaharenko424.a_changed.ability.GrabMode;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientboundGrabSyncPacket(int holderId, int targetId, int grabbedBy, GrabMode mode, boolean wantsToBeGrabbed) implements CustomPacketPayload {

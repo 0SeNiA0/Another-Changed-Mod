@@ -21,7 +21,7 @@ public class EntityTypeTagProvider extends EntityTypeTagsProvider {
     @Override
     @SuppressWarnings("unchecked")
     protected void addTags(HolderLookup.@NotNull Provider p_255894_) {
-        tag(AChanged.SEWAGE_SYSTEM_CONSUMABLE).add(EntityType.SLIME);
+        tag(AChanged.SEWAGE_SYSTEM_CONSUMABLE).add(EntityRegistry.MILK_PUDDING.get(), EntityType.SLIME);
 
         tag(AChanged.TRANSFURRABLE_TAG).add(EntityType.PLAYER, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.VILLAGER,
                         EntityType.WANDERING_TRADER)

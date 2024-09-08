@@ -10,18 +10,19 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.Latex;
 import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -35,12 +36,16 @@ public abstract class TransfurType {
     protected final float eyeHeightStanding;
     protected final float eyeHeightCrouching;
     protected final float eyeHeightSwimming;
-    protected final ImmutableMap<Pose, EntityDimensions> dimensions;
+    protected final Map<Pose, EntityDimensions> dimensions;
     public final ImmutableMultimap<Attribute, AttributeModifier> modifiers;
     protected final Gender gender;
     protected final boolean organic;
     protected final Consumer<LivingEntity> onTransfur;
     protected final Consumer<LivingEntity> onUnTransfur;
+    /**
+     * Unmodifiable!
+     */
+    public final List<? extends Ability> abilities;
 
     public TransfurType(@NotNull Properties properties, @Nullable MemorizingSupplier<CustomHumanoidModel<LivingEntity>> modelSupplier){
         id = properties.location;
@@ -50,12 +55,20 @@ public abstract class TransfurType {
         eyeHeightStanding = properties.eyeHeightStanding;
         eyeHeightCrouching = properties.eyeHeightCrouching;
         eyeHeightSwimming = properties.eyeHeightSwimming;
-        dimensions = ImmutableMap.copyOf(properties.dimensions);
+        dimensions = Map.copyOf(properties.dimensions);
         modifiers = ImmutableMultimap.copyOf(properties.modifiers);
         gender = properties.gender;
         organic = properties.organic;
         onTransfur = properties.onTransfur;
         onUnTransfur = properties.onUnTransfur;
+
+        abilities = properties.abilities.stream().map(DeferredHolder::get).sorted((ability1, ability2) -> {
+            boolean active0 = ability1.isActive();
+            boolean active1 = ability2.isActive();
+            if(active0 == active1) return 0;
+            return active0 ? -1 : 1;
+        }).toList();
+
         this.modelSupplier = modelSupplier;
     }
 
@@ -124,7 +137,7 @@ public abstract class TransfurType {
         protected float eyeHeightStanding = 1.62f;
         protected float eyeHeightCrouching = 1.27f;
         protected float eyeHeightSwimming = .4f;
-        protected Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
+        protected final Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
                 Pose.STANDING, EntityDimensions.scalable(.6f,1.9f),
                 Pose.SLEEPING, EntityDimensions.fixed(0.2f, 0.2f),
                 Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f),
@@ -133,11 +146,12 @@ public abstract class TransfurType {
                 Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f),
                 Pose.DYING, EntityDimensions.scalable(.2f,.2f)
         ));
-        protected Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+        protected final Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         protected Gender gender = Gender.NONE;
         protected boolean organic = false;
         protected Consumer<LivingEntity> onTransfur;
         protected Consumer<LivingEntity> onUnTransfur;
+        protected final List<DeferredHolder<Ability, ? extends Ability>> abilities = new ArrayList<>(TransfurManager.MAX_ABILITIES);
 
         protected Properties(ResourceLocation resourceLocation, Latex latex){
             location = resourceLocation;
@@ -260,6 +274,28 @@ public abstract class TransfurType {
          */
         public Properties onUnTransfur(Consumer<LivingEntity> onUnTransfur){
             this.onUnTransfur = onUnTransfur;
+            return this;
+        }
+
+        public int addedAbilities(){
+            return abilities.size();
+        }
+
+        public Properties addAbility(DeferredHolder<Ability, ? extends Ability> ability){
+            if(abilities.size() < TransfurManager.MAX_ABILITIES && !abilities.contains(ability)) abilities.add(ability);
+            return this;
+        }
+
+        public Properties addAbility(DeferredHolder<Ability, ? extends Ability> ability, int index){
+            if(abilities.size() == TransfurManager.MAX_ABILITIES || abilities.contains(ability)) return this;
+            if(index > abilities.size()) {
+                abilities.add(ability);
+            } else abilities.add(index, ability);
+            return this;
+        }
+
+        public Properties removeAbility(DeferredHolder<Ability, ? extends Ability> ability){
+            abilities.remove(ability);
             return this;
         }
     }

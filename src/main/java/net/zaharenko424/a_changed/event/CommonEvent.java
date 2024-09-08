@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
@@ -36,15 +37,10 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
-import net.zaharenko424.a_changed.capability.GrabCapability;
-import net.zaharenko424.a_changed.capability.IGrabHandler;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
-import net.zaharenko424.a_changed.commands.GiveDNASample;
-import net.zaharenko424.a_changed.commands.Transfur;
-import net.zaharenko424.a_changed.commands.TransfurTolerance;
-import net.zaharenko424.a_changed.commands.UnTransfur;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.commands.*;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
@@ -52,7 +48,6 @@ import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.AbstractLatexCat;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 
@@ -68,17 +63,20 @@ public class CommonEvent {
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         GiveDNASample.register(dispatcher);
+        LatexGrabChance.register(dispatcher);
         Transfur.register(dispatcher);
         UnTransfur.register(dispatcher);
         TransfurTolerance.register(dispatcher);
     }
 
     /**
-     * Load transfur tolerance value
+     * Load saved data.
      */
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event){
-        event.getServer().overworld().getDataStorage().computeIfAbsent(TransfurToleranceData.FACTORY, "transfur_tolerance");
+        ServerLevel level = event.getServer().overworld();
+        GrabChanceData.of(level);
+        TransfurToleranceData.of(level);
     }
 
     /**
@@ -91,10 +89,13 @@ public class CommonEvent {
 
         PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
 
-        TransfurCapability.nonNullOf(player).syncClients();
-        if(TransfurManager.isBeingTransfurred(player)) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
+        TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        handler.syncClients();
+        if(handler.isBeingTransfurred()) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
 
-        GrabCapability.nonNullOf(player).syncClients();
+        //GrabCapability.nonNullOf(player).syncClients();
+        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
+
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
 
@@ -102,15 +103,15 @@ public class CommonEvent {
     public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
         Player player = event.getEntity();
         if(player.level().isClientSide) return;
-        IGrabHandler handler = GrabCapability.of(player);
-        if(handler == null) return;
-        if(handler.getTarget() != null) handler.drop();
+
+        TransfurHandler handler = TransfurHandler.nonNullOf(player);
+        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().deactivate(player);
     }
 
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(TransfurManager.isHoldingEntity(player)) GrabCapability.nonNullOf(player).drop();
+        if(TransfurManager.isHoldingEntity(player)) AbilityRegistry.GRAB_ABILITY.get().deactivate(player);
     }
 
     @SubscribeEvent
@@ -235,10 +236,7 @@ public class CommonEvent {
         if(event.getEntity().level().isClientSide) return;
         LivingEntity entity = event.getEntity();
 
-        IGrabHandler grabHandler = GrabCapability.of(entity);
-        if(grabHandler != null) grabHandler.tick();
-
-        ITransfurHandler tfHandler = TransfurCapability.of(entity);
+        TransfurHandler tfHandler = TransfurHandler.of(entity);
         if(tfHandler != null){
             tfHandler.tick();
             if(DamageSources.checkTarget(entity)){
@@ -267,11 +265,25 @@ public class CommonEvent {
     public static void onLivingHurt(LivingHurtEvent event){
         LivingEntity entity = event.getEntity();
         if(event.getSource().is(DamageTypeTags.IS_FALL)){
-            if((entity instanceof Player player && TransfurManager.isTransfurred(player)
-                        && TransfurManager.getTransfurType(player) instanceof AbstractLatexCat)
-                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType instanceof AbstractLatexCat))
+            if((entity instanceof Player player && TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player))
+                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())))
                 event.setAmount(event.getAmount() / 2);
         }
+    }
+
+    /**
+     * Transfurs the entity if it died from tf attack.
+     */
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event){
+        LivingEntity entity = event.getEntity();
+        if(entity.level().isClientSide) return;
+        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTarget(entity)) return;
+
+        TransfurHandler handler = TransfurHandler.nonNullOf(entity);
+        if(handler.getTransfurProgress() == 0 || handler.getTransfurType() == null) return;
+
+        handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
     }
 
     /**
@@ -282,12 +294,11 @@ public class CommonEvent {
         if(!(event.getTarget() instanceof LivingEntity target)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
-        ITransfurHandler handler = TransfurCapability.of(target);
-        if(handler != null) handler.syncClient(player);
-
-        if(!(event.getTarget() instanceof Player remotePlayer)) return;//TODO check for entities with capabilities to sync?
-
-        GrabCapability.nonNullOf(remotePlayer).syncClient(player);
+        TransfurHandler handler = TransfurHandler.of(target);
+        if(handler != null) {
+            handler.syncClient(player);
+            if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(target).syncClient(player);
+        }
     }
 
     /**
@@ -311,8 +322,10 @@ public class CommonEvent {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                TransfurCapability.nonNullOf(player).syncClients();
-                GrabCapability.nonNullOf(player).syncClients();
+                TransfurHandler handler = TransfurHandler.nonNullOf(player);
+                handler.syncClients();
+                //GrabCapability.nonNullOf(player).syncClients();
+                if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
             }
         },25);
     }

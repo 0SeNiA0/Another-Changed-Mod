@@ -16,8 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.blocks.LaserEmitter;
-import net.zaharenko424.a_changed.capability.ITransfurHandler;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
@@ -104,7 +103,7 @@ public class LaserEmitterEntity extends BlockEntity {
     protected void transfurEntities(){
         level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTarget).forEach(entity -> {
             if(!entity.getItemBySlot(EquipmentSlot.LEGS).is(ItemRegistry.BLACK_LATEX_SHORTS.get())) return;
-            ITransfurHandler handler = TransfurCapability.of(entity);
+            TransfurHandler handler = TransfurHandler.of(entity);
             if(handler != null) handler.transfur(TransfurRegistry.BENIGN_TF.get(), TransfurContext.TRANSFUR_DEF);
         });
     }

@@ -9,8 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.zaharenko424.a_changed.EntityAccess;
+import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.capability.GrabCapability;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.CoveredWith;
@@ -36,7 +36,7 @@ public abstract class MixinEntity implements EntityAccess {
     @Inject(at = @At("HEAD"), method = "push(Lnet/minecraft/world/entity/Entity;)V", cancellable = true)
     private void onPush(Entity entity, CallbackInfo ci){
         if((entity instanceof Player player && TransfurManager.isGrabbed(player))
-                || (getSelf() instanceof Player player1 && GrabCapability.nonNullOf(player1).getTarget() == entity))
+                || (getSelf() instanceof Player player1 && GrabData.dataOf(player1).getGrabbedEntity() == entity))
             ci.cancel();
     }
 

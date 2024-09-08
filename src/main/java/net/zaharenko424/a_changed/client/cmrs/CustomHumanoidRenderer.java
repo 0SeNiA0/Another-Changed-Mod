@@ -36,7 +36,11 @@ public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntity
     protected final EntityRendererProvider.Context context;
 
     public CustomHumanoidRenderer(EntityRendererProvider.Context context, CustomHumanoidModel<E> model){
-        super(context,model,.5f);
+        this(context, model, .5f);
+    }
+
+    public CustomHumanoidRenderer(EntityRendererProvider.Context context, CustomHumanoidModel<E> model, float shadowRadius){
+        super(context, model ,shadowRadius);
         this.context = context;
         addLayers();
         addLayer(new GlowLayer<>(this));

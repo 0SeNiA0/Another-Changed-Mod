@@ -6,6 +6,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
+import net.zaharenko424.a_changed.item.StabilizedLatexSyringeItem;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPE_REGISTRY;
@@ -188,12 +189,19 @@ public class CreativeTabs {
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
                     output.accept(SYRINGE_COIL_GUN);
 
-                    TRANSFUR_REGISTRY.stream().forEach((tf) -> output.accept(LatexSyringeItem.encodeTransfur(tf)));
+                    output.accept(ROOMBA_SPAWN_EGG);
+
+                    TRANSFUR_REGISTRY.stream().forEach(tf -> {
+                        output.accept(LatexSyringeItem.encodeTransfur(tf));
+                        output.accept(StabilizedLatexSyringeItem.encodeTransfur(tf));
+                    });
 
                     output.accept(DARK_LATEX_PUDDLE_F_ITEM);
                     output.accept(DARK_LATEX_PUDDLE_M_ITEM);
                     output.accept(WHITE_LATEX_PUDDLE_F_ITEM);
                     output.accept(WHITE_LATEX_PUDDLE_M_ITEM);
+
+                    output.accept(MILK_PUDDING);
 
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);

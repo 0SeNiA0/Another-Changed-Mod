@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,7 +40,7 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
     private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
-        if(pEntity.getCapability(TransfurCapability.CAPABILITY) == null) return;
+        if(TransfurHandler.of(pEntity) == null) return;
         float progress = TransfurManager.getTransfurProgress(pEntity);
         if(progress <= 0 || progress >= TransfurManager.TRANSFUR_TOLERANCE) return;
         pPoseStack.pushPose();

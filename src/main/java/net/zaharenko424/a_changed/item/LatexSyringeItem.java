@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -25,9 +25,14 @@ import java.util.Objects;
 
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TYPE_KEY;
 
-public class LatexSyringeItem extends AbstractSyringe{
+public class LatexSyringeItem extends AbstractSyringe {
+
     public LatexSyringeItem() {
-        super(new Properties().stacksTo(1).rarity(Rarity.RARE));
+        this(new Properties().rarity(Rarity.RARE));
+    }
+
+    protected LatexSyringeItem(Properties properties){
+        super(properties.stacksTo(1));
     }
 
     @Override
@@ -40,7 +45,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         Player player = (Player) pLivingEntity;
         if(!pLevel.isClientSide)
-            TransfurCapability.nonNullOf(player).transfur(TransfurManager.getTransfurType(Objects.requireNonNull(decodeTransfur(pStack))), TransfurContext.TRANSFUR_DEF);
+            TransfurHandler.nonNullOf(player).transfur(TransfurManager.getTransfurType(Objects.requireNonNull(decodeTransfur(pStack))), TransfurContext.TRANSFUR_DEF);
         return onUse(pStack, new ItemStack(ItemRegistry.SYRINGE_ITEM.get()), player);
     }
 
@@ -57,7 +62,7 @@ public class LatexSyringeItem extends AbstractSyringe{
     }
 
     public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
-        ItemStack syringe = new ItemStack(ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
+        ItemStack syringe = ItemRegistry.LATEX_SYRINGE_ITEM.toStack();
         CompoundTag tag = syringe.hasTag() ? syringe.getTag() : new CompoundTag();
         NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
         syringe.setTag(tag);

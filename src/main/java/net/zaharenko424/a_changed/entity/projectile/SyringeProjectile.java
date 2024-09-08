@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.EntityHitResult;
-import net.zaharenko424.a_changed.capability.TransfurCapability;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -47,7 +47,7 @@ public class SyringeProjectile extends AbstractArrow {
         Block.popResource(level(), blockPosition(), ItemRegistry.SYRINGE_ITEM.get().getDefaultInstance());
         if(transfurType == null || !DamageSources.checkTarget(entity)) return;
         entity.hurt(DamageSources.transfur(this, getOwner()), .5f);
-        TransfurCapability.nonNullOf((LivingEntity) entity)
+        TransfurHandler.nonNullOf((LivingEntity) entity)
                 .addTransfurProgress(10f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
     }
 

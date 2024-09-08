@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class SyringeItem extends AbstractSyringe {
+
     public SyringeItem() {
         super(new Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
     }

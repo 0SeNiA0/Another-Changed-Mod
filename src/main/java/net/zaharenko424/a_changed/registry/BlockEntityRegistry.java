@@ -12,6 +12,7 @@ import net.zaharenko424.a_changed.entity.block.sign.SignEntity;
 
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
 
+@SuppressWarnings("ConstantConditions")//suppressing all the .build(null)
 public class BlockEntityRegistry {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, AChanged.MODID);

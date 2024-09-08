@@ -19,6 +19,8 @@ import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
+import net.zaharenko424.a_changed.client.renderer.MilkPuddingRenderer;
+import net.zaharenko424.a_changed.client.renderer.RoombaRenderer;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
@@ -62,13 +64,17 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event){
-        event.register(Keybindings.GRAB_KEY);
-        event.register(Keybindings.GRAB_MODE_KEY);
+        event.register(Keybindings.ABILITY_KEY);
+        event.register(Keybindings.ABILITY_SELECTION);
+
+        event.register(Keybindings.QUICK_SELECT_ABILITY_1);
+        event.register(Keybindings.QUICK_SELECT_ABILITY_2);
+        event.register(Keybindings.QUICK_SELECT_ABILITY_3);
     }
 
     @SubscribeEvent
     public static void onRegisterGui(RegisterGuiOverlaysEvent event){
-        event.registerBelowAll(AChanged.resourceLoc("grab_mode"), GrabModeOverlay.OVERLAY);
+        event.registerBelowAll(AChanged.resourceLoc("ability_overlay"), AbilityOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("transfur"), TransfurOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("pure_white_latex"), PureWhiteLatexOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("hazmat"), HazmatOverlay.OVERLAY);
@@ -110,6 +116,9 @@ public class ClientMod {
         event.registerEntityRenderer(SYRINGE_PROJECTILE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(SEAT_ENTITY.get(), SeatRenderer::new);//Dummy renderer
         event.registerEntityRenderer(CHAIR_ENTITY.get(), ChairRenderer::new);
+
+        event.registerEntityRenderer(MILK_PUDDING.get(), MilkPuddingRenderer::new);
+        event.registerEntityRenderer(ROOMBA_ENTITY.get(), RoombaRenderer::new);
 
         event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomHumanoidRenderer<>(a, BEI_FENG_TF.get().getModel()));
 
