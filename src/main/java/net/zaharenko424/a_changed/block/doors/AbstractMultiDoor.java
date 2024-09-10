@@ -5,7 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -30,18 +32,29 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
         registerDefaultState(defaultBlockState().setValue(OPEN,false));
     }
 
-    @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60507_ != InteractionHand.MAIN_HAND || p_60504_.isClientSide) return InteractionResult.CONSUME_PARTIAL;
-        BlockPos mainPos = getMainPos(p_60503_, p_60505_);
-        BlockState mainState = p_60504_.getBlockState(mainPos);
-        if(isPowered(mainPos, mainState, p_60504_)) {
-            setOpen(mainState, mainPos, p_60504_, !p_60503_.getValue(OPEN));
-            p_60504_.playSound(null, p_60505_, mainState.getValue(OPEN) ? SoundRegistry.DOOR_CLOSE.get() : SoundRegistry.DOOR_OPEN.get(), SoundSource.BLOCKS);
+    protected void use(BlockState state, Level level, BlockPos pos) {
+        BlockPos mainPos = getMainPos(state, pos);
+        BlockState mainState = level.getBlockState(mainPos);
+        if(isPowered(mainPos, mainState, level)) {
+            setOpen(mainState, mainPos, level, !state.getValue(OPEN));
+            level.playSound(null, pos, mainState.getValue(OPEN) ? SoundRegistry.DOOR_CLOSE.get() : SoundRegistry.DOOR_OPEN.get(), SoundSource.BLOCKS);
         } else {
-            p_60504_.playSound(null, p_60505_, SoundRegistry.DOOR_LOCKED.get(), SoundSource.BLOCKS);
+            level.playSound(null, pos, SoundRegistry.DOOR_LOCKED.get(), SoundSource.BLOCKS);
         }
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if(level.isClientSide) return super.useWithoutItem(state, level, pos, player, hitResult);
+        use(state, level, pos);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if(hand != InteractionHand.MAIN_HAND || level.isClientSide) return ItemInteractionResult.CONSUME_PARTIAL;
+        use(state, level, pos);
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

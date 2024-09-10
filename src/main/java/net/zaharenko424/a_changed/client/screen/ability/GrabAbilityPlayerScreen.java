@@ -58,7 +58,7 @@ public class GrabAbilityPlayerScreen extends AbstractRadialMenuScreen {
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
 
-        PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                 new FriendlyByteBuf(Unpooled.buffer()).writeByte(1).writeBoolean(currentlyActive == 0)));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

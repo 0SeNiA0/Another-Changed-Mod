@@ -20,8 +20,9 @@ public class UnTransfurEffect extends UnRemovableEffect {
     }
 
     @Override
-    public void applyEffectTick(LivingEntity p_19467_, int p_19468_) {
+    public boolean applyEffectTick(LivingEntity p_19467_, int p_19468_) {
         if(p_19467_ instanceof ServerPlayer player)
             TransfurHandler.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
+        return true;
     }
 }

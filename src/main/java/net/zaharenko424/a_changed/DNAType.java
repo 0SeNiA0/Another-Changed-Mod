@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 
@@ -18,9 +19,8 @@ public class DNAType {
         return material.get();
     }
 
-    @Override
-    public String toString() {
+    public ResourceLocation location(){
         return Objects.requireNonNull(DNATypeRegistry.DNA_TYPE_REGISTRY.getKey(this),
-                "Tried to get a key of non registered DNAType!").toString();
+                "Tried to get a key of non registered DNAType!");
     }
 }

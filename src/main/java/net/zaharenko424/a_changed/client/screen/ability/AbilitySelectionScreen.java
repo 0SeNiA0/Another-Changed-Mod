@@ -96,7 +96,7 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
         if(!transfurType.abilities.get(selectedButton).isActive()) return true;
         currentlyActive = selectedButton;
 
-        PacketDistributor.SERVER.noArg().send(
+        PacketDistributor.sendToServer(
                 new ServerboundSelectAbilityPacket(AbilityUtils.abilityIdOf(transfurType.abilities.get(currentlyActive))));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

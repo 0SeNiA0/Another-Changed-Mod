@@ -33,9 +33,9 @@ public class BlockRegistry {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
     //Liquid Blocks
-    public static final DeferredBlock<LiquidBlock> DARK_LATEX_FLUID_BLOCK = BLOCKS.register("dark_latex_fluid", ()-> new LiquidBlock(FluidRegistry.DARK_LATEX_STILL,liquidProperties()));
-    public static final DeferredBlock<LiquidBlock> LATEX_SOLVENT_BLOCK = BLOCKS.register("latex_solvent", ()-> new LiquidBlock(FluidRegistry.LATEX_SOLVENT_STILL, liquidProperties()));
-    public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL,liquidProperties()));
+    public static final DeferredBlock<LiquidBlock> DARK_LATEX_FLUID_BLOCK = BLOCKS.register("dark_latex_fluid", ()-> new LiquidBlock(FluidRegistry.DARK_LATEX_STILL.get(),liquidProperties()));
+    public static final DeferredBlock<LiquidBlock> LATEX_SOLVENT_BLOCK = BLOCKS.register("latex_solvent", ()-> new LiquidBlock(FluidRegistry.LATEX_SOLVENT_STILL.get(), liquidProperties()));
+    public static final DeferredBlock<LiquidBlock> WHITE_LATEX_FLUID_BLOCK = BLOCKS.register("white_latex_fluid", ()-> new LiquidBlock(FluidRegistry.WHITE_LATEX_STILL.get(),liquidProperties()));
 
     //Machines
     public static final DeferredBlock<Capacitor> CAPACITOR = BLOCKS.register("capacitor", () -> new Capacitor(softMetal()));
@@ -148,7 +148,7 @@ public class BlockRegistry {
     public static final DeferredBlock<PressurePlateBlock> ORANGE_PRESSURE_PLATE = BLOCKS.register("orange_pressure_plate", ()-> new PressurePlateBlock(BlockSetType.ACACIA, BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_PRESSURE_PLATE)));
     public static final DeferredBlock<StandingSign> ORANGE_SIGN = BLOCKS.register("orange_sign", ()-> new StandingSign(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_SIGN), AChanged.ORANGE));
     public static final DeferredBlock<SlabBlock> ORANGE_SLAB = BLOCKS.register("orange_slab", ()-> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_SLAB)));
-    public static final DeferredBlock<StairBlock> ORANGE_STAIRS = BLOCKS.register("orange_stairs", ()-> new StairBlock(()-> ORANGE_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(ORANGE_PLANKS.get())));
+    public static final DeferredBlock<StairBlock> ORANGE_STAIRS = registerStairs("orange_stairs", ORANGE_PLANKS);
     public static final DeferredBlock<TrapDoorBlock> ORANGE_TRAPDOOR = BLOCKS.register("orange_trapdoor", ()-> new TrapDoorBlock(BlockSetType.ACACIA, BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_TRAPDOOR)));
     public static final DeferredBlock<LogBlock> ORANGE_TREE_LOG = BLOCKS.register("orange_tree_log", ()-> new LogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_LOG), STRIPPED_ORANGE_LOG));
     public static final DeferredBlock<WallSign> ORANGE_WALL_SIGN = BLOCKS.register("orange_wall_sign", ()-> new WallSign(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava(), AChanged.ORANGE));
@@ -185,7 +185,7 @@ public class BlockRegistry {
     }
 
     private static @NotNull DeferredBlock<StairBlock> registerStairs(String name, DeferredBlock<?> block){
-        return BLOCKS.register(name, ()-> new StairBlock(()-> block.get().defaultBlockState(), decorProperties()));
+        return BLOCKS.register(name, ()-> new StairBlock(block.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(block.get())));
     }
 
     private static @NotNull DeferredBlock<SlabBlock> registerSlab(String name){

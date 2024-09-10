@@ -19,7 +19,7 @@ public abstract class MixinFaceBakery {
             uvs[i * 2] = uv.getU(i) / 16;
             uvs[i * 2 + 1] = uv.getV(i) / 16;
         }
-        ((BakedQuadExtension)original).mod$initUV(uvs);
+        ((BakedQuadExtension)original).achanged$initUV(uvs);
         return original;
     }
 }

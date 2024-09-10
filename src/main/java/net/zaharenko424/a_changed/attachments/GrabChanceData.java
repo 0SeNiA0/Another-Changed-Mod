@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.attachments;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -11,7 +12,7 @@ public class GrabChanceData extends SavedData {
 
     public static final float DEF_CHANCE = .3f;
     private static final String NAME = "grab_chance";
-    private static final SavedData.Factory<GrabChanceData> FACTORY = new Factory<>(GrabChanceData::new, tag -> {
+    private static final SavedData.Factory<GrabChanceData> FACTORY = new Factory<>(GrabChanceData::new, (tag, lookup)-> {
         GrabChanceData data = new GrabChanceData();
         data.grabChance = tag.getFloat(NAME);
         return data;
@@ -20,7 +21,7 @@ public class GrabChanceData extends SavedData {
     private float grabChance = DEF_CHANCE;
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         tag.putFloat(NAME, grabChance);
         return tag;
     }

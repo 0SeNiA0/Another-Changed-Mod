@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,29 +33,40 @@ public class CannedOranges extends MetalCan implements EntityBlock {
         return new CannedOrangesEntity(pos, state);
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+    public boolean use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, boolean hasItem) {
+        if(level.isClientSide) return false;
+
         if(state.getValue(OPEN)){
             if(!player.isCrouching() && level.getBlockEntity(pos) instanceof CannedOrangesEntity can && can.hasFoodLeft()) {
                 can.consumeFood();
                 player.getFoodData().eat(4, .5f);
                 level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS);
-                return InteractionResult.SUCCESS;
+                return true;
             }
             openCloseCan(state, pos, level);
-            return InteractionResult.SUCCESS;
+            return true;
         }
+
         if(player.isCrouching()){
-            if(!player.getItemInHand(hand).isEmpty()
-                    || !(level.getBlockEntity(pos) instanceof CannedOrangesEntity can)) return InteractionResult.PASS;
+            if(hasItem || !(level.getBlockEntity(pos) instanceof CannedOrangesEntity can)) return false;
             ItemHandlerHelper.giveItemToPlayer(player, can.getCan());
             level.removeBlockEntity(pos);
             level.removeBlock(pos, false);
-            return InteractionResult.SUCCESS;
+            return true;
         }
+
         openCloseCan(state, pos, level);
-        return InteractionResult.SUCCESS;
+        return true;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player, false) ? InteractionResult.SUCCESS : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player, true) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

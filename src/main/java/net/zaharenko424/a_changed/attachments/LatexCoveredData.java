@@ -1,8 +1,11 @@
 package net.zaharenko424.a_changed.attachments;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -75,7 +78,7 @@ public class LatexCoveredData {
         if(coverWith == CoveredWith.NOTHING){
             if(latexCoveredBlocks != null && latexCoveredBlocks.remove(pos) != null) {
                 holder.setUnsaved(true);
-                PacketDistributor.TRACKING_CHUNK.with(holder).send(getPacket(pos));
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos));
             }
 
             return;
@@ -85,7 +88,7 @@ public class LatexCoveredData {
         latexCoveredBlocks.put(pos, coverWith);
         holder.setUnsaved(true);
 
-        PacketDistributor.TRACKING_CHUNK.with(holder).send(getPacket(pos));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos));
     }
 
     private boolean verifyPos(@NotNull BlockPos pos){
@@ -110,7 +113,7 @@ public class LatexCoveredData {
         read_(rawData);
     }
 
-    public ClientboundLTCDataPacket getPacket(@Nullable BlockPos pos){
+    public CustomPacketPayload getPacket(@Nullable BlockPos pos){
         if(holder.getLevel().isClientSide) return null;
 
         if(isEmpty()){
@@ -204,14 +207,14 @@ public class LatexCoveredData {
         private Serializer(){}
 
         @Override
-        public @NotNull LatexCoveredData read(@NotNull IAttachmentHolder holder, @NotNull ByteArrayTag tag) {
+        public @NotNull LatexCoveredData read(@NotNull IAttachmentHolder holder, @NotNull ByteArrayTag tag, HolderLookup.@NotNull Provider lookup) {
             LatexCoveredData data = new LatexCoveredData(holder);
             if(!tag.isEmpty()) data.read_(tag.getAsByteArray());
             return data;
         }
 
         @Override
-        public @Nullable ByteArrayTag write(@NotNull LatexCoveredData attachment) {
+        public @Nullable ByteArrayTag write(@NotNull LatexCoveredData attachment, HolderLookup.@NotNull Provider lookup) {
             if(attachment.isEmpty()) return null;
             return new ByteArrayTag(attachment.write());
         }

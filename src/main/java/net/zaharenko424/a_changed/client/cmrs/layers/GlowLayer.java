@@ -25,6 +25,6 @@ public class GlowLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>>
         model.setAllVisible(true);
         model.setDrawAll(false);
         model.setupDrawGlow(false);
-        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.eyes(renderer.getTextureLocation(pLivingEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 1,1, 1, 1);
+        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.eyes(renderer.getTextureLocation(pLivingEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, -1);
     }
 }

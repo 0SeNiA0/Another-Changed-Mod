@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.block.smalldecor;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -45,9 +44,9 @@ public class MetalCan extends SmallDecorBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || hand != InteractionHand.MAIN_HAND || player.isCrouching())
-            return super.use(state, level, pos, player, hand, pHit);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide || player.isCrouching())
+            return super.useWithoutItem(state, level, pos, player, hitResult);
         openCloseCan(state, pos, level);
         return InteractionResult.SUCCESS;
     }

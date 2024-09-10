@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -136,6 +137,10 @@ public class ModelPart {
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay) {
         render(poseStack, consumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color){
+        render(poseStack, consumer, light, overlay, FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color), FastColor.ARGB32.alpha(color));
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
@@ -402,8 +407,8 @@ public class ModelPart {
                 for(Vertex vertex : quad.vertices) {
                     poseM.transform(pos.set(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
                     if(normals != null) normal.transform(vector3f1.set(normals.get(vertices.indexOf(vertex.pos)))); else vector3f1.set(vector3f);
-                    consumer.vertex(pos.x(), pos.y(), pos.z(),
-                            r, g, b, alpha,
+                    consumer.addVertex(pos.x(), pos.y(), pos.z(),//TODO rgba to int / replace addVertex with something better
+                            FastColor.ARGB32.colorFromFloat(alpha, r, g, b),
                             vertex.u, vertex.v,
                             overlay, light,
                             vector3f1.x(), vector3f1.y(), vector3f1.z()
@@ -443,8 +448,8 @@ public class ModelPart {
             Vector3f vector3f = normal.transform(new Vector3f(this.normal));
             for(Vertex vertex : vertices) {
                 Vector4f vector4f = pose.transform(new Vector4f(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
-                consumer.vertex(vector4f.x(), vector4f.y(), vector4f.z(),
-                        r, g, b, alpha,
+                consumer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(),
+                        FastColor.ARGB32.colorFromFloat(alpha, r, g, b),
                         vertex.u, vertex.v,
                         overlay, light,
                         vector3f.x(), vector3f.y(), vector3f.z()
@@ -513,8 +518,8 @@ public class ModelPart {
             Vector4f pos = new Vector4f();
             for(Vertex vertex : vertices) {
                 pose.transform(pos.set(vertex.pos.x() / 16.0F, vertex.pos.y() / 16.0F, vertex.pos.z() / 16.0F, 1.0F));
-                consumer.vertex(pos.x(), pos.y(), pos.z(),
-                        r, g, b, alpha,
+                consumer.addVertex(pos.x(), pos.y(), pos.z(),
+                        FastColor.ARGB32.colorFromFloat(alpha, r, g, b),
                         vertex.u, vertex.v,
                         overlay, light,
                         vector3f.x(), vector3f.y(), vector3f.z()

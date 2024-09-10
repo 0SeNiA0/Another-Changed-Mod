@@ -12,6 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
+import net.zaharenko424.a_changed.recipe.SingleInputRecipe;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +23,18 @@ import java.util.Map;
 public class CompressorRecipeBuilder implements RecipeBuilder {
 
     private final CompressorRecipe recipe;
+    private final Item result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
-    public CompressorRecipeBuilder(@NotNull Ingredient ingredient, @NotNull ItemStack result){
-        recipe = new CompressorRecipe(ingredient, result);
+    public CompressorRecipeBuilder(String group, @NotNull Ingredient ingredient, @NotNull ItemStack result){
+        SingleInputRecipe.Serializer<?> serializer = RecipeRegistry.COMPRESSOR_RECIPE_SERIALIZER.get();
+        recipe = new CompressorRecipe(group, ingredient, result, serializer.defaultEnergyConsumption, serializer.defaultProcessingTime);
+        this.result = result.getItem();
+    }
+
+    public CompressorRecipeBuilder(String group, @NotNull Ingredient ingredient, @NotNull ItemStack result, int energyConsumption, int processingTime){
+        recipe = new CompressorRecipe(group, ingredient, result, energyConsumption, processingTime);
+        this.result = result.getItem();
     }
 
     @Override
@@ -40,7 +50,7 @@ public class CompressorRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull Item getResult() {
-        return recipe.getResultItem().getItem();
+        return result;
     }
 
     @Override

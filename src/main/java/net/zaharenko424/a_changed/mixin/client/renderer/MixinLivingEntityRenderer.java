@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
@@ -28,7 +29,7 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
     @Shadow protected M model;
 
     @Unique
-    private static final ResourceLocation mod$TEXTURE = AChanged.textureLoc("entity/latex_covered");
+    private static final ResourceLocation achanged$TEXTURE = AChanged.textureLoc("entity/latex_covered");
 
     protected MixinLivingEntityRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
@@ -46,10 +47,10 @@ public abstract class MixinLivingEntityRenderer <T extends LivingEntity, M exten
         pPoseStack.pushPose();
         pPoseStack.scale(1.02f, 1.02f, 1.02f);
         int primaryColor = TransfurManager.getTransfurType(pEntity).getPrimaryColor();
-        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(mod$TEXTURE)),
+
+        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(achanged$TEXTURE)),
                 pPackedLight, OverlayTexture.NO_OVERLAY,
-                (0xFF & (primaryColor >> 16)) / 255f, (0xFF & (primaryColor >> 8)) / 255f, (0xFF & primaryColor) / 255f,
-                progress / TransfurManager.TRANSFUR_TOLERANCE);
+                FastColor.ARGB32.color(FastColor.as8BitChannel(progress / TransfurManager.TRANSFUR_TOLERANCE), primaryColor));
         pPoseStack.popPose();
     }
 }

@@ -12,9 +12,10 @@ public class FriendlyGrabEffect extends UnRemovableRegen{
     }
 
     @Override
-    public void applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
         super.applyEffectTick(entity, amplifier);
         if(entity instanceof ServerPlayer player)
             player.getFoodData().eat(amplifier + 1, 1.0F);
+        return false;
     }
 }

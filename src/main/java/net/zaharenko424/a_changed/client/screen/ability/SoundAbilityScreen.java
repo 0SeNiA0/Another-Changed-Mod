@@ -64,7 +64,7 @@ public abstract class SoundAbilityScreen extends AbstractRadialMenuScreen {
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if(super.mouseClicked(pMouseX, pMouseY, pButton)) return true;
         if(selectedButton != -1){
-            PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(ability().getId(),
+            PacketDistributor.sendToServer(new ServerboundAbilityPacket(ability().getId(),
                     new FriendlyByteBuf(Unpooled.wrappedBuffer(new byte[]{(byte) selectedButton}))));
 
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

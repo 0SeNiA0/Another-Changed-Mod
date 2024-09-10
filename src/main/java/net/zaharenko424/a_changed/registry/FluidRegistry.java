@@ -1,9 +1,7 @@
 package net.zaharenko424.a_changed.registry;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -11,10 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-
 import static net.zaharenko424.a_changed.AChanged.MODID;
-import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 
 public class FluidRegistry {
 
@@ -22,56 +17,11 @@ public class FluidRegistry {
     public static final DeferredRegister<net.minecraft.world.level.material.Fluid> FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID,MODID);
 
     //Fluid types
-    public static final DeferredHolder<FluidType,FluidType> LATEX_SOLVENT_TYPE = FLUID_TYPES.register("latex_solvent",() -> new FluidType(FluidType.Properties.create()) {
-        @Override
-        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
-            consumer.accept(new IClientFluidTypeExtensions(){
-                @Override
-                public @NotNull ResourceLocation getStillTexture() {
-                    return resourceLoc("block/latex_solvent_still");
-                }
+    public static final DeferredHolder<FluidType, FluidType> LATEX_SOLVENT_TYPE = FLUID_TYPES.register("latex_solvent",() -> new FluidType(FluidType.Properties.create()));
 
-                @Override
-                public @NotNull ResourceLocation getFlowingTexture() {
-                    return resourceLoc("block/latex_solvent_flowing");
-                }
-            });
-        }
-    });
+    public static final DeferredHolder<FluidType, FluidType> WHITE_LATEX_TYPE = FLUID_TYPES.register("white_latex",() -> new FluidType(FluidType.Properties.create()));
 
-    public static final DeferredHolder<FluidType,FluidType> WHITE_LATEX_TYPE = FLUID_TYPES.register("white_latex",() -> new FluidType(FluidType.Properties.create()) {
-        @Override
-        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
-            consumer.accept(new IClientFluidTypeExtensions(){
-                @Override
-                public @NotNull ResourceLocation getStillTexture() {
-                    return resourceLoc("block/white_latex_still");
-                }
-
-                @Override
-                public @NotNull ResourceLocation getFlowingTexture() {
-                    return resourceLoc("block/white_latex_flowing");
-                }
-            });
-        }
-    });
-
-    public static final DeferredHolder<FluidType,FluidType> DARK_LATEX_TYPE = FLUID_TYPES.register("dark_latex",() -> new FluidType(FluidType.Properties.create()) {
-        @Override
-        public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) {
-            consumer.accept(new IClientFluidTypeExtensions(){
-                @Override
-                public @NotNull ResourceLocation getStillTexture() {
-                    return resourceLoc("block/dark_latex_still");
-                }
-
-                @Override
-                public @NotNull ResourceLocation getFlowingTexture() {
-                    return resourceLoc("block/dark_latex_flowing");
-                }
-            });
-        }
-    });
+    public static final DeferredHolder<FluidType, FluidType> DARK_LATEX_TYPE = FLUID_TYPES.register("dark_latex",() -> new FluidType(FluidType.Properties.create()));
 
     //Fluids
     public static final DeferredHolder<Fluid, BaseFlowingFluid> LATEX_SOLVENT_STILL = FLUIDS.register("latex_solvent", ()-> new BaseFlowingFluid.Source(solventProp()));

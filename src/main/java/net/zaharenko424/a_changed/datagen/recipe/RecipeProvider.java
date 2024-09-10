@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.datagen.recipe;
 
 import net.minecraft.advancements.Criterion;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
@@ -16,11 +17,13 @@ import net.zaharenko424.a_changed.registry.DNATypeRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 import static net.zaharenko424.a_changed.registry.ItemRegistry.*;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
-    public RecipeProvider(PackOutput p_248933_) {
-        super(p_248933_);
+    public RecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+        super(output, lookup);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
 
         //Compressor recipes
-        new CompressorRecipeBuilder(Ingredient.of(EMPTY_CANISTER.get().getDefaultInstance()), COMPRESSED_AIR_CANISTER.get().getDefaultInstance())
+        new CompressorRecipeBuilder("compressor", Ingredient.of(EMPTY_CANISTER.get().getDefaultInstance()), COMPRESSED_AIR_CANISTER.get().getDefaultInstance())
                 .unlockedBy(getHasName(EMPTY_CANISTER), has(EMPTY_CANISTER))
                 .save(out);
 
@@ -371,8 +374,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, FLASK_ITEM, 3)
                 .pattern(" G ")
                 .pattern("GGG")
-                .define('G', Tags.Items.GLASS)
-                .unlockedBy(getHasName(Items.GLASS), has(Tags.Items.GLASS))
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(Items.GLASS), has(Tags.Items.GLASS_BLOCKS))
                 .save(out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GAS_TANK_ITEM)
@@ -506,7 +509,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("GGG")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('W', ItemTagProvider.WIRES_COPPER)
-                .define('G', Tags.Items.GLASS)
+                .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
@@ -522,7 +525,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('L', Items.REDSTONE_LAMP)
                 .define('A', Tags.Items.GEMS_AMETHYST)
-                .define('G', Tags.Items.GLASS)
+                .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
@@ -590,7 +593,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("CGC")
                 .pattern(" C ")
                 .define('C', LATEX_RESISTANT_COATING)
-                .define('G', Tags.Items.GLASS)
+                .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy(getHasName(LATEX_RESISTANT_COATING), hasLRCoating)
                 .save(out);
 
@@ -607,7 +610,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("IGI")
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .define('P', Blocks.PISTON)
-                .define('G', Tags.Items.GLASS)
+                .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
@@ -825,7 +828,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TEST_TUBES_ITEM, 3)
                 .pattern("GGG")
                 .pattern("I I")
-                .define('G', Tags.Items.GLASS)
+                .define('G', Tags.Items.GLASS_BLOCKS)
                 .define('I', ItemTagProvider.PLATES_IRON)
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);

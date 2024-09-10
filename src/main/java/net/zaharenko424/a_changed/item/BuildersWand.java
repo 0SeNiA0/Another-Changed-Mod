@@ -1,10 +1,14 @@
 package net.zaharenko424.a_changed.item;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -19,9 +23,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.zaharenko424.a_changed.util.NBTUtils;
+import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,13 +39,16 @@ public class BuildersWand extends Item {
     @Override
     public boolean onEntitySwing(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
         if(entity.level().isClientSide) return true;
-        CompoundTag tag = stack.getOrCreateTag();
-        byte mode = tag.getByte("mode");
-        if(mode >= 3) mode = 0;
-        else mode++;
-        tag.putByte("mode", mode);
-        tag.remove("data");
-        if(entity instanceof Player player) player.sendSystemMessage(Component.literal("Mode set to " + Mode.values()[mode]));
+        Data data = stack.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, Data.DEF);
+
+        int ordinal = data.mode.ordinal();
+        if(ordinal >= 3) {
+            ordinal = 0;
+        } else ordinal++;
+        Mode mode = Mode.values()[ordinal];
+        stack.set(ComponentRegistry.BUILDERS_WAND_DATA, data.withMode(mode));
+
+        if(entity instanceof Player player) player.sendSystemMessage(Component.literal("Mode set to " + mode));
         return true;
     }
 
@@ -51,20 +57,21 @@ public class BuildersWand extends Item {
         ItemStack item = player.getItemInHand(hand);
         if(hand != InteractionHand.MAIN_HAND) return InteractionResultHolder.pass(item);
         if(level.isClientSide) return InteractionResultHolder.consume(item);
+
+        Data data = item.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, Data.DEF);
+
         if(player.isCrouching()){
-            item.getOrCreateTag().remove("data");
+            item.set(ComponentRegistry.BUILDERS_WAND_DATA, data.withPos(null));
             return InteractionResultHolder.consume(item);
         }
-        if(item.getTagElement("data") == null) return InteractionResultHolder.fail(item);
-        CompoundTag tag = item.getOrCreateTag();
-        CompoundTag data = tag.getCompound("data");
-        Mode mode = Mode.values()[tag.getByte("mode")];
-        if(mode == Mode.GROW) return InteractionResultHolder.pass(item);
-        boolean destroy = data.getBoolean("destroy");
-        if(!destroy && (player.getOffhandItem().isEmpty() || !(player.getOffhandItem().getItem() instanceof BlockItem)))
+
+        Mode mode = data.mode;
+        if(data.from == null || mode == Mode.GROW) return InteractionResultHolder.pass(item);
+
+        if(mode != Mode.DESTROY && (player.getOffhandItem().isEmpty() || !(player.getOffhandItem().getItem() instanceof BlockItem)))
             return InteractionResultHolder.fail(item);
 
-        BlockPos from = NBTUtils.getBlockPos(data);
+        BlockPos from = data.from;
         Vec3 vec = player.getLookAngle().multiply(2, 0, 2).add(player.position());
         BlockPos to = new BlockPos.MutableBlockPos(vec.x, vec.y, vec.z).immutable();
 
@@ -81,7 +88,7 @@ public class BuildersWand extends Item {
             BlockPos.betweenClosedStream(from, to).forEach(pos -> level.removeBlock(pos, false));
         }
 
-        item.getOrCreateTag().remove("data");
+        item.set(ComponentRegistry.BUILDERS_WAND_DATA, data.withPos(null));
         return InteractionResultHolder.consume(item);
     }
 
@@ -89,10 +96,12 @@ public class BuildersWand extends Item {
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         if(context.getLevel().isClientSide) return InteractionResult.CONSUME;
         ItemStack item = context.getItemInHand();
-        CompoundTag tag = item.getOrCreateTag();
+        Data data = item.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, Data.DEF);
+        
         BlockPos clicked = context.getClickedPos();
         Direction clickedFace = context.getClickedFace();
-        Mode mode = Mode.values()[tag.getByte("mode")];
+        Mode mode = data.mode;
+        
         if(mode == Mode.GROW){
             Level level = context.getLevel();
             BlockState state = level.getBlockState(clicked);
@@ -102,11 +111,11 @@ public class BuildersWand extends Item {
             return InteractionResult.CONSUME;
         }
 
-        if(tag.contains("data") && (mode == Mode.DESTROY || mode == Mode.REPLACE)) {
+        if(data.from != null && (mode == Mode.DESTROY || mode == Mode.REPLACE)) {
             Player player = context.getPlayer();
             Level level = context.getLevel();
             if(player == null) return InteractionResult.FAIL;
-            BlockPos from = NBTUtils.getBlockPos(tag.getCompound("data"));
+            BlockPos from = data.from;
 
             if(mode == Mode.DESTROY){
                 BlockPos.betweenClosedStream(from, clicked).forEach(pos -> level.removeBlock(pos, false));
@@ -118,14 +127,11 @@ public class BuildersWand extends Item {
                 });
             }
 
-            tag.remove("data");
+            item.set(ComponentRegistry.BUILDERS_WAND_DATA, data.withPos(null));
             return InteractionResult.CONSUME;
         }
 
-        CompoundTag data = new CompoundTag();
-        BlockPos pos = context.getClickedPos().relative(clickedFace);
-        NBTUtils.putBlockPos(data, pos);
-        tag.put("data", data);
+        item.set(ComponentRegistry.BUILDERS_WAND_DATA, data.withPos(clicked.relative(clickedFace)));
         return InteractionResult.CONSUME;
     }
 
@@ -142,8 +148,29 @@ public class BuildersWand extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        pTooltipComponents.add(Component.literal("mode: " + Mode.values()[pStack.getOrCreateTag().getByte("mode")]).withStyle(ChatFormatting.DARK_GREEN));
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("mode: " + stack.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, Data.DEF).mode).withStyle(ChatFormatting.DARK_GREEN));
+    }
+
+    public record Data(Mode mode, BlockPos from){
+
+        public static final Data DEF = new Data(Mode.BUILD, null);
+        
+        public static Codec<Data> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+                Codec.BYTE.xmap(b -> Mode.values()[b], mode -> (byte) mode.ordinal()).fieldOf("mode").forGetter(Data::mode),
+                BlockPos.CODEC.fieldOf("from").forGetter(Data::from)
+        ).apply(builder, Data::new));
+
+        public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+
+        public Data withMode(Mode mode){
+            return new Data(mode, from);
+        }
+
+        public Data withPos(BlockPos from){
+            return new Data(mode, from);
+        }
     }
 
     public enum Mode {

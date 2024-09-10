@@ -1,24 +1,21 @@
 package net.zaharenko424.a_changed.network.packets.ability;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
 import org.jetbrains.annotations.NotNull;
 
 public record ServerboundDeactivateAbilityPacket() implements CustomPacketPayload {
 
-    public static final ResourceLocation ID = AChanged.resourceLoc("deactivate_ability");
+    public static final Type<ServerboundDeactivateAbilityPacket> TYPE = new Type<>(AChanged.resourceLoc("deactivate_ability"));
 
-    public ServerboundDeactivateAbilityPacket(FriendlyByteBuf buf){
-        this();
-    }
+    private static final ServerboundDeactivateAbilityPacket INSTANCE = new ServerboundDeactivateAbilityPacket();
 
-    @Override
-    public void write(@NotNull FriendlyByteBuf buf) {}
+    public static final StreamCodec<FriendlyByteBuf, ServerboundDeactivateAbilityPacket> CODEC = StreamCodec.unit(INSTANCE);
 
     @Override
-    public @NotNull ResourceLocation id() {
-        return ID;
+    public @NotNull Type<ServerboundDeactivateAbilityPacket> type() {
+        return TYPE;
     }
 }

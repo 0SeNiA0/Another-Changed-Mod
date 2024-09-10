@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.datagen.worldgen;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
@@ -30,7 +30,7 @@ public class BiomeModifierProvider {
     public static final ResourceKey<BiomeModifier> WATER_LATEX_SPAWNS_RIVER = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS, "water_latex_spawns_river");
     public static final ResourceKey<BiomeModifier> ADD_ORANGE_TREE = Utils.resourceKey(NeoForgeRegistries.Keys.BIOME_MODIFIERS,"add_orange_tree");
 
-    public static void bootstrap(BootstapContext<BiomeModifier> context){
+    public static void bootstrap(BootstrapContext<BiomeModifier> context){
         HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
 

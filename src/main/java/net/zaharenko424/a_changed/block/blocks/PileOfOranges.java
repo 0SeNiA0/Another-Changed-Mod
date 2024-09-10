@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -23,7 +24,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.entity.block.PileOfOrangesEntity;
-import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,27 +53,31 @@ public class PileOfOranges extends Block implements EntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if(pLevel.isClientSide || pHand != InteractionHand.MAIN_HAND) return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
-        Vec3 clickedPos = pHit.getLocation();
-        if(!(pLevel.getBlockEntity(pPos) instanceof PileOfOrangesEntity oranges)) return InteractionResult.FAIL;
-        ItemStack item = pPlayer.getMainHandItem();
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return super.useWithoutItem(state, level, pos, player, hitResult);
 
-        if(item.is(ItemRegistry.ORANGE_ITEM)){
-            if(!validateClickPos(clickedPos, pPos) || !oranges.addOrange(clickedPos, (int) pPlayer.yHeadRot)) return InteractionResult.PASS;
-            if(!pPlayer.isCreative()) item.shrink(1);
-            return InteractionResult.SUCCESS;
+        if(!(level.getBlockEntity(pos) instanceof PileOfOrangesEntity oranges)) return InteractionResult.FAIL;
+
+        if(oranges.isEmpty()){
+            level.removeBlock(pos, false);
+            return InteractionResult.PASS;
         }
 
-        if(item.isEmpty()){
-            item = oranges.removeOrange(clickedPos);
-            if(oranges.isEmpty()) pLevel.removeBlock(pPos, false);
-            if(!item.isEmpty()){
-                ItemHandlerHelper.giveItemToPlayer(pPlayer, item);
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        ItemHandlerHelper.giveItemToPlayer(player, oranges.removeOrange(hitResult.getLocation()));
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+
+        if(!(level.getBlockEntity(pos) instanceof PileOfOrangesEntity oranges)) return ItemInteractionResult.FAIL;
+
+        Vec3 clickPos = hitResult.getLocation();
+        if(!validateClickPos(clickPos, pos) || !oranges.addOrange(clickPos, (int) player.yHeadRot)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        if(!player.isCreative()) stack.shrink(1);
+        return ItemInteractionResult.SUCCESS;
     }
 
     private boolean validateClickPos(Vec3 clickPos, BlockPos pos){

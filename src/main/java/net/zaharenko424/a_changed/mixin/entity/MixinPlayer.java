@@ -39,7 +39,7 @@ public abstract class MixinPlayer extends LivingEntity {
         if(!DamageSources.checkTarget(target)) return target.hurt(p_19946_, damage);
         if(target.hurt(DamageSources.transfur(null, this), damage)){
             float tfProgress = 5f;
-            if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF.get())) tfProgress += 5;
+            if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF)) tfProgress += 5;
             TransfurHandler.nonNullOf((LivingEntity) target)
                     .addTransfurProgress(tfProgress, Objects.requireNonNull(handler.getTransfurType()), TransfurContext.ADD_PROGRESS_DEF);
             return true;
@@ -50,20 +50,10 @@ public abstract class MixinPlayer extends LivingEntity {
     /**
      * @return  dimensions of specified pose when transfurred.
      */
-    @ModifyReturnValue(at = @At("RETURN"), method = "getDimensions")
+    @ModifyReturnValue(at = @At("RETURN"), method = "getDefaultDimensions")
     private EntityDimensions onGetDimensions(EntityDimensions original, Pose pose) {
         TransfurHandler handler = TransfurHandler.of(this);
         if(handler != null && handler.isTransfurred()) return handler.getTransfurType().getPoseDimensions(pose);
-        return original;
-    }
-
-    /**
-     * @return eye height of specified pose when transfurred.
-     */
-    @ModifyReturnValue(at = @At("RETURN"), method = "getStandingEyeHeight")
-    private float onGetEyeHeight(float original, Pose pose){
-        TransfurHandler handler = TransfurHandler.of(this);
-        if(handler != null && handler.isTransfurred()) return handler.getTransfurType().getEyeHeight(pose);
         return original;
     }
 
@@ -72,8 +62,8 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @ModifyReturnValue(at = @At("TAIL"), method = "canPlayerFitWithinBlocksAndEntitiesWhen")
     private boolean onCanFitWithinBlocksAndEntitiesWhen(boolean original, Pose pose){
-        if(pose != Pose.SWIMMING && getFeetBlockState().getBlock() instanceof VentDuct duct
-                && duct.getShape(getFeetBlockState(), level(), blockPosition(), CollisionContext.empty()).bounds().move(blockPosition()).intersects(getBoundingBox())) {
+        if(pose != Pose.SWIMMING && getInBlockState().getBlock() instanceof VentDuct duct
+                && duct.getShape(getInBlockState(), level(), blockPosition(), CollisionContext.empty()).bounds().move(blockPosition()).intersects(getBoundingBox())) {
             return false;
         }
         return original;

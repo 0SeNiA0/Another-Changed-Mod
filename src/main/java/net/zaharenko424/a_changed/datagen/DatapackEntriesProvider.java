@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.biome.Biome;
@@ -14,10 +14,10 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.datagen.worldgen.BiomeModifierProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.ConfiguredFeatureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.PlacedFeatureProvider;
-import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.worldgen.Biomes;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.DarkLatexBiome;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.WhiteLatexBiome;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
+import net.zaharenko424.a_changed.worldgen.Biomes;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
@@ -36,14 +36,14 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
         super(output, registries, BUILDER, Set.of(AChanged.MODID));
     }
 
-    private static void damageType(BootstapContext<DamageType> context){
+    private static void damageType(BootstrapContext<DamageType> context){
         context.register(DamageSources.assimilation, new DamageType("assimilation", DamageScaling.NEVER, 0));
         context.register(DamageSources.electricity, new DamageType("electricity", DamageScaling.NEVER, 0));
         context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0));
         context.register(DamageSources.transfur, new DamageType("transfur", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
     }
 
-    private static void biome(BootstapContext<Biome> context){
+    private static void biome(BootstrapContext<Biome> context){
         context.register(Biomes.DARK_LATEX_BIOME, DarkLatexBiome.biome(context));
         context.register(Biomes.WHITE_LATEX_BIOME, WhiteLatexBiome.biome(context));
     }

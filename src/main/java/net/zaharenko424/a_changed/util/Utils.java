@@ -3,17 +3,16 @@ package net.zaharenko424.a_changed.util;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.AChanged;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -22,24 +21,27 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 public class Utils {
 
-    public static final ResourceLocation NULL_LOC = new ResourceLocation("null", "null");
+    public static final ResourceLocation NULL_LOC = ResourceLocation.fromNamespaceAndPath("null", "null");
     public static final String NULL_STR = "null";
 
     public static <T> @NotNull ResourceKey<T> resourceKey(ResourceKey<? extends Registry<T>> registry, String str){
-        return ResourceKey.create(registry, new ResourceLocation(AChanged.MODID, str));
+        return ResourceKey.create(registry, ResourceLocation.fromNamespaceAndPath(AChanged.MODID, str));
     }
 
     @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
     public static <T> @NotNull T nonNullOrThrow(@Nullable T obj, RuntimeException exc) {
         if(obj == null) throw exc;
         return obj;
+    }
+
+    public static void sendToClient(ServerPlayer player, Packet<?> packet){
+        player.connection.send(packet);
     }
 
     public static int booleansToInt(boolean[] booleans){
@@ -61,8 +63,8 @@ public class Utils {
     }
 
     public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
-        if(stackWith.isEmpty()) return true;
-        return stackWith.getCount() < stackWith.getMaxStackSize() && ItemHandlerHelper.canItemStacksStack(stack, stackWith);
+        if(stackWith.isEmpty() || !ItemStack.isSameItemSameComponents(stack, stackWith)) return true;
+        return stackWith.getCount() < stackWith.getMaxStackSize();
     }
 
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
@@ -137,22 +139,10 @@ public class Utils {
         return -65.0F * limbSwing + limbSwing * limbSwing;
     }
 
-    public static @NotNull String getArmorTexture(ItemStack stack, EquipmentSlot slot, @Nullable String type) {
-        ArmorItem item = (ArmorItem) stack.getItem();
-        String texture = item.getMaterial().getName();
-        String domain = "minecraft";
-        int idx = texture.indexOf(':');
-        if (idx != -1) {
-            domain = texture.substring(0, idx);
-            texture = texture.substring(idx + 1);
-        }
-        return String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
-    }
-
     public static boolean test(@Nullable ItemStack stack, Ingredient ingredient){
         if(stack == null) return false;
         for(ItemStack itemstack : ingredient.getItems()) {
-            if(stack.getItem() == itemstack.getItem() && stack.getCount() >= itemstack.getCount() && Objects.equals(stack.getTag(), itemstack.getTag()) && stack.areAttachmentsCompatible(itemstack)) {
+            if(ItemStack.isSameItemSameComponents(stack, itemstack) && stack.getCount() >= itemstack.getCount()) {
                 return true;
             }
         }

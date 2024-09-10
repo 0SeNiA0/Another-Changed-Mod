@@ -1,24 +1,26 @@
 package net.zaharenko424.a_changed.recipe;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
+public class DNAExtractorRecipe implements Recipe<RecipeWrapper> {
 
-    private final PartialNBTIngredientFix ingredient;
-    private final ItemStack result;
+    protected final Ingredient ingredient;
+    protected final ItemStack result;
 
-    public DNAExtractorRecipe(PartialNBTIngredientFix ingredient, ItemStack result){
+    public DNAExtractorRecipe(Ingredient ingredient, ItemStack result){
         this.ingredient = ingredient;
         this.result = result;
     }
@@ -29,14 +31,23 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
     }
 
     @Override
-    public boolean matches(@NotNull Container container, int slot, @NotNull Level level) {
+    public boolean matches(@NotNull RecipeWrapper input, @NotNull Level level) {
+        return matches(input, 0, level);
+    }
+
+    public boolean matches(@NotNull RecipeWrapper container, int slot, @NotNull Level level) {
         if(level.isClientSide) return false;
         ItemStack item = container.getItem(slot);
         return ingredient.test(item);
     }
 
-    public @NotNull ItemStack assemble(@NotNull Container container, int slot) {
-        container.removeItem(slot, 1);
+    @Override
+    public @NotNull ItemStack assemble(@NotNull RecipeWrapper input, HolderLookup.@NotNull Provider registries) {
+        return assemble(input, 0);
+    }
+
+    public @NotNull ItemStack assemble(@NotNull RecipeWrapper input, int slot) {
+        input.shrink(slot, 1);
         return result.copy();
     }
 
@@ -49,51 +60,49 @@ public class DNAExtractorRecipe implements SlotAwareRecipe<Container> {
         return true;
     }
 
-    public @NotNull ItemStack getResultItem() {
-        return result.copy();
-    }
-
     @Override
-    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
-        return getResultItem();
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
+        return result;
     }
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return Serializer.INSTANCE;
+        return RecipeRegistry.DNA_EXTRACTOR_RECIPE_SERIALIZER.get();
     }
 
     @Override
     public @NotNull RecipeType<?> getType() {
-        return Type.INSTANCE;
+        return RecipeRegistry.DNA_EXTRACTOR_RECIPE.get();
     }
 
     public static class Serializer implements RecipeSerializer<DNAExtractorRecipe> {
 
-        public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<DNAExtractorRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                PartialNBTIngredientFix.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-                ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
-            ).apply(instance, DNAExtractorRecipe::new));
+        private final MapCodec<DNAExtractorRecipe> codec;
+        private final StreamCodec<RegistryFriendlyByteBuf, DNAExtractorRecipe> streamCodec;
 
-        @Override
-        public @NotNull Codec<DNAExtractorRecipe> codec() {
-            return CODEC;
+        public Serializer(){
+            codec = RecordCodecBuilder.mapCodec(builder -> builder.group(
+                    Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+                    ItemStack.CODEC.fieldOf("result").forGetter(p_300827_ -> p_300827_.result)
+            ).apply(builder, DNAExtractorRecipe::new));
+
+            streamCodec = StreamCodec.composite(
+                    Ingredient.CONTENTS_STREAM_CODEC,
+                    recipe -> recipe.ingredient,
+                    ItemStack.STREAM_CODEC,
+                    recipe -> recipe.result,
+                    DNAExtractorRecipe::new
+            );
         }
 
         @Override
-        public @NotNull DNAExtractorRecipe fromNetwork(@NotNull FriendlyByteBuf friendlyByteBuf) {
-            return new DNAExtractorRecipe(PartialNBTIngredientFix.fromNetwork(friendlyByteBuf), friendlyByteBuf.readItem());
+        public @NotNull MapCodec<DNAExtractorRecipe> codec() {
+            return codec;
         }
 
         @Override
-        public void toNetwork(@NotNull FriendlyByteBuf friendlyByteBuf, @NotNull DNAExtractorRecipe dnaExtractorRecipe) {
-            dnaExtractorRecipe.ingredient.toNetwork0(friendlyByteBuf);
-            friendlyByteBuf.writeItem(dnaExtractorRecipe.result);
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, DNAExtractorRecipe> streamCodec() {
+            return streamCodec;
         }
-    }
-
-    public static class Type implements RecipeType<DNAExtractorRecipe> {
-        public static final Type INSTANCE = new Type();
     }
 }

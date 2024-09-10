@@ -54,7 +54,7 @@ public final class ModelDefinitionCache {
 
         modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.bodyLayer());
 
-        ModLoader.get().postEvent(new RegisterModelDefinitionsEvent(modelCache));
+        ModLoader.postEvent(new RegisterModelDefinitionsEvent(modelCache));
     }
 
     public ModelPart bake(ModelLayerLocation location){

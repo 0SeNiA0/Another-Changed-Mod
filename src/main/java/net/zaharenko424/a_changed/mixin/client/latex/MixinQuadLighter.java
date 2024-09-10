@@ -23,19 +23,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinQuadLighter {
 
     @Unique
-    private CoveredWith mod$coveredWith;
+    private CoveredWith achanged$coveredWith;
 
     /**
      * Checks whether the block is latex covered.
      */
     @Inject(at = @At("TAIL"), method = "setup")
     private void onSetup(BlockAndTintGetter level, BlockPos pos, BlockState state, CallbackInfo ci){
-        mod$coveredWith = LatexCoveredData.of(Minecraft.getInstance().level.getChunkAt(pos)).getCoveredWith(pos);
+        achanged$coveredWith = LatexCoveredData.of(Minecraft.getInstance().level.getChunkAt(pos)).getCoveredWith(pos);
     }
 
     @Inject(at = @At("TAIL"), method = "reset")
     private void onReset(CallbackInfo ci){
-        mod$coveredWith = CoveredWith.NOTHING;
+        achanged$coveredWith = CoveredWith.NOTHING;
     }
 
     /**
@@ -44,11 +44,11 @@ public abstract class MixinQuadLighter {
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BakedQuad;isTinted()Z"),
             method = "process")
     private boolean onProcess(boolean original, @Local(argsOnly = true) BakedQuad quad){
-        if(mod$coveredWith == CoveredWith.NOTHING) return quad.isTinted();
+        if(achanged$coveredWith == CoveredWith.NOTHING) return quad.isTinted();
 
-        if(mod$coveredWith == CoveredWith.DARK_LATEX){
-            ((BakedQuadExtension)quad).mod$darkLatex();
-        } else ((BakedQuadExtension)quad).mod$whiteLatex();
+        if(achanged$coveredWith == CoveredWith.DARK_LATEX){
+            ((BakedQuadExtension)quad).achanged$darkLatex();
+        } else ((BakedQuadExtension)quad).achanged$whiteLatex();
 
         return quad.isTinted();
     }
@@ -56,11 +56,11 @@ public abstract class MixinQuadLighter {
     /**
      *  Resets BakedQuad texture to default if it was switched before rendering.
      */
-    @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFF[IIZ)V", shift = At.Shift.AFTER),
+    @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFFF[IIZ)V", shift = At.Shift.AFTER),
             method = "process")
     private void onPostProcess(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad, int overlay, CallbackInfo ci){
-        if(mod$coveredWith == CoveredWith.NOTHING) return;
+        if(achanged$coveredWith == CoveredWith.NOTHING) return;
 
-        ((BakedQuadExtension)quad).mod$clear();
+        ((BakedQuadExtension)quad).achanged$clear();
     }
 }

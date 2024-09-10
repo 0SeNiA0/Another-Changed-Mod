@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class UnTransfurSyringeItem extends AbstractSyringe {
 
     public UnTransfurSyringeItem(){
-        this(new Properties());
+        this(new Properties().rarity(Rarity.RARE));
     }
 
     protected UnTransfurSyringeItem(@NotNull Properties properties) {
@@ -30,11 +30,6 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
         if(!TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
         return super.use(pLevel, pPlayer, pUsedHand);
-    }
-
-    @Override
-    public @NotNull Rarity getRarity(@NotNull ItemStack pStack) {
-        return Rarity.RARE;
     }
 
     @Override

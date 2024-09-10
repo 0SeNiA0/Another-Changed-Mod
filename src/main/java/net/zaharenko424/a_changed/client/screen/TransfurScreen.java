@@ -33,7 +33,7 @@ public class TransfurScreen extends Screen {
     }
 
     private void sendPacket(boolean becomeTransfur){
-        PacketDistributor.SERVER.noArg().send(new ServerboundTransfurChoicePacket(becomeTransfur));
+        PacketDistributor.sendToServer(new ServerboundTransfurChoicePacket(becomeTransfur));
     }
 
     @Override

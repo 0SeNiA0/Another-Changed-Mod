@@ -139,7 +139,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG), blockLoc(ORANGE_TREE_LOG));
         pipe();
         simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
-                new ResourceLocation("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
+                ResourceLocation.withDefaultNamespace("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
         blockExisting(ROTATING_CHAIR);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
@@ -434,7 +434,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     }
 
     private void simpleItem(ResourceLocation id, ResourceLocation texture){
-        itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(new ResourceLocation("item/generated"))).texture("layer0", texture);
+        itemModels().getBuilder(id.getPath()).parent(models().getExistingFile(ResourceLocation.withDefaultNamespace("item/generated"))).texture("layer0", texture);
     }
 
     private void slabWithItem(DeferredBlock<? extends SlabBlock> slab, ResourceLocation texture){
@@ -451,9 +451,9 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                 .forAllStates(state -> {
                     Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
                     return switch (state.getValue(SmallCardboardBox.BOX_AMOUNT)){
-                        default -> horizontalRotatedModelAr(file1, direction);
                         case 2 -> horizontalRotatedModelAr(file2, direction);
                         case 3 -> horizontalRotatedModelAr(file3, direction);
+                        default -> horizontalRotatedModelAr(file1, direction);
                     };
                 });
         itemModels().getBuilder(SMALL_CARDBOARD_BOX.getId().getPath()).parent(file1);

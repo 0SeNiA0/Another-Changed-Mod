@@ -26,7 +26,7 @@ public class LatexEncoderTransferHandler extends BasicRecipeTransferHandler<Late
         IRecipeTransferError error = super.transferRecipe(container, recipe, recipeSlotsView, player, maxTransfer, doTransfer);
         if(error != null || !doTransfer) return error;
 
-        PacketDistributor.SERVER.noArg().send(new ServerboundLatexEncoderScreenPacket(container.getEntity().getBlockPos(),
+        PacketDistributor.sendToServer(new ServerboundLatexEncoderScreenPacket(container.getEntity().getBlockPos(),
                 0, recipe.getGender().ordinal()));
 
         return null;

@@ -16,7 +16,8 @@ public abstract class MixinFogRenderer {
     /**
      * Enables night vision for certain latexes.
      */
-    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hasEffect(Lnet/minecraft/world/effect/MobEffect;)Z", ordinal = 0), method = "setupColor")
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hasEffect(Lnet/minecraft/core/Holder;)Z", ordinal = 0),
+            method = "setupColor")
     private static boolean onSetupColor(boolean original, Camera camera){
         if(original) return true;
         Entity entity = camera.getEntity();

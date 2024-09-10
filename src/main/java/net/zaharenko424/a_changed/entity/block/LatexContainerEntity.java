@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -95,36 +96,36 @@ public class LatexContainerEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
-        handler.getStackInSlot(0).save(tag);
+        handler.getStackInSlot(0).save(lookup, tag);
         return tag;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        handleUpdateTag(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
+        handleUpdateTag(pkt.getTag(), lookup);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        handler.setStackInSlot(0,ItemStack.of(tag));
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        handler.setStackInSlot(0, ItemStack.parseOptional(lookup, tag));
     }
 
     @Override
-    public void load(CompoundTag p_155245_) {
-        super.load(p_155245_);
+    public void loadAdditional(CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(p_155245_, lookup);
         CompoundTag modTag = NBTUtils.modTag(p_155245_);
         if(!modTag.contains("latex")) return;
-        handler.setStackInSlot(0, ItemStack.of(modTag.getCompound("latex")));
+        handler.setStackInSlot(0, ItemStack.parseOptional(lookup, modTag.getCompound("latex")));
     }
 
     @Override
-    protected void saveAdditional(CompoundTag p_187471_) {
-        super.saveAdditional(p_187471_);
+    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(p_187471_, lookup);
         if(isEmpty()) return;
         CompoundTag item = new CompoundTag();
-        handler.getStackInSlot(0).save(item);
+        handler.getStackInSlot(0).save(lookup, item);
         NBTUtils.modTag(p_187471_).put("latex", item);
     }
 }

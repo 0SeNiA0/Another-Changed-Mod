@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.CoveredWith;
@@ -24,8 +25,8 @@ public abstract class MixinMultiPlayerGameMode {
      */
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;"),
             method = "continueDestroyBlock")
-    private SoundType onBlockHitSound(SoundType original, @Local(argsOnly = true) BlockPos pos){
+    private SoundType onBlockHitSound(SoundType original, @Local BlockState state, @Local(argsOnly = true) BlockPos pos){
         if(LatexCoveredData.of(minecraft.level.getChunkAt(pos)).getCoveredWith(pos) == CoveredWith.NOTHING) return original;
-        return BlockRegistry.DARK_LATEX_BLOCK.get().getSoundType(null);
+        return BlockRegistry.DARK_LATEX_BLOCK.get().getSoundType(state, minecraft.level, pos, null);
     }
 }

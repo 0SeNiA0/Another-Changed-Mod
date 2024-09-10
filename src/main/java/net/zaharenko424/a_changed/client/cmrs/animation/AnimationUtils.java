@@ -19,14 +19,14 @@ public interface AnimationUtils {
         modelpart1.xRot = -1.5F + p_102100_.xRot;
     }
 
-    static void animateCrossbowCharge(ModelPart p_102087_, ModelPart p_102088_, LivingEntity p_102089_, boolean p_102090_) {
-        ModelPart modelpart = p_102090_ ? p_102087_ : p_102088_;
-        ModelPart modelpart1 = p_102090_ ? p_102088_ : p_102087_;
+    static void animateCrossbowCharge(ModelPart rightArm, ModelPart leftArm, LivingEntity livingEntity, boolean p_102090_) {
+        ModelPart modelpart = p_102090_ ? rightArm : leftArm;
+        ModelPart modelpart1 = p_102090_ ? leftArm : rightArm;
         modelpart.yRot = p_102090_ ? 0.8F : -0.8F;
         modelpart.xRot = 0.97079635F;
         modelpart1.xRot = modelpart.xRot;
-        float f = (float) CrossbowItem.getChargeDuration(p_102089_.getUseItem());
-        float f1 = Mth.clamp((float)p_102089_.getTicksUsingItem(), 0.0F, f);
+        float f = (float) CrossbowItem.getChargeDuration(livingEntity.getUseItem(), livingEntity);
+        float f1 = Mth.clamp((float)livingEntity.getTicksUsingItem(), 0.0F, f);
         float f2 = f1 / f;
         modelpart1.yRot = Mth.lerp(f2, 0.4F, 0.85F) * (float)(p_102090_ ? -1 : 1);
         modelpart1.xRot = Mth.lerp(f2, modelpart1.xRot, (float) Math.PI / 2);

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class AirConditioner extends HorizontalTwoBlockMultiBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE = Shapes.box(-0.625, 0.03125, 0.4375, 0.875, 1, 1);

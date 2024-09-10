@@ -6,7 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +35,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static net.zaharenko424.a_changed.util.StateProperties.UNLOCKED;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.box(0.0625, 0.1875, 0.625, 0.9375, 0.8125, 1);
@@ -67,23 +68,32 @@ public class Keypad extends HorizontalDirectionalBlock implements EntityBlock {
         };
     }
 
-    @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide||p_60503_.getValue(UNLOCKED)) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
-        BlockEntity entity=p_60504_.getBlockEntity(p_60505_);
+    public boolean use(BlockState state, Level level, BlockPos pos, Player player) {
+        if(level.isClientSide || state.getValue(UNLOCKED)) return false;
+        BlockEntity entity = level.getBlockEntity(pos);
         if(entity instanceof KeypadEntity keypad){
             if(keypad.isCodeSet()){
-                sendPacket(p_60506_, true, keypad.codeLength(), p_60505_);
-                return InteractionResult.SUCCESS;
+                sendPacket(player, true, keypad.codeLength(), pos);
+                return true;
             }
-            sendPacket(p_60506_, false,4, p_60505_);
-            return InteractionResult.SUCCESS;
+            sendPacket(player, false,4, pos);
+            return true;
         }
-        return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+        return false;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     private void sendPacket(Player player, boolean isPasswordSet, int length, BlockPos pos){
-        PacketDistributor.PLAYER.with((ServerPlayer) player).send(new ClientboundOpenKeypadPacket(isPasswordSet, length, pos));
+        PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundOpenKeypadPacket(isPasswordSet, length, pos));
     }
 
     @Nullable

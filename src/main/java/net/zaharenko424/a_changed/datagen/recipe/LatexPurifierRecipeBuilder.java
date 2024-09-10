@@ -12,6 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
+import net.zaharenko424.a_changed.recipe.SingleInputRecipe;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +23,18 @@ import java.util.Map;
 public class LatexPurifierRecipeBuilder implements RecipeBuilder {
 
     private final LatexPurifierRecipe recipe;
+    private final Item result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     public LatexPurifierRecipeBuilder(@NotNull Ingredient ingredient, @NotNull ItemStack result){
-        recipe = new LatexPurifierRecipe(ingredient, result);
+        SingleInputRecipe.Serializer<?> serializer = RecipeRegistry.LATEX_PURIFIER_RECIPE_SERIALIZER.get();
+        recipe = new LatexPurifierRecipe("", ingredient, result, serializer.defaultEnergyConsumption, serializer.defaultProcessingTime);
+        this.result = result.getItem();
+    }
+
+    public LatexPurifierRecipeBuilder(String group, @NotNull Ingredient ingredient, @NotNull ItemStack result, int energyConsumption, int processingTime){
+        recipe = new LatexPurifierRecipe(group, ingredient, result, energyConsumption, processingTime);
+        this.result = result.getItem();
     }
 
     @Override
@@ -40,7 +50,7 @@ public class LatexPurifierRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull Item getResult() {
-        return recipe.getResultItem().getItem();
+        return result;
     }
 
     @Override

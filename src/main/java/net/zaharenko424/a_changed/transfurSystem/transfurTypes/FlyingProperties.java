@@ -9,7 +9,6 @@ public class FlyingProperties extends TransfurType.Properties {
 
     protected FlyingProperties(ResourceLocation resourceLocation, Latex latex) {
         super(resourceLocation, latex);
-        eyeHeight(1.75f, 1.5f);
         airReductionModifier(.5f);
         swimSpeedModifier(-.25f);
         addAbility(AbilityRegistry.FALL_FLYING_PASSIVE);

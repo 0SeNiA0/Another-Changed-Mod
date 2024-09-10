@@ -24,8 +24,8 @@ description = '''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId="smartbrainlib"
     type = "required"
-    versionRange = "[1.8,)"
+    versionRange = "[${smartbrain_version},)"
     ordering = "NONE"
-    side = "SERVER"
+    side = "BOTH"
 [[accessTransformers]]
     file = "accesstransformer.cfg"

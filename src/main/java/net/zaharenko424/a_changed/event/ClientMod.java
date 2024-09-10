@@ -1,20 +1,34 @@
 package net.zaharenko424.a_changed.event;
 
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.atest.TestModel;
 import net.zaharenko424.a_changed.atest.TestRenderer;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.client.cmrs.CustomBEWLR;
 import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.overlay.*;
@@ -29,19 +43,20 @@ import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
 import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
 import net.zaharenko424.a_changed.event.custom.LoadModelsToCacheEvent;
-import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
-import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.registry.MenuRegistry;
+import net.zaharenko424.a_changed.item.AbstractSyringeRifle;
+import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static net.zaharenko424.a_changed.AChanged.BLUE_GAS_PARTICLE;
-import static net.zaharenko424.a_changed.AChanged.MODID;
+import static net.zaharenko424.a_changed.AChanged.*;
+import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
+
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientMod {
 
     @SubscribeEvent
@@ -73,7 +88,7 @@ public class ClientMod {
     }
 
     @SubscribeEvent
-    public static void onRegisterGui(RegisterGuiOverlaysEvent event){
+    public static void onRegisterGui(RegisterGuiLayersEvent event){
         event.registerBelowAll(AChanged.resourceLoc("ability_overlay"), AbilityOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("transfur"), TransfurOverlay.OVERLAY);
         event.registerBelowAll(AChanged.resourceLoc("pure_white_latex"), PureWhiteLatexOverlay.OVERLAY);
@@ -93,6 +108,76 @@ public class ClientMod {
         event.register((itemStack, i) ->
                 event.getBlockColors().getColor(((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
                 , null, null, i), BlockRegistry.ORANGE_LEAVES);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterItemExtensions(RegisterClientExtensionsEvent event){
+        //Items
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return CustomBEWLR.getInstance();
+            }
+        }, ItemRegistry.ABSOLUTE_SOLVER.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public HumanoidModel.ArmPose getArmPose(@NotNull LivingEntity entityLiving, @NotNull InteractionHand hand, @NotNull ItemStack rifle) {
+                IItemHandler handler = rifle.getCapability(Capabilities.ItemHandler.ITEM);
+                AbstractSyringeRifle item = (AbstractSyringeRifle) rifle.getItem();
+                return item.hasAmmo(handler) && item.hasFuel(rifle, handler) ? HumanoidModel.ArmPose.BOW_AND_ARROW
+                        : HumanoidModel.ArmPose.ITEM;
+            }
+        }, ItemRegistry.PNEUMATIC_SYRINGE_RIFLE.asItem(), ItemRegistry.SYRINGE_COIL_GUN.asItem());
+
+        //Fluids
+        event.registerFluidType(new IClientFluidTypeExtensions(){
+            @Override
+            public @NotNull ResourceLocation getStillTexture() {
+                return resourceLoc("block/latex_solvent_still");
+            }
+
+            @Override
+            public @NotNull ResourceLocation getFlowingTexture() {
+                return resourceLoc("block/latex_solvent_flowing");
+            }
+        }, FluidRegistry.LATEX_SOLVENT_TYPE.get());
+
+        event.registerFluidType(new IClientFluidTypeExtensions(){
+            @Override
+            public @NotNull ResourceLocation getStillTexture() {
+                return resourceLoc("block/white_latex_still");
+            }
+
+            @Override
+            public @NotNull ResourceLocation getFlowingTexture() {
+                return resourceLoc("block/white_latex_flowing");
+            }
+        }, FluidRegistry.WHITE_LATEX_TYPE.get());
+
+        event.registerFluidType(new IClientFluidTypeExtensions(){
+            @Override
+            public @NotNull ResourceLocation getStillTexture() {
+                return resourceLoc("block/dark_latex_still");
+            }
+
+            @Override
+            public @NotNull ResourceLocation getFlowingTexture() {
+                return resourceLoc("block/dark_latex_flowing");
+            }
+        }, FluidRegistry.DARK_LATEX_TYPE.get());
+
+        //Effects
+        event.registerMobEffect(new IClientMobEffectExtensions() {
+            @Override
+            public boolean isVisibleInInventory(MobEffectInstance instance) {
+                return false;
+            }
+            @Override
+            public boolean isVisibleInGui(MobEffectInstance instance) {
+                return false;
+            }
+        }, MobEffectRegistry.FRESH_AIR.get(), MobEffectRegistry.GRAB_COOLDOWN.get());
     }
 
     @SubscribeEvent

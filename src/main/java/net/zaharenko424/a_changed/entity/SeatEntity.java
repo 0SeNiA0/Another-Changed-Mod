@@ -74,8 +74,8 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(RENDER_PLAYER,true);
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        builder.define(RENDER_PLAYER, true);
     }
 
     @Override

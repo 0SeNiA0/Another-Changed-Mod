@@ -25,12 +25,12 @@ public class SyringeProjectile extends AbstractArrow {
     private TransfurType transfurType = null;
 
     public SyringeProjectile(Level pLevel) {
-        super(EntityRegistry.SYRINGE_PROJECTILE.get(), pLevel, ItemStack.EMPTY);
+        super(EntityRegistry.SYRINGE_PROJECTILE.get(), pLevel);
         setBaseDamage(.01);
     }
 
     public SyringeProjectile(Level level, LivingEntity shooter, TransfurType transfurType){
-        super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY);
+        super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY, ItemStack.EMPTY);
         this.transfurType = transfurType;
         setBaseDamage(.01);
     }
@@ -47,7 +47,7 @@ public class SyringeProjectile extends AbstractArrow {
         Block.popResource(level(), blockPosition(), ItemRegistry.SYRINGE_ITEM.get().getDefaultInstance());
         if(transfurType == null || !DamageSources.checkTarget(entity)) return;
         entity.hurt(DamageSources.transfur(this, getOwner()), .5f);
-        TransfurHandler.nonNullOf((LivingEntity) entity)
+        TransfurHandler.nonNullOf((LivingEntity) entity)//TODO move to LatexSyringe effect()
                 .addTransfurProgress(10f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
     }
 
@@ -57,10 +57,15 @@ public class SyringeProjectile extends AbstractArrow {
     }
 
     @Override
+    protected @NotNull ItemStack getDefaultPickupItem() {
+        return getPickupItem();
+    }
+
+    @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if(tag.contains(TransfurManager.TRANSFUR_TYPE_KEY))
-            transfurType = TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TransfurManager.TRANSFUR_TYPE_KEY)));
+            transfurType = TransfurManager.getTransfurType(ResourceLocation.parse(tag.getString(TransfurManager.TRANSFUR_TYPE_KEY)));
     }
 
     @Override

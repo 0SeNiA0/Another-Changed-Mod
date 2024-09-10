@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.attachments;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -113,7 +114,7 @@ public class GrabData implements AbilityData {
 
     public boolean canGrab(LivingEntity potentialTarget) {//TODO limit grabbable entities to transfurrable & latexes(?)
         return potentialTarget != null && getGrabbedBy() == null && getGrabbedEntity() == null
-                && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())
+                && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN)
                 && (potentialTarget.getType().is(AChanged.TRANSFURRABLE_TAG) || potentialTarget instanceof LatexBeast)
                 && mode.checkTarget(potentialTarget);
     }
@@ -135,11 +136,11 @@ public class GrabData implements AbilityData {
         dataOf(grabbedEntity).setGrabbedBy(holder);
         if(target instanceof ServerPlayer player1 && mode == GrabMode.FRIENDLY) {
             player1.setGameMode(GameType.SPECTATOR);
-            player1.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB.get(), -1, 0, false, false));
+            player1.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB, -1, 0, false, false));
         }
 
-        if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF.get(), grabDuration, 0, false, false));
-        if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF.get(), -1, 0, false, false));
+        if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF, grabDuration, 0, false, false));
+        if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF, -1, 0, false, false));
         activated = true;
         syncClients();
     }
@@ -152,26 +153,26 @@ public class GrabData implements AbilityData {
             if(grabbedEntity instanceof ServerPlayer player1 && mode == GrabMode.FRIENDLY) {
                 player1.setCamera(null);
                 player1.setGameMode(GameType.SURVIVAL);
-                player1.removeEffect(MobEffectRegistry.FRIENDLY_GRAB.get());
+                player1.removeEffect(MobEffectRegistry.FRIENDLY_GRAB);
             }
-            if(mode.givesDebuffToTarget) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF.get());
+            if(mode.givesDebuffToTarget) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF);
             dataOf(grabbedEntity).setGrabbedBy(null);
         }
 
         grabbedEntity = null;
-        if(mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF.get());
-        holder.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN.get(), grabCooldown, 0, false, false));
+        if(mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF);
+        holder.addEffect(new MobEffectInstance(MobEffectRegistry.GRAB_COOLDOWN, grabCooldown, 0, false, false));
         activated = false;
         syncClients();
     }
 
     public void syncClients(){
         if(holder.level().isClientSide) return;
-        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(holder).send(updatePacket());
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, updatePacket());
     }
 
     public void syncClient(@NotNull ServerPlayer packetReceiver) {
-        PacketDistributor.PLAYER.with(packetReceiver).send(updatePacket());
+        PacketDistributor.sendToPlayer(packetReceiver, updatePacket());
     }
 
     private ClientboundAbilitySyncPacket updatePacket() {
@@ -202,7 +203,7 @@ public class GrabData implements AbilityData {
         private Serializer() {}
 
         @Override
-        public @NotNull GrabData read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag) {
+        public @NotNull GrabData read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
             GrabData data = new GrabData(holder);
             if(!(holder instanceof Player)) return data;
 
@@ -212,7 +213,7 @@ public class GrabData implements AbilityData {
         }
 
         @Override
-        public @Nullable CompoundTag write(@NotNull GrabData data) {
+        public @Nullable CompoundTag write(@NotNull GrabData data, HolderLookup.@NotNull Provider lookup) {
             if(!(data.holder instanceof Player)) return null;
 
             CompoundTag tag = new CompoundTag();

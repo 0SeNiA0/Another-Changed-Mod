@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
@@ -54,7 +54,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = AChanged.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = AChanged.MODID, value = Dist.CLIENT)
 public class ClientEvent {
 
     @SubscribeEvent
@@ -164,7 +164,7 @@ public class ClientEvent {
         event.setCanceled(true);
     }
 
-    public static void renderShape(PoseStack p_109783_, VertexConsumer p_109784_, VoxelShape p_109785_,
+    public static void renderShape(PoseStack p_109783_, VertexConsumer consumer, VoxelShape p_109785_,
                                    double p_109786_, double p_109787_, double p_109788_,
                                    float r, float g, float b, float a) {
         PoseStack.Pose posestack$pose = p_109783_.last();
@@ -177,14 +177,12 @@ public class ClientEvent {
                     f /= f3;
                     f1 /= f3;
                     f2 /= f3;
-                    p_109784_.vertex(posestack$pose.pose(), (float)(p_234280_ + p_109786_), (float)(p_234281_ + p_109787_), (float)(p_234282_ + p_109788_))
-                            .color(r, g, b, a)
-                            .normal(posestack$pose.normal(), f, f1, f2)
-                            .endVertex();
-                    p_109784_.vertex(posestack$pose.pose(), (float)(p_234283_ + p_109786_), (float)(p_234284_ + p_109787_), (float)(p_234285_ + p_109788_))
-                            .color(r, g, b, a)
-                            .normal(posestack$pose.normal(), f, f1, f2)
-                            .endVertex();
+                    consumer.addVertex(posestack$pose.pose(), (float)(p_234280_ + p_109786_), (float)(p_234281_ + p_109787_), (float)(p_234282_ + p_109788_))
+                            .setColor(r, g, b, a)
+                            .setNormal(posestack$pose, f, f1, f2);
+                    consumer.addVertex(posestack$pose.pose(), (float)(p_234283_ + p_109786_), (float)(p_234284_ + p_109787_), (float)(p_234285_ + p_109788_))
+                            .setColor(r, g, b, a)
+                            .setNormal(posestack$pose, f, f1, f2);
                 }
         );
     }

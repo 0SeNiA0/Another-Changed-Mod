@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.item;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -12,18 +11,16 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
-import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-
-import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TYPE_KEY;
 
 public class LatexSyringeItem extends AbstractSyringe {
 
@@ -37,7 +34,7 @@ public class LatexSyringeItem extends AbstractSyringe {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(TransfurManager.isTransfurred(pPlayer) || !NBTUtils.hasModTag(pPlayer.getItemInHand(pUsedHand).getTag())) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
+        if(TransfurManager.isTransfurred(pPlayer) || !pPlayer.getItemInHand(pUsedHand).has(ComponentRegistry.TRANSFUR_TYPE)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
         return super.use(pLevel, pPlayer, pUsedHand);
     }
 
@@ -50,29 +47,22 @@ public class LatexSyringeItem extends AbstractSyringe {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack p_41421_, @Nullable Level p_41422_, @NotNull List<Component> p_41423_, @NotNull TooltipFlag p_41424_) {
-        super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
-        ResourceLocation transfurType = decodeTransfur(p_41421_);
-        if(transfurType == null) return;
-        try {
-            p_41423_.add(TransfurManager.getTransfurType(transfurType).fancyName());
-        } catch (Exception ex) {
-            p_41423_.add(Component.literal("Invalid transfur type " + transfurType));
-        }
+    public void appendHoverText(@NotNull ItemStack syringe, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(syringe, context, tooltipComponents, tooltipFlag);
+        if(syringe.has(ComponentRegistry.TRANSFUR_TYPE)){
+            tooltipComponents.add(TransfurManager.getTransfurType(syringe.get(ComponentRegistry.TRANSFUR_TYPE)).fancyName());
+        } else tooltipComponents.add(Component.literal("Invalid transfur type!"));
     }
 
     public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
         ItemStack syringe = ItemRegistry.LATEX_SYRINGE_ITEM.toStack();
-        CompoundTag tag = syringe.hasTag() ? syringe.getTag() : new CompoundTag();
-        NBTUtils.modTag(tag).putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());
-        syringe.setTag(tag);
+        syringe.set(ComponentRegistry.TRANSFUR_TYPE, transfurType.id);
         return syringe;
     }
 
     public static @Nullable ResourceLocation decodeTransfur(@NotNull ItemStack latexSyringe){
         if(!(latexSyringe.getItem() instanceof LatexSyringeItem)) throw new IllegalArgumentException("latexSyringe must be an instance of LatexSyringeItem");
-        if(!latexSyringe.hasTag()) return null;
-        CompoundTag modTag = NBTUtils.modTag(latexSyringe.getTag());
-        return modTag.contains(TRANSFUR_TYPE_KEY) ? new ResourceLocation(modTag.getString(TRANSFUR_TYPE_KEY)) : null;
+        if(!latexSyringe.has(ComponentRegistry.TRANSFUR_TYPE)) return null;
+        return latexSyringe.get(ComponentRegistry.TRANSFUR_TYPE);
     }
 }

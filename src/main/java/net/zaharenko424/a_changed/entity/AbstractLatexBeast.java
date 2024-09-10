@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -11,7 +10,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
@@ -100,7 +98,7 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     }
 
     @Override
-    public @NotNull EntityDimensions getDimensions(Pose pPose) {
+    public @NotNull EntityDimensions getDefaultDimensions(Pose pPose) {
         return transfurType.getPoseDimensions(pPose);
     }
 
@@ -112,7 +110,6 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
                 new OneRandomBehaviour<>(
                         new SetPlayerLookTarget<E>()
                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < lookRangeSqr)
-                                .stopIf(latex -> !latex.isAlive() || distanceToSqr(latex) > lookRangeSqr)
                                 .runFor(latex -> latex.random.nextInt(60, 120)),
                         new SetRandomLookTarget<>())
         );
@@ -122,11 +119,8 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     public boolean doHurtTarget(Entity target) {
         if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
 
-        int i = EnchantmentHelper.getFireAspect(this);
-        if (i > 0) target.setSecondsOnFire(i * 4);
-
         if(!target.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
-        doEnchantDamageEffects(this, target);
+
         setLastHurtMob(target);
         TransfurHandler.nonNullOf((LivingEntity) target)
                 .addTransfurProgress(5f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
@@ -151,12 +145,12 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        onFinalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData) {
+        onFinalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
-    protected void onFinalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag tag){
+    protected void onFinalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData){
         setCanPickUpLoot(level.getRandom().nextFloat() < 0.55F * difficulty.getSpecialMultiplier());
     }
 }

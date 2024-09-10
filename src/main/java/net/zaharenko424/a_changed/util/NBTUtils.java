@@ -2,18 +2,12 @@ package net.zaharenko424.a_changed.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-
-import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TYPE_KEY;
 
 @ParametersAreNonnullByDefault
 public class NBTUtils {
@@ -24,15 +18,6 @@ public class NBTUtils {
         if(tag.contains(KEY)) return tag.getCompound(KEY);
         tag.put(KEY, new CompoundTag());
         return tag.getCompound(KEY);
-    }
-
-    public static boolean hasModTag(@Nullable CompoundTag tag){
-        return tag != null && tag.contains(KEY);
-    }
-
-    public static @Nullable TransfurType readTransfurType(CompoundTag tag){
-        if(!tag.contains(TransfurManager.TRANSFUR_TYPE_KEY)) return null;
-        return TransfurManager.getTransfurType(new ResourceLocation(tag.getString(TRANSFUR_TYPE_KEY)));
     }
 
     public static void putBlockPos(CompoundTag tag, BlockPos pos){

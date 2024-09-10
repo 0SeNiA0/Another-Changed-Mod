@@ -1,9 +1,13 @@
 package net.zaharenko424.a_changed.datagen;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -35,8 +39,14 @@ import java.util.stream.Collectors;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
 
 public class BlockLootTableProvider extends BlockLootSubProvider {
-    public BlockLootTableProvider() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+
+    private static final Set<Item> EXPLOSION_RESISTANT = Set.of(
+            ItemRegistry.LATEX_RESISTANT_BLOCK_ITEM.get(),
+            ItemRegistry.LATEX_RESISTANT_COATING.get()
+    );
+
+    public BlockLootTableProvider(HolderLookup.Provider lookup) {
+        super(EXPLOSION_RESISTANT, FeatureFlags.REGISTRY.allFlags(), lookup);
     }
 
     @Override
@@ -156,21 +166,23 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     }
 
     private void createOrangeLeavesDrops(){
-        Block leaves=ORANGE_LEAVES.get();
+        HolderLookup.RegistryLookup<Enchantment> lookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+        Block leaves = ORANGE_LEAVES.get();
         add(leaves, createLeavesDrops(leaves,ORANGE_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES)
         .withPool(
-            LootPool.lootPool().when(HAS_SHEARS.invert().and(HAS_NO_SILK_TOUCH))
+            LootPool.lootPool().when(HAS_SHEARS.invert().and(doesNotHaveSilkTouch()))
                 .add(
                     applyExplosionCondition(leaves, LootItem.lootTableItem(ItemRegistry.ORANGE_ITEM))
-                    .when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))
+                    .when(BonusLevelTableCondition.bonusLevelFlatChance(lookup.getOrThrow(Enchantments.FORTUNE), 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))
                 )
         ));
     }
 
     private void crystalDrops(Crystal crystal, ItemLike shard){
+        HolderLookup.RegistryLookup<Enchantment> lookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
         add(crystal, createSilkTouchDispatchTable(crystal, LootItem.lootTableItem(shard)
                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))
-                .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
+                .apply(ApplyBonusCount.addOreBonusCount(lookup.getOrThrow(Enchantments.FORTUNE)))));
     }
 
     private void derelictMachineDrops(AbstractDerelictMachine derelictMachine, float dropMultiplier){
@@ -202,13 +214,14 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     }
 
     private void doublePartCrystal(TallCrystal crystal, ItemLike shard){
+        HolderLookup.RegistryLookup<Enchantment> lookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
         add(crystal, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(crystal)
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART2,0)))
-                        .add(applyExplosionCondition(crystal, LootItem.lootTableItem(crystal).when(HAS_SILK_TOUCH)
+                        .add(applyExplosionCondition(crystal, LootItem.lootTableItem(crystal).when(hasSilkTouch())
                                 .otherwise(LootItem.lootTableItem(shard)
                                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1,2)))
-                                        .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))))
+                                        .apply(ApplyBonusCount.addOreBonusCount(lookup.getOrThrow(Enchantments.FORTUNE))))))
                 ));
     }
 

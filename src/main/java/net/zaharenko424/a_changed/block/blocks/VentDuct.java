@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.block.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -86,15 +85,15 @@ public class VentDuct extends ConnectedTextureBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if(pPlayer.getFeetBlockState().is(this) || !pPlayer.isCrouching()
-                || pPlayer.distanceToSqr(pHit.getLocation()) > 9
-                || !getShape(pState, pLevel, pPos, CollisionContext.empty()).bounds().deflate(.5 / 16).move(pPos).contains(pHit.getLocation()))
-            return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
-        Vec3 pos = pPos.getCenter();
-        pPlayer.teleportTo(pos.x, pos.y, pos.z);
-        pPlayer.setPose(Pose.SWIMMING);
-        return InteractionResult.sidedSuccess(pLevel.isClientSide);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull BlockHitResult hitResult) {
+        if(player.getInBlockState().is(this) || !player.isCrouching()
+                || player.distanceToSqr(hitResult.getLocation()) > 9
+                || !getShape(state, level, pos, CollisionContext.empty()).bounds().deflate(.5 / 16).move(pos).contains(hitResult.getLocation()))
+            return super.useWithoutItem(state, level, pos, player, hitResult);
+        Vec3 vec = pos.getCenter();
+        player.teleportTo(vec.x, vec.y, vec.z);
+        player.setPose(Pose.SWIMMING);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

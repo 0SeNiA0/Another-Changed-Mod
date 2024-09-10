@@ -1,6 +1,9 @@
 package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
@@ -21,8 +24,10 @@ import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -33,11 +38,8 @@ public abstract class TransfurType {
 
     protected final int primaryColor;
     protected final int secondaryColor;
-    protected final float eyeHeightStanding;
-    protected final float eyeHeightCrouching;
-    protected final float eyeHeightSwimming;
     protected final Map<Pose, EntityDimensions> dimensions;
-    public final ImmutableMultimap<Attribute, AttributeModifier> modifiers;
+    public final ImmutableMultimap<Holder<Attribute>, AttributeModifier> modifiers;
     protected final Gender gender;
     protected final boolean organic;
     protected final Consumer<LivingEntity> onTransfur;
@@ -52,9 +54,6 @@ public abstract class TransfurType {
         latex = properties.latex;
         primaryColor = properties.primaryColor;
         secondaryColor = properties.secondaryColor;
-        eyeHeightStanding = properties.eyeHeightStanding;
-        eyeHeightCrouching = properties.eyeHeightCrouching;
-        eyeHeightSwimming = properties.eyeHeightSwimming;
         dimensions = Map.copyOf(properties.dimensions);
         modifiers = ImmutableMultimap.copyOf(properties.modifiers);
         gender = properties.gender;
@@ -84,14 +83,6 @@ public abstract class TransfurType {
 
     public int getSecondaryColor(){
         return secondaryColor;
-    }
-
-    public float getEyeHeight(@NotNull Pose pose){
-        return switch (pose) {
-            case SWIMMING, FALL_FLYING, SPIN_ATTACK -> eyeHeightSwimming;
-            case CROUCHING -> eyeHeightCrouching;
-            default -> eyeHeightStanding;
-        };
     }
 
     public EntityDimensions getPoseDimensions(Pose pose){
@@ -126,27 +117,20 @@ public abstract class TransfurType {
 
     public static class Properties {
 
-        static final UUID airDecreaseSpeed = UUID.fromString("3425eeff-ee2d-44c9-91f5-67044b84baa0");
-        static final UUID healthModifier = UUID.fromString("ecc275cc-dc18-4792-bca2-0adf7f331bbc");
-        static final UUID swimSpeed = UUID.fromString("577c604f-686a-4224-b9f6-e619c5f2ee06");
-
         protected ResourceLocation location;
         protected Latex latex;
         protected int primaryColor = -1644826;
         protected int secondaryColor = -4934476;
-        protected float eyeHeightStanding = 1.62f;
-        protected float eyeHeightCrouching = 1.27f;
-        protected float eyeHeightSwimming = .4f;
         protected final Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
-                Pose.STANDING, EntityDimensions.scalable(.6f,1.9f),
+                Pose.STANDING, EntityDimensions.scalable(.6f,1.9f).withEyeHeight(1.75f),
                 Pose.SLEEPING, EntityDimensions.fixed(0.2f, 0.2f),
-                Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f),
-                Pose.SWIMMING, EntityDimensions.scalable(0.6f, 0.6f),
-                Pose.SPIN_ATTACK, EntityDimensions.scalable(0.6f, 0.6f),
-                Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f),
+                Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
+                Pose.SWIMMING, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
+                Pose.SPIN_ATTACK, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
+                Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f).withEyeHeight(1.5f),
                 Pose.DYING, EntityDimensions.scalable(.2f,.2f)
         ));
-        protected final Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+        protected final Multimap<Holder<Attribute>, AttributeModifier> modifiers = HashMultimap.create();
         protected Gender gender = Gender.NONE;
         protected boolean organic = false;
         protected Consumer<LivingEntity> onTransfur;
@@ -171,24 +155,6 @@ public abstract class TransfurType {
             return this;
         }
 
-        public Properties eyeHeight(float standing){
-            eyeHeightStanding = standing;
-            return this;
-        }
-
-        public Properties eyeHeight(float standing, float crouching){
-            eyeHeightStanding = standing;
-            eyeHeightCrouching = crouching;
-            return this;
-        }
-
-        public Properties eyeHeight(float standing, float crouching, float swimming){
-            eyeHeightStanding = standing;
-            eyeHeightCrouching = crouching;
-            eyeHeightSwimming = swimming;
-            return this;
-        }
-
         public Properties poseSize(Pose pose, EntityDimensions size){
             dimensions.put(pose, size);
             return this;
@@ -205,19 +171,18 @@ public abstract class TransfurType {
          * @param amount amount.
          * @param op modifier operation.
          */
-        public Properties addModifier(Attribute attribute, String name, double amount, AttributeModifier.Operation op){
-            return addModifier(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)), name, amount, op));
+        public Properties addModifier(Holder<Attribute> attribute, String name, double amount, AttributeModifier.Operation op){
+            return addModifier(attribute, new AttributeModifier(AChanged.resourceLoc(name), amount, op));
         }
 
         /**
          * @param attribute attribute to add modifier to.
-         * @param uuid UUID of modifier. Must be unique!
-         * @param name name of the modifier.
+         * @param id ResourceLocation of modifier. Must be unique!
          * @param amount amount.
          * @param op modifier operation.
          */
-        public Properties addModifier(Attribute attribute, UUID uuid, String name, double amount, AttributeModifier.Operation op){
-            return addModifier(attribute, new AttributeModifier(uuid, name, amount, op));
+        public Properties addModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, AttributeModifier.Operation op){
+            return addModifier(attribute, new AttributeModifier(id, amount, op));
         }
 
         /**
@@ -225,7 +190,7 @@ public abstract class TransfurType {
          * @param attribute attribute to add modifier to.
          * @param modifier modifier to add.
          */
-        public Properties addModifier(Attribute attribute, AttributeModifier modifier){
+        public Properties addModifier(Holder<Attribute> attribute, AttributeModifier modifier){
             modifiers.put(attribute, modifier);
             return this;
         }
@@ -234,21 +199,21 @@ public abstract class TransfurType {
          * Zero (default) -> no changes to minecraft logic. Operation - Addition.<p>modifier > 0 -> faster air depletion. <p>-1 < modifier < 0 -> slower depletion. <p>modifier <= -1 -> no depletion.
          */
         public Properties airReductionModifier(float airReductionModifier){
-            return addModifier(AChanged.AIR_DECREASE_SPEED.get(), airDecreaseSpeed, "a", airReductionModifier, AttributeModifier.Operation.ADDITION);
+            return addModifier(AChanged.AIR_DECREASE_SPEED, "latex_air_decrease_speed_mod", airReductionModifier, AttributeModifier.Operation.ADD_VALUE);
         }
 
         /**
          * Operation - Addition
          */
         public Properties maxHealthModifier(int maxHealthModifier){
-            return addModifier(Attributes.MAX_HEALTH, healthModifier, "a", maxHealthModifier, AttributeModifier.Operation.ADDITION);
+            return addModifier(Attributes.MAX_HEALTH, "latex_health_mod", maxHealthModifier, AttributeModifier.Operation.ADD_VALUE);
         }
 
         /**
          * Higher modifier -> higher swim speed. <p> Operation - Multiply Total.
          */
         public Properties swimSpeedModifier(float swimSpeedModifier){
-            return addModifier(NeoForgeMod.SWIM_SPEED.value(), swimSpeed, "a", swimSpeedModifier, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            return addModifier(NeoForgeMod.SWIM_SPEED, "latex_swim_speed_mod", swimSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
 
         public Properties gender(Gender gender){

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class OrangeJuiceItem extends Item {
 
     public OrangeJuiceItem(@NotNull Item.Properties p_42979_) {
-        super(p_42979_.food(new FoodProperties.Builder().nutrition(6).saturationMod(.5f).build()).stacksTo(16));
+        super(p_42979_.food(new FoodProperties.Builder().nutrition(6).saturationModifier(.5f).build()).stacksTo(16));
     }
 
     @Override

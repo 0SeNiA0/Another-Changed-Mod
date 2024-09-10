@@ -27,7 +27,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class TallCrystal extends NotRotatedMultiBlock {
 
     private static final VoxelShape SHAPE0 = Shapes.or(

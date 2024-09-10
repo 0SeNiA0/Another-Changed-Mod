@@ -49,7 +49,7 @@ public class GrabEscapeScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void init() {
-        if(!TransfurManager.isGrabbed(minecraft.player) || !minecraft.player.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
+        if(!TransfurManager.isGrabbed(minecraft.player) || !minecraft.player.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)) {
             minecraft.setScreen(null);
             return;
         }
@@ -77,7 +77,7 @@ public class GrabEscapeScreen extends AbstractRadialMenuScreen {
     public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.time_remaining", minecraft.player.getEffect(MobEffectRegistry.GRABBED_DEBUFF.get()).getDuration() / 20f), halfWidth, halfHeight - 8, Color.RED.getRGB());
+        guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.time_remaining", minecraft.player.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration() / 20f), halfWidth, halfHeight - 8, Color.RED.getRGB());
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.clicks", clicks, type.clicksRequired), halfWidth, halfHeight + 8, Color.CYAN.getRGB());
     }
 
@@ -120,13 +120,13 @@ public class GrabEscapeScreen extends AbstractRadialMenuScreen {
     @Override
     public void tick() {
         super.tick();
-        if(!TransfurManager.isGrabbed(minecraft.player) || !minecraft.player.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
+        if(!TransfurManager.isGrabbed(minecraft.player) || !minecraft.player.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)) {
             minecraft.setScreen(null);
             return;
         }
 
         if(clicks >= type.clicksRequired){
-            PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+            PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                     new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(true)));
             minecraft.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
             minecraft.setScreen(null);

@@ -8,7 +8,6 @@ import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.zaharenko424.a_changed.AChanged;
@@ -34,9 +33,9 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
 
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 builder -> builder.group(
-                        ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(TriggerInstance::player),
-                        ExtraCodecs.strictOptionalField(DamageSourcePredicate.CODEC, "damage_source").forGetter(TriggerInstance::damagePredicate),
-                        ExtraCodecs.strictOptionalField(TransfurTypePredicate.CODEC, "transfur_type_predicate").forGetter(TriggerInstance::transfurType)
+                        Codec.optionalField("player", EntityPredicate.ADVANCEMENT_CODEC, false).forGetter(TriggerInstance::player),
+                        Codec.optionalField("damage_source", DamageSourcePredicate.CODEC, false).forGetter(TriggerInstance::damagePredicate),
+                        Codec.optionalField("transfur_type_predicate", TransfurTypePredicate.CODEC, false).forGetter(TriggerInstance::transfurType)
                 ).apply(builder, TriggerInstance::new));
 
         public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurred(){

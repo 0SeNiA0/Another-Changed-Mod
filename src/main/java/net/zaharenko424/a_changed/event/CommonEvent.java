@@ -18,29 +18,28 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.commands.*;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
@@ -56,7 +55,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = AChanged.MODID)
+@EventBusSubscriber(modid = AChanged.MODID)
 public class CommonEvent {
 
     @SubscribeEvent
@@ -87,11 +86,11 @@ public class CommonEvent {
         if(event.getEntity().level().isClientSide) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
-        PacketDistributor.PLAYER.with(player).send(new ClientboundTransfurToleranceSyncPacket());
+        PacketDistributor.sendToPlayer(player, new ClientboundTransfurToleranceSyncPacket());
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
         handler.syncClients();
-        if(handler.isBeingTransfurred()) PacketDistributor.PLAYER.with(player).send(new ClientboundOpenTransfurScreenPacket());
+        if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
 
         //GrabCapability.nonNullOf(player).syncClients();
         if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
@@ -132,8 +131,10 @@ public class CommonEvent {
             }
 
             BlockState above = level.getBlockState(pos.above());
-            if(above.getBlock() instanceof PileOfOranges oranges){
-                event.setCancellationResult(oranges.use(above, level, pos.above(), player, event.getHand(), event.getHitVec()));
+            if(above.getBlock() instanceof PileOfOranges){
+                if(item.isEmpty()) {
+                    event.setCancellationResult(above.useWithoutItem(level, player, event.getHitVec().withPosition(pos.above())));
+                } else event.setCancellationResult(above.useItemOn(item, level, player, event.getHand(), event.getHitVec().withPosition(pos.above())).result());
                 event.setCanceled(true);
                 return;
             }
@@ -211,8 +212,8 @@ public class CommonEvent {
     }
 
     private static void denyEvent(PlayerInteractEvent.RightClickBlock event){
-        event.setUseBlock(Event.Result.DENY);
-        event.setUseItem(Event.Result.DENY);
+        event.setUseBlock(TriState.FALSE);
+        event.setUseItem(TriState.FALSE);
         event.setCanceled(true);
     }
 
@@ -220,7 +221,8 @@ public class CommonEvent {
     public static void onBlockBreak(BlockEvent.BreakEvent event){
         Level level = (Level) event.getLevel();
         Player player = event.getPlayer();
-        if(level.isClientSide || player.isCreative() || !CommonHooks.isCorrectToolForDrops(event.getState(), player)) return;
+
+        if(level.isClientSide || player.isCreative() || !player.hasCorrectToolForDrops(event.getState(), level, event.getPos())) return;
 
         BlockPos pos = event.getPos();
         CoveredWith coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
@@ -232,9 +234,8 @@ public class CommonEvent {
     }
 
     @SubscribeEvent
-    public static void onLivingTick(LivingEvent.LivingTickEvent event){
-        if(event.getEntity().level().isClientSide) return;
-        LivingEntity entity = event.getEntity();
+    public static void onLivingTick(EntityTickEvent.Pre event){
+        if(event.getEntity().level().isClientSide || !(event.getEntity() instanceof LivingEntity entity)) return;
 
         TransfurHandler tfHandler = TransfurHandler.of(entity);
         if(tfHandler != null){
@@ -255,19 +256,19 @@ public class CommonEvent {
 
         if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
         if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
-            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT.get(),200));
+            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT,200));
     }
 
     /**
      * Reduce fall damage taken by cat transfurs
      */
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event){
+    public static void onLivingHurt(LivingDamageEvent.Pre event){
         LivingEntity entity = event.getEntity();
         if(event.getSource().is(DamageTypeTags.IS_FALL)){
             if((entity instanceof Player player && TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player))
                     || (entity instanceof AbstractLatexBeast latex && latex.transfurType.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())))
-                event.setAmount(event.getAmount() / 2);
+                event.setNewDamage(event.getNewDamage() / 2);
         }
     }
 
@@ -308,7 +309,7 @@ public class CommonEvent {
     public static void onChunkWatch(ChunkWatchEvent.Sent event){
         LatexCoveredData data = LatexCoveredData.of(event.getChunk());
         if(data.isEmpty()) return;
-        PacketDistributor.PLAYER.with(event.getPlayer()).send(data.getPacket(null));
+        PacketDistributor.sendToPlayer(event.getPlayer(), data.getPacket(null));
     }
 
     /**

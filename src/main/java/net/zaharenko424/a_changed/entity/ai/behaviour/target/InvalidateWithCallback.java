@@ -24,7 +24,7 @@ public class InvalidateWithCallback<E extends LivingEntity> extends InvalidateAt
             return;
 
         if (isTargetInvalid(entity, target) || !canAttack(entity, target) ||
-                isTiredOfPathing(entity) || this.customPredicate.applyAsBoolean(entity, target)) {
+                isTiredOfPathing(entity) || this.customPredicate.test(entity, target)) {
             BrainUtils.setTargetOfEntity(entity, null);
             if(onInvalidate != null) onInvalidate.accept(entity, target);
         }

@@ -14,7 +14,8 @@ public abstract class MixinLightTexture {
     /**
      * Enables night vision for certain latexes.
      */
-    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasEffect(Lnet/minecraft/world/effect/MobEffect;)Z", ordinal = 0), method = "updateLightTexture")
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasEffect(Lnet/minecraft/core/Holder;)Z", ordinal = 0),
+            method = "updateLightTexture")
     private boolean onUpdateLightTexture(boolean original){
         if(original) return true;
         Player player = Minecraft.getInstance().player;

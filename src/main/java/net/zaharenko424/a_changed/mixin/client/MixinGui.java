@@ -18,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinGui {
 
     @Unique
-    private int mod$primaryColor;
+    private int achanged$primaryColor;
     @Unique
-    private int mod$secondaryColor;
+    private int achanged$secondaryColor;
 
     /**
      * Manually render hearts.
@@ -31,19 +31,19 @@ public abstract class MixinGui {
 
         Player player = Minecraft.getInstance().player;
         if(player.isDeadOrDying()){
-            if(mod$primaryColor == 0 && mod$secondaryColor == 0) return;
+            if(achanged$primaryColor == 0 && achanged$secondaryColor == 0) return;
         } else if(!TransfurManager.isTransfurred(Minecraft.getInstance().player)) {
-            mod$primaryColor = 0;
-            mod$secondaryColor = 0;
+            achanged$primaryColor = 0;
+            achanged$secondaryColor = 0;
             return;
         } else {
             TransfurType transfurType = TransfurManager.getTransfurType(player);
-            mod$primaryColor = transfurType.getPrimaryColor();
-            mod$secondaryColor = transfurType.getSecondaryColor();
+            achanged$primaryColor = transfurType.getPrimaryColor();
+            achanged$secondaryColor = transfurType.getSecondaryColor();
         }
         ci.cancel();
 
-        int tmp = heartType == Gui.HeartType.NORMAL ? mod$primaryColor : mod$secondaryColor;
+        int tmp = heartType == Gui.HeartType.NORMAL ? achanged$primaryColor : achanged$secondaryColor;
 
         guiGraphics.setColor( (0xFF & (tmp >> 16)) / 255f,
                 (0xFF & (tmp >> 8)) / 255f,

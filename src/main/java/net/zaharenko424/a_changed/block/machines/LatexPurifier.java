@@ -2,8 +2,6 @@ package net.zaharenko424.a_changed.block.machines;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -11,7 +9,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +30,10 @@ public class LatexPurifier extends AbstractMachine {
         return new LatexPurifierEntity(pos, state);
     }
 
-    @Override @SuppressWarnings("deprecation")
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(player.isCrouching() || hand != InteractionHand.MAIN_HAND
-                || !(level.getBlockEntity(pos) instanceof LatexPurifierEntity purifier)) return InteractionResult.PASS;
+    public boolean use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        if(player.isCrouching() || !(level.getBlockEntity(pos) instanceof LatexPurifierEntity purifier)) return false;
         if(!level.isClientSide) player.openMenu(purifier, pos);
-        return InteractionResult.SUCCESS;
+        return true;
     }
 
     @Nullable

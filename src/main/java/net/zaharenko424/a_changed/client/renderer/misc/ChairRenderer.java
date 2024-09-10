@@ -48,7 +48,7 @@ public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
     }
 
     @Override
-    protected void renderNameTag(@NotNull RotatingChairEntity pEntity, @NotNull Component pDisplayName, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {}
+    protected void renderNameTag(@NotNull RotatingChairEntity entity, @NotNull Component displayName, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, float partialTick) {}
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull RotatingChairEntity pEntity) {

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
@@ -30,11 +31,11 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class MixinLivingEntity extends Entity implements ILivingEntityExtension {
 
     @Unique
-    protected float mod$airDecreaseDecimals = 0;
+    protected float achanged$airDecreaseDecimals = 0;
 
     @Shadow public abstract double getAttributeValue(Holder<Attribute> p_251296_);
 
-    @Shadow public abstract boolean hasEffect(MobEffect pEffect);
+    @Shadow public abstract boolean hasEffect(Holder<MobEffect> effect);
 
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
@@ -47,13 +48,13 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     private int onDecreaseAirSupply(int original, @Local(argsOnly = true) int currentAir){
         float airDecrease = (float) getAttributeValue(AChanged.AIR_DECREASE_SPEED);
         if(airDecrease == 0) return currentAir;
-        if(airDecrease == 1) return original;
+        if(airDecrease == 1 || original == currentAir) return original;
 
         int airReduction = (int) airDecrease;
         float decimals = airDecrease % 1;
-        if(decimals > .01) mod$airDecreaseDecimals += decimals;
-        if(mod$airDecreaseDecimals > 1){
-            mod$airDecreaseDecimals--;
+        if(decimals > .01) achanged$airDecreaseDecimals += decimals;
+        if(achanged$airDecreaseDecimals > 1){
+            achanged$airDecreaseDecimals--;
             airReduction++;
         }
 
@@ -65,9 +66,9 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
      */
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;"),
             method = "playBlockFallSound")
-    private SoundType onPlayBlockFallSound(SoundType original, @Local BlockPos pos){
+    private SoundType onPlayBlockFallSound(SoundType original, @Local BlockState state, @Local BlockPos pos){
         if(LatexCoveredData.of(level().getChunkAt(pos)).getCoveredWith(pos) == CoveredWith.NOTHING) return original;
-        return BlockRegistry.DARK_LATEX_BLOCK.get().getSoundType(null);
+        return BlockRegistry.DARK_LATEX_BLOCK.get().getSoundType(state, level(), pos, null);
     }
 
     /**

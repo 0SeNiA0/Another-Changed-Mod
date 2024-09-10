@@ -6,7 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -87,16 +89,27 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
         return CACHE.getShape(state.getValue(FACING), partId + (open ? 100 : 0), PARTS.get(partId).alignShape(open ? SHAPE_OPEN : SHAPE));
     }
 
-    @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHit) {
-        if(player.isCrouching()) return InteractionResult.PASS;
-        if(hand != InteractionHand.MAIN_HAND || level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+    public boolean use(BlockState state, Level level, BlockPos pos, Player player) {
+        if(player.isCrouching()) return false;
+
         BlockPos mainPos = getMainPos(state, pos);
         boolean open = !state.getValue(OPEN);
         setOpen(level.getBlockState(mainPos), mainPos, level, open);
         level.playSound(null, pos, open ? SoundRegistry.SPACE_DOOR_OPEN.get() : SoundRegistry.SPACE_DOOR_CLOSE.get(), SoundSource.BLOCKS);
         if(level.getBlockEntity(mainPos) instanceof CryoChamberEntity chamber) chamber.setOpen(open);
-        return InteractionResult.SUCCESS;
+        return true;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if(hand != InteractionHand.MAIN_HAND || level.isClientSide) return ItemInteractionResult.CONSUME_PARTIAL;
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     public void leak(BlockPos mainPos, BlockState mainState, Level level, int lvl){

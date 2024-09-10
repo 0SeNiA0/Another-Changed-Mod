@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.client.screen;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.StringSplitter;
@@ -181,7 +180,7 @@ public class NoteScreen extends Screen {
     private void saveChanges(boolean finalize) {
         if (isModified||finalize) {
             eraseEmptyTrailingPages();
-            PacketDistributor.SERVER.noArg().send(new ServerboundEditNotePacket(pages,notePos,finalize));
+            PacketDistributor.sendToServer(new ServerboundEditNotePacket(pages,notePos,finalize));
         }
     }
 
@@ -211,12 +210,10 @@ public class NoteScreen extends Screen {
             return true;
         } else if (finalized){
             return false;
-        } else if (SharedConstants.isAllowedChatCharacter(p_98085_)) {
+        } else {
             pageEdit.insertText(Character.toString(p_98085_));
             clearDisplayCache();
             return true;
-        } else {
-            return false;
         }
     }
 

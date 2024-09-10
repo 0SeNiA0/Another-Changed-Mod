@@ -117,7 +117,7 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         RenderType rendertype = getRenderType(entity, flag, flag1, minecraft.shouldEntityAppearGlowing(entity));
         if (rendertype != null) {
             int overlay = getOverlayCoords(entity, getWhiteOverlayProgress(entity, ticks));
-            model.renderToBuffer(poseStack, buffer.getBuffer(rendertype), light, overlay, 1, 1, 1, flag1 ? .15f : 1);
+            model.renderToBuffer(poseStack, buffer.getBuffer(rendertype), light, overlay, flag1 ? 654311423 : -1);
         }
 
         if (!entity.isSpectator()) {

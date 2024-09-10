@@ -30,6 +30,6 @@ public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEnti
 
         int progress = entity.getProgress();
         if(progress > 0)
-            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 22 * progress / LatexPurifierEntity.MAX_PROGRESS, 15, 256, 166);
+            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 22 * progress / entity.getRecipeProcessingTime(), 15, 256, 166);
     }
 }

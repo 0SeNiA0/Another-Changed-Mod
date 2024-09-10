@@ -47,7 +47,7 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    boolean hasFuel(@NotNull ItemStack rifle, @NotNull IItemHandler inventory) {
+    public boolean hasFuel(@NotNull ItemStack rifle, @NotNull IItemHandler inventory) {
         ItemStack canister = inventory.getStackInSlot(0);
         return !canister.isEmpty() && canister.is(ItemRegistry.COMPRESSED_AIR_CANISTER);
     }
@@ -79,12 +79,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level pLevel, @NotNull List<Component> tooltip, @NotNull TooltipFlag pIsAdvanced) {
-        super.appendHoverText(stack, pLevel, tooltip, pIsAdvanced);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
         ItemStack canister = inventory.getStackInSlot(0);
 
-        tooltip.add(Component.translatable("tooltip.a_changed.syringe_rifle_air",
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_air",
                 canister.isEmpty() || !(canister.getItem() instanceof CompressedAirCanister) ? 0
                         : canister.getMaxDamage() - canister.getDamageValue()).withStyle(ChatFormatting.GRAY));
 
@@ -92,7 +92,7 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
         for(int i = 1; i < 9; i++){
             if(!inventory.getStackInSlot(i).isEmpty()) count++;
         }
-        tooltip.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
     }
 
     @Nullable
