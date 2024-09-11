@@ -47,6 +47,7 @@ import static net.zaharenko424.a_changed.registry.MemoryTypeRegistry.MEMORY_TYPE
 import static net.zaharenko424.a_changed.registry.MenuRegistry.MENU_TYPES;
 import static net.zaharenko424.a_changed.registry.MobEffectRegistry.EFFECTS;
 import static net.zaharenko424.a_changed.registry.RecipeRegistry.RECIPE_SERIALIZERS;
+import static net.zaharenko424.a_changed.registry.RecipeRegistry.RECIPE_TYPES;
 import static net.zaharenko424.a_changed.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_TYPES;
 
@@ -124,6 +125,8 @@ public class AChanged {
         BLOCK_ENTITIES.register(modEventBus);
         COMPONENTS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
+        RECIPE_TYPES.register(modEventBus);
         TRANSFUR_TYPES.register(modEventBus);
         DNA_TYPES.register(modEventBus);
         EFFECTS.register(modEventBus);
@@ -134,7 +137,6 @@ public class AChanged {
         MEMORY_TYPES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
-        RECIPE_SERIALIZERS.register(modEventBus);
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
     }

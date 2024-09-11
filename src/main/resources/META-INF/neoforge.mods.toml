@@ -2,13 +2,13 @@ modLoader = "javafml"
 loaderVersion = "${loader_version_range}"
 license = "${mod_license}"
 [[mods]]
-modId = "${mod_id}"
-version = "${mod_version}"
-displayName = "${mod_name}"
-displayURL = "https://www.curseforge.com/minecraft/mc-mods/another-changed"
-logoFile = "logo.png"
-authors = "${mod_authors}"
-description = '''${mod_description}'''
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    displayURL = "https://www.curseforge.com/minecraft/mc-mods/another-changed"
+    logoFile = "logo.png"
+    authors = "${mod_authors}"
+    description = '''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId = "neoforge"
     type = "required"
@@ -27,5 +27,7 @@ description = '''${mod_description}'''
     versionRange = "[${smartbrain_version},)"
     ordering = "NONE"
     side = "BOTH"
+[[mixins]]
+    config="${mod_id}.mixins.json"
 [[accessTransformers]]
     file = "accesstransformer.cfg"

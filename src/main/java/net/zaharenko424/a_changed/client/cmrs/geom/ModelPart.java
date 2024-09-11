@@ -140,7 +140,7 @@ public class ModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color){
-        render(poseStack, consumer, light, overlay, FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color), FastColor.ARGB32.alpha(color));
+        render(poseStack, consumer, light, overlay, FastColor.ARGB32.red(color) / 255f, FastColor.ARGB32.green(color) / 255f, FastColor.ARGB32.blue(color) / 255f, FastColor.ARGB32.alpha(color) / 255f);
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {

@@ -26,7 +26,7 @@ public class HazmatArmorItem extends ArmorItem {
 
     @Override
     public @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        EquipmentSlot slot = getEquipmentSlot(stack);
+        EquipmentSlot slot = type.getSlot();
         if(slot == EquipmentSlot.BODY) return super.getDefaultAttributeModifiers(stack);
         return super.getDefaultAttributeModifiers(stack)
                 .withModifierAdded(LATEX_RESISTANCE, new AttributeModifier(AChanged.resourceLoc("hazmat_latex_resistance"),
