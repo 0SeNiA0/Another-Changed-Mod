@@ -12,7 +12,6 @@ import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.entity.LatexBeast;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -34,7 +33,7 @@ public class TransfurManager {
     public static final int MAX_ABILITIES = 6;
 
     public static boolean isTransfurred(@NotNull LivingEntity entity){
-        return entity instanceof LatexBeast || TransfurHandler.nonNullOf(entity).isTransfurred();
+        return entity instanceof AbstractLatexBeast || TransfurHandler.nonNullOf(entity).isTransfurred();
     }
 
     public static boolean isBeingTransfurred(@NotNull Player player){

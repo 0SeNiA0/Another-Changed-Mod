@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.event;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -180,8 +179,6 @@ public class CommonMod {
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
 
         event.put(YUFENG_DRAGON.get(), LatexBeast.createAttributes().build());
-//TMP DON'T FORGET TO REMOVE
-        event.put(TEST.get(), Zombie.createAttributes().build());
     }
 
     @SubscribeEvent
