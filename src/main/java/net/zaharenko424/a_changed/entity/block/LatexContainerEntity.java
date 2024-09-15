@@ -98,7 +98,7 @@ public class LatexContainerEntity extends BlockEntity {
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
-        handler.getStackInSlot(0).save(lookup, tag);
+        if(!handler.getStackInSlot(0).isEmpty()) handler.getStackInSlot(0).save(lookup, tag);
         return tag;
     }
 
@@ -109,7 +109,7 @@ public class LatexContainerEntity extends BlockEntity {
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
-        handler.setStackInSlot(0, ItemStack.parseOptional(lookup, tag));
+        if(!tag.isEmpty()) handler.setStackInSlot(0, ItemStack.parseOptional(lookup, tag));
     }
 
     @Override

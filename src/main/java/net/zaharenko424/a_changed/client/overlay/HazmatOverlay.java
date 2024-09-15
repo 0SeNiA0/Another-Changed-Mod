@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.overlay;
 
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
@@ -16,15 +15,14 @@ public class HazmatOverlay {
 
     public static final LayeredDraw.Layer OVERLAY = (guiGraphics, partialTick) -> {
         Minecraft minecraft = Minecraft.getInstance();
-        if(!minecraft.player.getItemBySlot(EquipmentSlot.HEAD).is(ItemRegistry.HAZMAT_HELMET.get())||!minecraft.options.getCameraType().isFirstPerson()) return;
+        if(!minecraft.player.getItemBySlot(EquipmentSlot.HEAD).is(ItemRegistry.HAZMAT_HELMET.get()) || !minecraft.options.getCameraType().isFirstPerson()) return;
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1f,1f,1f,1f);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        Window window = minecraft.getWindow();
-        int screenWidth = window.getScreenWidth();
-        int screenHeight = window.getScreenHeight();
-        guiGraphics.blit(TEXTURE,0,0,0,0,screenWidth, screenHeight, screenWidth, screenHeight);
+        int screenWidth = guiGraphics.guiWidth();
+        int screenHeight = guiGraphics.guiHeight();
+        guiGraphics.blit(TEXTURE,0,0,0,0, screenWidth, screenHeight, screenWidth, screenHeight);
     };
 }

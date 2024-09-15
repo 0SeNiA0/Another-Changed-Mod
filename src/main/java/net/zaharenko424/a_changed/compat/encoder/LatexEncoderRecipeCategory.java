@@ -77,7 +77,8 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
 
     @Override
     public void draw(@NotNull LatexEncoderRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth(), 45);
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
+        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 96, 64);
     }
 
     @Override

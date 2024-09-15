@@ -100,13 +100,8 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
 
     @Override
     public void tick() {
-        if(!enabled || getEnergy() < energyConsumption){
-            if(progress != 0) progress = 0;
-            setActive(false);
-            return;
-        }
-
-        if(currentRecipe != null && !currentRecipe.value().matches(container, level)){
+        if(!enabled || (currentRecipe != null
+                && (getEnergy() < energyConsumption || !currentRecipe.value().matches(container, level)))){
             setActive(false);
             return;
         }

@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.overlay;
 
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
@@ -15,8 +14,7 @@ public class PureWhiteLatexOverlay {
     private static boolean applyOverlay = false;
 
     public static final LayeredDraw.Layer OVERLAY = (guiGraphics, partialTick) -> {
-        Minecraft minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
+        Player player = Minecraft.getInstance().player;
 
         if(!player.isDeadOrDying()){
             if(!TransfurManager.isTransfurred(player) || TransfurManager.getTransfurType(player) != TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get()) {
@@ -31,9 +29,8 @@ public class PureWhiteLatexOverlay {
         RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
 
-        Window window = minecraft.getWindow();
-        int screenWidth = window.getScreenWidth();
-        int screenHeight = window.getScreenHeight();
+        int screenWidth = guiGraphics.guiWidth();
+        int screenHeight = guiGraphics.guiHeight();
         guiGraphics.blit(LATEX_OVERLAY,0,0,0,0,0, screenWidth, screenHeight, screenWidth, screenHeight);
         RenderSystem.disableBlend();
         RenderSystem.depthMask(true);

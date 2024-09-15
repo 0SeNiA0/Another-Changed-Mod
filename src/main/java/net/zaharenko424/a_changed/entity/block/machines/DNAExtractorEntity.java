@@ -27,11 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
+    public static final int energyConsumption = 64;
     public static final int maxProgress = 600;
 
     private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
@@ -46,11 +48,6 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     @Override
     ItemStackHandler initInv() {
         return new ItemStackHandler(8){
-            @Override
-            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot < 4;
-            }
-
             @Override
             protected void onContentsChanged(int slot) {
                 update();
@@ -80,8 +77,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 //Eats 64/t for now
     @Override
     public void tick() {
-        if(energyStorage.getEnergyStored() < 64) {
-            resetProgress();
+        if(energyStorage.getEnergyStored() < energyConsumption) {
             setActive(false);
             return;
         }
@@ -100,13 +96,12 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         }
 
         if(!hasAnyRecipes || !hasEnoughOutputSpace(map)){
-            resetProgress();
             setActive(false);
             return;
         }
 
         setActive(true);
-        energyStorage.addEnergy(-64);
+        energyStorage.addEnergy(-energyConsumption);
         rotationDeg = Mth.wrapDegrees(rotationDeg + 20);
 
         map.forEach((slot, r) -> {
@@ -116,24 +111,25 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
             }
             progress[slot] = 0;
             ItemStack result = r.get().value().assemble(container, slot);
-            ItemStack out;
+
             for(int i0 = 0; i0 < 4; i0++){
-                out = output.getStackInSlot(i0);
-                if(out.isEmpty() || ItemStack.isSameItemSameComponents(result, out)){
-                    int toAdd = Math.min(output.getSlotLimit(i0) - out.getCount(), result.getCount());
-                    output.setStackInSlot(i0, result.copyWithCount(out.getCount() + toAdd));
-                    result.shrink(toAdd);
-                }
-                if(result.isEmpty()) break;
+                result = output.insertItem(i0, result, false);
+                if(result.isEmpty()) return;
             }
         });
 
         update();
     }
 
+    @Override
+    protected void setActive(boolean active) {
+        if(!active) Arrays.fill(progress, 0);
+        super.setActive(active);
+    }
+
     private boolean hasEnoughOutputSpace(@NotNull Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> recipes){
         List<ItemStack> results = recipes.values().stream().filter(Optional::isPresent)
-                .map(optional -> optional.get().value().getResultItem(level.registryAccess())).toList();
+                .map(optional -> optional.get().value().getResultItem(level.registryAccess()).copy()).toList();
 
         List<ItemStack> outSlots = new ArrayList<>();
         for(int i = 0; i < 4; i++){
@@ -166,15 +162,6 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
             if(progress[i] > 0) return true;
         }
         return false;
-    }
-
-    private void resetProgress(){
-        boolean anyProgress = false;
-        for(int i = 0; i < 4;i++){
-            if(progress[i] != 0) anyProgress = true;
-            progress[i] = 0;
-        }
-        if(anyProgress) update();
     }
 
     @Override

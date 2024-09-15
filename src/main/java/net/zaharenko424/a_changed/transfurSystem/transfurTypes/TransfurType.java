@@ -6,12 +6,11 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
@@ -122,12 +121,14 @@ public abstract class TransfurType {
         protected int primaryColor = -1644826;
         protected int secondaryColor = -4934476;
         protected final Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
-                Pose.STANDING, EntityDimensions.scalable(.6f,1.9f).withEyeHeight(1.75f),
+                Pose.STANDING, EntityDimensions.scalable(.6f,1.9f)
+                        .withAttachments(EntityAttachments.builder().attach(EntityAttachment.VEHICLE, Player.DEFAULT_VEHICLE_ATTACHMENT)),
                 Pose.SLEEPING, EntityDimensions.fixed(0.2f, 0.2f),
                 Pose.FALL_FLYING, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
                 Pose.SWIMMING, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
                 Pose.SPIN_ATTACK, EntityDimensions.scalable(0.6f, 0.6f).withEyeHeight(.4f),
-                Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f).withEyeHeight(1.5f),
+                Pose.CROUCHING, EntityDimensions.scalable(0.6f, 1.6f)
+                        .withAttachments(EntityAttachments.builder().attach(EntityAttachment.VEHICLE, Player.DEFAULT_VEHICLE_ATTACHMENT)),
                 Pose.DYING, EntityDimensions.scalable(.2f,.2f)
         ));
         protected final Multimap<Holder<Attribute>, AttributeModifier> modifiers = HashMultimap.create();

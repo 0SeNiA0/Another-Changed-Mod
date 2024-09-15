@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.compat;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -11,7 +10,6 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
 import net.zaharenko424.a_changed.client.screen.machines.CompressorScreen;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
@@ -83,6 +81,7 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
 
     @Override
     public void draw(@NotNull CompressorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 20, 45);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth(), 45);
     }
 
@@ -92,8 +91,8 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
         builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(RecipeUtil.getResultItem(recipe));
     }
 
-    @Override
-    public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull CompressorRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(24, 18)));
-    }
+    //@Override//TODO use correct texture for arrow
+    //public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull CompressorRecipe recipe, @NotNull IFocusGroup focuses) {
+    //    builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(24, 18)));
+    //}
 }

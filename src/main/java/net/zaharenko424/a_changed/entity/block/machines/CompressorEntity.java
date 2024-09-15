@@ -47,7 +47,7 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, Ex
         return new ItemStackHandler(3){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot == 1 || (slot == 0 && checkItemEnergyCap(stack));
+                return slot != 0 || checkItemEnergyCap(stack);
             }
 
             @Override
@@ -85,13 +85,7 @@ public class CompressorEntity extends AbstractMachineEntity<ItemStackHandler, Ex
                     energyStorage.getMaxReceive(), false) != 0;
         }
 
-        if(getEnergy() < energyConsumption){
-            setActive(false);
-            if(changed) update();
-            return;
-        }
-
-        if(currentRecipe != null && !currentRecipe.value().matches(container, level)){
+        if(currentRecipe != null && (getEnergy() < energyConsumption || !currentRecipe.value().matches(container, level))){
             setActive(false);
             if(changed) update();
             return;

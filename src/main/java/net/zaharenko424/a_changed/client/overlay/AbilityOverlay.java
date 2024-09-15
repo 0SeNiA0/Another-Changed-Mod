@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.overlay;
 
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.world.entity.player.Player;
@@ -17,8 +16,7 @@ public class AbilityOverlay {
         if(!player.isDeadOrDying()) lastSelected = TransfurHandler.nonNullOf(player).getSelectedAbility();
         if(lastSelected == null) return;
 
-        Window window = Minecraft.getInstance().getWindow();
-        int screenHeight = window.getScreenHeight();
-        lastSelected.drawIcon(player, guiGraphics, window.getScreenWidth() / 16, screenHeight - screenHeight / 4, true);
+        int screenHeight = guiGraphics.guiHeight();
+        lastSelected.drawIcon(player, guiGraphics, guiGraphics.guiWidth() / 16, screenHeight - screenHeight / 4, true);
     };
 }

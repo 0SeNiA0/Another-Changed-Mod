@@ -178,7 +178,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     @Override
     public BrainActivityGroup<? extends WaterLatexBeast> getFightTasks() {// Retaliate redirects here
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)),
+                new InvalidateAttackTarget<>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                 new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                 new SetWalkTargetToAttackTarget<>().speedMod((latex, target) -> 1.8f),
                 new AnimatableMeleeAttack<>(0)
@@ -190,7 +190,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     public Map<Activity, BrainActivityGroup<? extends WaterLatexBeast>> getAdditionalTasks() {//  TargetTransfurrable goes here
         return Map.of(
                 AChanged.TRANSFUR_ATTACK.get(), new BrainActivityGroup<WaterLatexBeast>(AChanged.TRANSFUR_ATTACK.get()).behaviours(
-                        new InvalidateAttackTarget<WaterLatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)),
+                        new InvalidateAttackTarget<WaterLatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                         new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                         new SetWalkTargetToAttackTarget<>().speedMod((latex, target) -> 1.8f),
                         new CustomHeldBehaviour<AbstractLatexBeast>(latex -> AbilityRegistry.HYPNOSIS_ABILITY.get().serverTick(latex))
@@ -208,6 +208,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
                                 .onInvalidate((latex, entity) -> {
                                     BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
                                     AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
+                                    BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
                                 }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
                         new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
                                 .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))

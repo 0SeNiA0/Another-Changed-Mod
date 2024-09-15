@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.overlay;
 
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
@@ -16,8 +15,7 @@ public class CryoChamberOverlay {
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("overlay/cryo_chamber");
 
     public static final LayeredDraw.Layer OVERLAY = (guiGraphics, partialTick) -> {
-        Minecraft minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
+        Player player = Minecraft.getInstance().player;
         Level level = player.level();
         CryoChamberEntity chamberEntity = CryoChamber.getEntity(player.blockPosition(), level);
 
@@ -28,8 +26,7 @@ public class CryoChamberOverlay {
         RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
 
-        Window window = minecraft.getWindow();
-        guiGraphics.blit(TEXTURE, 0, 0, 0, 0, window.getScreenWidth(), window.getScreenHeight());
+        guiGraphics.blit(TEXTURE, 0, 0, 0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight());
         RenderSystem.disableBlend();
         RenderSystem.depthMask(true);
         RenderSystem.enableDepthTest();

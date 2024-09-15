@@ -180,7 +180,7 @@ public class ItemRegistry {
     public static final DeferredItem<Item> LATEX_RESISTANT_COATING = ITEMS.registerSimpleItem("latex_resistant_coating");
     public static final DeferredItem<Item> LATEX_RESISTANT_COMPOUND = ITEMS.registerSimpleItem("latex_resistant_compound");
     public static final DeferredItem<Item> LATEX_RESISTANT_FABRIC = ITEMS.registerSimpleItem("latex_resistant_fabric");
-    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE_ITEM = ITEMS.register("latex_syringe", LatexSyringeItem::new);
+    public static final DeferredItem<LatexSyringeItem> LATEX_SYRINGE = ITEMS.register("latex_syringe", LatexSyringeItem::new);
     public static final DeferredItem<Item> ORANGE_ITEM = ITEMS.register("orange", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(.3f).build())));
     public static final DeferredItem<OrangeJuiceItem> ORANGE_JUICE_ITEM = ITEMS.register("orange_juice", ()-> new OrangeJuiceItem(new Item.Properties()));
     public static final DeferredItem<PneumaticSyringeRifle> PNEUMATIC_SYRINGE_RIFLE = ITEMS.register("pneumatic_syringe_rifle", PneumaticSyringeRifle::new);

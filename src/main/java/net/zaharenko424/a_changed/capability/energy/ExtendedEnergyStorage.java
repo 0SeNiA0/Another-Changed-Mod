@@ -58,7 +58,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
     }
 
     protected void setEnergy(int amount){
-        energy = amount;
+        energy = Math.min(amount, capacity);
         onEnergyChanged();
     }
 

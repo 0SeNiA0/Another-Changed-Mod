@@ -30,7 +30,7 @@ public class BloodSyringe extends Item {
     public void appendHoverText(@NotNull ItemStack syringe, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(syringe, context, tooltipComponents, tooltipFlag);
         if(syringe.has(ComponentRegistry.BLOOD_TYPE)){
-            MutableComponent component = Component.translatable("tooltip.a_changed.blood_syringe", syringe.get(ComponentRegistry.BLOOD_TYPE)).withStyle(ChatFormatting.DARK_RED);
+            MutableComponent component = Component.translatable("tooltip.a_changed.blood_syringe", syringe.get(ComponentRegistry.BLOOD_TYPE).toString()).withStyle(ChatFormatting.DARK_RED);
             if(syringe.has(ComponentRegistry.BLOOD_OWNER_NAME)) component.append(" (").append(syringe.get(ComponentRegistry.BLOOD_OWNER_NAME)).append(")");
             tooltipComponents.add(component);
         } else tooltipComponents.add(Component.literal("Invalid tag!").withColor(Color.RED.getRGB()));

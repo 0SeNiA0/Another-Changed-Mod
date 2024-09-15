@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEntity, LatexPurifierMenu> {
 
-    private static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_purifier");
+    public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_purifier");
 
     public LatexPurifierScreen(LatexPurifierMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, true);

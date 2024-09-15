@@ -21,7 +21,6 @@ import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
-import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +45,7 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         return new ItemStackHandler(3){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return switch(slot){
-                    case 0 -> checkItemEnergyCap(stack);
-                    case 1 -> stack.is(ItemRegistry.DARK_LATEX_ITEM.get()) || stack.is(ItemRegistry.WHITE_LATEX_ITEM.get());
-                    default -> false;
-                };
+                return slot != 0 || checkItemEnergyCap(stack);
             }
 
             @Override
@@ -87,13 +82,7 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
                     energyStorage.getMaxReceive(), false) != 0;
         }
 
-        if(getEnergy() < energyConsumption){
-            setActive(false);
-            if(changed) update();
-            return;
-        }
-
-        if(currentRecipe != null && !currentRecipe.value().matches(container, level)){
+        if(currentRecipe != null && (getEnergy() < energyConsumption || !currentRecipe.value().matches(container, level))){
             setActive(false);
             if(changed) update();
             return;

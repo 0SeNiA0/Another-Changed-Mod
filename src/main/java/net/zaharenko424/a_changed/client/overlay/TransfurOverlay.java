@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.overlay;
 
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
@@ -33,9 +32,8 @@ public class TransfurOverlay {
                 (0xFF & primaryColor) / 255f,
                 TransfurManager.getTransfurProgress(player) / TransfurManager.TRANSFUR_TOLERANCE);
 
-        Window window = minecraft.getWindow();
-        int screenWidth = window.getScreenWidth();
-        int screenHeight = window.getScreenHeight();
+        int screenWidth = guiGraphics.guiWidth();
+        int screenHeight = guiGraphics.guiHeight();
         guiGraphics.blit(TRANSFUR_OVERLAY,0,0,-90,0,0, screenWidth, screenHeight, screenWidth, screenHeight);
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();

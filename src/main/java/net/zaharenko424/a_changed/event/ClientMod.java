@@ -51,7 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.zaharenko424.a_changed.AChanged.*;
-import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 

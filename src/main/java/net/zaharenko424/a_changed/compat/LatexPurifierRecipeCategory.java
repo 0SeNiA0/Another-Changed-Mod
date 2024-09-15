@@ -13,7 +13,7 @@ import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.client.screen.machines.CompressorScreen;
+import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;
@@ -55,7 +55,7 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
             @Override
             public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(CompressorScreen.TEXTURE, xOffset, yOffset, 82, 54, 55, 16, 82, 54, 256, 166);
+                guiGraphics.blit(LatexPurifierScreen.TEXTURE, xOffset, yOffset, 82, 54, 55, 16, 82, 54, 256, 166);
             }
         };
     }
@@ -83,6 +83,7 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
     @Override
     public void draw(@NotNull LatexPurifierRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 20, 45);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth(), 45);
     }
 

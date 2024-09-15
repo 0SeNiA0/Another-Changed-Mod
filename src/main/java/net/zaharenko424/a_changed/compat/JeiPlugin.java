@@ -4,6 +4,7 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IStackHelper;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.*;
 import mezz.jei.common.network.IConnectionToServer;
@@ -29,10 +30,12 @@ import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
 import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
+import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -49,9 +52,16 @@ public class JeiPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
-        //registration.
-        //registration.useNbtForSubtypes(ItemRegistry.BLOOD_SYRINGE.asItem(), ItemRegistry.DNA_SAMPLE.asItem(),
-        //        ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
+        registration.registerSubtypeInterpreter(ItemRegistry.BLOOD_SYRINGE.asItem(), (ingredient, context) ->
+                ingredient.has(ComponentRegistry.BLOOD_TYPE) ? ingredient.get(ComponentRegistry.BLOOD_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+
+        registration.registerSubtypeInterpreter(ItemRegistry.DNA_SAMPLE.asItem(), (ingredient, context) ->
+                ingredient.has(ComponentRegistry.DNA_TYPE) ? ingredient.get(ComponentRegistry.DNA_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+
+        registration.registerSubtypeInterpreter(ItemRegistry.LATEX_SYRINGE.asItem(), ((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
+        registration.registerSubtypeInterpreter(ItemRegistry.STABILIZED_LATEX_SYRINGE.asItem(), ((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
     }
 
     @Override
@@ -126,6 +136,16 @@ public class JeiPlugin implements IModPlugin {
         registration.addRecipeClickArea(DNAExtractorScreen.class, 82, 36, 16, 16, DNAExtractorRecipeCategory.TYPE);
         registration.addRecipeClickArea(LatexEncoderScreen.class, 83, 36, 38, 12, LatexEncoderRecipeCategory.TYPE);
         registration.addRecipeClickArea(LatexPurifierScreen.class, 82, 37, 18, 11, LatexPurifierRecipeCategory.TYPE);
+    }
+
+    public static void drawEnergyConsumption(int energyPerTick, GuiGraphics guiGraphics, int width, int y){
+        if (energyPerTick > 0) {
+            String timeString = Utils.formatEnergy(energyPerTick) + " EU/t";
+            Minecraft minecraft = Minecraft.getInstance();
+            Font fontRenderer = minecraft.font;
+            int stringWidth = fontRenderer.width(timeString);
+            guiGraphics.drawString(fontRenderer, timeString, width - stringWidth, y, 0xFF808080, false);
+        }
     }
 
     public static void drawProcessingTime(int processingTime, GuiGraphics guiGraphics, int width, int y){

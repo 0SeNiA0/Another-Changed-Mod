@@ -74,7 +74,8 @@ public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorR
 
     @Override
     public void draw(@NotNull DNAExtractorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        JeiPlugin.drawProcessingTime(DNAExtractorEntity.maxProgress, guiGraphics, getWidth(), 45);
+        JeiPlugin.drawEnergyConsumption(DNAExtractorEntity.energyConsumption, guiGraphics, getWidth() - 96, 64);
+        JeiPlugin.drawProcessingTime(DNAExtractorEntity.maxProgress, guiGraphics, getWidth() - 32, 64);
     }
 
     @Override

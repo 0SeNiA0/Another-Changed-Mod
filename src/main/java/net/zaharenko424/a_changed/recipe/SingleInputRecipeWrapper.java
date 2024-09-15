@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class SingleInputRecipeWrapper extends RecipeWrapper {
 
@@ -15,6 +16,11 @@ public class SingleInputRecipeWrapper extends RecipeWrapper {
     @Override
     public int size() {
         return 1;
+    }
+
+    @Override
+    public @NotNull ItemStack getItem(int slot) {
+        return item();
     }
 
     public ItemStack item(){

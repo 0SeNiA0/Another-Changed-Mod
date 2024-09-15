@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +91,6 @@ public class CommonEvent {
         handler.syncClients();
         if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
 
-        //GrabCapability.nonNullOf(player).syncClients();
         if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
 
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
@@ -123,13 +121,6 @@ public class CommonEvent {
         BlockPos pos = event.getPos();
         if(!player.isCrouching()) {
 
-            if(handleLatexRMB(level, item, pos)){
-                if(!player.isCreative()) item.shrink(1);
-                denyEvent(event);
-                event.setCancellationResult(InteractionResult.CONSUME);
-                return;
-            }
-
             BlockState above = level.getBlockState(pos.above());
             if(above.getBlock() instanceof PileOfOranges){
                 if(item.isEmpty()) {
@@ -157,27 +148,6 @@ public class CommonEvent {
             handlePaperRMB(level, player, item, pos, direction);
             denyEvent(event);
         }
-    }
-
-    static boolean handleLatexRMB(Level level, ItemStack item, BlockPos pos){
-        BlockState state = level.getBlockState(pos);
-        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) return false;
-
-        LatexCoveredData data = LatexCoveredData.of(level.getChunkAt(pos));
-        if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return false;
-        boolean consume = false;
-
-        if (item.is(ItemRegistry.DARK_LATEX_ITEM)) {
-            data.coverWith(pos, CoveredWith.DARK_LATEX);
-            consume = true;
-        }
-
-        if (item.is(ItemRegistry.WHITE_LATEX_ITEM)) {
-            data.coverWith(pos, CoveredWith.WHITE_LATEX);
-            consume = true;
-        }
-
-        return consume;
     }
 
     static void handleBookRMB(Level level, Player player, ItemStack item, BlockPos pos){
@@ -325,7 +295,6 @@ public class CommonEvent {
             public void run() {
                 TransfurHandler handler = TransfurHandler.nonNullOf(player);
                 handler.syncClients();
-                //GrabCapability.nonNullOf(player).syncClients();
                 if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
             }
         },25);

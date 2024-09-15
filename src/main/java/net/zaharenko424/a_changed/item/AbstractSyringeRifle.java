@@ -39,7 +39,7 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
         if(!player.isCreative()) consumeFuel(rifle, handler);
 
         //shoot projectile
-        SyringeProjectile syringe = new SyringeProjectile(level, player, useFirst(handler, player.isCreative()));
+        SyringeProjectile syringe = new SyringeProjectile(level, player, useFirst(handler, player.isCreative()), rifle);
         syringe.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, velocity(), accuracy());
         level.addFreshEntity(syringe);
 

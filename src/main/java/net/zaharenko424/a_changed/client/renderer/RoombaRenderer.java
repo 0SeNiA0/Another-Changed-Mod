@@ -20,4 +20,9 @@ public class RoombaRenderer extends CustomMobRenderer<RoombaEntity, RoombaModel>
     public @NotNull ResourceLocation getTextureLocation(@NotNull RoombaEntity pEntity) {
         return TEXTURE;
     }
+
+    @Override
+    protected boolean shouldShowName(@NotNull RoombaEntity entity) {
+        return entity.hasCustomName() && super.shouldShowName(entity);
+    }
 }

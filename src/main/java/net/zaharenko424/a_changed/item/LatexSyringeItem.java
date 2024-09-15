@@ -55,7 +55,7 @@ public class LatexSyringeItem extends AbstractSyringe {
     }
 
     public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
-        ItemStack syringe = ItemRegistry.LATEX_SYRINGE_ITEM.toStack();
+        ItemStack syringe = ItemRegistry.LATEX_SYRINGE.toStack();
         syringe.set(ComponentRegistry.TRANSFUR_TYPE, transfurType.id);
         return syringe;
     }

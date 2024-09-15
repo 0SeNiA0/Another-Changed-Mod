@@ -29,8 +29,8 @@ public class SyringeProjectile extends AbstractArrow {
         setBaseDamage(.01);
     }
 
-    public SyringeProjectile(Level level, LivingEntity shooter, TransfurType transfurType){
-        super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY, ItemStack.EMPTY);
+    public SyringeProjectile(Level level, LivingEntity shooter, TransfurType transfurType, ItemStack rifle){
+        super(EntityRegistry.SYRINGE_PROJECTILE.get(), shooter, level, ItemStack.EMPTY, rifle);
         this.transfurType = transfurType;
         setBaseDamage(.01);
     }
