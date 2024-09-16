@@ -25,8 +25,6 @@ import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtension
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.atest.TestModel;
-import net.zaharenko424.a_changed.atest.TestRenderer;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomBEWLR;
 import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
@@ -227,8 +225,6 @@ public class ClientMod {
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel()));
 
         event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomHumanoidRenderer<>(a, YUFENG_DRAGON_TF.get().getModel()));
-//TMP DON'T FORGET TO REMOVE
-        event.registerEntityRenderer(TEST.get(), a -> new TestRenderer<>(a, new TestModel<>()));
     }
 
     @SubscribeEvent

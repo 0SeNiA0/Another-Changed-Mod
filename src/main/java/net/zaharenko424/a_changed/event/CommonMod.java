@@ -181,8 +181,6 @@ public class CommonMod {
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
 
         event.put(YUFENG_DRAGON.get(), LatexBeast.createAttributes().build());
-//TMP DON'T FORGET TO REMOVE
-        event.put(TEST.get(), Zombie.createAttributes().build());
     }
 
     @SubscribeEvent
