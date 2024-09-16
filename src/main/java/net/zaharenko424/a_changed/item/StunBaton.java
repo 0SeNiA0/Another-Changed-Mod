@@ -61,11 +61,13 @@ public class StunBaton extends SwordItem {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
         ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(!(pTarget instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
+        if(!(pAttacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
+        if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
 
         pTarget.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
 
         if(!(pAttacker instanceof Player player)) return true;
+
         player.getCooldowns().addCooldown(stack.getItem(), 20);
 
         double entityReachSq = Mth.square(player.entityInteractionRange()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
@@ -80,7 +82,6 @@ public class StunBaton extends SwordItem {
             }
         }
 
-        if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
         return true;
     }
 

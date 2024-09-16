@@ -22,6 +22,11 @@ public class UnTransfurBottle extends Item {
     }
 
     @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 32;
+    }
+
+    @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level p_41432_, @NotNull Player p_41433_, @NotNull InteractionHand p_41434_) {
         return ItemUtils.startUsingInstantly(p_41432_, p_41433_, p_41434_);
     }

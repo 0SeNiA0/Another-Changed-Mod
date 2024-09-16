@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.client.cmrs.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -103,7 +102,7 @@ public class CustomHeadLayer <E extends LivingEntity, M extends CustomHumanoidMo
 
     public static void translateToHead(@NotNull PoseStack pPoseStack, boolean pIsVillager) {
         pPoseStack.translate(0.0F, 0.25F, 0.0F);//TODO fix wrong rotation (potentially the 180 YP)
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        //pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         pPoseStack.scale(0.625F, 0.625F, 0.625F);
         if (pIsVillager) {
             pPoseStack.translate(0.0F, 0.1875F, 0.0F);

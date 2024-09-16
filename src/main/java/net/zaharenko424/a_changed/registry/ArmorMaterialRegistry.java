@@ -28,10 +28,7 @@ public class ArmorMaterialRegistry {
             15,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             () -> Ingredient.EMPTY,
-            List.of(
-                    new ArmorMaterial.Layer(AChanged.resourceLoc("hazmat"), "", false),
-                    new ArmorMaterial.Layer(AChanged.resourceLoc("hazmat"), "_overlay", false)
-            ),
+            List.of(new ArmorMaterial.Layer(AChanged.resourceLoc("hazmat"), "", false)),
             1,
             .1f
     ));
@@ -47,10 +44,7 @@ public class ArmorMaterialRegistry {
             10,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             () -> Ingredient.of(ItemRegistry.WHITE_LATEX_ITEM, ItemRegistry.DARK_LATEX_ITEM),
-            List.of(
-                    new ArmorMaterial.Layer(AChanged.resourceLoc("latex"), "", false),
-                    new ArmorMaterial.Layer(AChanged.resourceLoc("latex"), "_overlay", false)
-            ),
+            List.of(new ArmorMaterial.Layer(AChanged.resourceLoc("latex"), "", false)),
             0,
             0
     ));

@@ -70,7 +70,7 @@ public class LatexContainerEntity extends BlockEntity {
     }
 
     public void addLatex(ItemStack item, boolean shrink){
-        handler.insertItem(0,item.copyWithCount(1),false);
+        handler.insertItem(0, item.copyWithCount(1),false);
         if(shrink) item.shrink(1);
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
@@ -97,9 +97,8 @@ public class LatexContainerEntity extends BlockEntity {
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
-        CompoundTag tag = new CompoundTag();
-        if(!handler.getStackInSlot(0).isEmpty()) handler.getStackInSlot(0).save(lookup, tag);
-        return tag;
+        if(!handler.getStackInSlot(0).isEmpty()) return (CompoundTag) handler.getStackInSlot(0).save(lookup, new CompoundTag());
+        return new CompoundTag();
     }
 
     @Override
@@ -109,7 +108,9 @@ public class LatexContainerEntity extends BlockEntity {
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
-        if(!tag.isEmpty()) handler.setStackInSlot(0, ItemStack.parseOptional(lookup, tag));
+        if(!tag.isEmpty()) {
+            handler.setStackInSlot(0, ItemStack.parseOptional(lookup, tag));
+        } else handler.setStackInSlot(0, ItemStack.EMPTY);
     }
 
     @Override
