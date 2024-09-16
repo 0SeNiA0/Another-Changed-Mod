@@ -10,11 +10,12 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
-import net.zaharenko424.a_changed.recipe.PartialNBTIngredientFix;
-import net.zaharenko424.a_changed.DNAType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,16 +24,18 @@ import java.util.*;
 public class DNAExtractorRecipeBuilder implements RecipeBuilder {
 
     private final DNAExtractorRecipe recipe;
+    private final ItemStack result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
-    public DNAExtractorRecipeBuilder(@NotNull PartialNBTIngredientFix ingredient, @NotNull ItemStack result){
+    protected DNAExtractorRecipeBuilder(@NotNull Ingredient ingredient, @NotNull ItemStack result){
         this.recipe = new DNAExtractorRecipe(ingredient, result);
+        this.result = result;
     }
 
     public static @NotNull DNAExtractorRecipeBuilder of(@NotNull DeferredHolder<DNAType, DNAType> dnaType){
         DNAType type = dnaType.get();
         ItemStack item = type.getMaterial();
-        return new DNAExtractorRecipeBuilder(PartialNBTIngredientFix.of(item.getItem(), item.getTag()), DNASample.encodeDNA(type));
+        return new DNAExtractorRecipeBuilder(DataComponentIngredient.of(false, item), DNASample.encodeDNA(type));
     }
 
     @Override
@@ -61,12 +64,12 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull Item getResult() {
-        return recipe.getResultItem().getItem();
+        return result.getItem();
     }
 
     @Override
     public void save(@NotNull RecipeOutput pRecipeOutput) {
-        save(pRecipeOutput, Objects.requireNonNull(DNASample.decodeDNA(recipe.getResultItem())));
+        save(pRecipeOutput, Objects.requireNonNull(DNASample.decodeDNA(result)));
     }
 
     @Override

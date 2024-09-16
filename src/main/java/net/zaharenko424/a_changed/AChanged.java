@@ -32,9 +32,11 @@ import org.slf4j.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.zaharenko424.a_changed.registry.AbilityRegistry.ABILITIES;
+import static net.zaharenko424.a_changed.registry.ArmorMaterialRegistry.ARMOR_MATERIALS;
 import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
+import static net.zaharenko424.a_changed.registry.ComponentRegistry.COMPONENTS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
 import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPES;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
@@ -44,7 +46,8 @@ import static net.zaharenko424.a_changed.registry.ItemRegistry.ITEMS;
 import static net.zaharenko424.a_changed.registry.MemoryTypeRegistry.MEMORY_TYPES;
 import static net.zaharenko424.a_changed.registry.MenuRegistry.MENU_TYPES;
 import static net.zaharenko424.a_changed.registry.MobEffectRegistry.EFFECTS;
-import static net.zaharenko424.a_changed.registry.RecipeSerializerRegistry.RECIPE_SERIALIZERS;
+import static net.zaharenko424.a_changed.registry.RecipeRegistry.RECIPE_SERIALIZERS;
+import static net.zaharenko424.a_changed.registry.RecipeRegistry.RECIPE_TYPES;
 import static net.zaharenko424.a_changed.registry.SoundRegistry.SOUNDS;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.TRANSFUR_TYPES;
 
@@ -88,7 +91,7 @@ public class AChanged {
     public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
 
     //Item tier
-    public static final SimpleTier COPPER = new SimpleTier(2, 128, 5, 1, 12, BlockTags.NEEDS_IRON_TOOL, ()-> Ingredient.of(Items.COPPER_INGOT));
+    public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 2, 128, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));
 
     //Game rules
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
@@ -100,12 +103,12 @@ public class AChanged {
 
     @Contract("_ -> new")
     public static @NotNull ResourceLocation resourceLoc(String path){
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
     @Contract("_ -> new")
     public static @NotNull ResourceLocation textureLoc(String path){
-        return new ResourceLocation(MODID,"textures/" + path + ".png");
+        return ResourceLocation.fromNamespaceAndPath(MODID,"textures/" + path + ".png");
     }
 
     public static @NotNull ResourceLocation textureLoc(ResourceLocation loc){
@@ -115,11 +118,15 @@ public class AChanged {
     public AChanged(IEventBus modEventBus) {
         ABILITIES.register(modEventBus);
         ACTIVITIES.register(modEventBus);
+        ARMOR_MATERIALS.register(modEventBus);
         ATTACHMENTS.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        COMPONENTS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
+        RECIPE_TYPES.register(modEventBus);
         TRANSFUR_TYPES.register(modEventBus);
         DNA_TYPES.register(modEventBus);
         EFFECTS.register(modEventBus);
@@ -130,7 +137,6 @@ public class AChanged {
         MEMORY_TYPES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
-        RECIPE_SERIALIZERS.register(modEventBus);
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
     }

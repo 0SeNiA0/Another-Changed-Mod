@@ -14,11 +14,12 @@ public class UnRemovableRegen extends UnRemovableEffect {
     private final float healAmount;
 
     @Override
-    public void applyEffectTick(@NotNull LivingEntity p_295924_, int p_296417_) {
+    public boolean applyEffectTick(@NotNull LivingEntity p_295924_, int p_296417_) {
         super.applyEffectTick(p_295924_, p_296417_);
         if (p_295924_.getHealth() < p_295924_.getMaxHealth()) {
             p_295924_.heal(healAmount);
         }
+        return true;
     }
 
     @Override

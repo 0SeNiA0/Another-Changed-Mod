@@ -11,7 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.client.screen.ability.CatAbilityScreen;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class CatAbility implements PassiveAbility {
     }
 
     @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull PlayPayloadContext context) {
+    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {
         if(holder.level().isClientSide) return;
         holder.level().playSound(null, holder, sounds.get(buf.readByte()).right(), SoundSource.PLAYERS, 1, 1);
     }

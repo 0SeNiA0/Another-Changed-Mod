@@ -1,13 +1,18 @@
 package net.zaharenko424.a_changed.compat;
 
 import mezz.jei.api.IModPlugin;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IStackHelper;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.*;
 import mezz.jei.common.network.IConnectionToServer;
 import mezz.jei.neoforge.network.ConnectionToServer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -25,13 +30,12 @@ import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
 import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
-import net.zaharenko424.a_changed.recipe.CompressorRecipe;
-import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
-import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
-import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
+import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -48,8 +52,16 @@ public class JeiPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
-        registration.useNbtForSubtypes(ItemRegistry.BLOOD_SYRINGE.asItem(), ItemRegistry.DNA_SAMPLE.asItem(),
-                ItemRegistry.LATEX_SYRINGE_ITEM.asItem());
+        registration.registerSubtypeInterpreter(ItemRegistry.BLOOD_SYRINGE.asItem(), (ingredient, context) ->
+                ingredient.has(ComponentRegistry.BLOOD_TYPE) ? ingredient.get(ComponentRegistry.BLOOD_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+
+        registration.registerSubtypeInterpreter(ItemRegistry.DNA_SAMPLE.asItem(), (ingredient, context) ->
+                ingredient.has(ComponentRegistry.DNA_TYPE) ? ingredient.get(ComponentRegistry.DNA_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+
+        registration.registerSubtypeInterpreter(ItemRegistry.LATEX_SYRINGE.asItem(), ((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
+        registration.registerSubtypeInterpreter(ItemRegistry.STABILIZED_LATEX_SYRINGE.asItem(), ((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
     }
 
     @Override
@@ -60,8 +72,9 @@ public class JeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(@NotNull IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new CompressorRecipeCategory(), new DNAExtractorRecipeCategory(),
-                new LatexEncoderRecipeCategory(), new LatexPurifierRecipeCategory());
+        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new CompressorRecipeCategory(guiHelper), new DNAExtractorRecipeCategory(),
+                new LatexEncoderRecipeCategory(), new LatexPurifierRecipeCategory(guiHelper));
     }
 
     @Override
@@ -71,16 +84,16 @@ public class JeiPlugin implements IModPlugin {
         RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
 
         registration.addRecipes(CompressorRecipeCategory.TYPE,
-                unWrapRecipes(manager.getAllRecipesFor(CompressorRecipe.Type.INSTANCE)));
+                unWrapRecipes(manager.getAllRecipesFor(RecipeRegistry.COMPRESSOR_RECIPE.get())));
 
         registration.addRecipes(DNAExtractorRecipeCategory.TYPE,
-                unWrapRecipes(manager.getAllRecipesFor(DNAExtractorRecipe.Type.INSTANCE)));
+                unWrapRecipes(manager.getAllRecipesFor(RecipeRegistry.DNA_EXTRACTOR_RECIPE.get())));
 
         registration.addRecipes(LatexEncoderRecipeCategory.TYPE,
-                unWrapRecipes(manager.getAllRecipesFor(LatexEncoderRecipe.Type.INSTANCE)));
+                unWrapRecipes(manager.getAllRecipesFor(RecipeRegistry.LATEX_ENCODER_RECIPE.get())));
 
         registration.addRecipes(LatexPurifierRecipeCategory.TYPE,
-                unWrapRecipes(manager.getAllRecipesFor(LatexPurifierRecipe.Type.INSTANCE)));
+                unWrapRecipes(manager.getAllRecipesFor(RecipeRegistry.LATEX_PURIFIER_RECIPE.get())));
     }
 
     private <T extends Recipe<?>> List<T> unWrapRecipes(@NotNull List<RecipeHolder<T>> holders){
@@ -123,5 +136,26 @@ public class JeiPlugin implements IModPlugin {
         registration.addRecipeClickArea(DNAExtractorScreen.class, 82, 36, 16, 16, DNAExtractorRecipeCategory.TYPE);
         registration.addRecipeClickArea(LatexEncoderScreen.class, 83, 36, 38, 12, LatexEncoderRecipeCategory.TYPE);
         registration.addRecipeClickArea(LatexPurifierScreen.class, 82, 37, 18, 11, LatexPurifierRecipeCategory.TYPE);
+    }
+
+    public static void drawEnergyConsumption(int energyPerTick, GuiGraphics guiGraphics, int width, int y){
+        if (energyPerTick > 0) {
+            String timeString = Utils.formatEnergy(energyPerTick) + " EU/t";
+            Minecraft minecraft = Minecraft.getInstance();
+            Font fontRenderer = minecraft.font;
+            int stringWidth = fontRenderer.width(timeString);
+            guiGraphics.drawString(fontRenderer, timeString, width - stringWidth, y, 0xFF808080, false);
+        }
+    }
+
+    public static void drawProcessingTime(int processingTime, GuiGraphics guiGraphics, int width, int y){
+        if (processingTime > 0) {
+            int cookTimeSeconds = processingTime / 20;
+            Component timeString = Component.translatable("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
+            Minecraft minecraft = Minecraft.getInstance();
+            Font fontRenderer = minecraft.font;
+            int stringWidth = fontRenderer.width(timeString);
+            guiGraphics.drawString(fontRenderer, timeString, width - stringWidth, y, 0xFF808080, false);
+        }
     }
 }

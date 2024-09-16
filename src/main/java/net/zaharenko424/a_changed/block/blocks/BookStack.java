@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -31,7 +32,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class BookStack extends Block implements EntityBlock {
 
     private static final VoxelShape ONE_BOOK = Shapes.box(0.25, 0, 0.25, 0.75, 0.125, 0.75);
@@ -73,35 +73,51 @@ public class BookStack extends Block implements EntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
-        BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
-        if(entity instanceof BookStackEntity bookStack){
-            ItemStack item = p_60506_.getItemInHand(p_60507_);
-            BlockPos above = p_60505_.above();
-            BlockState stateAbove = p_60504_.getBlockState(above);
-            if(item.is(ItemTags.BOOKSHELF_BOOKS)){
-                if(bookStack.hasSpace()) {
-                    bookStack.addBook(item, (int) p_60506_.yHeadRot, !p_60506_.isCreative());
-                    return InteractionResult.CONSUME;
-                }
-                if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
-                if(stateAbove.canBeReplaced()){
-                    p_60504_.setBlockAndUpdate(above, defaultBlockState());
-                    return use(p_60504_.getBlockState(above), p_60504_, above, p_60506_, p_60507_, p_60508_);
-                }
-            }
-            if(item.isEmpty()){
-                if(stateAbove.is(this)) return use(stateAbove, p_60504_, above, p_60506_, p_60507_, p_60508_);
-                ItemHandlerHelper.giveItemToPlayer(p_60506_, bookStack.removeBook());
-                if(bookStack.isEmpty()) {
-                    p_60504_.removeBlock(p_60505_, false);
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.SUCCESS;
-            }
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if(level.isClientSide) return InteractionResult.SUCCESS;
+
+        BlockEntity entity = level.getBlockEntity(pos);
+        if(!(entity instanceof BookStackEntity bookStack)) return super.useWithoutItem(state, level, pos, player, hitResult);
+
+        if(bookStack.isEmpty()){
+            level.removeBlock(pos, false);
+            return InteractionResult.PASS;
         }
-        return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+
+        BlockPos above = pos.above();
+        BlockState stateAbove = level.getBlockState(above);
+
+        if(stateAbove.is(this)) return useWithoutItem(stateAbove, level, above, player, hitResult);
+
+        ItemHandlerHelper.giveItemToPlayer(player, bookStack.removeBook());
+        if(bookStack.isEmpty()) {
+            level.removeBlock(pos, false);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack item, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if(!item.is(ItemTags.BOOKSHELF_BOOKS)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if(level.isClientSide) return ItemInteractionResult.SUCCESS;
+
+        BlockEntity entity = level.getBlockEntity(pos);
+        if(!(entity instanceof BookStackEntity bookStack)) return super.useItemOn(item, state, level, pos, player, hand, hitResult);
+
+        BlockPos above = pos.above();
+        BlockState stateAbove = level.getBlockState(above);
+
+        if(bookStack.hasSpace()) {
+            bookStack.addBook(item, (int) player.yHeadRot, !player.isCreative());
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if(stateAbove.is(this)) return useItemOn(item, stateAbove, level, above, player, hand, hitResult);
+        if(stateAbove.canBeReplaced()){
+            level.setBlockAndUpdate(above, defaultBlockState());
+            return useItemOn(item, level.getBlockState(above), level, above, player, hand, hitResult);
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

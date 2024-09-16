@@ -7,6 +7,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -22,7 +23,7 @@ public class MaintenanceDoor extends Abstract2By2Door {
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
         boolean open = p_60555_.getValue(OPEN);
         int partId = p_60555_.getValue(PART);
         return CACHE.getShape(p_60555_.getValue(FACING), partId + (open ? 10 : 0),

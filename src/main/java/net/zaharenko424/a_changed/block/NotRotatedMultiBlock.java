@@ -24,7 +24,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Not so nice solution for multiBlocks that do not need FACING property
  */
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public abstract class NotRotatedMultiBlock extends Block {
 
     public NotRotatedMultiBlock(Properties pProperties) {

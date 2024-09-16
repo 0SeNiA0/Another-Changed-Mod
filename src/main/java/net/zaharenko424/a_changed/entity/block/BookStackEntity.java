@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -72,7 +73,7 @@ public class BookStackEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
         if(books1.isEmpty()) return tag;
         tag.putInt("Size", books1.size());
@@ -86,12 +87,12 @@ public class BookStackEntity extends BlockEntity {
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        handleUpdateTag(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
+        handleUpdateTag(pkt.getTag(), lookup);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         books1.clear();
         if(!tag.contains("Size")) return;
         int size = tag.getInt("Size");
@@ -102,19 +103,19 @@ public class BookStackEntity extends BlockEntity {
             modelId = tag.getInt("modelId" + i);
             books1.add(new BookData(rotation, modelId));
         }
-        super.handleUpdateTag(tag);
+        super.handleUpdateTag(tag, lookup);
     }
 
     @Override
-    public void load(@NotNull CompoundTag p_155245_) {
-        super.load(p_155245_);
+    public void loadAdditional(@NotNull CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(p_155245_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_155245_);
         int size = tag.getInt("Size");
         ItemStack book;
         float rotation;
         int modelId;
         for(int i = 0; i < size; i++){
-            book=ItemStack.of(tag.getCompound("book" + i));
+            book=ItemStack.parseOptional(lookup, tag.getCompound("book" + i));
             rotation = tag.getFloat("rotation" + i);
             modelId = tag.getInt("modelId" + i);
             books.add(book);
@@ -123,14 +124,14 @@ public class BookStackEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag p_187471_) {
-        super.saveAdditional(p_187471_);
+    protected void saveAdditional(@NotNull CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(p_187471_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_187471_);
         tag.putInt("Size", books1.size());
         BookData book;
         for(int i = 0; i < books1.size(); i++){
             book = books1.get(i);
-            tag.put("book" + i, books.get(i).save(new CompoundTag()));
+            tag.put("book" + i, books.get(i).save(lookup));
             tag.putFloat("rotation" + i, book.rotation);
             tag.putInt("modelId" + i, book.modelId);
         }

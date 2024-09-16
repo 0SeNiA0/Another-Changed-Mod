@@ -36,7 +36,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     }
 
     @Override
-    boolean hasAmmo(@NotNull IItemHandler handler) {
+    public boolean hasAmmo(@NotNull IItemHandler handler) {
         for(int i = 0; i < 4; i++){
             if(!handler.getStackInSlot(i).isEmpty()) return true;
         }
@@ -53,7 +53,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     }
 
     @Override
-    boolean hasFuel(@NotNull ItemStack rifle, @NotNull IItemHandler inventory) {
+    public boolean hasFuel(@NotNull ItemStack rifle, @NotNull IItemHandler inventory) {
         return rifle.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= 2000;
     }
 
@@ -81,11 +81,11 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level pLevel, @NotNull List<Component> tooltip, @NotNull TooltipFlag pIsAdvanced) {
-        super.appendHoverText(stack, pLevel, tooltip, pIsAdvanced);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
-        tooltip.add(Component.translatable("tooltip.a_changed.syringe_rifle_energy",
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_energy",
                 stack.isEmpty() || stack.getCapability(Capabilities.EnergyStorage.ITEM) == null ? 0
                         : Mth.floorDiv(stack.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored(), 2000)).withStyle(ChatFormatting.GREEN));
 
@@ -93,11 +93,11 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
         for(int i = 0; i < 4; i++){
             if(!inventory.getStackInSlot(i).isEmpty()) count++;
         }
-        tooltip.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.empty());
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.empty());
 
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        tooltip.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
+        tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
     }
 
     @Nullable

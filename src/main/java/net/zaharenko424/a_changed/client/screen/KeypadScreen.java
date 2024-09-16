@@ -57,7 +57,7 @@ public class KeypadScreen extends Screen {
     }
 
     private void sendPacket(int[] code){
-        PacketDistributor.SERVER.noArg().send(new ServerboundTryPasswordPacket(code, pos));
+        PacketDistributor.sendToServer(new ServerboundTryPasswordPacket(code, pos));
     }
 
     private void recalculateCoordinates(){

@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.criterion;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -17,8 +16,8 @@ public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optiona
 
     public static final Codec<TransfurTypePredicate> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(
-                    ExtraCodecs.strictOptionalField(ResourceLocation.CODEC.xmap(TransfurManager::getTransfurType, tfType -> tfType.id), "transfur_type").forGetter(TransfurTypePredicate::transfurType),
-                    ExtraCodecs.strictOptionalField(ExtraCodecs.stringResolverCodec(Type::toString, Type::valueOf), "type").forGetter(TransfurTypePredicate::type)
+                    Codec.optionalField("transfur_type", ResourceLocation.CODEC.xmap(TransfurManager::getTransfurType, tfType -> tfType.id), false).forGetter(TransfurTypePredicate::transfurType),
+                    Codec.optionalField("type", Codec.stringResolver(Type::toString, Type::valueOf), false).forGetter(TransfurTypePredicate::type)
             ).apply(builder, TransfurTypePredicate::new));
 
     public boolean matches(TransfurType transfurType){

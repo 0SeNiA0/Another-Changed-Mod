@@ -131,7 +131,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     @Override
     public BrainActivityGroup<? extends LatexBeast> getFightTasks() {// Retaliate redirects here
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)),
+                new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                 new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump? 1 ~= 3 blocks
                 new SetWalkTargetToAttackTarget<>(),
                 new AnimatableMeleeAttack<>(0)
@@ -143,7 +143,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     public Map<Activity, BrainActivityGroup<? extends LatexBeast>> getAdditionalTasks() {//  TargetTransfurrable goes here
         return Map.of(
                 AChanged.TRANSFUR_ATTACK.get(), new BrainActivityGroup<LatexBeast>(AChanged.TRANSFUR_ATTACK.get()).behaviours(
-                        new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)),
+                        new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                         new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                         new SetWalkTargetToAttackTarget<>(),
                         new CustomHeldBehaviour<AbstractLatexBeast>(latex -> AbilityRegistry.HYPNOSIS_ABILITY.get().serverTick(latex))
@@ -161,6 +161,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
                                 .onInvalidate((latex, entity) -> {
                                         BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
                                         AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
+                                        BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
                                 }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
                         new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
                                 .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))

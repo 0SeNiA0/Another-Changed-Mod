@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class DangerSign extends HorizontalDirectionalBlock {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.or(Shapes.box(0.4375, 0.125, 0.9375, 0.5625, 0.875, 1),

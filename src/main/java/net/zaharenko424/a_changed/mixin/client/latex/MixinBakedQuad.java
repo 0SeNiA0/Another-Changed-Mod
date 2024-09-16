@@ -28,71 +28,71 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
     private static TextureAtlasSprite wl_sprite;
 
     @Unique
-    private int[] dark_latex;
+    private int[] achanged$dark_latex;
     @Unique
-    private int[] white_latex;
+    private int[] achanged$white_latex;
 
     @Unique
-    private float[] mod$uv;
+    private float[] achanged$uv;
 
     @Unique
-    private final WeakHashMap<Thread, CoveredWith> mod$map = new WeakHashMap<>();
+    private final WeakHashMap<Thread, CoveredWith> achanged$map = new WeakHashMap<>();
 
     @Override
-    public void mod$darkLatex() {
-        mod$map.put(Thread.currentThread(), CoveredWith.DARK_LATEX);
+    public void achanged$darkLatex() {
+        achanged$map.put(Thread.currentThread(), CoveredWith.DARK_LATEX);
         if(dl_sprite == null) dl_sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("block/"));
 
-        if(dark_latex != null) return;
+        if(achanged$dark_latex != null) return;
 
-        dark_latex = vertices.clone();
+        achanged$dark_latex = vertices.clone();
 
         for(int i = 0; i < 4; i++){
             int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
 
-            dark_latex[offset] = Float.floatToRawIntBits(dl_sprite.getU(mod$uv[i * 2]));
-            dark_latex[offset + 1] = Float.floatToRawIntBits(dl_sprite.getV(mod$uv[i * 2 + 1]));
+            achanged$dark_latex[offset] = Float.floatToRawIntBits(dl_sprite.getU(achanged$uv[i * 2]));
+            achanged$dark_latex[offset + 1] = Float.floatToRawIntBits(dl_sprite.getV(achanged$uv[i * 2 + 1]));
         }
     }
 
     @Override
-    public void mod$whiteLatex() {
-        mod$map.put(Thread.currentThread(), CoveredWith.WHITE_LATEX);
+    public void achanged$whiteLatex() {
+        achanged$map.put(Thread.currentThread(), CoveredWith.WHITE_LATEX);
         if(wl_sprite == null) wl_sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("block/"));
 
-        if(white_latex != null) return;
+        if(achanged$white_latex != null) return;
 
-        white_latex = vertices.clone();
+        achanged$white_latex = vertices.clone();
 
         for(int i = 0; i < 4; i++){
             int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
 
-            white_latex[offset] = Float.floatToRawIntBits(wl_sprite.getU(mod$uv[i * 2]));
-            white_latex[offset + 1] = Float.floatToRawIntBits(wl_sprite.getV(mod$uv[i * 2 + 1]));
+            achanged$white_latex[offset] = Float.floatToRawIntBits(wl_sprite.getU(achanged$uv[i * 2]));
+            achanged$white_latex[offset + 1] = Float.floatToRawIntBits(wl_sprite.getV(achanged$uv[i * 2 + 1]));
         }
     }
 
     @Override
-    public void mod$clear() {
-        mod$map.put(Thread.currentThread(), CoveredWith.NOTHING);
+    public void achanged$clear() {
+        achanged$map.put(Thread.currentThread(), CoveredWith.NOTHING);
     }
 
     @Override
-    public void mod$initUV(float[] uv) {
-        this.mod$uv = uv;
+    public void achanged$initUV(float[] uv) {
+        this.achanged$uv = uv;
     }
 
     @ModifyReturnValue(at = @At("TAIL"), method = "getVertices")
     private int[] modifyGetVertices(int[] original){
-        return switch (mod$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING)){
-            case DARK_LATEX -> dark_latex;
-            case WHITE_LATEX -> white_latex;
+        return switch (achanged$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING)){
+            case DARK_LATEX -> achanged$dark_latex;
+            case WHITE_LATEX -> achanged$white_latex;
             default -> original;
         };
     }
 
     @ModifyReturnValue(at = @At("TAIL"), method = "isTinted")
     private boolean modifyIsTinted(boolean original){
-        return mod$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING) == CoveredWith.NOTHING && original;
+        return achanged$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING) == CoveredWith.NOTHING && original;
     }
 }

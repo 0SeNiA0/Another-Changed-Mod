@@ -27,7 +27,7 @@ public class TransfurRegistry {
     public static final DeferredHolder<TransfurType, LatexWolf> BENIGN_TF = TRANSFUR_TYPES
             .register("benign", ()-> new LatexWolf(TransfurType.Properties
                     .of(resourceLoc("benign"), Latex.WHITE).organic(true)
-                    .addModifier(Attributes.MOVEMENT_SPEED, "benign_slowdown", -.3, AttributeModifier.Operation.MULTIPLY_TOTAL)
+                    .addModifier(Attributes.MOVEMENT_SPEED, "benign_slowdown", -.3, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
                     .onTransfur(entity -> {
                         MobEffectInstance unremovableBlindness = new MobEffectInstance(MobEffects.BLINDNESS, -1, 0, false, false, false);
                         unremovableBlindness.getCures().clear();

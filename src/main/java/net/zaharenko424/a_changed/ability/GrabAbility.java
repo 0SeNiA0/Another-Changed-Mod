@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
@@ -75,7 +75,7 @@ public class GrabAbility implements Ability {
     }
 
     @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull PlayPayloadContext context) {
+    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {
         GrabData holderData = getAbilityData(holder);
 
         if(holder.level().isClientSide){
@@ -132,7 +132,7 @@ public class GrabAbility implements Ability {
                 if(getAbilityData(grabbedBy).getMode().givesDebuffToTarget) {
                     if(minecraft.screen == null) minecraft.setScreen(Utils.get(()-> new GrabEscapeScreen(localPlayer.getRandom())));
                 } else {//TODO make grabbed entities follow where you are looking at
-                    PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+                    PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                             new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(false)));
                 }
             }
@@ -176,10 +176,10 @@ public class GrabAbility implements Ability {
 
         if(!mode.givesDebuffToTarget) return;
 
-        if(!grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())) {
+        if(!grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)) {
             if(mode == GrabMode.ASSIMILATE) {
                 grabbedEntity.hurt(DamageSources.assimilation(holder, null), Integer.MAX_VALUE);
-                holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF.get(), 6000, 0, false, false));
+                holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF, 6000, 0, false, false));
                 if(holder instanceof Player player) player.getFoodData().eat(6, 1);
             } else if(mode == GrabMode.REPLICATE) {
                 TransfurHandler handler = TransfurHandler.of(grabbedEntity);
@@ -188,7 +188,7 @@ public class GrabAbility implements Ability {
             holderData.drop();
         } else if(mode == GrabMode.REPLICATE){
             TransfurHandler handler = TransfurHandler.of(grabbedEntity);
-            handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF.get()).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.ADD_PROGRESS_DEF);
+            handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.ADD_PROGRESS_DEF);
         }
     }
 
@@ -200,7 +200,7 @@ public class GrabAbility implements Ability {
     private void clientGrabLogic(Player player, Minecraft minecraft){
         if(TransfurManager.isHoldingEntity(player)){
             if(player.isCrouching()){
-                PacketDistributor.SERVER.noArg().send(new ServerboundDeactivateAbilityPacket());
+                PacketDistributor.sendToServer(new ServerboundDeactivateAbilityPacket());
                 return;
             }
             return;
@@ -238,13 +238,13 @@ public class GrabAbility implements Ability {
             }
         }
 
-        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN.get())){
+        if(player.hasEffect(MobEffectRegistry.GRAB_COOLDOWN)){
             player.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
-                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN.get()).getDuration() / 20)), true);
+                    String.valueOf((float) player.getEffect(MobEffectRegistry.GRAB_COOLDOWN).getDuration() / 20)), true);
             return;
         }
 
-        PacketDistributor.SERVER.noArg().send(new ServerboundActivateAbilityPacket(true,
+        PacketDistributor.sendToServer(new ServerboundActivateAbilityPacket(true,
                 new FriendlyByteBuf(Unpooled.buffer(4)).writeVarInt(entity.getId())));
     }
 
@@ -253,8 +253,8 @@ public class GrabAbility implements Ability {
     private void hold(LivingEntity holder, LivingEntity grabbedEntity, GrabMode mode){
         float distance = 1.2f;
         if(mode == GrabMode.ASSIMILATE){
-            distance -= grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF.get())
-                    ? 1 - (float) grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF.get()).getDuration() / GrabData.grabDuration
+            distance -= grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)
+                    ? 1 - (float) grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration() / GrabData.grabDuration
                     : 1;
         }
 
@@ -270,7 +270,7 @@ public class GrabAbility implements Ability {
         } else grabbedEntity.setDeltaMovement(pos.x, pos.y, pos.z);
 
         if(grabbedEntity instanceof ServerPlayer player) {
-            PacketDistributor.PLAYER.with(player).send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
+            Utils.sendToClient(player, new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
             TransfurUtils.smoothLookAt(player, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), false, .6f);
         } else grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, holder.getEyePosition());
     }

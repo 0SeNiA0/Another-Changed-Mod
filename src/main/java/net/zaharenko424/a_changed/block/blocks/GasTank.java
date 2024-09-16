@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.block.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE_0 = Shapes.or(Shapes.box(0.3125, 0, 0.25, 0.6875, 1.125, 0.75),
@@ -52,13 +52,23 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
         return p_60555_.getValue(PART) == 0 ? SHAPE_0 : SHAPE_1;
     }
 
+    public boolean use(BlockState state, Level level, BlockPos pos, Player p_60506_) {
+        if(!(level.getBlockEntity(getMainPos(state, pos)) instanceof GasTankEntity canister)) return false;
+
+        canister.setOpenClose();//TODO make better sound
+        return true;
+    }
+
     @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide || p_60507_ != InteractionHand.MAIN_HAND) return InteractionResult.CONSUME_PARTIAL;
-        if(p_60504_.getBlockEntity(getMainPos(p_60503_, p_60505_)) instanceof GasTankEntity canister){
-            canister.setOpenClose();//TODO make better sound
-        }
-        return InteractionResult.SUCCESS;
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide || hand != InteractionHand.MAIN_HAND) return ItemInteractionResult.CONSUME_PARTIAL;
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
         if(selectedButton == -1 || selectedButton == currentlyActive) return false;
         currentlyActive = selectedButton;
 
-        PacketDistributor.SERVER.noArg().send(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
+        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                 new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(0).writeEnum(grabMode.get(currentlyActive))));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

@@ -20,9 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinLocalPlayer extends Player implements LocalPlayerExtension {
 
     @Unique
-    int mod$ticks;
+    int achanged$ticks;
     @Unique
-    float mod$targetYRot, mod$targetXRot, mod$speed;
+    float achanged$targetYRot, achanged$targetXRot, achanged$speed;
 
     public MixinLocalPlayer(Level pLevel, BlockPos pPos, float pYRot, GameProfile pGameProfile) {
         super(pLevel, pPos, pYRot, pGameProfile);
@@ -43,7 +43,7 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
      */
     @ModifyReturnValue(at = @At("TAIL"), method = "getViewYRot")
     private float onGetViewYRot(float original, float partialTicks){
-        return mod$ticks > 0 && !isPassenger() ? super.getViewYRot(partialTicks) : original;
+        return achanged$ticks > 0 && !isPassenger() ? super.getViewYRot(partialTicks) : original;
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
      */
     @ModifyReturnValue(at = @At("TAIL"), method = "getViewXRot")
     private float onGetViewXRot(float original, float partialTicks){
-        return mod$ticks > 0 ? super.getViewXRot(partialTicks) : original;
+        return achanged$ticks > 0 ? super.getViewXRot(partialTicks) : original;
     }
 
     /**
@@ -61,27 +61,27 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
      * @param ticks amount of ticks designated for this transition.
      */
     @Override
-    public void mod$lerpLookAt(float xRot, float yRot, float speed, int ticks) {
+    public void achanged$lerpLookAt(float xRot, float yRot, float speed, int ticks) {
         if(speed == 0){
-            mod$ticks = 0;
+            achanged$ticks = 0;
             return;
         }
-        mod$ticks = ticks;
-        this.mod$speed = speed;
-        mod$targetXRot = xRot;
-        mod$targetYRot = yRot;
+        achanged$ticks = ticks;
+        this.achanged$speed = speed;
+        achanged$targetXRot = xRot;
+        achanged$targetYRot = yRot;
     }
 
     @Inject(at = @At("TAIL"), method = "aiStep")
     private void onAiStep(CallbackInfo ci){
-        if(mod$ticks > 1) {
-            float f = Mth.rotLerp(mod$speed, this.getYRot(), mod$targetYRot);
-            float f1 = Mth.lerp(mod$speed, this.getXRot(), mod$targetXRot);
+        if(achanged$ticks > 1) {
+            float f = Mth.rotLerp(achanged$speed, this.getYRot(), achanged$targetYRot);
+            float f1 = Mth.lerp(achanged$speed, this.getXRot(), achanged$targetXRot);
 
             yRotO = getYRot();
             xRotO = getXRot();
             setRot(f, f1);
         }
-        if(mod$ticks > 0) mod$ticks--;
+        if(achanged$ticks > 0) achanged$ticks--;
     }
 }

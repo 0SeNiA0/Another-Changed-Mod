@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class Computer extends HorizontalDirectionalBlock {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.or(Shapes.box(0.0625, 0.1875, 0.6875, 0.9375, 0.8125, 0.75),

@@ -38,13 +38,13 @@ public class LatexContainerRenderer implements BlockEntityRenderer<LatexContaine
     }
 
     @Override
-    public void render(LatexContainerEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
-        if(p_112307_.isEmpty()) return;
+    public void render(LatexContainerEntity entity, float p_112308_, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        if(entity.isEmpty()) return;
         latex.resetPose();
-        p_112309_.pushPose();
-        p_112309_.translate(.5,.125,.5);
-        latex.yScale = p_112307_.getLatexAmount() * .75f;
-        latex.render(p_112309_, p_112310_.getBuffer(RenderType.entitySolid(p_112307_.getLatexType() == Latex.DARK?DARK:WHITE)), p_112311_, p_112312_);
-        p_112309_.popPose();
+        poseStack.pushPose();
+        poseStack.translate(.5,.125,.5);
+        latex.yScale = entity.getLatexAmount() * .75f;
+        latex.render(poseStack, buffer.getBuffer(RenderType.entitySolid(entity.getLatexType() == Latex.DARK ? DARK : WHITE)), packedLight, packedOverlay);
+        poseStack.popPose();
     }
 }

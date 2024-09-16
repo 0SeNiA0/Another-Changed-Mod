@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,6 +10,7 @@ import net.zaharenko424.a_changed.block.blocks.Keypad;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -67,8 +69,8 @@ public class KeypadEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag p_155245_) {
-        super.load(p_155245_);
+    public void loadAdditional(CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(p_155245_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_155245_);
         code = tag.getIntArray("code");
         open = tag.getBoolean("open");
@@ -76,8 +78,8 @@ public class KeypadEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag p_187471_) {
-        super.saveAdditional(p_187471_);
+    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(p_187471_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_187471_);
         tag.putIntArray("code", code);
         tag.putBoolean("open", open);

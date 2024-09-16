@@ -66,7 +66,7 @@ public class TransfurTolerance {
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
             if(DamageSources.checkTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
-        PacketDistributor.ALL.noArg().send(new ClientboundTransfurToleranceSyncPacket());
+        PacketDistributor.sendToAllPlayers(new ClientboundTransfurToleranceSyncPacket());
         return Command.SINGLE_SUCCESS;
     }
 }

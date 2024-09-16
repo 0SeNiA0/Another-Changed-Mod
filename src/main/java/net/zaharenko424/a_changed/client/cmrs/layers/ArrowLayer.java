@@ -30,7 +30,7 @@ public class ArrowLayer<E extends LivingEntity,M extends CustomHumanoidModel<E>>
     @Override
     protected void renderStuckItem(PoseStack poseStack, MultiBufferSource buffer, int light, E entity, float x, float y, float z, float ticks) {
         float f = Mth.sqrt(x * x + z * z);
-        Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ(), ItemStack.EMPTY);
+        Arrow arrow = new Arrow(entity.level(), entity.getX(), entity.getY(), entity.getZ(), ItemStack.EMPTY, ItemStack.EMPTY);
         arrow.setYRot((float)(Math.atan2(x, z) * 180.0F / (float)Math.PI));
         arrow.setXRot((float)(Math.atan2(y, f) * 180.0F / (float)Math.PI));
         arrow.yRotO = arrow.getYRot();

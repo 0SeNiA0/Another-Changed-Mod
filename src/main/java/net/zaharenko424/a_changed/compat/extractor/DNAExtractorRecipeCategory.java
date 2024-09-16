@@ -2,22 +2,25 @@ package net.zaharenko424.a_changed.compat.extractor;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.screen.machines.DNAExtractorScreen;
+import net.zaharenko424.a_changed.compat.JeiPlugin;
+import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorRecipe> {
 
-    public static final RecipeType<DNAExtractorRecipe> TYPE = RecipeType
-            .create(AChanged.MODID, "dna_extractor", DNAExtractorRecipe.class);
+    public static final RecipeType<DNAExtractorRecipe> TYPE = new RecipeType<>(RecipeRegistry.DNA_EXTRACTOR_RECIPE.getId(), DNAExtractorRecipe.class);
 
     @Override
     public @NotNull RecipeType<DNAExtractorRecipe> getRecipeType() {
@@ -70,10 +73,16 @@ public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorR
     }
 
     @Override
+    public void draw(@NotNull DNAExtractorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        JeiPlugin.drawEnergyConsumption(DNAExtractorEntity.energyConsumption, guiGraphics, getWidth() - 96, 64);
+        JeiPlugin.drawProcessingTime(DNAExtractorEntity.maxProgress, guiGraphics, getWidth() - 32, 64);
+    }
+
+    @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DNAExtractorRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 75, 5).addIngredients(recipe.getIngredient());
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 137, 3).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 137, 3).addItemStack(RecipeUtil.getResultItem(recipe));
         builder.setShapeless(10,60);
     }
 }

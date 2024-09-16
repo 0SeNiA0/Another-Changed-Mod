@@ -2,6 +2,8 @@ package net.zaharenko424.a_changed.entity.block.machines;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,12 +17,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
+import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
-import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,10 +29,12 @@ import java.util.Optional;
 
 public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
-    public static final int MAX_PROGRESS = 160;
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
     private final RangedWrapper out = new RangedWrapper(inventory, 2, 3);
     private int progress;
+    private int energyConsumption;
+    private int recipeProcessingTime;
+    private RecipeHolder<LatexPurifierRecipe> currentRecipe;
 
     public LatexPurifierEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.LATEX_PURIFIER_ENTITY.get(), pPos, pBlockState);
@@ -42,11 +45,7 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         return new ItemStackHandler(3){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return switch(slot){
-                    case 0 -> checkItemEnergyCap(stack);
-                    case 1 -> stack.is(ItemRegistry.DARK_LATEX_ITEM.get()) || stack.is(ItemRegistry.WHITE_LATEX_ITEM.get());
-                    default -> false;
-                };
+                return slot != 0 || checkItemEnergyCap(stack);
             }
 
             @Override
@@ -65,12 +64,16 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
         return progress;
     }
 
+    public int getRecipeProcessingTime() {
+        return recipeProcessingTime;
+    }
+
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInventory, @NotNull Player player) {
         return new LatexPurifierMenu(pContainerId, playerInventory, this);
     }
-//Eats 48/t
+
     public void tick(){
         boolean changed = false;
 
@@ -79,37 +82,52 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
                     energyStorage.getMaxReceive(), false) != 0;
         }
 
-        if(getEnergy() < 48){
+        if(currentRecipe != null && (getEnergy() < energyConsumption || !currentRecipe.value().matches(container, level))){
             setActive(false);
             if(changed) update();
             return;
         }
 
-        Optional<RecipeHolder<LatexPurifierRecipe>> recipe = getRecipe();
-        if(recipe.isEmpty() || !Utils.canStacksStack(recipe.get().value().getResultItem(), inventory.getStackInSlot(2))) {
-            if(progress != 0) progress = 0;
-            setActive(false);
-            return;
+        RegistryAccess access = level.registryAccess();
+
+        if(currentRecipe == null) {
+            Optional<RecipeHolder<LatexPurifierRecipe>> recipe = getRecipe();
+            if (recipe.isEmpty() || !inventory.insertItem(2, recipe.get().value().getResultItem(access), true).isEmpty()) {
+                setActive(false);
+                return;
+            }
+
+            currentRecipe = recipe.get();
+            energyConsumption = currentRecipe.value().getEnergyConsumption();
+            recipeProcessingTime = currentRecipe.value().getProcessingTime();
+            setActive(true);
         }
 
-        setActive(true);
-        energyStorage.addEnergy(-48);
+        energyStorage.addEnergy(-energyConsumption);
 
-        if(progress < MAX_PROGRESS) {
+        if(progress < recipeProcessingTime) {
             progress++;
         } else {
-            ItemStack item = recipe.get().value().assemble(container);
-            inventory.setStackInSlot(2,  item.copyWithCount(item.getCount() + inventory.getStackInSlot(2).getCount()));
+            inventory.insertItem(2, currentRecipe.value().assemble(container, access), false);
             progress = 0;
         }
 
         update();
     }
 
-    private final ItemHandlerContainer container = new ItemHandlerContainer(inventory);
+    @Override
+    protected void setActive(boolean active) {
+        if(!active){
+            progress = 0;
+            currentRecipe = null;
+        }
+        super.setActive(active);
+    }
+
+    private final SingleInputRecipeWrapper container = new SingleInputRecipeWrapper(inventory, 1);
 
     private @NotNull Optional<RecipeHolder<LatexPurifierRecipe>> getRecipe(){
-        return level.getRecipeManager().getRecipeFor(LatexPurifierRecipe.Type.INSTANCE, container, level);
+        return level.getRecipeManager().getRecipeFor(RecipeRegistry.LATEX_PURIFIER_RECIPE.get(), container, level);
     }
 
     @Override
@@ -123,14 +141,22 @@ public class LatexPurifierEntity extends AbstractMachineEntity<ItemStackHandler,
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
         progress = tag.getInt("progress");
+        if(progress > 0){
+            energyConsumption = tag.getInt("energyConsumption");
+            recipeProcessingTime = tag.getInt("recipeProcessingTime");
+        }
     }
 
     @Override
-    void save(@NotNull CompoundTag tag) {
-        super.save(tag);
-        if(progress > 0) tag.putInt("progress", progress);
+    void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.save(tag, lookup);
+        if(progress > 0) {
+            tag.putInt("progress", progress);
+            tag.putInt("energyConsumption", energyConsumption);
+            tag.putInt("recipeProcessingTime", recipeProcessingTime);
+        }
     }
 }

@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.entity.block.machines;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -123,14 +124,14 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
         burnTicks = tag.getInt("burnTicks");
         maxBurnTicks = tag.getInt("maxBurnTicks");
     }
 
-    void save(@NotNull CompoundTag tag){
-        super.save(tag);
+    void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup){
+        super.save(tag, lookup);
         if(burnTicks > 0) {
             tag.putInt("burnTicks", burnTicks);
             tag.putInt("maxBurnTicks", maxBurnTicks);

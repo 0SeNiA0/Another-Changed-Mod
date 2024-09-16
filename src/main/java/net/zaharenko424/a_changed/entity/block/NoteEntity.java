@@ -2,11 +2,13 @@ package net.zaharenko424.a_changed.entity.block;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -37,16 +39,16 @@ public class NoteEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag p_155245_) {
-        super.load(p_155245_);
+    public void loadAdditional(CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(p_155245_, lookup);
         CompoundTag modTag = NBTUtils.modTag(p_155245_);
         NBTUtils.readFromTag(modTag,text);
         finalized = modTag.getBoolean("finalized");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag p_187471_) {
-        super.saveAdditional(p_187471_);
+    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(p_187471_, lookup);
         CompoundTag modTag = NBTUtils.modTag(p_187471_);
         NBTUtils.writeToTag(modTag, text);
         modTag.putBoolean("finalized", finalized);

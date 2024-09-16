@@ -55,12 +55,12 @@ public class HypnosisData implements AbilityData {
     @Override
     public void syncClients() {
         if(holder.level().isClientSide) return;
-        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(holder).send(updatePacket());
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, updatePacket());
     }
 
     @Override
     public void syncClient(ServerPlayer receiver) {
-        PacketDistributor.PLAYER.with(receiver).send(updatePacket());
+        PacketDistributor.sendToPlayer(receiver, updatePacket());
     }
 
     private ClientboundAbilitySyncPacket updatePacket() {

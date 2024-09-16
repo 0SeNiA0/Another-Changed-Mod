@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-@SuppressWarnings("deprecation")
-public class TallCardboardBox extends TallBox implements ISeatBlock, Fallable {
+public class TallCardboardBox extends TallBox implements ISeatBlock<SeatEntity>, Fallable {
     public TallCardboardBox(Properties p_49795_) {
         super(p_49795_);
     }
@@ -34,30 +34,40 @@ public class TallCardboardBox extends TallBox implements ISeatBlock, Fallable {
         if(p_60566_.getValue(PART) == 0) p_60567_.addFreshEntity(new SeatEntity(p_60567_, p_60568_, false));
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState p_60503_, @NotNull Level level, @NotNull BlockPos p_60505_, @NotNull Player p_60506_, @NotNull InteractionHand p_60507_, @NotNull BlockHitResult p_60508_) {
-        if(level.isClientSide) return super.use(p_60503_, level, p_60505_, p_60506_, p_60507_, p_60508_);
-        if(p_60506_.isCrouching()){
-            BlockPos mainPos = getMainPos(p_60503_, p_60505_);
-            BlockState mainState = level.getBlockState(mainPos);
-            BlockPos pos = mainPos.relative(p_60506_.getDirection());
-            if(level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos.above()).canBeReplaced()){
-                level.setBlockAndUpdate(mainPos, getFluidState(mainState).createLegacyBlock());
-                level.playSound(null, mainPos, SoundRegistry.PUSH.get(), SoundSource.BLOCKS);
-                BlockState below = level.getBlockState(pos.below());
-                if(below.isAir() || below.canBeReplaced()) {
-                    FallingBlockEntity.fall(level, pos, mainState);
-                    return InteractionResult.SUCCESS;
-                }
-                level.setBlockAndUpdate(pos, mainState.setValue(WATERLOGGED, level.getFluidState(pos).isSourceOfType(Fluids.WATER)));
-                setPlacedBy(level, pos, p_60503_, null, ItemStack.EMPTY);
-                return InteractionResult.SUCCESS;
-            }
-            return InteractionResult.PASS;
+    public boolean use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos p_60505_, @NotNull Player player) {
+        if(level.isClientSide) return false;
+
+        if(!player.isCrouching()){
+            BlockPos pos = state.getValue(PART) == 0 ? p_60505_ : p_60505_.below();
+            return sit(level, pos, SHAPE_0.bounds().move(pos), player, false);
         }
-        BlockPos pos = p_60503_.getValue(PART) == 0 ? p_60505_ : p_60505_.below();
-        if(sit(level,pos, SHAPE_0.bounds().move(pos),p_60506_,false)) return InteractionResult.SUCCESS;
-        return super.use(p_60503_, level, p_60505_, p_60506_, p_60507_, p_60508_);
+
+        BlockPos mainPos = getMainPos(state, p_60505_);
+        BlockState mainState = level.getBlockState(mainPos);
+        BlockPos pos = mainPos.relative(player.getDirection());
+        if(level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos.above()).canBeReplaced()){
+            level.setBlockAndUpdate(mainPos, getFluidState(mainState).createLegacyBlock());
+            level.playSound(null, mainPos, SoundRegistry.PUSH.get(), SoundSource.BLOCKS);
+            BlockState below = level.getBlockState(pos.below());
+            if(below.isAir() || below.canBeReplaced()) {
+                FallingBlockEntity.fall(level, pos, mainState);
+                return true;
+            }
+            level.setBlockAndUpdate(pos, mainState.setValue(WATERLOGGED, level.getFluidState(pos).isSourceOfType(Fluids.WATER)));
+            setPlacedBy(level, pos, state, null, ItemStack.EMPTY);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

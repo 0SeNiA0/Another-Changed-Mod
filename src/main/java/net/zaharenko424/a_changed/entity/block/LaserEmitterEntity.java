@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -115,7 +116,7 @@ public class LaserEmitterEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("active", active);
         tag.putInt("length", lengthCache);
@@ -125,12 +126,12 @@ public class LaserEmitterEntity extends BlockEntity {
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        handleUpdateTag(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
+        handleUpdateTag(pkt.getTag(), lookup);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         active = tag.getBoolean("active");
         lengthCache = tag.getInt("length");
         directionCache = Direction.byName(tag.getString("direction"));

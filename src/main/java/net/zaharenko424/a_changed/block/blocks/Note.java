@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class Note extends AbstractNote {
 
     private static final VoxelShape SHAPE_NORTH = Shapes.box(0.3125, 0.3125, 0.9375, 0.6875, 0.875, 1);

@@ -33,7 +33,7 @@ public abstract class MixinBlockRendererDispatcher {
     @Shadow public abstract BakedModel getBlockModel(BlockState pState);
 
     @Unique
-    private boolean mod$wasLatexCovered;
+    private boolean achanged$wasLatexCovered;
 
     /**
      * Sets BakedQuads textures to latex textures if block is latex covered
@@ -44,7 +44,7 @@ public abstract class MixinBlockRendererDispatcher {
         CoveredWith coveredWith = LatexCoveredData.of(Minecraft.getInstance().level.getChunkAt(pos)).getCoveredWith(pos);
         if(coveredWith == CoveredWith.NOTHING) return model;
 
-        mod$wasLatexCovered = true;
+        achanged$wasLatexCovered = true;
         Consumer<BakedQuad> consumer = coveredWith == CoveredWith.DARK_LATEX ? BakedQuadExtension.dlMode : BakedQuadExtension.wlMode;
 
         long seed = state.getSeed(pos);
@@ -63,16 +63,16 @@ public abstract class MixinBlockRendererDispatcher {
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/ModelBlockRenderer;tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;JILnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V", shift = At.Shift.AFTER),
             method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V")
     private void onPostRenderBatched(BlockState state, BlockPos pos, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource random, ModelData data, RenderType renderType, CallbackInfo ci){
-        if(!mod$wasLatexCovered) return;
+        if(!achanged$wasLatexCovered) return;
 
         BakedModel model = getBlockModel(state);
         long seed = state.getSeed(pos);
         for(Direction direction : Direction.values()){
             random.setSeed(seed);
-            model.getQuads(state, direction, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).mod$clear());
+            model.getQuads(state, direction, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).achanged$clear());
         }
         random.setSeed(seed);
-        model.getQuads(state, null, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).mod$clear());
+        model.getQuads(state, null, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).achanged$clear());
     }
 
     //renderSingleBlock does not have BlockPos -> don't need to touch it

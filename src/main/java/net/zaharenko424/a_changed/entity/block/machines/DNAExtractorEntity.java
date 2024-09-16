@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.entity.block.machines;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -13,27 +14,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.ItemHandlerContainer;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
+import net.zaharenko424.a_changed.recipe.RecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
 
-    private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
+    public static final int energyConsumption = 64;
+    public static final int maxProgress = 600;
 
-    private static final int maxProgress = 600;
+    private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
     private int[] progress = new int[4];
     private int rotationDeg;
     private int rotationDegO;
@@ -45,11 +48,6 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     @Override
     ItemStackHandler initInv() {
         return new ItemStackHandler(8){
-            @Override
-            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot < 4;
-            }
-
             @Override
             protected void onContentsChanged(int slot) {
                 update();
@@ -79,8 +77,7 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 //Eats 64/t for now
     @Override
     public void tick() {
-        if(energyStorage.getEnergyStored() < 64) {
-            resetProgress();
+        if(energyStorage.getEnergyStored() < energyConsumption) {
             setActive(false);
             return;
         }
@@ -99,13 +96,12 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         }
 
         if(!hasAnyRecipes || !hasEnoughOutputSpace(map)){
-            resetProgress();
             setActive(false);
             return;
         }
 
         setActive(true);
-        energyStorage.addEnergy(-64);
+        energyStorage.addEnergy(-energyConsumption);
         rotationDeg = Mth.wrapDegrees(rotationDeg + 20);
 
         map.forEach((slot, r) -> {
@@ -115,24 +111,25 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
             }
             progress[slot] = 0;
             ItemStack result = r.get().value().assemble(container, slot);
-            ItemStack out;
+
             for(int i0 = 0; i0 < 4; i0++){
-                out = output.getStackInSlot(i0);
-                if(out.isEmpty() || ItemHandlerHelper.canItemStacksStack(result, out)){
-                    int toAdd = Math.min(output.getSlotLimit(i0) - out.getCount(), result.getCount());
-                    output.setStackInSlot(i0, result.copyWithCount(out.getCount() + toAdd));
-                    result.shrink(toAdd);
-                }
-                if(result.isEmpty()) break;
+                result = output.insertItem(i0, result, false);
+                if(result.isEmpty()) return;
             }
         });
 
         update();
     }
 
+    @Override
+    protected void setActive(boolean active) {
+        if(!active) Arrays.fill(progress, 0);
+        super.setActive(active);
+    }
+
     private boolean hasEnoughOutputSpace(@NotNull Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> recipes){
         List<ItemStack> results = recipes.values().stream().filter(Optional::isPresent)
-                .map(optional -> optional.get().value().getResultItem()).toList();
+                .map(optional -> optional.get().value().getResultItem(level.registryAccess()).copy()).toList();
 
         List<ItemStack> outSlots = new ArrayList<>();
         for(int i = 0; i < 4; i++){
@@ -153,10 +150,10 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         return true;
     }
 
-    private final ItemHandlerContainer container = new ItemHandlerContainer(inventory);
+    private final RecipeWrapper container = new RecipeWrapper(inventory);
 
     private @NotNull Optional<RecipeHolder<DNAExtractorRecipe>> getRecipe(int slot){
-        return level.getRecipeManager().getAllRecipesFor(DNAExtractorRecipe.Type.INSTANCE).stream()
+        return level.getRecipeManager().getAllRecipesFor(RecipeRegistry.DNA_EXTRACTOR_RECIPE.get()).stream()
                 .filter(holder -> holder.value().matches(container, slot, level)).findFirst();
     }
 
@@ -165,15 +162,6 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
             if(progress[i] > 0) return true;
         }
         return false;
-    }
-
-    private void resetProgress(){
-        boolean anyProgress = false;
-        for(int i = 0; i < 4;i++){
-            if(progress[i] != 0) anyProgress = true;
-            progress[i] = 0;
-        }
-        if(anyProgress) update();
     }
 
     @Override
@@ -195,8 +183,8 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
         int[] ar = tag.getIntArray("progress");
         if(ar.length == 4) progress = ar;
         int rot = rotationDeg;
@@ -206,8 +194,8 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     }
 
     @Override
-    void save(@NotNull CompoundTag tag) {
-        super.save(tag);
+    void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.save(tag, lookup);
         tag.putIntArray("progress", progress);
         tag.putInt("rotation", rotationDeg);
     }

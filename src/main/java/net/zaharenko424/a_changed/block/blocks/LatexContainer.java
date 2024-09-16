@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,14 +22,12 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.block.AbstractMultiBlock.Part;
 import net.zaharenko424.a_changed.block.NotRotatedMultiBlock;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
-import net.zaharenko424.a_changed.item.LatexItem;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock {
 
@@ -67,22 +66,28 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return InteractionResult.CONSUME_PARTIAL;
-        BlockPos pos = p_60503_.getValue(PART) == 0 ? p_60505_ : p_60505_.below();
-        BlockEntity entity = p_60504_.getBlockEntity(pos);
-        if(entity instanceof LatexContainerEntity container){
-            ItemStack item = p_60506_.getItemInHand(p_60507_);
-            if(item.getItem() instanceof LatexItem && container.hasSpace(item.getItem())){
-                container.addLatex(item, !p_60506_.isCreative());
-                return InteractionResult.SUCCESS;
-            }
-            if(item.isEmpty() && !container.isEmpty()){
-                ItemHandlerHelper.giveItemToPlayer(p_60506_, container.removeLatex());
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+
+        BlockPos pos1 = state.getValue(PART) == 0 ? pos : pos.below();
+        BlockEntity entity = level.getBlockEntity(pos1);
+        if(!(entity instanceof LatexContainerEntity container) || container.isEmpty()) return InteractionResult.PASS;
+
+        ItemHandlerHelper.giveItemToPlayer(player, container.removeLatex());
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return ItemInteractionResult.CONSUME_PARTIAL;
+
+        BlockPos pos1 = state.getValue(PART) == 0 ? pos : pos.below();
+        BlockEntity entity = level.getBlockEntity(pos1);
+        if(!(entity instanceof LatexContainerEntity container) || !container.hasSpace(stack.getItem()))
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        container.addLatex(stack, !player.isCreative());
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

@@ -13,7 +13,6 @@ import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("deprecation")
 public class BrokenCup extends SmallDecorBlock {
 
     private static final VoxelShape SHAPE_N = Shapes.or(Shapes.box(0.3125, 0, 0.3875, 0.35, 0.1125, 0.6125),

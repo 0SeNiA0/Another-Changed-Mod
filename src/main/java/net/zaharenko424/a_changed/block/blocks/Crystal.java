@@ -25,7 +25,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class Crystal extends Block {
 
     private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.75,.625);

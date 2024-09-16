@@ -9,8 +9,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class GasCanisterItem extends BlockItem {
+
     public GasCanisterItem(Block p_40565_, Properties p_40566_) {
-        super(p_40565_, p_40566_.defaultDurability(256).rarity(Rarity.UNCOMMON));
+        super(p_40565_, p_40566_.durability(256).rarity(Rarity.UNCOMMON));
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -103,7 +104,7 @@ public class CryoChamberEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
         CompoundTag modTag = NBTUtils.modTag(tag);
         save(modTag);
@@ -113,17 +114,17 @@ public class CryoChamberEntity extends BlockEntity {
     }
 
     @Override
-    public void onDataPacket(Connection net, @NotNull ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = pkt.getTag();
-        load(tag);
+        loadAdditional(tag, lookup);
         CompoundTag modTag = NBTUtils.modTag(tag);
         direction = Direction.byName(modTag.getString("direction"));
         insideAABB = NBTUtils.getAABB(modTag);
     }
 
     @Override
-    public void load(@NotNull CompoundTag pTag) {
-        super.load(pTag);
+    public void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(pTag, lookup);
         CompoundTag modTag = NBTUtils.modTag(pTag);
         open = modTag.getBoolean("open");
         active = modTag.getBoolean("active");
@@ -131,8 +132,8 @@ public class CryoChamberEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(pTag, lookup);
         save(NBTUtils.modTag(pTag));
     }
 

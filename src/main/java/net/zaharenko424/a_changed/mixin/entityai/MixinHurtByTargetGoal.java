@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinHurtByTargetGoal extends TargetGoal {
 
     @Unique
-    boolean mod$wasTransfurred = false;
+    boolean achanged$wasTransfurred = false;
 
     public MixinHurtByTargetGoal(Mob pMob, boolean pMustSee) {
         super(pMob, pMustSee);
@@ -23,12 +23,12 @@ public abstract class MixinHurtByTargetGoal extends TargetGoal {
 
     @Inject(at = @At("HEAD"), method = "start")
     private void onStart(CallbackInfo ci){
-        if(mob.getLastHurtByMob() instanceof Player player) mod$wasTransfurred = TransfurManager.isTransfurred(player);
+        if(mob.getLastHurtByMob() instanceof Player player) achanged$wasTransfurred = TransfurManager.isTransfurred(player);
     }
 
     @Override
     public boolean canContinueToUse() {
-        if(!mod$wasTransfurred && targetMob instanceof Player player && (TransfurManager.isTransfurred(player) || TransfurManager.isBeingTransfurred(player))) return false;
+        if(!achanged$wasTransfurred && targetMob instanceof Player player && (TransfurManager.isTransfurred(player) || TransfurManager.isBeingTransfurred(player))) return false;
         return super.canContinueToUse();
     }
 }

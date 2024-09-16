@@ -1,8 +1,6 @@
 package net.zaharenko424.a_changed.client.cmrs.layers;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -11,15 +9,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.WalkAnimationState;
 import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
@@ -75,27 +72,18 @@ public class CustomHeadLayer <E extends LivingEntity, M extends CustomHumanoidMo
 
             getParentModel().head.translateAndRotate(pPoseStack);
             if (item instanceof BlockItem && ((BlockItem)item).getBlock() instanceof AbstractSkullBlock) {
-                //float f2 = 1.1875F; magic number I guess
                 pPoseStack.scale(1.1875F, 1.1875F, -1.1875F);
                 if (flag) {
                     pPoseStack.translate(0.0F, 0.0625F, 0.0F);
                 }
 
-                GameProfile gameprofile = null;
-                if (itemstack.hasTag()) {
-                    CompoundTag compoundtag = itemstack.getTag();
-                    if (compoundtag.contains("SkullOwner", 10)) {
-                        gameprofile = NbtUtils.readGameProfile(compoundtag.getCompound("SkullOwner"));
-                    }
-                }
-
+                ResolvableProfile resolvableprofile = itemstack.get(DataComponents.PROFILE);
                 pPoseStack.translate(-0.5, 0.0, -0.5);
                 SkullBlock.Type skullblock$type = ((AbstractSkullBlock)((BlockItem)item).getBlock()).getType();
                 SkullModelBase skullmodelbase = this.skullModels.get(skullblock$type);
-                RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, gameprofile);
-                Entity entity = pLivingEntity.getVehicle();
+                RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, resolvableprofile);
                 WalkAnimationState walkanimationstate;
-                if (entity instanceof LivingEntity livingentity) {
+                if (pLivingEntity.getVehicle() instanceof LivingEntity livingentity) {
                     walkanimationstate = livingentity.walkAnimation;
                 } else {
                     walkanimationstate = pLivingEntity.walkAnimation;
@@ -113,8 +101,8 @@ public class CustomHeadLayer <E extends LivingEntity, M extends CustomHumanoidMo
     }
 
     public static void translateToHead(@NotNull PoseStack pPoseStack, boolean pIsVillager) {
-        pPoseStack.translate(0.0F, 0.25F, 0.0F);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        pPoseStack.translate(0.0F, 0.25F, 0.0F);//TODO fix wrong rotation (potentially the 180 YP)
+        //pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         pPoseStack.scale(0.625F, 0.625F, 0.625F);
         if (pIsVillager) {
             pPoseStack.translate(0.0F, 0.1875F, 0.0F);

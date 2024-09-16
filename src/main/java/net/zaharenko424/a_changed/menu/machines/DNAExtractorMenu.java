@@ -2,10 +2,11 @@ package net.zaharenko424.a_changed.menu.machines;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
 import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
+import net.zaharenko424.a_changed.menu.SlotItemHandler;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +28,30 @@ public class DNAExtractorMenu extends AbstractMachineMenu<DNAExtractorEntity> {
         addSlot(new SlotItemHandler(inv, 1, 56, 36));
         addSlot(new SlotItemHandler(inv, 2, 108, 36));
         addSlot(new SlotItemHandler(inv, 3, 82, 62));
-        addSlot(new SlotItemHandler(inv, 4, 144, 8));
-        addSlot(new SlotItemHandler(inv, 5, 144, 26));
-        addSlot(new SlotItemHandler(inv, 6, 144, 44));
-        addSlot(new SlotItemHandler(inv, 7, 144, 62));
+        addSlot(new SlotItemHandler(inv, 4, 144, 8){
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
+        addSlot(new SlotItemHandler(inv, 5, 144, 26){
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
+        addSlot(new SlotItemHandler(inv, 6, 144, 44){
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
+        addSlot(new SlotItemHandler(inv, 7, 144, 62){
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
     }
 
     @Override

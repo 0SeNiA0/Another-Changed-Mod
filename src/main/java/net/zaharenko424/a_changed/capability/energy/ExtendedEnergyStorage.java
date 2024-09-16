@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.capability.energy;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -53,7 +54,11 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
      * @param amount amount of energy to add
      */
     public void addEnergy(int amount){
-        energy += amount;
+        setEnergy(energy + amount);
+    }
+
+    protected void setEnergy(int amount){
+        energy = Math.min(amount, capacity);
         onEnergyChanged();
     }
 
@@ -65,8 +70,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
         if(simulate) return energyReceived;
 
-        energy += energyReceived;
-        onEnergyChanged();
+        setEnergy(energy + energyReceived);
         return energyReceived;
     }
 
@@ -96,8 +100,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
         if(simulate) return energyExtracted;
 
-        energy -= energyExtracted;
-        onEnergyChanged();
+        setEnergy(energy - energyExtracted);
         return energyExtracted;
     }
 
@@ -143,12 +146,12 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
     public void onEnergyChanged(){}
 
     @Override
-    public Tag serializeNBT() {
+    public Tag serializeNBT(HolderLookup.@NotNull Provider lookup) {
         return IntTag.valueOf(getEnergyStored());
     }
 
     @Override
-    public void deserializeNBT(@NotNull Tag nbt) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider lookup, @NotNull Tag nbt) {
         if (!(nbt instanceof IntTag intNbt))
             throw new IllegalArgumentException("Tag, provided for deserialization, is not an IntTag!");
         energy = intNbt.getAsInt();

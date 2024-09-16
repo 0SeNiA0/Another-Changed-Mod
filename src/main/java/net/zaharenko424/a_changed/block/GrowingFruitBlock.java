@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -53,12 +54,21 @@ public abstract class GrowingFruitBlock extends Block implements BonemealableBlo
         return defaultBlockState().setValue(ageProperty(), Mth.clamp(age, 0, maxAge()));
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || !isMaxAge(state)) return super.use(state, level, pos, player, pHand, pHit);
+    public boolean use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        if(level.isClientSide || !isMaxAge(state)) return false;
         level.removeBlock(pos, false);
         ItemHandlerHelper.giveItemToPlayer(player, fruitItem.get().getDefaultInstance());
-        return InteractionResult.SUCCESS;
+        return true;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -68,9 +78,9 @@ public abstract class GrowingFruitBlock extends Block implements BonemealableBlo
 
     @Override
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (net.neoforged.neoforge.common.CommonHooks.onCropsGrowPre(level, pos, state, random.nextInt(15) == 0)) {
+        if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt(15) == 0)) {
             level.setBlock(pos, getAgeState(getAge(state) + 1), Block.UPDATE_CLIENTS);
-            net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost(level, pos, state);
+            net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
         }
     }
 

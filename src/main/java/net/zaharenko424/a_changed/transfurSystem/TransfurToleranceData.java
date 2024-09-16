@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.transfurSystem;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -12,13 +13,13 @@ public class TransfurToleranceData extends SavedData {
     private static final SavedData.Factory<TransfurToleranceData> FACTORY = new Factory<>(()-> {
         TransfurManager.TRANSFUR_TOLERANCE = TransfurManager.DEF_TRANSFUR_TOLERANCE;
         return new TransfurToleranceData();
-    }, tag -> {
+    }, (tag, lookup) -> {
         TransfurManager.TRANSFUR_TOLERANCE = tag.getFloat(NAME);
         return new TransfurToleranceData();
     });
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         tag.putFloat(NAME, TransfurManager.TRANSFUR_TOLERANCE);
         return tag;
     }

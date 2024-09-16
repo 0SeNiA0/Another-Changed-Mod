@@ -7,7 +7,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
@@ -38,25 +38,25 @@ public class ClientPacketHandler {
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
-    public void handleSmoothLookPacket(ClientboundSmoothLookPacket packet, PlayPayloadContext context){
-        context.workHandler().execute(()->
-                ((LocalPlayerExtension)minecraft.player).mod$lerpLookAt(packet.xRot(), packet.yRot(), packet.speed(), packet.ticks()));
+    public void handleSmoothLookPacket(ClientboundSmoothLookPacket packet, IPayloadContext context){
+        context.enqueueWork(()->
+                ((LocalPlayerExtension)minecraft.player).achanged$lerpLookAt(packet.xRot(), packet.yRot(), packet.speed(), packet.ticks()));
     }
 
     public void handleTransfurToleranceSync(@NotNull ClientboundTransfurToleranceSyncPacket packet){
         TransfurManager.TRANSFUR_TOLERANCE = packet.transfurTolerance();
     }
 
-    public void handleAbilitySyncPacket(@NotNull ClientboundAbilitySyncPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().execute(()-> {
+    public void handleAbilitySyncPacket(@NotNull ClientboundAbilitySyncPacket packet, @NotNull IPayloadContext context){
+        context.enqueueWork(()-> {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity living)) return;
             packet.ability().handleData(living, packet.buffer(), context);
         });
     }
 
-    public void handleTransfurSyncPacket(@NotNull ClientboundTransfurSyncPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().execute(() -> {
+    public void handleTransfurSyncPacket(@NotNull ClientboundTransfurSyncPacket packet, @NotNull IPayloadContext context){
+        context.enqueueWork(() -> {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity holder)) {
                 AChanged.LOGGER.warn("No suitable holder for TransfurCapability found with id {}!", packet.holderId());
@@ -85,8 +85,8 @@ public class ClientPacketHandler {
         else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
     }
 
-    public void handleLTCDataSync(ClientboundLTCDataPacket packet, PlayPayloadContext context){
-        context.workHandler().execute(() -> {
+    public void handleLTCDataSync(ClientboundLTCDataPacket packet, IPayloadContext context){
+        context.enqueueWork(() -> {
             LevelChunk chunk = minecraft.level.getChunk(packet.pos().x, packet.pos().z);
             LatexCoveredData.of(chunk).readPacket(packet.flags(), packet.rawData());
         });
@@ -100,18 +100,18 @@ public class ClientPacketHandler {
         }
     }
 
-    public void handleOpenTransfurScreen(@NotNull PlayPayloadContext context){
-        context.workHandler().execute(() ->
+    public void handleOpenTransfurScreen(@NotNull IPayloadContext context){
+        context.enqueueWork(() ->
                 minecraft.setScreen(new TransfurScreen()));
     }
 
-    public void handleOpenNotePacket(@NotNull ClientboundOpenNotePacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().execute(() ->
+    public void handleOpenNotePacket(@NotNull ClientboundOpenNotePacket packet, @NotNull IPayloadContext context){
+        context.enqueueWork(() ->
                 minecraft.setScreen(new NoteScreen(packet.pos(), packet.text(), packet.finalized(), packet.guiId())));
     }
 
-    public void handleOpenKeypadPacket(@NotNull ClientboundOpenKeypadPacket packet, @NotNull PlayPayloadContext context){
-        context.workHandler().execute(() ->
+    public void handleOpenKeypadPacket(@NotNull ClientboundOpenKeypadPacket packet, @NotNull IPayloadContext context){
+        context.enqueueWork(() ->
                 minecraft.setScreen(new KeypadScreen(packet.isPasswordSet(), packet.length(), packet.pos())));
     }
 }

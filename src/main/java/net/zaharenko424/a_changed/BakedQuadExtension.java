@@ -6,17 +6,17 @@ import java.util.function.Consumer;
 
 public interface BakedQuadExtension {
 
-    Consumer<BakedQuad> dlMode = quad -> ((BakedQuadExtension)quad).mod$darkLatex();
+    Consumer<BakedQuad> dlMode = quad -> ((BakedQuadExtension)quad).achanged$darkLatex();
 
-    Consumer<BakedQuad> wlMode = quad -> ((BakedQuadExtension)quad).mod$whiteLatex();
+    Consumer<BakedQuad> wlMode = quad -> ((BakedQuadExtension)quad).achanged$whiteLatex();
 
-    Consumer<BakedQuad> clearMode = quad -> ((BakedQuadExtension)quad).mod$clear();
+    Consumer<BakedQuad> clearMode = quad -> ((BakedQuadExtension)quad).achanged$clear();
 
-    void mod$darkLatex();
+    void achanged$darkLatex();
 
-    void mod$whiteLatex();
+    void achanged$whiteLatex();
 
-    void mod$clear();
+    void achanged$clear();
 
-    void mod$initUV(float[] uv);
+    void achanged$initUV(float[] uv);
 }

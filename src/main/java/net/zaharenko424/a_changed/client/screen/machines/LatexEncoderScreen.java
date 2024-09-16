@@ -37,7 +37,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
         int progress = entity.getProgress();
         if(progress > 0)
             guiGraphics.blit(TEXTURE, leftPos + 81, topPos + 28, 0,
-                    176, 0, 42 * progress / LatexEncoderEntity.MAX_PROGRESS, 24, 256, 166);
+                    176, 0, 42 * progress / entity.getRecipeProcessingTime(), 24, 256, 166);
 
         Gender gender = entity.getSelectedGender();
         if(gender != Gender.NONE)
@@ -87,6 +87,6 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
 
     @ApiStatus.Internal
     public void sendDataPacket(int index, int data){
-        PacketDistributor.SERVER.noArg().send(new ServerboundLatexEncoderScreenPacket(entity.getBlockPos(), index, data));
+        PacketDistributor.sendToServer(new ServerboundLatexEncoderScreenPacket(entity.getBlockPos(), index, data));
     }
 }

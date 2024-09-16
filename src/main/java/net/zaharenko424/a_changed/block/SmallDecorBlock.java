@@ -23,7 +23,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation")
 public abstract class SmallDecorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -51,10 +50,10 @@ public abstract class SmallDecorBlock extends HorizontalDirectionalBlock impleme
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || !player.isCrouching() || !player.getItemInHand(hand).isEmpty()) return super.use(state, level, pos, player, hand, pHit);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide || !player.isCrouching()) return super.useWithoutItem(state, level, pos, player, hitResult);
         level.removeBlock(pos, false);
-        player.setItemInHand(hand, new ItemStack(state.getBlock()));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(state.getBlock()));
         return InteractionResult.SUCCESS;
     }
 

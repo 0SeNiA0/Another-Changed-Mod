@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.entity.block.machines;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -77,32 +78,32 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
-        save(tag);
+        save(tag, lookup);
         return tag;
     }
 
     /*
-        handleUpdateTag is a scam. override is ignored
+    *    handleUpdateTag is a scam. override is ignored
     */
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        inventory.deserializeNBT(tag.getCompound("inventory"));
-        energyStorage.deserializeNBT(tag.get("energyStorage"));
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
+        inventory.deserializeNBT(lookup, tag.getCompound("inventory"));
+        energyStorage.deserializeNBT(lookup, tag.get("energyStorage"));
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        save(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(tag, lookup);
+        save(tag, lookup);
     }
 
-    void save(@NotNull CompoundTag tag){
-        tag.put("inventory", inventory.serializeNBT());
-        tag.put("energyStorage", energyStorage.serializeNBT());
+    void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup){
+        tag.put("inventory", inventory.serializeNBT(lookup));
+        tag.put("energyStorage", energyStorage.serializeNBT(lookup));
     }
 
     public @Nullable <CT> CT getCapability(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {

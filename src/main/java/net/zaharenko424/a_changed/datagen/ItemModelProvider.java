@@ -50,7 +50,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(LATEX_RESISTANT_FABRIC.getId());
         basicItemBlockTexture(LATEX_RESISTANT_GLASS_PANE_ITEM, BlockRegistry.LATEX_RESISTANT_GLASS).renderType("translucent");
         basicItem(LATEX_SOLVENT_BUCKET.getId());
-        basicItem(LATEX_SYRINGE_ITEM.getId());
+        basicItem(LATEX_SYRINGE.getId());
 
         ResourceLocation planks = blockLoc(BlockRegistry.ORANGE_PLANKS);
         buttonInventory(ORANGE_BUTTON_ITEM.getId().getPath(), planks);

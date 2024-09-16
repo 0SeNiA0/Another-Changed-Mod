@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.block.KeypadEntity;
@@ -35,11 +35,9 @@ public class ServerPacketHandler {
         return empty;
     }
 
-    public void handleActivateAbilityPacket(ServerboundActivateAbilityPacket packet, PlayPayloadContext context){
-        if(playerEmpty(context.player().isEmpty())) return;
-
-        context.workHandler().execute(() -> {
-            ServerPlayer player = (ServerPlayer) context.player().get();
+    public void handleActivateAbilityPacket(ServerboundActivateAbilityPacket packet, IPayloadContext context){
+        context.enqueueWork(() -> {
+            ServerPlayer player = (ServerPlayer) context.player();
             TransfurHandler handler = TransfurHandler.nonNullOf(player);
 
             if(!handler.isTransfurred()) return;
@@ -50,11 +48,9 @@ public class ServerPacketHandler {
         });
     }
 
-    public void handleDeactivateAbilityPacket(ServerboundDeactivateAbilityPacket packet, PlayPayloadContext context){
-        if(playerEmpty(context.player().isEmpty())) return;
-
-        context.workHandler().execute(() -> {
-            ServerPlayer player = (ServerPlayer) context.player().get();
+    public void handleDeactivateAbilityPacket(ServerboundDeactivateAbilityPacket packet, IPayloadContext context){
+        context.enqueueWork(() -> {
+            ServerPlayer player = (ServerPlayer) context.player();
             TransfurHandler handler = TransfurHandler.nonNullOf(player);
 
             if(!handler.isTransfurred()) return;
@@ -65,11 +61,9 @@ public class ServerPacketHandler {
         });
     }
 
-    public void handleSelectAbilityPacket(ServerboundSelectAbilityPacket packet, PlayPayloadContext context){
-        if(playerEmpty(context.player().isEmpty())) return;
-
-        context.workHandler().execute(() -> {
-            ServerPlayer player = (ServerPlayer) context.player().get();
+    public void handleSelectAbilityPacket(ServerboundSelectAbilityPacket packet, IPayloadContext context){
+        context.enqueueWork(() -> {
+            ServerPlayer player = (ServerPlayer) context.player();
             TransfurHandler handler = TransfurHandler.nonNullOf(player);
 
             if(!handler.isTransfurred()) return;
@@ -77,15 +71,13 @@ public class ServerPacketHandler {
         });
     }
 
-    public void handleAbilityPacket(ServerboundAbilityPacket packet, PlayPayloadContext context){
-        context.workHandler().execute(() ->
-                packet.ability().handleData(context.player().get(), packet.buffer(), context));
+    public void handleAbilityPacket(ServerboundAbilityPacket packet, IPayloadContext context){
+        context.enqueueWork(() ->
+                packet.ability().handleData(context.player(), packet.buffer(), context));
     }
 
-    public void handleTransfurChoicePacket(ServerboundTransfurChoicePacket packet, @NotNull PlayPayloadContext context){
-        if(playerEmpty(context.player().isEmpty())) return;
-
-        ServerPlayer player = (ServerPlayer) context.player().get();
+    public void handleTransfurChoicePacket(ServerboundTransfurChoicePacket packet, @NotNull IPayloadContext context){
+        ServerPlayer player = (ServerPlayer) context.player();
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
         if(!handler.isBeingTransfurred()) return;
 
@@ -94,17 +86,17 @@ public class ServerPacketHandler {
         else handler.transfur(transfurType, TransfurContext.TRANSFUR_DEATH);
     }
 
-    public void handleLatexEncoderScreenPacket(@NotNull ServerboundLatexEncoderScreenPacket packet, PlayPayloadContext context){
+    public void handleLatexEncoderScreenPacket(@NotNull ServerboundLatexEncoderScreenPacket packet, IPayloadContext context){
         blockEntityInteract(context, packet.pos(), LatexEncoderEntity.class, (player, encoder) ->
                 encoder.setData(packet.index(), packet.data()));
     }
 
-    public void handleEditNotePacket(@NotNull ServerboundEditNotePacket packet, @NotNull PlayPayloadContext context){
+    public void handleEditNotePacket(@NotNull ServerboundEditNotePacket packet, @NotNull IPayloadContext context){
         blockEntityInteract(context, packet.pos(), NoteEntity.class, (player, noteEntity) ->
                 noteEntity.setText(packet.text(), packet.finalize_()));
     }
 
-    public void handleTryPasswordPacket(@NotNull ServerboundTryPasswordPacket packet, @NotNull PlayPayloadContext context){
+    public void handleTryPasswordPacket(@NotNull ServerboundTryPasswordPacket packet, @NotNull IPayloadContext context){
         blockEntityInteract(context, packet.pos(), KeypadEntity.class, (player, keypad) -> {
             if(keypad.isCodeSet()){
                 keypad.tryCode(packet.attempt());
@@ -112,15 +104,13 @@ public class ServerPacketHandler {
         });
     }
 
-    private <E extends BlockEntity> void blockEntityInteract(@NotNull PlayPayloadContext context, BlockPos pos, Class<E> clazz, BiConsumer<ServerPlayer, E> task){
-        if(playerEmpty(context.player().isEmpty())) return;
-
-        ServerPlayer sender = (ServerPlayer) context.player().get();
+    private <E extends BlockEntity> void blockEntityInteract(@NotNull IPayloadContext context, BlockPos pos, Class<E> clazz, BiConsumer<ServerPlayer, E> task){
+        ServerPlayer sender = (ServerPlayer) context.player();
         if(sender.distanceToSqr(pos.getCenter()) > 64) {
             LOGGER.warn("Player {} tried to interact with {} from more than 8 blocks away!", sender, clazz);
             return;
         }
-        context.workHandler().execute(()->{
+        context.enqueueWork(()->{
             BlockEntity entity = sender.level().getBlockEntity(pos);
             if(entity == null || !clazz.isAssignableFrom(entity.getClass())){
                 LOGGER.warn("Block position does not contain {}! ({})", clazz, pos);

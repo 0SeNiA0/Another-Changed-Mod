@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +21,7 @@ import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.util.NBTUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -56,7 +58,7 @@ public class GasTankEntity extends BlockEntity {
     }
 
     public void setOpenClose(){
-        if(!isEmpty()) open=!open;
+        if(!isEmpty()) open =! open;
     }
 
     public void tick(){
@@ -65,10 +67,10 @@ public class GasTankEntity extends BlockEntity {
         if(tick % 2 == 0) ((ServerLevel)level).sendParticles(AChanged.BLUE_GAS_PARTICLE.get(), pos.x, pos.y, pos.z,0, target.getX(), target.getY(), target.getZ(),.4);
         if(tick < 20) return;
         tick = 0;
-        canister.hurt(1, level.random,null);
+        canister.hurtAndBreak(1, ((ServerLevel)level),null, item -> {});
         level.playSound(null, worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
         level.getEntitiesOfClass(LivingEntity.class, ab, DamageSources::checkTarget).forEach((entity -> {
-            if(entity.hasEffect(MobEffectRegistry.FRESH_AIR.get()) || isFullHazmat(entity)) return;
+            if(entity.hasEffect(MobEffectRegistry.FRESH_AIR) || isFullHazmat(entity)) return;
             TransfurHandler.nonNullOf(entity).addTransfurProgress(5f, TransfurRegistry.GAS_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
         }));
         if(isEmpty()) open = false;
@@ -82,18 +84,18 @@ public class GasTankEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag p_155245_) {
-        super.load(p_155245_);
+    public void loadAdditional(CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(p_155245_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_155245_);
-        canister = ItemStack.of(tag.getCompound("canister"));
+        canister = ItemStack.parseOptional(lookup, tag.getCompound("canister"));
         open = tag.getBoolean("open");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag p_187471_) {
-        super.saveAdditional(p_187471_);
+    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(p_187471_, lookup);
         CompoundTag tag = NBTUtils.modTag(p_187471_);
-        tag.put("canister", canister.save(new CompoundTag()));
+        tag.put("canister", canister.save(lookup));
         tag.putBoolean("open", open);
     }
 }

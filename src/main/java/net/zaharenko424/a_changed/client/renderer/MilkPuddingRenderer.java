@@ -20,4 +20,9 @@ public class MilkPuddingRenderer extends CustomMobRenderer<MilkPuddingEntity, Mi
     public @NotNull ResourceLocation getTextureLocation(@NotNull MilkPuddingEntity pEntity) {
         return TEXTURE;
     }
+
+    @Override
+    protected boolean shouldShowName(@NotNull MilkPuddingEntity entity) {
+        return entity.hasCustomName() && super.shouldShowName(entity);
+    }
 }

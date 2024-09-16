@@ -2,21 +2,23 @@ package net.zaharenko424.a_changed.event;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.items.ComponentItemHandler;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.*;
@@ -29,9 +31,9 @@ import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransf
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
-import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
+import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +43,7 @@ import java.util.List;
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = AChanged.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AChanged.MODID,bus = EventBusSubscriber.Bus.MOD)
 public class CommonMod {
 
     @SubscribeEvent
@@ -50,64 +52,64 @@ public class CommonMod {
     }
 
     @SubscribeEvent
-    public static void onRegisterPayload(RegisterPayloadHandlerEvent event){
-        IPayloadRegistrar registrar = event.registrar(MODID);
+    public static void onRegisterPayload(RegisterPayloadHandlersEvent event){
+        PayloadRegistrar registrar = event.registrar(MODID);
 
         //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
         //Ability
-        registrar.play(ServerboundActivateAbilityPacket.ID, ServerboundActivateAbilityPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleActivateAbilityPacket));
+        registrar.playToServer(ServerboundActivateAbilityPacket.TYPE, ServerboundActivateAbilityPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleActivateAbilityPacket);
 
-        registrar.play(ServerboundDeactivateAbilityPacket.ID, ServerboundDeactivateAbilityPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleDeactivateAbilityPacket));
+        registrar.playToServer(ServerboundDeactivateAbilityPacket.TYPE, ServerboundDeactivateAbilityPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleDeactivateAbilityPacket);
 
-        registrar.play(ServerboundSelectAbilityPacket.ID, ServerboundSelectAbilityPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleSelectAbilityPacket));
+        registrar.playToServer(ServerboundSelectAbilityPacket.TYPE, ServerboundSelectAbilityPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleSelectAbilityPacket);
 
-        registrar.play(ClientboundAbilitySyncPacket.ID, ClientboundAbilitySyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleAbilitySyncPacket(packet, context)));
+        registrar.playToClient(ClientboundAbilitySyncPacket.TYPE, ClientboundAbilitySyncPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleAbilitySyncPacket(packet, context));
 
-        registrar.play(ServerboundAbilityPacket.ID, ServerboundAbilityPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleAbilityPacket));
+        registrar.playToServer(ServerboundAbilityPacket.TYPE, ServerboundAbilityPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleAbilityPacket);
 
         //Smooth look
-        registrar.play(ClientboundSmoothLookPacket.ID, ClientboundSmoothLookPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleSmoothLookPacket(packet, context)));
+        registrar.playToClient(ClientboundSmoothLookPacket.TYPE, ClientboundSmoothLookPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleSmoothLookPacket(packet, context));
 
         //Transfur tolerance update
-        registrar.common(ClientboundTransfurToleranceSyncPacket.ID, ClientboundTransfurToleranceSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet)));
+        registrar.commonToClient(ClientboundTransfurToleranceSyncPacket.TYPE, ClientboundTransfurToleranceSyncPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet));
 
         //Transfur sync
-        registrar.play(ClientboundTransfurSyncPacket.ID, ClientboundTransfurSyncPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurSyncPacket(packet, context)));
+        registrar.playToClient(ClientboundTransfurSyncPacket.TYPE, ClientboundTransfurSyncPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurSyncPacket(packet, context));
 
         //Transfur screen
-        registrar.play(ClientboundOpenTransfurScreenPacket.ID, a -> new ClientboundOpenTransfurScreenPacket(), handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenTransfurScreen(context)));
-        registrar.play(ServerboundTransfurChoicePacket.ID, ServerboundTransfurChoicePacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleTransfurChoicePacket));
+        registrar.playToClient(ClientboundOpenTransfurScreenPacket.TYPE, ClientboundOpenTransfurScreenPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleOpenTransfurScreen(context));
+        registrar.playToServer(ServerboundTransfurChoicePacket.TYPE, ServerboundTransfurChoicePacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleTransfurChoicePacket);
 
         //Latex coveredness of chunks
-        registrar.play(ClientboundLTCDataPacket.ID, ClientboundLTCDataPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleLTCDataSync(packet, context)));
+        registrar.playToClient(ClientboundLTCDataPacket.TYPE, ClientboundLTCDataPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleLTCDataSync(packet, context));
 
         //Latex encoder
-        registrar.play(ServerboundLatexEncoderScreenPacket.ID, ServerboundLatexEncoderScreenPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleLatexEncoderScreenPacket));
+        registrar.playToServer(ServerboundLatexEncoderScreenPacket.TYPE, ServerboundLatexEncoderScreenPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleLatexEncoderScreenPacket);
 
         //Note
-        registrar.play(ClientboundOpenNotePacket.ID, ClientboundOpenNotePacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenNotePacket(packet, context)));
-        registrar.play(ServerboundEditNotePacket.ID, ServerboundEditNotePacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleEditNotePacket));
+        registrar.playToClient(ClientboundOpenNotePacket.TYPE, ClientboundOpenNotePacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleOpenNotePacket(packet, context));
+        registrar.playToServer(ServerboundEditNotePacket.TYPE, ServerboundEditNotePacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleEditNotePacket);
 
         //Keypad
-        registrar.play(ClientboundOpenKeypadPacket.ID, ClientboundOpenKeypadPacket::new, handler ->
-                handler.client((packet, context) -> ClientPacketHandler.INSTANCE.handleOpenKeypadPacket(packet, context)));
-        registrar.play(ServerboundTryPasswordPacket.ID, ServerboundTryPasswordPacket::new, handler ->
-                handler.server(ServerPacketHandler.INSTANCE::handleTryPasswordPacket));
+        registrar.playToClient(ClientboundOpenKeypadPacket.TYPE, ClientboundOpenKeypadPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleOpenKeypadPacket(packet, context));
+        registrar.playToServer(ServerboundTryPasswordPacket.TYPE, ServerboundTryPasswordPacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleTryPasswordPacket);
     }
 
     private static final List<EntityType<? extends LivingEntity>> transfurrable = List.of(EntityType.PLAYER, EntityType.ZOMBIE,
@@ -126,9 +128,9 @@ public class CommonMod {
                 ItemEnergyCapability.getCapability(50000, 256, item), ItemRegistry.SYRINGE_COIL_GUN);
 
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                item.getData(AttachmentRegistry.PNEUMATIC_SYRINGE_RIFLE_ITEM_HANDLER), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 9), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                item.getData(AttachmentRegistry.SYRINGE_COIL_GUN_HANDLER), ItemRegistry.SYRINGE_COIL_GUN);
+                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 4), ItemRegistry.SYRINGE_COIL_GUN);
 
         //BlockEntity
         registerMachineEntityCaps(event, BlockEntityRegistry.CAPACITOR_ENTITY.get());
@@ -149,8 +151,8 @@ public class CommonMod {
     @SubscribeEvent
     public static void onAttributeModify(EntityAttributeModificationEvent event){
         event.getTypes().forEach((type)-> {
-            if(!event.has(type,AIR_DECREASE_SPEED.get())) event.add(type, AIR_DECREASE_SPEED.get());
-            if(!event.has(type,LATEX_RESISTANCE.get())) event.add(type, LATEX_RESISTANCE.get());
+            if(!event.has(type, AIR_DECREASE_SPEED)) event.add(type, AIR_DECREASE_SPEED);
+            if(!event.has(type, LATEX_RESISTANCE)) event.add(type, LATEX_RESISTANCE);
         });
     }
 
@@ -182,27 +184,27 @@ public class CommonMod {
     }
 
     @SubscribeEvent
-    public static void onSpawnPlacementRegister(SpawnPlacementRegisterEvent event){
-        event.register(MILK_PUDDING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MilkPuddingEntity::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+    public static void onSpawnPlacementRegister(RegisterSpawnPlacementsEvent event){
+        event.register(MILK_PUDDING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MilkPuddingEntity::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(BEI_FENG.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(GAS_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(BEI_FENG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(GAS_WOLF.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(HYPNO_CAT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(HYPNO_CAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(LATEX_SHARK_FEMALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(LATEX_SHARK_MALE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(LATEX_SHARK_FEMALE.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(LATEX_SHARK_MALE.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterLatexBeast::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(PURE_WHITE_LATEX_WOLF.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
-        event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
 
-        event.register(YUFENG_DRAGON.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(YUFENG_DRAGON.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
     }
 }

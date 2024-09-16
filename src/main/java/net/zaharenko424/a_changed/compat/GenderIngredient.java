@@ -11,7 +11,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -70,7 +69,6 @@ public class GenderIngredient {
                         176, 24, 18, 18, 256, 166);
         }
 
-        @Contract(pure = true)
         @Override
         public @NotNull @Unmodifiable List<Component> getTooltip(@NotNull Gender ingredient, @NotNull TooltipFlag tooltipFlag) {
             return List.of();

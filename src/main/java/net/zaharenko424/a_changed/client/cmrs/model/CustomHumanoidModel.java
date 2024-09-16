@@ -83,8 +83,8 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-        root().render(poseStack, consumer, light, overlay, r, g, b, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color) {
+        root().render(poseStack, consumer, light, overlay, color);
     }
 
     public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {

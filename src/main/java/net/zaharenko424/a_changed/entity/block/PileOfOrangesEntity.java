@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -109,19 +110,19 @@ public class PileOfOrangesEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
         save(tag);
         return tag;
     }
 
     @Override
-    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt) {
-        handleUpdateTag(pkt.getTag());
+    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
+        handleUpdateTag(pkt.getTag(), lookup);
     }
 
     @Override
-    public void handleUpdateTag(@NotNull CompoundTag tag) {
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         int size = tag.getInt("Size");
         oranges.clear();
         for(int i = 0; i < size; i++){
@@ -131,8 +132,8 @@ public class PileOfOrangesEntity extends BlockEntity {
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
         int size = tag.getInt("Size");
         oranges.clear();
         for(int i = 0; i < size; i++){
@@ -143,8 +144,8 @@ public class PileOfOrangesEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(pTag, lookup);
         save(pTag);
     }
 

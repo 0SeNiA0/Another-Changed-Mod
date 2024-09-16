@@ -55,7 +55,7 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             poseStack.pushPose();
             poseStack.translate(0, 1, .5);
             int time = (int) (Minecraft.getInstance().level.getGameTime() % 1800);
-            float partialTick = Minecraft.getInstance().getPartialTick();
+            float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
             float deg = time / 5f;
             float nextDeg = (time + 1) / 5f;
             absoluteSolver.x = 7;

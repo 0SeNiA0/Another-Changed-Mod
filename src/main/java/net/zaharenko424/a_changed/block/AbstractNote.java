@@ -5,7 +5,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -20,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public abstract class AbstractNote extends HorizontalDirectionalBlock implements EntityBlock {
     public AbstractNote(Properties p_49795_) {
         super(p_49795_);
@@ -28,15 +29,24 @@ public abstract class AbstractNote extends HorizontalDirectionalBlock implements
 
     public abstract int guiId();
 
-    @Override
-    public @NotNull InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return super.use(p_60503_, p_60504_, p_60505_, p_60506_, p_60507_, p_60508_);
-        BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
+    public boolean use(BlockState p_60503_, Level level, BlockPos pos, Player player) {
+        if(level.isClientSide) return false;
+        BlockEntity entity = level.getBlockEntity(pos);
         if(entity instanceof NoteEntity note){
-            PacketDistributor.PLAYER.with((ServerPlayer)p_60506_).send(new ClientboundOpenNotePacket(note.getText(), note.getBlockPos(), note.isFinalized(), guiId()));
-            return InteractionResult.SUCCESS;
+            PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundOpenNotePacket(note.getText(), note.getBlockPos(), note.isFinalized(), guiId()));
+            return true;
         }
-        return super.use(p_60503_,p_60504_,p_60505_,p_60506_,p_60507_,p_60508_);
+        return false;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

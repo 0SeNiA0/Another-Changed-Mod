@@ -1,7 +1,7 @@
 package net.zaharenko424.a_changed.datagen.worldgen;
 
 import net.minecraft.core.Vec3i;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.random.SimpleWeightedRandomList;
@@ -29,7 +29,7 @@ import static net.zaharenko424.a_changed.registry.BlockRegistry.ORANGE_TREE_LOG;
 
 public class ConfiguredFeatureProvider {
 
-    public static void bootstrap(BootstapContext<ConfiguredFeature<?,?>> context){
+    public static void bootstrap(BootstrapContext<ConfiguredFeature<?,?>> context){
         register(context, DarkLatexBiome.CRYSTAL_PATCH,
                 Feature.RANDOM_PATCH,
                 new RandomPatchConfiguration(
@@ -55,7 +55,7 @@ public class ConfiguredFeatureProvider {
         );
     }
 
-    private static <FC extends FeatureConfiguration,F extends Feature<FC>> void register(@NotNull BootstapContext<ConfiguredFeature<?,?>> context, ResourceKey<ConfiguredFeature<?,?>> key, F feature, FC configuration){
+    private static <FC extends FeatureConfiguration,F extends Feature<FC>> void register(@NotNull BootstrapContext<ConfiguredFeature<?,?>> context, ResourceKey<ConfiguredFeature<?,?>> key, F feature, FC configuration){
         context.register(key,new ConfiguredFeature<>(feature,configuration));
     }
 }

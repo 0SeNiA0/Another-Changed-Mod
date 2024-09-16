@@ -1,36 +1,44 @@
 package net.zaharenko424.a_changed.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class LatexEncoderRecipe implements SimpleRecipe<Container> {
+public class LatexEncoderRecipe implements Recipe<LatexEncoderRecipeWrapper> {
 
-    private final NonNullList<PartialNBTIngredientFix> ingredients;
-    private final NonNullList<Ingredient> ingredients0;
-    private final Gender gender;
-    private final ItemStack result;
+    protected final NonNullList<Ingredient> ingredients;
+    protected final Gender gender;
+    protected final ItemStack result;
+    protected final int energyConsumption;
+    protected final int processingTime;
 
-    public LatexEncoderRecipe(@NotNull NonNullList<PartialNBTIngredientFix> ingredients, Gender gender, ItemStack result){
-        this.ingredients = ingredients;
+    public LatexEncoderRecipe(@NotNull List<Ingredient> ingredients, Gender gender, ItemStack result, int energyConsumption, int processingTime){
         if(ingredients.size() != 7) throw
                 new IllegalStateException("Wrong amount of ingredients in Latex Encoder recipe (" + ingredients.size() + "/7)");
-        ingredients0 = Utils.toNonNull(List.copyOf(ingredients), PartialNBTIngredientFix.EMPTY);
+
+        this.ingredients = ingredients instanceof NonNullList<Ingredient> nonNull ? nonNull : Utils.toNonNull(ingredients, Ingredient.EMPTY);
         this.gender = gender;
         this.result = result;
+        this.energyConsumption = energyConsumption;
+        this.processingTime = processingTime;
     }
 
     @Override
@@ -40,20 +48,16 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
 
     @Override
     public @NotNull NonNullList<Ingredient> getIngredients() {
-        return ingredients0;
+        return ingredients;
     }
 
     @Override
-    public boolean matches(@NotNull Container pContainer, @NotNull Level pLevel) {
-        return matches(pContainer, Gender.NONE);
-    }
-
-    public boolean matches(@NotNull Container container, Gender gender){
-        if(this.gender != gender) return false;
+    public boolean matches(@NotNull LatexEncoderRecipeWrapper input, @NotNull Level level) {
+        if(this.gender != input.getGender()) return false;
         ItemStack item;
         Ingredient ingredient;
-        for(int i = 0; i < 7; i++){
-            item = container.getItem(i);
+        for(int i = 0; i < input.size(); i++){
+            item = input.getItem(i);
             ingredient = ingredients.get(i);
             if(item.isEmpty() && ingredient.isEmpty()) continue;
             if(!ingredient.test(item)) return false;
@@ -61,18 +65,18 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
         return true;
     }
 
-    public Gender getGender(){
-        return gender;
-    }
-
     @Override
-    public @NotNull ItemStack assemble(Container pContainer) {
+    public @NotNull ItemStack assemble(@NotNull LatexEncoderRecipeWrapper input, HolderLookup.@NotNull Provider registries) {
         Ingredient ingredient;
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < input.size(); i++){
             ingredient = ingredients.get(i);
-            if(!ingredient.isEmpty()) pContainer.removeItem(i, ingredient.getItems()[0].getCount());
+            if(!ingredient.isEmpty()) input.shrink(i, ingredient.getItems()[0].getCount());
         }
         return result.copy();
+    }
+
+    public Gender getGender(){
+        return gender;
     }
 
     @Override
@@ -80,50 +84,64 @@ public class LatexEncoderRecipe implements SimpleRecipe<Container> {
         return true;
     }
 
+    @Override
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
+        return result.copy();
+    }
+
     public @NotNull ItemStack getResultItem(){
         return result.copy();
     }
 
+    public int getEnergyConsumption() {
+        return energyConsumption;
+    }
+
+    public int getProcessingTime() {
+        return processingTime;
+    }
+
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return Serializer.INSTANCE;
+        return RecipeRegistry.LATEX_ENCODER_RECIPE_SERIALIZER.get();
     }
 
     @Override
     public @NotNull RecipeType<?> getType() {
-        return Type.INSTANCE;
+        return RecipeRegistry.LATEX_ENCODER_RECIPE.get();
     }
 
     public static class Serializer implements RecipeSerializer<LatexEncoderRecipe> {
 
-        public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<LatexEncoderRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                PartialNBTIngredientFix.CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
-                Codec.STRING.fieldOf("gender").forGetter(recipe -> recipe.gender.toString()),
-                ItemStack.CODEC.fieldOf("result").forGetter(recipe-> recipe.result)
-            ).apply(instance, (ingredients, str, result) -> new LatexEncoderRecipe(Utils.toNonNull(ingredients, PartialNBTIngredientFix.EMPTY),
-                Gender.valueOf(str), result)));
+        private final MapCodec<LatexEncoderRecipe> codec;
+        private final StreamCodec<RegistryFriendlyByteBuf, LatexEncoderRecipe> streamCodec;
 
-        @Override
-        public @NotNull Codec<LatexEncoderRecipe> codec() {
-            return CODEC;
+        public final int defaultEnergyConsumption;
+        public final int defaultProcessingTime;
+
+        public Serializer(int defaultEnergyConsumption, int defaultProcessingTime){
+            codec = RecordCodecBuilder.mapCodec(builder -> builder.group(
+                    Ingredient.CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
+                    Codec.STRING.fieldOf("gender").xmap(Gender::valueOf, Enum::toString).forGetter(recipe -> recipe.gender),
+                    ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+                    Codec.INT.fieldOf("energyConsumption").orElse(defaultEnergyConsumption).forGetter(recipe -> recipe.energyConsumption),
+                    Codec.INT.fieldOf("processingTime").orElse(defaultProcessingTime).forGetter(recipe -> recipe.processingTime)
+            ).apply(builder, LatexEncoderRecipe::new));
+
+            streamCodec = ByteBufCodecs.fromCodecWithRegistries(codec.codec());
+
+            this.defaultEnergyConsumption = defaultEnergyConsumption;
+            this.defaultProcessingTime = defaultProcessingTime;
         }
 
         @Override
-        public @NotNull LatexEncoderRecipe fromNetwork(@NotNull FriendlyByteBuf pBuffer) {
-            return new LatexEncoderRecipe(Utils.toNonNull(pBuffer.readList(PartialNBTIngredientFix::fromNetwork), PartialNBTIngredientFix.EMPTY),
-                    pBuffer.readEnum(Gender.class), pBuffer.readItem());
+        public @NotNull MapCodec<LatexEncoderRecipe> codec() {
+            return codec;
         }
 
         @Override
-        public void toNetwork(@NotNull FriendlyByteBuf pBuffer, @NotNull LatexEncoderRecipe pRecipe) {
-            pBuffer.writeCollection(pRecipe.ingredients, (buf, ingredient) -> ingredient.toNetwork0(buf));
-            pBuffer.writeEnum(pRecipe.gender);
-            pBuffer.writeItem(pRecipe.result);
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, LatexEncoderRecipe> streamCodec() {
+            return streamCodec;
         }
-    }
-
-    public static class Type implements RecipeType<LatexEncoderRecipe> {
-        public static final Type INSTANCE = new Type();
     }
 }

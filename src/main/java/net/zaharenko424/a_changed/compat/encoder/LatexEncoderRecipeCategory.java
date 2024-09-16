@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.compat.encoder;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -10,17 +11,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
 import net.zaharenko424.a_changed.compat.GenderIngredient;
+import net.zaharenko424.a_changed.compat.JeiPlugin;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderRecipe> {
 
-    public static final RecipeType<LatexEncoderRecipe> TYPE = RecipeType
-            .create(AChanged.MODID, "latex_encoder", LatexEncoderRecipe.class);
+    public static final RecipeType<LatexEncoderRecipe> TYPE = new RecipeType<>(RecipeRegistry.LATEX_ENCODER_RECIPE.getId(), LatexEncoderRecipe.class);
 
     @Override
     public @NotNull RecipeType<LatexEncoderRecipe> getRecipeType() {
@@ -35,6 +36,7 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
     @Override
     public @NotNull IDrawable getBackground() {
         return new IDrawable() {
+
             @Override
             public int getWidth() {
                 return 162;
@@ -55,6 +57,7 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
     @Override
     public @NotNull IDrawable getIcon() {
         return new IDrawable() {
+
             @Override
             public int getWidth() {
                 return 16;
@@ -70,6 +73,12 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
                 guiGraphics.renderItem(ItemRegistry.LATEX_ENCODER_ITEM.toStack(), xOffset, yOffset);
             }
         };
+    }
+
+    @Override
+    public void draw(@NotNull LatexEncoderRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
+        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 96, 64);
     }
 
     @Override

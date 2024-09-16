@@ -16,7 +16,6 @@ import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation")
 public class Table extends Block {
 
     private static final VoxelShape TOP = Shapes.box(0, 0.875, 0, 1, 1, 1);

@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.zaharenko424.a_changed.LevelAccess;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.util.CoveredWith;
 import org.spongepowered.asm.mixin.Final;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Level.class)
-public abstract class MixinLevel implements LevelAccess {
+public abstract class MixinLevel {
 
     @Shadow @Final public boolean isClientSide;
 

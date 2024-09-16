@@ -57,5 +57,5 @@ public class RoombaEntity extends PathfinderMob {
     }
 
     @Override
-    protected void jumpFromGround() {}
+    public void jumpFromGround() {}
 }

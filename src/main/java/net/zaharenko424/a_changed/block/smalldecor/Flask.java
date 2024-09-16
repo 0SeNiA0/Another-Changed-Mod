@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-@SuppressWarnings("deprecation")
 public class Flask extends Block implements SimpleWaterloggedBlock {
 
     private static final VoxelShape SHAPE = Shapes.or(Shapes.box(0.375, 0.3125, 0.375, 0.625, 0.5625, 0.625),
@@ -58,10 +57,10 @@ public class Flask extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
-        if(level.isClientSide || !player.isCrouching() || !player.getItemInHand(hand).isEmpty()) return super.use(pState, level, pos, player, hand, pHit);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide || !player.isCrouching()) return super.useWithoutItem(state, level, pos, player, hitResult);
         level.removeBlock(pos, false);
-        player.setItemInHand(hand, new ItemStack(pState.getBlock()));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(state.getBlock()));
         return InteractionResult.SUCCESS;
     }
 

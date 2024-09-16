@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.block.blocks.ConnectedTextureBlockImpl;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -37,15 +36,15 @@ public class StateKey extends Item {
         if(!level.isClientSide){
             level.setBlockAndUpdate(pos, state.setValue(StateProperties.LOCKED_STATE, !state.getValue(StateProperties.LOCKED_STATE)));
             if(!player.isCreative())
-                context.getItemInHand().hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level pLevel, @NotNull List<Component> tooltip, @NotNull TooltipFlag pIsAdvanced) {
-        super.appendHoverText(pStack, pLevel, tooltip, pIsAdvanced);
-        tooltip.add(Component.translatable("tooltip.a_changed.state_key"));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.state_key"));
     }
 }

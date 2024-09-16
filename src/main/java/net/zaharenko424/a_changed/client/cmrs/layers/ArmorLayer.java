@@ -10,25 +10,27 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.neoforged.neoforge.client.ClientHooks;
 import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
-import net.zaharenko424.a_changed.util.Utils;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
 
 @ParametersAreNonnullByDefault
 public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E,M> {
 
-    protected static final HashMap<String, ResourceLocation> ARMOR_LOCATION_CACHE = new HashMap<>();
     protected final TextureAtlas armorTrimAtlas;
     protected M model;
 
@@ -53,54 +55,54 @@ public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>
         if(!(itemstack.getItem() instanceof ArmorItem armoritem) || armoritem.getEquipmentSlot() != slot) return;
 
         model.setupArmorPart(slot, false);
-        ResourceLocation armorTexture = getArmorResource(entity, itemstack, slot, null);
 
-        if(armoritem instanceof net.minecraft.world.item.DyeableLeatherItem dyeable) {
-            int i = dyeable.getColor(itemstack);
-            float f = (float)(i >> 16 & 0xFF) / 255.0F;
-            float f1 = (float)(i >> 8 & 0xFF) / 255.0F;
-            float f2 = (float)(i & 0xFF) / 255.0F;
-            renderModel(poseStack, buffer, light, f, f1, f2, armorTexture);
-            renderModel(poseStack, buffer, light, 1, 1, 1, getArmorResource(entity, itemstack, slot, "overlay"));
-        } else {
-            renderModel(poseStack, buffer, light, 1, 1, 1, armorTexture);
+        boolean innerModel = slot == EquipmentSlot.LEGS;
+        ArmorMaterial armormaterial = armoritem.getMaterial().value();
+
+        //net.neoforged.neoforge.client.extensions.common.IClientItemExtensions extensions = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack);
+        //int fallbackColor = extensions.getDefaultDyeColor(itemstack);
+        //for (int layerIdx = 0; layerIdx < armormaterial.layers().size(); layerIdx++) {
+        //    ArmorMaterial.Layer armormaterial$layer = armormaterial.layers().get(layerIdx);
+        //    int j = extensions.getArmorLayerTintColor(itemstack, entity, armormaterial$layer, layerIdx, fallbackColor);
+        //    if (j != 0) {
+        //        var texture = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(entity, itemstack, armormaterial$layer, innerModel, slot);
+        //        this.renderModel(poseStack, buffer, light, j, texture);
+        //    }
+        //}
+
+        int color = itemstack.is(ItemTags.DYEABLE) ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemstack, -6265536)) : -1;
+        for (int layerIdx = 0; layerIdx < armormaterial.layers().size(); layerIdx++) {
+            ArmorMaterial.Layer armormaterial$layer = armormaterial.layers().get(layerIdx);
+            int j = armormaterial$layer.dyeable() ? color : -1;
+            if (j != 0) {
+                var texture = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(entity, itemstack, armormaterial$layer, innerModel, slot);
+                this.renderModel(poseStack, buffer, light, j, texture);
+            }
         }
-        ArmorTrim.getTrim(entity.level().registryAccess(), itemstack, true).ifPresent(p_289638_ ->
-                renderTrim(armoritem.getMaterial(), poseStack, buffer, light, p_289638_, slot == EquipmentSlot.LEGS)
-        );
+
+        ArmorTrim trim = itemstack.get(DataComponents.TRIM);
+        if(trim != null)
+            renderTrim(armoritem.getMaterial(), poseStack, buffer, light, trim, slot == EquipmentSlot.LEGS);
+
         if(itemstack.hasFoil()) renderGlint(poseStack, buffer, light);
 
         if(!model.hasGlowingArmor()) return;
         model.setupArmorPart(slot, true);
-        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.eyes(armorTexture)), light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.eyes(ClientHooks.getArmorTexture(entity, itemstack, armormaterial.layers().get(0), innerModel, slot))), light, OverlayTexture.NO_OVERLAY, 1);
     }
 
-    protected void renderModel(PoseStack poseStack, MultiBufferSource buffer, int light, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
+    protected void renderModel(PoseStack poseStack, MultiBufferSource buffer, int light, int color, ResourceLocation armorResource) {
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.armorCutoutNoCull(armorResource));
-        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, p_289678_, p_289674_, p_289693_, 1);
+        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, color);
     }
 
-    protected void renderTrim(ArmorMaterial material, PoseStack poseStack, MultiBufferSource buffer, int light, ArmorTrim trim, boolean p_289651_) {
-        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(p_289651_ ? trim.innerTexture(material) : trim.outerTexture(material));
+    protected void renderTrim(Holder<ArmorMaterial> material, PoseStack poseStack, MultiBufferSource buffer, int light, ArmorTrim trim, boolean innerTexture) {
+        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(innerTexture ? trim.innerTexture(material) : trim.outerTexture(material));
         VertexConsumer vertexconsumer = textureatlassprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
-        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1);
     }
 
     protected void renderGlint(PoseStack poseStack, MultiBufferSource buffer, int light) {
-        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-    }
-
-    public ResourceLocation getArmorResource(E entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
-        String s1 = Utils.getArmorTexture(stack, slot, type);
-
-        s1 = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(entity, stack, s1, slot, type);
-        ResourceLocation resourcelocation = ARMOR_LOCATION_CACHE.get(s1);
-
-        if (resourcelocation == null) {
-            resourcelocation = new ResourceLocation(s1);
-            ARMOR_LOCATION_CACHE.put(s1, resourcelocation);
-        }
-
-        return resourcelocation;
+        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY, 1);
     }
 }

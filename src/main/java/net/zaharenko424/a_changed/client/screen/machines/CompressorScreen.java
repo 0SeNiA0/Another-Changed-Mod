@@ -30,6 +30,6 @@ public class CompressorScreen extends AbstractMachineScreen<CompressorEntity, Co
 
         int progress = entity.getProgress();
         if(progress > 0)
-            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 23 * progress / CompressorEntity.MAX_PROGRESS, 17, 256, 166);
+            guiGraphics.blit(TEXTURE, leftPos + 80, topPos + 35, 0, 176, 0, 23 * progress / entity.getRecipeProcessingTime(), 17, 256, 166);
     }
 }

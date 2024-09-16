@@ -6,7 +6,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(modid = AChanged.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AChanged.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class DatagenEvent {
     @SubscribeEvent
     public static void onDataGather(@NotNull GatherDataEvent event){
@@ -32,16 +32,16 @@ public final class DatagenEvent {
         generator.addProvider(event.includeClient(), new ItemModelProvider(out, helper));
         generator.addProvider(event.includeClient(), new SoundDefinitionProvider(out, helper));
 
-        CompletableFuture<HolderLookup.Provider> lookup0=
+        CompletableFuture<HolderLookup.Provider> lookup0 =
                 generator.addProvider(event.includeServer(), new DatapackEntriesProvider(out,lookup)).getRegistryProvider();
         generator.addProvider(event.includeServer(), new BiomeTagProvider(out,lookup0,helper));
         generator.addProvider(event.includeServer(), new DamageTypeTagProvider(out,lookup0,helper));
 
-        generator.addProvider(event.includeServer(), new RecipeProvider(out));
+        generator.addProvider(event.includeServer(), new RecipeProvider(out, lookup0));
         generator.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(BlockLootTableProvider::new, LootContextParamSets.BLOCK),
                 new LootTableProvider.SubProviderEntry(EntityLootTableProvider::new, LootContextParamSets.ENTITY)
-        )));
+        ), lookup0));
 
         BlockTagProvider tagProvider = generator.addProvider(event.includeServer(),new BlockTagProvider(out,lookup,helper));
         generator.addProvider(event.includeServer(), new ItemTagProvider(out,lookup,tagProvider.contentsGetter(),helper));

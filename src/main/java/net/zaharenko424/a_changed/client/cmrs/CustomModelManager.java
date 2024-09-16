@@ -55,7 +55,7 @@ public class CustomModelManager {
     public static CustomModelManager getInstance(){
         if(modelManager == null) {
             modelManager = new CustomModelManager();
-            ModLoader.get().postEvent(new LoadModelsToCacheEvent());
+            ModLoader.postEvent(new LoadModelsToCacheEvent());
         }
         return modelManager;
     }
@@ -249,7 +249,7 @@ public class CustomModelManager {
                 buf.readBytes(textureBytes);
                 buf.release();
 
-                Minecraft.getInstance().textureManager.register(model.getTexture(),
+                Minecraft.getInstance().getTextureManager().register(model.getTexture(),
                         new DynamicTexture(NativeImage.read(textureBytes)));
 
                 modelCache.put(modelId, model);

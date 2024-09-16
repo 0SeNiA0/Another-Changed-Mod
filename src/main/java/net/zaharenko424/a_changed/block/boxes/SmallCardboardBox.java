@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -64,34 +65,41 @@ public class SmallCardboardBox extends SmallDecorBlock implements EntityBlock {
     public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
         Direction direction = p_60555_.getValue(FACING);
         return switch (p_60555_.getValue(BOX_AMOUNT)){
-            default -> CACHE.getShape(direction,1, ONE_BOX);
             case 2 -> CACHE.getShape(direction,2, TWO_BOXES);
             case 3 -> CACHE.getShape(direction,3, THREE_BOXES);
+            default -> CACHE.getShape(direction,1, ONE_BOX);
         };
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        if(p_60504_.isClientSide) return InteractionResult.SUCCESS;
-        BlockEntity entity = p_60504_.getBlockEntity(p_60505_);
-        if(entity instanceof BoxPileEntity boxPile){
-            ItemStack item = p_60506_.getItemInHand(p_60507_);
-            if(item.is(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get())&&boxPile.hasSpace()){
-                boxPile.addBox(item, !p_60506_.isCreative());
-                p_60504_.setBlock(p_60505_, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
-                return InteractionResult.CONSUME;
-            }
-            if(item.isEmpty()){
-                ItemHandlerHelper.giveItemToPlayer(p_60506_, boxPile.removeBox());
-                if(boxPile.isEmpty()){
-                    p_60504_.setBlock(p_60505_, Blocks.AIR.defaultBlockState(), 3);
-                    return InteractionResult.SUCCESS;
-                }
-                p_60504_.setBlock(p_60505_, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
-                return InteractionResult.SUCCESS;
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if(level.isClientSide) return InteractionResult.SUCCESS;
+
+        BlockEntity entity = level.getBlockEntity(pos);
+        if(!(entity instanceof BoxPileEntity boxPile)) return InteractionResult.PASS;
+
+        ItemHandlerHelper.giveItemToPlayer(player, boxPile.removeBox());
+        if(boxPile.isEmpty()){
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            return InteractionResult.SUCCESS;
+        }
+        level.setBlock(pos, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack item, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if(level.isClientSide) return ItemInteractionResult.CONSUME_PARTIAL;
+
+        BlockEntity entity = level.getBlockEntity(pos);
+        if(entity instanceof BoxPileEntity boxPile) {
+            if(item.is(ItemRegistry.SMALL_CARDBOARD_BOX_ITEM.get()) && boxPile.hasSpace()){
+                boxPile.addBox(item, !player.isCreative());
+                level.setBlock(pos, state.setValue(BOX_AMOUNT, boxPile.boxAmount()),3);
+                return ItemInteractionResult.CONSUME;
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

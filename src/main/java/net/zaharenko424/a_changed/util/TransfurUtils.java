@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.util;
 
-import com.google.common.collect.Multimap;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -8,7 +7,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
@@ -69,17 +71,17 @@ public class TransfurUtils {
         });
     }
 
-    public static void removeModifiers(LivingEntity holder, Multimap<Attribute, AttributeModifier> modifierMap){
+    public static void removeModifiers(LivingEntity holder, TransfurType transfurType){
         AttributeMap map = holder.getAttributes();
         AttributeInstance[] instance = new AttributeInstance[1];
-        modifierMap.asMap().forEach((attribute, modifiers) -> {
+        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
             if(!map.hasAttribute(attribute)) return;
 
             if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
                 float maxHealthO = holder.getMaxHealth();
                 instance[0] = map.getInstance(attribute);
                 for(AttributeModifier modifier : modifiers){
-                    instance[0].removeModifier(modifier.getId());
+                    instance[0].removeModifier(modifier);
                 }
                 if(holder.getMaxHealth() - maxHealthO < 0) holder.setHealth(holder.getMaxHealth());
                 return;
@@ -87,7 +89,7 @@ public class TransfurUtils {
 
             instance[0] = map.getInstance(attribute);
             for(AttributeModifier modifier : modifiers){
-                instance[0].removeModifier(modifier.getId());
+                instance[0].removeModifier(modifier);
             }
         });
     }
@@ -143,7 +145,7 @@ public class TransfurUtils {
         player.setXRot(Mth.lerp(.6f, player.getXRot(), rot.x));
         player.setYRot(Mth.rotLerp(.6f, player.getYRot(), rot.y));
 
-        PacketDistributor.PLAYER.with(player).send(
+        PacketDistributor.sendToPlayer(player,
                 new ClientboundSmoothLookPacket(rot.x, rot.y, speed, looker.getType().updateInterval() + 1));
         return true;
     }

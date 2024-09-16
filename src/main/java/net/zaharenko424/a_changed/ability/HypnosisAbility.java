@@ -15,7 +15,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.HypnosisData;
 import net.zaharenko424.a_changed.client.Keybindings;
@@ -57,7 +57,7 @@ public class HypnosisAbility implements Ability {
     }
 
     @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull PlayPayloadContext context) {}
+    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {}
 
     @Override
     public void activate(@NotNull LivingEntity holder, boolean oneShot, @Nullable FriendlyByteBuf additionalData) {
@@ -76,12 +76,12 @@ public class HypnosisAbility implements Ability {
         if(Keybindings.ABILITY_KEY.isDown()) {
             if(!hypnosisData.isActivated()) {
                 hypnosisData.setActivated(true);
-                PacketDistributor.SERVER.noArg().send(new ServerboundActivateAbilityPacket(false, null));
+                PacketDistributor.sendToServer(new ServerboundActivateAbilityPacket(false, null));
             }
         } else {
             if(hypnosisData.isActivated()){
                 hypnosisData.setActivated(false);
-                PacketDistributor.SERVER.noArg().send(new ServerboundDeactivateAbilityPacket());
+                PacketDistributor.sendToServer(new ServerboundDeactivateAbilityPacket());
             }
         }
     }
@@ -93,24 +93,12 @@ public class HypnosisAbility implements Ability {
     @Override
     public void serverTick(@NotNull LivingEntity holder) {
         if(holder instanceof Player && !getAbilityData(holder).isActivated()) return;// Don't check activatedness for mobs. Only used for overlay
-        HypnosisData hypnosisData;
-        LivingEntity hypnotisedBy;
+
         if(holder instanceof Targeting latex){
             LivingEntity target = latex.getTarget();
             if(!DamageSources.checkTarget(target)) return;
 
-            hypnosisData = HypnosisData.dataOf(target);
-            hypnotisedBy = hypnosisData.getHypnotisedBy();
-            if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) return;
-
-            if(TransfurUtils.smoothLookAt(target, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), true, speed)){
-                hypnosisData.setHypnotisedBy(holder);
-            } else if(target instanceof ServerPlayer serverPl) {
-                if(hypnotisedBy != null)
-                    PacketDistributor.PLAYER.with(serverPl).send(
-                            new ClientboundSmoothLookPacket(serverPl.getXRot(), serverPl.getYRot(), speed, target.getType().updateInterval() + 1));
-                hypnosisData.setHypnotisedBy(null);
-            }
+            doHypnotise(holder, target, HypnosisData.dataOf(target));
             return;
         }
         if(!(holder instanceof Player)) return; //player
@@ -130,18 +118,21 @@ public class HypnosisAbility implements Ability {
             lookAngles = TransfurUtils.targetLookAngles(playerPos, targetPos);
             if(lookAngles.x > 50 || lookAngles.y > 50) continue;//TODO test if ok
 
-            hypnosisData = HypnosisData.dataOf(target);
-            hypnotisedBy = hypnosisData.getHypnotisedBy();
-            if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) continue;
+            doHypnotise(holder, target, HypnosisData.dataOf(target));
+        }
+    }
 
-            if(TransfurUtils.smoothLookAt(target, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), true, speed)){
-                hypnosisData.setHypnotisedBy(holder);
-            } else if(target instanceof ServerPlayer serverPl) {
-                if(hypnotisedBy != null)
-                    PacketDistributor.PLAYER.with(serverPl).send(
-                            new ClientboundSmoothLookPacket(serverPl.getXRot(), serverPl.getYRot(), speed, target.getType().updateInterval() + 1));
-                hypnosisData.setHypnotisedBy(null);
-            }
+    private void doHypnotise(LivingEntity holder, LivingEntity target, HypnosisData hypnosisData){
+        LivingEntity hypnotisedBy = hypnosisData.getHypnotisedBy();
+        if(hypnotisedBy != null && hypnotisedBy != holder && hypnotisedBy.isAlive()) return;
+
+        if(TransfurUtils.smoothLookAt(target, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), true, speed)){
+            hypnosisData.setHypnotisedBy(holder);
+        } else if(target instanceof ServerPlayer serverPl) {
+            if(hypnotisedBy != null)
+                PacketDistributor.sendToPlayer(serverPl,
+                        new ClientboundSmoothLookPacket(serverPl.getXRot(), serverPl.getYRot(), speed, target.getType().updateInterval() + 1));
+            hypnosisData.setHypnotisedBy(null);
         }
     }
 

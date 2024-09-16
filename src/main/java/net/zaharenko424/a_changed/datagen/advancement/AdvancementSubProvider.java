@@ -27,7 +27,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
     public void generate(HolderLookup.@NotNull Provider lookup, @NotNull Consumer<AdvancementHolder> saver, @NotNull ExistingFileHelper existingFileHelper) {
         AdvancementHolder root = Advancement.Builder.recipeAdvancement()
                 .display(
-                        ItemRegistry.LATEX_SYRINGE_ITEM,
+                        ItemRegistry.LATEX_SYRINGE,
                         Component.translatable("advancements.a_changed.root.title"),
                         Component.translatable("advancements.a_changed.root.description"),
                         resourceLoc("textures/gui/advancements/background.png"),
@@ -78,7 +78,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
 
         AdvancementHolder getTransfurred = Advancement.Builder.recipeAdvancement()
                 .display(
-                        ItemRegistry.LATEX_SYRINGE_ITEM,
+                        ItemRegistry.LATEX_SYRINGE,
                         Component.translatable("advancements.a_changed.get_transfurred.title"),
                         Component.translatable("advancements.a_changed.get_transfurred.description"),
                         null,
