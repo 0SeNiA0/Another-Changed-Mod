@@ -6,6 +6,7 @@ import net.minecraft.client.model.geom.PartPose;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,10 +28,10 @@ public class GroupDefinition {
         glowing = false;
     }
 
-    GroupDefinition(GroupBuilder builder, PartPose p_171582_) {
+    GroupDefinition(GroupBuilder builder, PartPose pose) {
         this.cubes = builder.cubes();
         this.meshes = builder.meshes();
-        this.partPose = p_171582_;
+        this.partPose = pose;
         armor = builder.armor;
         glowing = builder.glowing;
     }
@@ -48,16 +49,27 @@ public class GroupDefinition {
         return groupDefinition;
     }
 
-    public ModelPart bake(float textureWidth, float textureHeight) {
-        Object2ObjectArrayMap<String, ModelPart> object2objectarraymap = this.children.entrySet().stream().collect(Collectors.toMap(
-            Map.Entry::getKey,
-            group -> group.getValue().armor ? group.getValue().bake(64, 32) : group.getValue().bake(textureWidth, textureHeight),
-            (p_171595_, p_171596_) -> p_171595_,
-            Object2ObjectArrayMap::new
+    public ModelPart bake(float textureWidth, float textureHeight){
+        return bake(textureWidth, textureHeight, new HashMap<>());
+    }
+
+    private ModelPart bake(float textureWidth, float textureHeight, Map<String, ModelPart> allParts) {
+        Object2ObjectArrayMap<String, ModelPart> children = this.children.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                group -> group.getValue().armor ? group.getValue().bake(64, 32, allParts) : group.getValue().bake(textureWidth, textureHeight, allParts),
+                (p_171595_, p_171596_) -> p_171595_,
+                Object2ObjectArrayMap::new
         ));
+
+        allParts.putAll(children);
+
         List<ModelPart.Cube> cubes1 = this.cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
-        List<ModelPart.Mesh> meshes1 = meshes.stream().map(mesh -> mesh.bake(textureWidth, textureHeight)).toList();
-        ModelPart modelpart = new ModelPart(cubes1, meshes1, armor, glowing, object2objectarraymap);
+        List<ModelPart.Mesh> meshes1 = meshes.stream().map(meshDef -> {
+            ModelPart.Mesh mesh = meshDef.bake(textureWidth, textureHeight);
+            return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allParts) : mesh;
+        }).toList();
+
+        ModelPart modelpart = new ModelPart(cubes1, meshes1, armor, glowing, children, allParts);
         modelpart.setInitialPose(this.partPose);
         modelpart.loadPose(this.partPose);
         return modelpart;
