@@ -87,13 +87,13 @@ public class YufengDragonModel <E extends LivingEntity> extends CustomHumanoidMo
                 .addBox(-1.1318f, -4f, -0.824f, 1, 6, 1, new CubeUV().up(63, 16, 62, 15).east(62, 33, 61, 27).down(63, 16, 62, 17).north(62, 22, 61, 16).west(62, 45, 61, 39).south(62, 39, 61, 33)), PartPose.rotation(-0.0443f, 0.1744f, -0.0077f));
         GroupDefinition tail = body.addOrReplaceChild("tail", GroupBuilder.create()
                 .addBox(-2.4f, -2.4f, -3f, 4.8f, 4.8f, 7, new CubeUV().up(38, 19, 33, 12).east(39, 12, 32, 7).down(38, 19, 33, 26).north(42, 5, 37, 0).west(15, 37, 8, 32).south(43, 25, 38, 20)), PartPose.offsetAndRotation(0, 0, 2, 0.7418f, 0, 0));
-        GroupDefinition tail_0 = tail.addOrReplaceChild("tail_0", GroupBuilder.create()
+        GroupDefinition tail_0 = tail.addOrReplaceChild("tail0", GroupBuilder.create()
                 .addBox(-2.1f, -1.8f, -0.5f, 4.2f, 4.2f, 6, new CubeUV().up(4, 46, 0, 40).east(41, 42, 35, 38).down(8, 40, 4, 46).north(49, 39, 45, 35).west(45, 9, 39, 5).south(51, 21, 47, 17)), PartPose.offsetAndRotation(0, 0, 4, -0.1309f, 0, 0));
-        GroupDefinition tail_1 = tail_0.addOrReplaceChild("tail_1", GroupBuilder.create()
+        GroupDefinition tail_1 = tail_0.addOrReplaceChild("tail1", GroupBuilder.create()
                 .addBox(-1.8f, -1.3f, 0f, 3.6f, 3.7f, 5, new CubeUV().up(11.5f, 50, 8, 45).east(49, 30.5f, 44, 27).down(27.5f, 45, 24, 50).north(55.5f, 50.5f, 52, 47).west(49, 34.5f, 44, 31).south(55.5f, 54.5f, 52, 51)), PartPose.offsetAndRotation(0, 0, 5, -0.1309f, 0, 0));
-        GroupDefinition tail_2 = tail_1.addOrReplaceChild("tail_2", GroupBuilder.create()
+        GroupDefinition tail_2 = tail_1.addOrReplaceChild("tail2", GroupBuilder.create()
                 .addBox(-1.5f, -1.3f, -0.5f, 3, 3.2f, 4.5f, new CubeUV().up(43, 56.5f, 40, 52).east(55.5f, 19, 51, 16).down(46, 52, 43, 56.5f).north(36, 33, 33, 30).west(55.5f, 22, 51, 19).south(42, 12, 39, 9)), PartPose.offsetAndRotation(0, 0.5f, 5, -0.0873f, 0, 0));
-        GroupDefinition tail_3 = tail_2.addOrReplaceChild("tail_3", GroupBuilder.create()
+        GroupDefinition tail_3 = tail_2.addOrReplaceChild("tail3", GroupBuilder.create()
                 .addBox(-1f, -1f, 0f, 2, 2.4f, 3, new CubeUV().up(47, 42, 45, 39).east(60, 59.5f, 57, 57).down(53, 22, 51, 25).north(63, 57.5f, 61, 55).west(61, 2.5f, 58, 0).south(63, 63.5f, 61, 61)), PartPose.offsetAndRotation(0, 0.5f, 4, -0.0873f, 0, 0));
         tail_3.addOrReplaceChild("armor_tail_3", GroupBuilder.create()
                 .addBox(-1f, -1f, 0f, 2, 2.4f, 3, new Vector3f(0.6f), new CubeUV().up(8, 29, 4, 25).east(8, 29, 4, 25).down(8, 25, 4, 29).west(8, 29, 4, 25).south(8, 29, 4, 25)).armor());

@@ -28,39 +28,28 @@ public interface Animations {
             .build();
 
     AnimationDefinition TAIL_DRAGON = AnimationDefinition.Builder.withLength(4.0F).looping()
-            .addAnimation("tail", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(2.0F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
-            ))
-            .addAnimation("tail1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
-            ))
-            .addAnimation("tail2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(2.0F, KeyframeAnimations.degreeVec(-2.5F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
-            ))
-            .addAnimation("tail3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
-            ))
-            .addAnimation("tail4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM),
-                    new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), Interpolations.CATMULLROM)
-            ))
-            .build();
+            .addAnimation("tail",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(5f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM)))
+            .addAnimation("tail2",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM)))
+            .addAnimation("tail3",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(-7.5f, 0f, 0f), Interpolations.CATMULLROM),
+                            new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f), Interpolations.CATMULLROM))).build();
 
     AnimationDefinition TAIL_CAT = AnimationDefinition.Builder.withLength(4f).looping()
             .addAnimation("tail",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-7.5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(7.5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
@@ -68,7 +57,7 @@ public interface Animations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
@@ -76,7 +65,7 @@ public interface Animations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
@@ -84,7 +73,7 @@ public interface Animations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
@@ -92,7 +81,7 @@ public interface Animations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
@@ -100,7 +89,7 @@ public interface Animations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
-                            new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                            new Keyframe(2f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
                                     Interpolations.CATMULLROM),
                             new Keyframe(4f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM))).build();
@@ -122,7 +111,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3.5f, KeyframeAnimations.degreeVec(0f + 115, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_0",
+            .addAnimation("tail0",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                     Interpolations.CATMULLROM),
@@ -134,7 +123,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3.5f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_1",
+            .addAnimation("tail1",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
                                     Interpolations.CATMULLROM),
@@ -146,7 +135,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3.5f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_2",
+            .addAnimation("tail2",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
@@ -172,7 +161,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_0",
+            .addAnimation("tail0",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
@@ -184,7 +173,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_1",
+            .addAnimation("tail1",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),
@@ -196,7 +185,7 @@ public interface Animations {
                                     Interpolations.CATMULLROM),
                             new Keyframe(3f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM)))
-            .addAnimation("tail_2",
+            .addAnimation("tail2",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     Interpolations.CATMULLROM),

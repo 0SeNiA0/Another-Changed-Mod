@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FastColor;
@@ -165,24 +166,42 @@ public class ModelPart {
         render(poseStack, consumer, light, overlay, FastColor.ARGB32.red(color) / 255f, FastColor.ARGB32.green(color) / 255f, FastColor.ARGB32.blue(color) / 255f, FastColor.ARGB32.alpha(color) / 255f);
     }
 
-    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
-        if(!visible || (isEmpty() && children.isEmpty())) return;
+    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha){
+        render(poseStack, consumer, light, overlay, r, g, b, alpha, new ObjectArrayList<>());
+    }
+
+    private void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha, List<Mesh> animated) {
+        if(!visible || (isEmpty() && children.isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
+        PoseStack.Pose last = poseStack.last();
         poseStack.pushPose();
         translateAndRotate(poseStack);
-        for (Cube cube : cubes) cube.resetTransform();
-        for (Mesh mesh : meshes) mesh.resetTransform();
 
+        for (Mesh anim : animated) {
+            anim.offset.add(initialPose.x, initialPose.y, initialPose.z);
+        }
+
+        if(draw) {
+            for (Cube cube : cubes) cube.resetTransform();
+            for (Mesh mesh : meshes) {
+                mesh.resetTransform();
+                if (mesh.animated) animated.add(mesh);
+            }
+        }
 
         for (ModelPart modelpart : children.values()) {
-            modelpart.render(poseStack, consumer, light, overlay, r, g, b, alpha);
+            modelpart.render(poseStack, consumer, light, overlay, r, g, b, alpha, animated);
         }
 
         PoseStack.Pose pose = poseStack.last();
         if(animatedVertices != null) {
-            Matrix4f posTransform = pose.pose();
-            Matrix3f normalTransform = pose.normal();
+            VertexData data;
+            Vector3f offset;
             for (Object2FloatMap.Entry<VertexData> entry : animatedVertices.object2FloatEntrySet()) {
-                entry.getKey().transform(posTransform, normalTransform, entry.getFloatValue());
+                data = entry.getKey();
+                offset = data.mesh.offset;
+                poseStack.translate(-offset.x / 16, -offset.y / 16, -offset.z / 16);
+                data.transform(pose, last, entry.getFloatValue());
+                poseStack.translate(offset.x / 16, offset.y / 16, offset.z / 16);
             }
         }
 
@@ -190,11 +209,15 @@ public class ModelPart {
             for (Cube cube : this.cubes) {
                 cube.compile(pose, consumer, light, overlay, r, g, b, alpha);
             }
-            for (Mesh mesh : meshes){
+            for (Mesh mesh : meshes) {
                 mesh.compile(pose, consumer, light, overlay, r, g, b, alpha);
+                animated.remove(mesh);
             }
         }
 
+        for(Mesh anim : animated) {
+            anim.offset.sub(initialPose.x, initialPose.y, initialPose.z);
+        }
         poseStack.popPose();
     }
 
@@ -323,6 +346,8 @@ public class ModelPart {
 
         protected final ImmutableList<VertexData> vertexData;
         protected final Quad[] quads;
+        protected final Vector3f offset = new Vector3f();
+        private boolean animated;
 
         public Mesh(ImmutableList<VertexData> vertexData, Quad[] quads){
             this.vertexData = vertexData;
@@ -366,8 +391,12 @@ public class ModelPart {
             vertexData = builder.build();
         }
 
+        public boolean animated() {
+            return animated;
+        }
+
         protected @NotNull VertexData createData(Vector3f pos, Quad[] quads){
-            return new VertexData(pos, quads);
+            return new VertexData(pos, quads, this);
         }
 
         protected Vector3f readVec(float[] array, int start){
@@ -385,6 +414,7 @@ public class ModelPart {
         }
 
         Mesh addAnimatedVertices(String[] groups, float[][] vertexInfluence, Map<String, ModelPart> allParts){
+            animated = true;
             for(int i = 0; i < groups.length; i++){
                 if(!allParts.containsKey(groups[i])) continue;
                 allParts.get(groups[i]).addAnimatedVertices(vertexData, vertexInfluence[i]);
@@ -395,6 +425,7 @@ public class ModelPart {
         public void resetTransform(){
             for(VertexData data : vertexData) data.resetTransform();
             for(Quad quad : quads) quad.resetTransform();
+            offset.set(0);
         }
 
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
@@ -427,7 +458,7 @@ public class ModelPart {
 
         @Override
         protected @NotNull VertexData createData(Vector3f pos, Quad[] quads) {
-            return new VertexData(pos, new Vector3f(), quads);
+            return new VertexData(pos, new Vector3f(), quads, this);
         }
 
         public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
@@ -538,14 +569,18 @@ public class ModelPart {
     /**
      * normal !null -> transformedNormal !null
      */
-    public record VertexData(Vector3f pos, Vector3f transformedPos, @Nullable Vector3f normal, @Nullable Vector3f transformedNormal, Quad[] quads){
+    public record VertexData(Vector3f pos, Vector3f transformedPos, @Nullable Vector3f normal, @Nullable Vector3f transformedNormal, Quad[] quads, Mesh mesh){
 
-        public VertexData(Vector3f pos, Quad[] quads){
-            this(pos, new Vector3f(Float.POSITIVE_INFINITY), null, null, quads);
+        public VertexData(Vector3f pos, Quad[] quads, Mesh mesh){
+            this(pos, new Vector3f(Float.POSITIVE_INFINITY), null, null, quads, mesh);
         }
 
-        public VertexData(Vector3f pos, Vector3f normal, Quad[] quads){
-            this(pos, new Vector3f(Float.POSITIVE_INFINITY), normal, new Vector3f(Float.POSITIVE_INFINITY), quads);
+        public VertexData(Vector3f pos, Vector3f normal, Quad[] quads, Mesh mesh){
+            this(pos, new Vector3f(Float.POSITIVE_INFINITY), normal, new Vector3f(Float.POSITIVE_INFINITY), quads, mesh);
+        }
+
+        public VertexData(Vector3f pos, Quad[] quads){
+            this(pos, new Vector3f(Float.POSITIVE_INFINITY), null, null, quads, null);
         }
 
         public void resetTransform(){
@@ -553,16 +588,28 @@ public class ModelPart {
             if(normal != null) transformedNormal.set(Float.POSITIVE_INFINITY);
         }
 
-        public void transform(Matrix4f posTransform, Matrix3f normalTransform, float factor){
+        public void transform(PoseStack.Pose transform, PoseStack.Pose last, float factor){
             boolean changed = false;
             if(!transformedPos.isFinite()) {
-                transformedPos.set(pos.x / 16, pos.y / 16, pos.z / 16)
-                        .lerp(Reusable.VEC3F.get().set(transformedPos).mulPosition(posTransform), factor);
+                transformedPos.set(pos.x / 16, pos.y / 16, pos.z / 16);
+                if(factor == 0){
+                    transformedPos.mulPosition(last.pose());
+                } else if(factor == 1){
+                    transformedPos.mulPosition(transform.pose());
+                } else {
+                    transformedPos.mulPosition(last.pose()).lerp(Reusable.VEC3F.get().set(pos.x / 16, pos.y / 16, pos.z / 16).mulPosition(transform.pose()), factor);
+                }
                 changed = true;
             }
 
             if(normal != null && !transformedNormal.isFinite()) {
-                transformedNormal.set(normal).lerp(Reusable.VEC3F.get().set(normal).mul(normalTransform), factor);
+                if(factor == 0){
+                    transformedNormal.set(normal).mul(last.normal());
+                } else if(factor == 1){
+                    transformedNormal.set(normal).mul(transform.normal());
+                } else {
+                    transformedNormal.set(normal).mul(last.normal()).lerp(Reusable.VEC3F.get().set(normal).mul(transform.normal()), factor);
+                }
                 changed = true;
             }
 

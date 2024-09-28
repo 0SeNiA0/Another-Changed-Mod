@@ -41,7 +41,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     public final ModelPart leftArm;
     public final ModelPart rightLeg;
     public final ModelPart leftLeg;
-    protected final ImmutableList<ModelPart> bodyParts;
+    protected final ImmutableList<ModelPart> bodyPartsWCubes;
     public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
     public HumanoidModel.ArmPose rightArmPose = HumanoidModel.ArmPose.EMPTY;
     public boolean crouching;
@@ -61,7 +61,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         leftArm = root.getChild("left_arm");
         rightLeg = root.getChild("right_leg");
         leftLeg = root.getChild("left_leg");
-        bodyParts = ImmutableList.copyOf(root.getAllParts().filter(ModelPart::hasCubes).iterator());
+        bodyPartsWCubes = ImmutableList.copyOf(root.getAllParts().filter(ModelPart::hasCubes).iterator());
         if(!texture.getPath().startsWith("textures/")) this.texture = AChanged.textureLoc(texture.withPrefix("entity/"));
         else this.texture = texture;
     }
@@ -300,7 +300,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     }
 
     public ModelPart getRandomModelPart(RandomSource p_233439_) {
-        return bodyParts.get(p_233439_.nextInt(bodyParts.size()));
+        return bodyPartsWCubes.get(p_233439_.nextInt(bodyPartsWCubes.size()));
     }
 
     /**
@@ -395,8 +395,8 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     /**
      * Sets visibility of all children of provided modelPart.
      */
-    public void setAllVisible(boolean b, ModelPart part){
-        part.getAllParts().forEach(child -> child.visible = b);
+    public void setAllVisible(boolean visible, ModelPart part){
+        part.getAllParts().forEach(child -> child.visible = visible);
     }
 
     protected void poseRightArm(E entity) {

@@ -70,16 +70,16 @@ public class BeiFengModel<E extends LivingEntity> extends CustomHumanoidModel<E>
         GroupDefinition tail = body.addOrReplaceChild("tail", GroupBuilder.create()
                 .addBox(-2.4f, -2.4f, -3f, 4.8f, 4.8f, 7, new CubeUV().east(15, 37, 8, 32).south(32, 44, 27, 39).west(40, 14, 33, 9).up(38, 21, 33, 14).north(43, 27, 38, 22).down(38, 21, 33, 28))
                 .addBox(-0.5f, 2.5f, 0f, 1, 1, 1, new CubeUV().east(36, 55, 35, 54).south(37, 55, 36, 54).west(38, 55, 37, 54).up(39, 55, 38, 54).north(18, 55, 17, 54).down(40, 54, 39, 55)), PartPose.offsetAndRotation(0, 0, 2, 0.7418f, 0, 0));
-        GroupDefinition tail_0 = tail.addOrReplaceChild("tail_0", GroupBuilder.create()
+        GroupDefinition tail_0 = tail.addOrReplaceChild("tail0", GroupBuilder.create()
                 .addBox(-2.1f, -1.8f, -0.5f, 4.2f, 4.2f, 6, new CubeUV().east(6, 44, 0, 40).south(49, 42, 45, 38).west(46, 12, 40, 8).up(45, 6, 41, 0).north(49, 38, 45, 34).down(45, 27, 41, 33))
                 .addBox(-0.5f, 2.4f, 2f, 1, 1, 1, new CubeUV().east(42, 55, 41, 54).south(55, 42, 54, 41).west(43, 55, 42, 54).up(55, 43, 54, 42).north(41, 55, 40, 54).down(44, 54, 43, 55)), PartPose.offsetAndRotation(0, 0, 4, -0.1309f, 0, 0));
-        GroupDefinition tail_1 = tail_0.addOrReplaceChild("tail_1", GroupBuilder.create()
+        GroupDefinition tail_1 = tail_0.addOrReplaceChild("tail1", GroupBuilder.create()
                 .addBox(-1.8f, -1.3f, 0f, 3.6f, 3.7f, 5, new CubeUV().east(50, 3.5f, 45, 0).south(52.5f, 43.5f, 49, 40).west(50, 7.5f, 45, 4).up(48.5f, 29, 45, 24).north(43.5f, 52.5f, 40, 49).down(48.5f, 29, 45, 34))
                 .addBox(-0.5f, 2.4f, 2f, 1, 1, 1, new CubeUV().east(55, 46, 54, 45).south(48, 55, 47, 54).west(49, 55, 48, 54).up(50, 55, 49, 54).north(55, 45, 54, 44).down(51, 54, 50, 55)), PartPose.offsetAndRotation(0, 0, 5, -0.1309f, 0, 0));
-        GroupDefinition tail_2 = tail_1.addOrReplaceChild("tail_2", GroupBuilder.create()
+        GroupDefinition tail_2 = tail_1.addOrReplaceChild("tail2", GroupBuilder.create()
                 .addBox(-1.5f, -1.3f, -0.5f, 3, 3.2f, 4.5f, new CubeUV().east(4, 53, 0, 50).south(47, 53, 44, 50).west(54, 3, 50, 0).up(15, 41, 12, 37).north(15, 44, 12, 41).down(53, 3, 50, 7))
                 .addBox(-0.5f, 1.9f, 1.5f, 1, 1, 1, new CubeUV().east(53, 55, 52, 54).south(54, 55, 53, 54).west(55, 55, 54, 54).up(1, 56, 0, 55).north(52, 55, 51, 54).down(2, 55, 1, 56)), PartPose.offsetAndRotation(0, 0.5f, 5, -0.0873f, 0, 0));
-        GroupDefinition tail_3 = tail_2.addOrReplaceChild("tail_3", GroupBuilder.create()
+        GroupDefinition tail_3 = tail_2.addOrReplaceChild("tail3", GroupBuilder.create()
                 .addBox(-1f, -1f, 0f, 2, 2.4f, 3, new CubeUV().east(21, 55.5f, 18, 53).south(55, 26.5f, 53, 24).west(24, 55.5f, 21, 53).up(8, 43, 6, 40).north(26, 55.5f, 24, 53).down(45, 24, 43, 27))
                 .addBox(-0.5f, 1.4f, 1f, 1, 1.5f, 1, new CubeUV().east(11, 55.5f, 10, 54).south(12, 55.5f, 11, 54).west(15, 55.5f, 14, 54).up(3, 56, 2, 55).north(10, 55.5f, 9, 54).down(56, 2, 55, 3)), PartPose.offsetAndRotation(0, 0.5f, 4, -0.0873f, 0, 0));
         tail_3.addOrReplaceChild("armor_tail_3", GroupBuilder.create()
