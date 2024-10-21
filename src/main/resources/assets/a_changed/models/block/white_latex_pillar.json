@@ -1,0 +1,9 @@
+{
+  "loader": "neoforge:obj",
+  "model": "a_changed:models/block/white_latex_pillar/white_latex_pillar.obj",
+  "textures": {
+    "texture0": "a_changed:block/white_latex_block",
+    "particle": "#texture0"
+  },
+  "emissive_ambient": false
+}

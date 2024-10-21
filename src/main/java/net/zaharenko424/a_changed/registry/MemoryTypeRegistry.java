@@ -15,6 +15,8 @@ public class MemoryTypeRegistry {
 
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> GRAB_ATTEMPT_COOLDOWN = MEMORY_TYPES
             .register("grab_attempt_cooldown", () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> INSIDE_PILLAR = MEMORY_TYPES
+            .register("inside_pillar", () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> TRANSFUR_HOLDING = MEMORY_TYPES
             .register("transfur_holding", () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> TRYING_TO_TRANSFUR = MEMORY_TYPES

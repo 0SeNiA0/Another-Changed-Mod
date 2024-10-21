@@ -162,12 +162,13 @@ public class CreativeTabs {
                     output.accept(DARK_LATEX_ITEM);
                     output.accept(WHITE_LATEX_ITEM);
                     output.accept(DARK_LATEX_BLOCK_ITEM);
-                    output.accept(WHITE_LATEX_BLOCK_ITEM);
                     output.accept(DARK_LATEX_ICE_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_SHARD);
                     output.accept(GREEN_CRYSTAL_ITEM);
                     output.accept(GREEN_CRYSTAL_SHARD);
+                    output.accept(WHITE_LATEX_BLOCK_ITEM);
+                    output.accept(WHITE_LATEX_PILLAR_ITEM);
 
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);

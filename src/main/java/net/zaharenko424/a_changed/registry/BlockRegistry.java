@@ -130,6 +130,7 @@ public class BlockRegistry {
     public static final DeferredBlock<TrapDoorBlock> VENT_HATCH = BLOCKS.register("vent_hatch", ()-> new TrapDoorBlock(BlockSetType.STONE, softMetal().noOcclusion()));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<Block> WHITE_LATEX_BLOCK = BLOCKS.registerSimpleBlock("white_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
+    public static final DeferredBlock<WhiteLatexPillar> WHITE_LATEX_PILLAR = BLOCKS.register("white_latex_pillar", ()-> new WhiteLatexPillar(BlockBehaviour.Properties.ofFullCopy(WHITE_LATEX_BLOCK.get())));
     public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_F_TF));
     public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_M = BLOCKS.register("white_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> YELLOW_LAB_BLOCK = BLOCKS.registerSimpleBlock("yellow_lab_block", decorProperties().mapColor(DyeColor.YELLOW));

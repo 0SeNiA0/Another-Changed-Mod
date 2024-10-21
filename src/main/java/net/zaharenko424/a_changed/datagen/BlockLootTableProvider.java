@@ -154,6 +154,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(VENT_HATCH.get());
         dropSelf(VENT_WALL.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
+        doublePartBlockDrops(WHITE_LATEX_PILLAR.get());
         dropSelf(WHITE_LATEX_PUDDLE_F.get());
         dropSelf(WHITE_LATEX_PUDDLE_M.get());
         dropSelf(YELLOW_LAB_BLOCK.get());

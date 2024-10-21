@@ -16,6 +16,7 @@ public class WhiteLatexBiome {
     public static @NotNull Biome biome(BootstrapContext<Biome> context){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
+        spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.PURE_WHITE_LATEX_WOLF.get(), 100, 1, 3));
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get(), 100, 1, 3));
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_MALE.get(), 100, 1, 3));
 

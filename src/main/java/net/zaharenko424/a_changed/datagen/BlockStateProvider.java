@@ -101,7 +101,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         slabWithItem(LAB_TILE_SLAB, blockLoc(LAB_TILE));
         stairsWithItem(LAB_TILE_STAIRS, blockLoc(LAB_TILE));
         laserWithItem();
-        doublePartYBlockWithItem(LATEX_CONTAINER);
+        doublePartYBlockWItem(LATEX_CONTAINER);
         machineLikeWithItem(LATEX_ENCODER, false);
         machineLikeWithItem(LATEX_PURIFIER, false);
         simpleCubeWithItem(LATEX_RESISTANT_BLOCK);
@@ -157,6 +157,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         pillarWithItem(VENT_WALL,null);
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID + ":block/white_latex_still"));
+        doublePartYBlockWOItem(WHITE_LATEX_PILLAR);
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_F, true);
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_M, true);
         blockWithItem(YELLOW_LAB_BLOCK);
@@ -237,7 +238,16 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         return models().cube(textureLoc+modelId, textureLoc.withSuffix(str0), textureLoc.withSuffix(str1), textureLoc.withSuffix(str2), textureLoc.withSuffix(str3), textureLoc.withSuffix(str4), textureLoc.withSuffix(str5)).texture("particle", textureLoc.withSuffix("0c"));
     }
 
-    private void doublePartYBlockWithItem(DeferredBlock<?> block){
+    private void doublePartYBlockWOItem(DeferredBlock<?> block){
+        ResourceLocation id = block.getId();
+        ModelFile part0 = models().getExistingFile(blockLoc(id));
+        ModelFile part_1 = models().getExistingFile(blockLoc(id).withSuffix("_1"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                new ConfiguredModel[]{new ConfiguredModel(state.getValue(StateProperties.PART2) == 1 ? part_1 : part0)}
+        );
+    }
+
+    private void doublePartYBlockWItem(DeferredBlock<?> block){
         ResourceLocation id = block.getId();
         ModelFile part0 = models().getExistingFile(blockLoc(id));
         ModelFile part_1 = models().getExistingFile(blockLoc(id).withSuffix("_1"));

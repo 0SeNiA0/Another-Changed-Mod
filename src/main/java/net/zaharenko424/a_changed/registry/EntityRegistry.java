@@ -80,7 +80,7 @@ public class EntityRegistry {
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> PURE_WHITE_LATEX_WOLF = registerEntity(
             "pure_white_latex_wolf",
-            EntityType.Builder.of((a, b) -> new LatexBeast(a, b, PURE_WHITE_LATEX_WOLF_TF.get()), MobCategory.MONSTER)
+            EntityType.Builder.of((a, b) -> new PureWhiteLatex(a, b, PURE_WHITE_LATEX_WOLF_TF.get()), MobCategory.MONSTER)
     );
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> SNOW_LEOPARD_FEMALE = registerEntity(

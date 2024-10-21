@@ -118,6 +118,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> VENT_HATCH_ITEM = ITEMS.registerSimpleBlockItem(VENT_HATCH);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);
     public static final DeferredItem<BlockItem> WHITE_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_BLOCK);
+    public static final DeferredItem<BlockItem> WHITE_LATEX_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PILLAR);
     public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_F);
     public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_M);
     public static final DeferredItem<BlockItem> YELLOW_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(YELLOW_LAB_BLOCK);

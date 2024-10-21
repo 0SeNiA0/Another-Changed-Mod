@@ -11,6 +11,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
@@ -95,6 +96,11 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
         return p_219015_.getDifficulty() != Difficulty.PEACEFUL
                 && isDarkEnoughToSpawn(p_219015_, p_219017_, p_219018_)
                 && checkMobSpawnRules(p_219014_, p_219015_, p_219016_, p_219017_, p_219018_);
+    }
+
+    @Override
+    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+        return 0;
     }
 
     @Override
