@@ -64,12 +64,12 @@ public abstract class MixinLevelRenderer {
         HitResult hitResult = Minecraft.getInstance().hitResult;
 
         BuildersWand.Data data = item.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, BuildersWand.Data.DEF);
-        if(data.from() == null) return;
+        if(data.from().isEmpty()) return;
 
         BuildersWand.Mode mode = data.mode();
         boolean destroyReplace = mode == BuildersWand.Mode.DESTROY || mode == BuildersWand.Mode.REPLACE;
 
-        BlockPos from = data.from();
+        BlockPos from = data.from().get();
         BlockPos to;
         if(destroyReplace && hitResult.getType() == HitResult.Type.BLOCK){
             to = ((BlockHitResult) hitResult).getBlockPos();

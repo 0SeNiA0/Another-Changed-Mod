@@ -8,14 +8,17 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.datagen.worldgen.BiomeModifierProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.ConfiguredFeatureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.PlacedFeatureProvider;
+import net.zaharenko424.a_changed.datagen.worldgen.StructureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.DarkLatexBiome;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.WhiteLatexBiome;
+import net.zaharenko424.a_changed.datagen.worldgen.template_pool.LabPools;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 
@@ -30,7 +33,10 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.CONFIGURED_FEATURE, ConfiguredFeatureProvider::bootstrap)
             .add(Registries.PLACED_FEATURE, PlacedFeatureProvider::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifierProvider::bootstrap)
-            .add(Registries.DAMAGE_TYPE, DatapackEntriesProvider::damageType);
+            .add(Registries.DAMAGE_TYPE, DatapackEntriesProvider::damageType)
+            .add(Registries.TEMPLATE_POOL, DatapackEntriesProvider::templatePools)
+            .add(Registries.STRUCTURE, StructureProvider::bootstrap)
+            .add(Registries.STRUCTURE_SET, StructureProvider::structureSet);
 
     public DatapackEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(AChanged.MODID));
@@ -46,5 +52,9 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
     private static void biome(BootstrapContext<Biome> context){
         context.register(Biomes.DARK_LATEX_BIOME, DarkLatexBiome.biome(context));
         context.register(Biomes.WHITE_LATEX_BIOME, WhiteLatexBiome.biome(context));
+    }
+
+    private static void templatePools(BootstrapContext<StructureTemplatePool> context){
+        LabPools.bootstrap(context);
     }
 }

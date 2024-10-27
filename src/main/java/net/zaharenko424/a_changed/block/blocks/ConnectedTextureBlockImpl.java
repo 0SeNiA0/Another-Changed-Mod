@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -34,5 +35,10 @@ public class ConnectedTextureBlockImpl extends ConnectedTextureBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST, StateProperties.LOCKED_STATE);
+    }
+
+    @Override
+    protected @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rotation) {
+        return state.getValue(LOCKED_STATE) ? state : super.rotate(state, rotation);
     }
 }

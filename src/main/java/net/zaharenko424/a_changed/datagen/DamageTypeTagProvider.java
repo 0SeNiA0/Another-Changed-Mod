@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
@@ -21,5 +22,6 @@ public class DamageTypeTagProvider extends DamageTypeTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider p_270108_) {
         tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.electricity);
         tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.electricity, DamageSources.transfur);
+        tag(Tags.DamageTypes.NO_FLINCH).add(DamageSources.transfur);
     }
 }

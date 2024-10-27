@@ -13,6 +13,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.datagen.advancement.AdvancementSubProvider;
 import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
+import net.zaharenko424.a_changed.datagen.worldgen.loot_table.LabLoot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +41,8 @@ public final class DatagenEvent {
         generator.addProvider(event.includeServer(), new RecipeProvider(out, lookup0));
         generator.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(BlockLootTableProvider::new, LootContextParamSets.BLOCK),
-                new LootTableProvider.SubProviderEntry(EntityLootTableProvider::new, LootContextParamSets.ENTITY)
+                new LootTableProvider.SubProviderEntry(EntityLootTableProvider::new, LootContextParamSets.ENTITY),
+                new LootTableProvider.SubProviderEntry(LabLoot::new, LootContextParamSets.CHEST)
         ), lookup0));
 
         BlockTagProvider tagProvider = generator.addProvider(event.includeServer(),new BlockTagProvider(out,lookup,helper));

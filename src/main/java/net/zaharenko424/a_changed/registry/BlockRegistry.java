@@ -174,7 +174,7 @@ public class BlockRegistry {
     }
 
     private static BlockBehaviour.@NotNull Properties glassDoorProperties(){
-        return softMetal().pushReaction(PushReaction.BLOCK).noCollission();
+        return softMetal().pushReaction(PushReaction.BLOCK);
     }
 
     private static BlockBehaviour.@NotNull Properties metalDoorProperties(){

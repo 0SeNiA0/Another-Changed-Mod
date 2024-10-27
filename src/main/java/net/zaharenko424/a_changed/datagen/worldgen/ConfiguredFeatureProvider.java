@@ -50,12 +50,12 @@ public class ConfiguredFeatureProvider {
                 BlockStateProvider.simple(ORANGE_TREE_LOG.get()),
                 new StraightTrunkPlacer(4,2,0),
                 BlockStateProvider.simple(ORANGE_LEAVES.get()),
-                new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),
+                new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0),3),
                 new TwoLayersFeatureSize(1,0,1)).ignoreVines().build()
         );
     }
 
-    private static <FC extends FeatureConfiguration,F extends Feature<FC>> void register(@NotNull BootstrapContext<ConfiguredFeature<?,?>> context, ResourceKey<ConfiguredFeature<?,?>> key, F feature, FC configuration){
-        context.register(key,new ConfiguredFeature<>(feature,configuration));
+    private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(@NotNull BootstrapContext<ConfiguredFeature<?,?>> context, ResourceKey<ConfiguredFeature<?,?>> key, F feature, FC configuration){
+        context.register(key, new ConfiguredFeature<>(feature, configuration));
     }
 }

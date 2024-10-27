@@ -125,7 +125,7 @@ public abstract class AbstractMultiBlock extends Block {
     }
 
     /**
-     * By default, mirroring is prohibited. Not possible to reliably detect muliblock
+     * By default, mirroring is prohibited. Not possible to reliably detect multiblock
      */
     @Override
     public @NotNull BlockState mirror(BlockState state, Mirror mirror) {

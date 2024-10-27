@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class BuildersWand extends Item {
@@ -66,12 +67,12 @@ public class BuildersWand extends Item {
         }
 
         Mode mode = data.mode;
-        if(data.from == null || mode == Mode.GROW) return InteractionResultHolder.pass(item);
+        if(data.from.isEmpty() || mode == Mode.GROW) return InteractionResultHolder.pass(item);
 
         if(mode != Mode.DESTROY && (player.getOffhandItem().isEmpty() || !(player.getOffhandItem().getItem() instanceof BlockItem)))
             return InteractionResultHolder.fail(item);
 
-        BlockPos from = data.from;
+        BlockPos from = data.from.get();
         Vec3 vec = player.getLookAngle().multiply(2, 0, 2).add(player.position());
         BlockPos to = new BlockPos.MutableBlockPos(vec.x, vec.y, vec.z).immutable();
 
@@ -111,11 +112,11 @@ public class BuildersWand extends Item {
             return InteractionResult.CONSUME;
         }
 
-        if(data.from != null && (mode == Mode.DESTROY || mode == Mode.REPLACE)) {
+        if(data.from.isPresent() && (mode == Mode.DESTROY || mode == Mode.REPLACE)) {
             Player player = context.getPlayer();
             Level level = context.getLevel();
             if(player == null) return InteractionResult.FAIL;
-            BlockPos from = data.from;
+            BlockPos from = data.from.get();
 
             if(mode == Mode.DESTROY){
                 BlockPos.betweenClosedStream(from, clicked).forEach(pos -> level.removeBlock(pos, false));
@@ -153,13 +154,13 @@ public class BuildersWand extends Item {
         tooltipComponents.add(Component.literal("mode: " + stack.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, Data.DEF).mode).withStyle(ChatFormatting.DARK_GREEN));
     }
 
-    public record Data(Mode mode, BlockPos from){
+    public record Data(Mode mode, Optional<BlockPos> from){
 
         public static final Data DEF = new Data(Mode.BUILD, null);
         
         public static Codec<Data> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 Codec.BYTE.xmap(b -> Mode.values()[b], mode -> (byte) mode.ordinal()).fieldOf("mode").forGetter(Data::mode),
-                BlockPos.CODEC.fieldOf("from").forGetter(Data::from)
+                Codec.optionalField("from", BlockPos.CODEC, false).forGetter(Data::from)
         ).apply(builder, Data::new));
 
         public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
@@ -169,7 +170,7 @@ public class BuildersWand extends Item {
         }
 
         public Data withPos(BlockPos from){
-            return new Data(mode, from);
+            return new Data(mode, from == null ? Optional.empty() : Optional.of(from));
         }
     }
 

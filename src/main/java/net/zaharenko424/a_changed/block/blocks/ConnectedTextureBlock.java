@@ -7,6 +7,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -60,5 +61,15 @@ public abstract class ConnectedTextureBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
+    }
+
+    @Override
+    protected @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rotation) {
+        if(rotation == Rotation.NONE) return state;
+        BlockState newState = state;
+        for(Direction direction : Direction.Plane.HORIZONTAL){
+            newState = newState.setValue(propByDirection.get(rotation.rotate(direction)), state.getValue(propByDirection.get(direction)));
+        }
+        return newState;
     }
 }

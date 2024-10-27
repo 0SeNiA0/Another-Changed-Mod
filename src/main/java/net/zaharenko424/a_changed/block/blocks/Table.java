@@ -6,6 +6,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -20,9 +21,9 @@ public class Table extends Block {
 
     private static final VoxelShape TOP = Shapes.box(0, 0.875, 0, 1, 1, 1);
     private static final VoxelShape LEG_1_ = Shapes.box(0.75, 0, 0.125, 0.875, 0.875, 0.25);
-    private static final VoxelShape LEG_2_ = Utils.rotateShape(Direction.EAST,LEG_1_);
-    private static final VoxelShape LEG_3_ = Utils.rotateShape(Direction.SOUTH,LEG_1_);
-    private static final VoxelShape LEG_4_ = Utils.rotateShape(Direction.WEST,LEG_1_);
+    private static final VoxelShape LEG_2_ = Utils.rotateShape(Direction.EAST, LEG_1_);
+    private static final VoxelShape LEG_3_ = Utils.rotateShape(Direction.SOUTH, LEG_1_);
+    private static final VoxelShape LEG_4_ = Utils.rotateShape(Direction.WEST, LEG_1_);
     public static final BooleanProperty LEG_1 = BooleanProperty.create("leg_1");
     public static final BooleanProperty LEG_2 = BooleanProperty.create("leg_2");
     public static final BooleanProperty LEG_3 = BooleanProperty.create("leg_3");
@@ -74,5 +75,15 @@ public class Table extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
         p_49915_.add(LEG_1, LEG_2, LEG_3, LEG_4);
+    }
+
+    @Override
+    protected @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rotation) {
+        return switch (rotation){
+            case NONE -> state;
+            case COUNTERCLOCKWISE_90 -> state.setValue(LEG_1, state.getValue(LEG_2)).setValue(LEG_2, state.getValue(LEG_3)).setValue(LEG_3, state.getValue(LEG_4)).setValue(LEG_4, state.getValue(LEG_1));
+            case CLOCKWISE_180 -> state.setValue(LEG_1, state.getValue(LEG_3)).setValue(LEG_2, state.getValue(LEG_4)).setValue(LEG_3, state.getValue(LEG_1)).setValue(LEG_4, state.getValue(LEG_2));
+            case CLOCKWISE_90 -> state.setValue(LEG_1, state.getValue(LEG_4)).setValue(LEG_2, state.getValue(LEG_1)).setValue(LEG_3, state.getValue(LEG_2)).setValue(LEG_4, state.getValue(LEG_3));
+        };
     }
 }

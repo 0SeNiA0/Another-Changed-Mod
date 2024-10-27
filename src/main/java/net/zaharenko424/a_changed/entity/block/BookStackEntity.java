@@ -131,7 +131,7 @@ public class BookStackEntity extends BlockEntity {
         BookData book;
         for(int i = 0; i < books1.size(); i++){
             book = books1.get(i);
-            tag.put("book" + i, books.get(i).save(lookup));
+            if(level == null || !level.isClientSide) tag.put("book" + i, books.get(i).save(lookup));
             tag.putFloat("rotation" + i, book.rotation);
             tag.putInt("modelId" + i, book.modelId);
         }

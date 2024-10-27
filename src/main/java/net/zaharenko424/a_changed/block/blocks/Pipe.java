@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -36,17 +37,17 @@ public class Pipe extends Block {
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
-    public static final ImmutableMap<Direction, BooleanProperty> propByDirection=ImmutableMap.of(
+    public static final ImmutableMap<Direction, BooleanProperty> propByDirection = ImmutableMap.of(
             Direction.NORTH, NORTH, Direction.EAST, EAST, Direction.SOUTH, SOUTH, Direction.WEST, WEST);
 
-    public Pipe(Properties p_49795_) {
-        super(p_49795_);
+    public Pipe(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false)
                 .setValue(SOUTH, false).setValue(WEST, false));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         boolean n = state.getValue(NORTH);
         boolean e = state.getValue(EAST);
         boolean s = state.getValue(SOUTH);
@@ -67,15 +68,15 @@ public class Pipe extends Block {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        BlockState state = getConnections(p_60544_, p_60545_);
-        return canSurvive(state, p_60544_, p_60545_) ? state : Blocks.AIR.defaultBlockState();
+    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos p_60546_) {
+        BlockState state = getConnections(level, pos);
+        return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        return getConnections(p_49820_.getLevel(), p_49820_.getClickedPos());
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return getConnections(context.getLevel(), context.getClickedPos());
     }
 
     public BlockState getConnections(@NotNull LevelAccessor level, @NotNull BlockPos pos) {
@@ -116,16 +117,26 @@ public class Pipe extends Block {
     }
 
     @Override
-    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         for(BooleanProperty prop : propByDirection.values()){
-            if(p_60525_.getValue(prop)) return true;
+            if(state.getValue(prop)) return true;
         }
         return false;
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(NORTH, EAST, SOUTH, WEST);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(NORTH, EAST, SOUTH, WEST);
+    }
+
+    @Override
+    protected @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+        if(rotation == Rotation.NONE) return state;
+        BlockState newState = state;
+        for(Direction direction : Direction.Plane.HORIZONTAL){
+            newState = newState.setValue(propByDirection.get(rotation.rotate(direction)), state.getValue(propByDirection.get(direction)));
+        }
+        return super.rotate(state, rotation);
     }
 
     static {
