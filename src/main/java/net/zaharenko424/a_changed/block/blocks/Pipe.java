@@ -136,7 +136,7 @@ public class Pipe extends Block {
         for(Direction direction : Direction.Plane.HORIZONTAL){
             newState = newState.setValue(propByDirection.get(rotation.rotate(direction)), state.getValue(propByDirection.get(direction)));
         }
-        return super.rotate(state, rotation);
+        return newState;
     }
 
     static {
