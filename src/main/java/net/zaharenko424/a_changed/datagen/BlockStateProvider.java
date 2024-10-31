@@ -50,6 +50,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         rotatedDoublePartBlock(BIG_LAB_LAMP, null);
         threeByThreeDoorWithItem(BIG_LIBRARY_DOOR);
         threeByThreeDoorWithItem(BIG_MAINTENANCE_DOOR);
+        blockWithItem(BLUE_LAB_BLOCK);
         blockWithItem(BLUE_LAB_TILE);
         slabWithItem(BLUE_LAB_TILE_SLAB, blockLoc(BLUE_LAB_TILE));
         stairsWithItem(BLUE_LAB_TILE_STAIRS, blockLoc(BLUE_LAB_TILE));
@@ -109,6 +110,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         paneBlockWithRenderType(LATEX_RESISTANT_GLASS_PANE.get(), blockLoc(LATEX_RESISTANT_GLASS), blockLoc(LATEX_RESISTANT_GLASS), "translucent");
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
         twoByTwoDoorWithItem(LIBRARY_DOOR);
+        blockWithItem(LIGHT_BLUE_LAB_BLOCK);
         twoByTwoDoorWithItem(MAINTENANCE_DOOR);
         rotatedDoublePartBlock(METAL_BOX,null);
         metalCan(METAL_CAN);
@@ -144,6 +146,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
+        pillarWithItem(STRIPED_LIGHT_BLUE_LAB_BLOCK, blockLoc(LIGHT_BLUE_LAB_BLOCK));
         pillarWithItem(STRIPED_ORANGE_LAB_BLOCK, blockLoc(ORANGE_LAB_BLOCK));
         logWithItem(STRIPPED_ORANGE_LOG, null, blockLoc(ORANGE_TREE_LOG).withSuffix("_top"));
         logWithItem(STRIPPED_ORANGE_WOOD, blockLoc(STRIPPED_ORANGE_LOG), blockLoc(STRIPPED_ORANGE_LOG));

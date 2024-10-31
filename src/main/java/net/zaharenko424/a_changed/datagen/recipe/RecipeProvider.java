@@ -201,10 +201,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(MAINTENANCE_DOOR_ITEM), has(MAINTENANCE_DOOR_ITEM))
                 .save(out);
 
-        labBlock(BLUE_LAB_TILE_ITEM, Items.LIGHT_BLUE_CONCRETE, out);
+        labBlock(BLUE_LAB_BLOCK_ITEM, Items.BLUE_CONCRETE, out);
 
-        stonecuttingAllToAll(new DeferredItem[]{BLUE_LAB_TILE_ITEM, BLUE_LAB_TILE_SLAB_ITEM, BLUE_LAB_TILE_STAIRS_ITEM,
-                BOLTED_BLUE_LAB_TILE_ITEM, CONNECTED_BLUE_LAB_TILE_ITEM}, RecipeCategory.BUILDING_BLOCKS, out);
+        stonecuttingAllToAll(new DeferredItem[]{BLUE_LAB_BLOCK_ITEM, BLUE_LAB_TILE_ITEM, BLUE_LAB_TILE_SLAB_ITEM,
+                BLUE_LAB_TILE_STAIRS_ITEM, BOLTED_BLUE_LAB_TILE_ITEM, CONNECTED_BLUE_LAB_TILE_ITEM}, RecipeCategory.BUILDING_BLOCKS, out);
 
 
         labBlock(BROWN_LAB_BLOCK_ITEM, Items.BROWN_CONCRETE, out);
@@ -618,6 +618,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .requires(BIG_LIBRARY_DOOR_ITEM)
                 .unlockedBy(getHasName(BIG_LIBRARY_DOOR_ITEM), has(BIG_LIBRARY_DOOR_ITEM))
                 .save(out, LIBRARY_DOOR_ITEM.getId().withSuffix("_from_big"));
+
+        labBlock(LIGHT_BLUE_LAB_BLOCK_ITEM, Items.LIGHT_BLUE_CONCRETE, out);
+
+        stonecuttingAllToAll(new DeferredItem[]{LIGHT_BLUE_LAB_BLOCK_ITEM, STRIPED_LIGHT_BLUE_LAB_BLOCK_ITEM},
+                RecipeCategory.BUILDING_BLOCKS, out);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MAINTENANCE_DOOR_ITEM)
                 .pattern("IPI")

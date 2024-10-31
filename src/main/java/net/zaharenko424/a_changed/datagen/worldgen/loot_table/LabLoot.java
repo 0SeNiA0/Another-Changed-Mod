@@ -68,13 +68,13 @@ public record LabLoot(HolderLookup.Provider registries) implements LootTableSubP
                         .add(LootItem.lootTableItem(ItemRegistry.ROTATING_CHAIR_ITEM))
                         .add(LootItem.lootTableItem(ItemRegistry.LIBRARY_DOOR_ITEM))
                         .add(LootItem.lootTableItem(ItemRegistry.BIG_LAB_LAMP_ITEM))
+                        .add(LootItem.lootTableItem(ItemRegistry.LAB_LAMP_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
                         .add(LootItem.lootTableItem(ItemRegistry.IV_RACK_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
         ).withPool(
                 LootPool.lootPool()
                         .setRolls(UniformGenerator.between(1, 3))
                         .add(LootItem.lootTableItem(ItemRegistry.LAB_BLOCK_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 10))))
                         .add(LootItem.lootTableItem(ItemRegistry.LAB_STAIRS_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 10))))
-                        .add(LootItem.lootTableItem(ItemRegistry.LAB_LAMP_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
                         .add(LootItem.lootTableItem(ItemRegistry.METAL_CAN_ITEM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))))
         ));
 

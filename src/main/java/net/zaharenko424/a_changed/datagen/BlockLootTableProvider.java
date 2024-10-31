@@ -56,6 +56,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         doublePartBlockDrops(BIG_LAB_LAMP.get());
         ninePartMultiBlockDrops(BIG_LIBRARY_DOOR.get());
         ninePartMultiBlockDrops(BIG_MAINTENANCE_DOOR.get());
+        dropSelf(BLUE_LAB_BLOCK.get());
         dropSelf(BLUE_LAB_TILE.get());
         dropSlab(BLUE_LAB_TILE_SLAB);
         dropSelf(BLUE_LAB_TILE_STAIRS.get());
@@ -110,6 +111,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(LATEX_RESISTANT_GLASS.get());
         dropSelf(LATEX_RESISTANT_GLASS_PANE.get());
         fourPartMultiBlockDrops(LIBRARY_DOOR.get());
+        dropSelf(LIGHT_BLUE_LAB_BLOCK.get());
         fourPartMultiBlockDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());
         dropSelf(METAL_CAN.get());
@@ -142,6 +144,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ROTATING_CHAIR.get());
         dropSelf(SCANNER.get());
         dropSelf(SMART_SEWAGE_SYSTEM.get());
+        dropSelf(STRIPED_LIGHT_BLUE_LAB_BLOCK.get());
         dropSelf(STRIPED_ORANGE_LAB_BLOCK.get());
         dropSelf(STRIPPED_ORANGE_LOG.get());
         dropSelf(STRIPPED_ORANGE_WOOD.get());

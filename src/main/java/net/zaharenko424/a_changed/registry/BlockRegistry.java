@@ -54,6 +54,7 @@ public class BlockRegistry {
     public static final DeferredBlock<BigLabLamp> BIG_LAB_LAMP = BLOCKS.register("big_lab_lamp", ()-> new BigLabLamp(decorProperties().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(glassDoorProperties()));
     public static final DeferredBlock<BigMaintenanceDoor> BIG_MAINTENANCE_DOOR = BLOCKS.register("big_maintenance_door", ()-> new BigMaintenanceDoor(bigDoorProperties()));
+    public static final DeferredBlock<Block> BLUE_LAB_BLOCK = BLOCKS.registerSimpleBlock("blue_lab_block", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
     public static final DeferredBlock<Block> BLUE_LAB_TILE = BLOCKS.registerSimpleBlock("blue_lab_tile", decorProperties().mapColor(DyeColor.LIGHT_BLUE));
     public static final DeferredBlock<SlabBlock> BLUE_LAB_TILE_SLAB = registerSlab("blue_lab_tile_slab");
     public static final DeferredBlock<StairBlock> BLUE_LAB_TILE_STAIRS = registerStairs("blue_lab_tile_stairs", BLUE_LAB_TILE);
@@ -102,6 +103,7 @@ public class BlockRegistry {
     public static final DeferredBlock<TintedGlassBlock> LATEX_RESISTANT_GLASS = BLOCKS.register("latex_resistant_glass", ()-> new TintedGlassBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TINTED_GLASS)));
     public static final DeferredBlock<IronBarsBlock> LATEX_RESISTANT_GLASS_PANE = BLOCKS.register("latex_resistant_glass_pane", ()-> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS_PANE)));
     public static final DeferredBlock<Abstract2By2Door> LIBRARY_DOOR = BLOCKS.register("library_door", ()-> new LibraryDoor(glassDoorProperties()));
+    public static final DeferredBlock<Block> LIGHT_BLUE_LAB_BLOCK = BLOCKS.registerSimpleBlock("light_blue_lab_block", decorProperties());
     public static final DeferredBlock<MaintenanceDoor> MAINTENANCE_DOOR = BLOCKS.register("maintenance_door", ()-> new MaintenanceDoor(metalDoorProperties()));
     public static final DeferredBlock<TallBox> METAL_BOX = BLOCKS.register("metal_box", ()-> new TallBox(hardMetal().pushReaction(PushReaction.BLOCK)));
     public static final DeferredBlock<MetalCan> METAL_CAN = BLOCKS.register("metal_can", ()-> new MetalCan(BlockBehaviour.Properties.of().strength(2).mapColor(MapColor.METAL).noOcclusion().sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)));
@@ -120,6 +122,7 @@ public class BlockRegistry {
     public static final DeferredBlock<Scanner> SCANNER = BLOCKS.register("scanner", ()-> new Scanner(softMetal().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<SmallCardboardBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", ()-> new SmallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY).noLootTable()));
     public static final DeferredBlock<SmartSewageSystem> SMART_SEWAGE_SYSTEM = BLOCKS.register("smart_sewage_system", ()-> new SmartSewageSystem(decorProperties()));
+    public static final DeferredBlock<Block> STRIPED_LIGHT_BLUE_LAB_BLOCK = BLOCKS.registerSimpleBlock("striped_light_blue_lab_block", decorProperties());
     public static final DeferredBlock<Block> STRIPED_ORANGE_LAB_BLOCK = BLOCKS.registerSimpleBlock("striped_orange_lab_block", decorProperties().mapColor(DyeColor.ORANGE));
     public static final DeferredBlock<Table> TABLE = BLOCKS.register("table", ()-> new Table(decorProperties()));
     public static final DeferredBlock<TallCardboardBox> TALL_CARDBOARD_BOX = BLOCKS.register("tall_cardboard_box", ()-> new TallCardboardBox(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).pushReaction(PushReaction.DESTROY)));

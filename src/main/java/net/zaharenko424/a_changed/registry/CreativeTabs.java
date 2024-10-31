@@ -28,37 +28,45 @@ public class CreativeTabs {
                     output.accept(METAL_CAN_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
+                    //Building blocks
                     output.accept(HAZARD_BLOCK_ITEM);
                     output.accept(HAZARD_LAB_BLOCK_ITEM);
+                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(HAZARD_SLAB_ITEM);
+
+                    output.accept(BLUE_LAB_BLOCK_ITEM);
                     output.accept(BLUE_LAB_TILE_ITEM);
                     output.accept(BOLTED_BLUE_LAB_TILE_ITEM);
-                    output.accept(BOLTED_LAB_TILE_ITEM);
+                    output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
+                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
+                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
+
                     output.accept(BROWN_LAB_BLOCK_ITEM);
                     output.accept(CARPET_BLOCK_ITEM);
-                    output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
-                    output.accept(CONNECTED_LAB_TILE_ITEM);
+
                     output.accept(LAB_BLOCK_ITEM);
-                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(LAB_TILE_ITEM);
-                    output.accept(ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(VENT_WALL_ITEM);
-                    output.accept(YELLOW_LAB_BLOCK_ITEM);
-
-                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
-                    output.accept(HAZARD_SLAB_ITEM);
-                    output.accept(LAB_SLAB_ITEM);
-                    output.accept(LAB_TILE_SLAB_ITEM);
-                    output.accept(ORANGE_LAB_SLAB_ITEM);
-                    output.accept(YELLOW_LAB_SLAB_ITEM);
-
-                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
-                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(BOLTED_LAB_TILE_ITEM);
+                    output.accept(CONNECTED_LAB_TILE_ITEM);
                     output.accept(LAB_STAIRS_ITEM);
                     output.accept(LAB_TILE_STAIRS_ITEM);
-                    output.accept(ORANGE_LAB_STAIRS_ITEM);
-                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+                    output.accept(LAB_SLAB_ITEM);
+                    output.accept(LAB_TILE_SLAB_ITEM);
 
+                    output.accept(LIGHT_BLUE_LAB_BLOCK_ITEM);
+                    output.accept(STRIPED_LIGHT_BLUE_LAB_BLOCK_ITEM);
+
+                    output.accept(ORANGE_LAB_BLOCK_ITEM);
+                    output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
+                    output.accept(ORANGE_LAB_STAIRS_ITEM);
+                    output.accept(ORANGE_LAB_SLAB_ITEM);
+
+                    output.accept(VENT_WALL_ITEM);
+                    output.accept(YELLOW_LAB_BLOCK_ITEM);
+                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+                    output.accept(YELLOW_LAB_SLAB_ITEM);
+
+                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(LAB_LAMP_ITEM);
                     output.accept(BIG_LAB_LAMP_ITEM);
@@ -129,21 +137,21 @@ public class CreativeTabs {
                     output.accept(DERELICT_LATEX_PURIFIER_ITEM);
                     output.accept(UNTRANSFUR_SYNTHESIZER_COMPONENTS);
                     //Wood
-                    output.accept(ORANGE_BUTTON_ITEM);
-                    output.accept(ORANGE_DOOR_ITEM);
-                    output.accept(ORANGE_FENCE_ITEM);
-                    output.accept(ORANGE_FENCE_GATE_ITEM);
-                    output.accept(ORANGE_HANGING_SIGN_ITEM);
-                    output.accept(ORANGE_PLANKS_ITEM);
-                    output.accept(ORANGE_PRESSURE_PLATE_ITEM);
-                    output.accept(ORANGE_SIGN_ITEM);
-                    output.accept(ORANGE_SLAB_ITEM);
-                    output.accept(ORANGE_STAIRS_ITEM);
-                    output.accept(ORANGE_TRAPDOOR_ITEM);
                     output.accept(ORANGE_TREE_LOG_ITEM);
                     output.accept(ORANGE_WOOD_ITEM);
                     output.accept(STRIPPED_ORANGE_LOG_ITEM);
                     output.accept(STRIPPED_ORANGE_WOOD_ITEM);
+                    output.accept(ORANGE_PLANKS_ITEM);
+                    output.accept(ORANGE_STAIRS_ITEM);
+                    output.accept(ORANGE_SLAB_ITEM);
+                    output.accept(ORANGE_FENCE_ITEM);
+                    output.accept(ORANGE_FENCE_GATE_ITEM);
+                    output.accept(ORANGE_DOOR_ITEM);
+                    output.accept(ORANGE_TRAPDOOR_ITEM);
+                    output.accept(ORANGE_PRESSURE_PLATE_ITEM);
+                    output.accept(ORANGE_BUTTON_ITEM);
+                    output.accept(ORANGE_HANGING_SIGN_ITEM);
+                    output.accept(ORANGE_SIGN_ITEM);
                 }).build());
 
         CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()

@@ -34,6 +34,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> BIG_LAB_LAMP_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_LAMP);
     public static final DeferredItem<BlockItem> BIG_LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LIBRARY_DOOR);
     public static final DeferredItem<BlockItem> BIG_MAINTENANCE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_MAINTENANCE_DOOR);
+    public static final DeferredItem<BlockItem> BLUE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE);
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE_SLAB);
     public static final DeferredItem<BlockItem> BLUE_LAB_TILE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(BLUE_LAB_TILE_STAIRS);
@@ -81,6 +82,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> LATEX_RESISTANT_GLASS_ITEM = ITEMS.registerSimpleBlockItem(LATEX_RESISTANT_GLASS);
     public static final DeferredItem<BlockItem> LATEX_RESISTANT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(LATEX_RESISTANT_GLASS_PANE);
     public static final DeferredItem<BlockItem> LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LIBRARY_DOOR);
+    public static final DeferredItem<BlockItem> LIGHT_BLUE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(LIGHT_BLUE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> MAINTENANCE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(MAINTENANCE_DOOR);
     public static final DeferredItem<BlockItem> METAL_BOX_ITEM = ITEMS.registerSimpleBlockItem(METAL_BOX);
     public static final DeferredItem<BlockItem> METAL_CAN_ITEM = ITEMS.registerSimpleBlockItem(METAL_CAN);
@@ -96,6 +98,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> SCANNER_ITEM = ITEMS.registerSimpleBlockItem(SCANNER);
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(SMALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> SMART_SEWAGE_SYSTEM_ITEM = ITEMS.registerSimpleBlockItem(SMART_SEWAGE_SYSTEM);
+    public static final DeferredItem<BlockItem> STRIPED_LIGHT_BLUE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(STRIPED_LIGHT_BLUE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> STRIPED_ORANGE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(STRIPED_ORANGE_LAB_BLOCK);
     public static final DeferredItem<BlockItem> TABLE_ITEM = ITEMS.registerSimpleBlockItem(TABLE);
     public static final DeferredItem<BlockItem> TALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(TALL_CARDBOARD_BOX);
