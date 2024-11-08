@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.lighting.QuadLighter;
 import net.zaharenko424.a_changed.BakedQuadExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

@@ -2,7 +2,7 @@ package net.zaharenko424.a_changed.transfurSystem.transfurTypes;
 
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import org.jetbrains.annotations.NotNull;
 
 public class FlyingProperties extends TransfurType.Properties {

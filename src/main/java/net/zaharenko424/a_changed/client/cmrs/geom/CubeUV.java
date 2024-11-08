@@ -1,9 +1,10 @@
 package net.zaharenko424.a_changed.client.cmrs.geom;
 
-import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class CubeUV {
 
@@ -11,7 +12,7 @@ public class CubeUV {
 
     public CubeUV(){}
 
-    public CubeUV(@NotNull ImmutableMap<Direction, UVData> data){
+    public CubeUV(@NotNull Map<Direction, UVData> data){
         uv.putAll(data);
     }
 

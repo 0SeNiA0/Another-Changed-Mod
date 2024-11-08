@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

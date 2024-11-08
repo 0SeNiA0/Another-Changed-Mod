@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import org.jetbrains.annotations.NotNull;
 
 public class CatProperties extends TransfurType.Properties {

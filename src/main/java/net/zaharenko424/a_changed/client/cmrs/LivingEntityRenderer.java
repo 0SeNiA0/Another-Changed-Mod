@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.scores.Team;
@@ -59,27 +58,24 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         float f = Mth.rotLerp(ticks, entity.yBodyRotO, entity.yBodyRot);
         float f1 = Mth.rotLerp(ticks, entity.yHeadRotO, entity.yHeadRot);
         float f2 = f1 - f;
-        if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
-            Entity $$14 = entity.getVehicle();
-            if ($$14 instanceof LivingEntity livingentity) {
-                f = Mth.rotLerp(ticks, livingentity.yBodyRotO, livingentity.yBodyRot);
-                f2 = f1 - f;
-                float f6 = Mth.wrapDegrees(f2);
-                if (f6 < -85.0F) {
-                    f6 = -85.0F;
-                }
-
-                if (f6 >= 85.0F) {
-                    f6 = 85.0F;
-                }
-
-                f = f1 - f6;
-                if (f6 * f6 > 2500.0F) {
-                    f += f6 * 0.2F;
-                }
-
-                f2 = f1 - f;
+        if (shouldSit && entity.getVehicle() instanceof LivingEntity vehicle) {
+            f = Mth.rotLerp(ticks, vehicle.yBodyRotO, vehicle.yBodyRot);
+            f2 = f1 - f;
+            float f6 = Mth.wrapDegrees(f2);
+            if (f6 < -85.0F) {
+                f6 = -85.0F;
             }
+
+            if (f6 >= 85.0F) {
+                f6 = 85.0F;
+            }
+
+            f = f1 - f6;
+            if (f6 * f6 > 2500.0F) {
+                f += f6 * 0.2F;
+            }
+
+            f2 = f1 - f;
         }
 
         float f5 = Mth.lerp(ticks, entity.xRotO, entity.getXRot());
@@ -155,7 +151,7 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         return entity.isFullyFrozen();
     }
 
-    protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
+    protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float partialTick) {
         if (this.isShaking(entity)) {
             yaw += (float)(Math.cos((double)entity.tickCount * 3.25) * Math.PI * 0.4F);
         }
@@ -165,7 +161,7 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
         }
 
         if (entity.deathTime > 0) {
-            float f = ((float)entity.deathTime + ticks - 1.0F) / 20.0F * 1.6F;
+            float f = ((float)entity.deathTime + partialTick - 1.0F) / 20.0F * 1.6F;
             f = Mth.sqrt(f);
             if (f > 1.0F) {
                 f = 1.0F;
@@ -174,7 +170,7 @@ public abstract class LivingEntityRenderer<E extends LivingEntity, M extends Ent
             poseStack.mulPose(Axis.ZP.rotationDegrees(f * this.getFlipDegrees(entity)));
         } else if (entity.isAutoSpinAttack()) {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F - entity.getXRot()));
-            poseStack.mulPose(Axis.YP.rotationDegrees(((float)entity.tickCount + ticks) * -75.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(((float)entity.tickCount + partialTick) * -75.0F));
         } else if (entity.hasPose(Pose.SLEEPING)) {
             Direction direction = entity.getBedOrientation();
             float f1 = direction != null ? sleepDirectionToRotation(direction) : yaw;

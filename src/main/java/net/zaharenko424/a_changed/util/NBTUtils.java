@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.util;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Contract;
@@ -18,17 +17,6 @@ public class NBTUtils {
         if(tag.contains(KEY)) return tag.getCompound(KEY);
         tag.put(KEY, new CompoundTag());
         return tag.getCompound(KEY);
-    }
-
-    public static void putBlockPos(CompoundTag tag, BlockPos pos){
-        tag.putInt("x", pos.getX());
-        tag.putInt("y", pos.getY());
-        tag.putInt("z", pos.getZ());
-    }
-
-    @Contract("_ -> new")
-    public static @NotNull BlockPos getBlockPos(CompoundTag tag){
-        return new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
     }
 
     public static void putAABB(CompoundTag tag, AABB aabb){

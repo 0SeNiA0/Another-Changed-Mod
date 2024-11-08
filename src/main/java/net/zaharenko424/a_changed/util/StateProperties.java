@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.util;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 
 public class StateProperties {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");

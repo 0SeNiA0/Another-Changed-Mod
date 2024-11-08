@@ -2,9 +2,11 @@ package net.zaharenko424.a_changed.client.cmrs.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -23,18 +25,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.neoforge.client.ClientHooks;
-import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.NoYFlip;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E,M> {
+public class ArmorLayer<E extends LivingEntity, M extends EntityModel<E> & CustomModel> extends RenderLayer<E,M> implements NoYFlip {
 
     protected final TextureAtlas armorTrimAtlas;
     protected M model;
 
-    public ArmorLayer(CustomHumanoidRenderer<E> renderer, TextureAtlas armorTrimAtlas) {
+    public ArmorLayer(EntityRenderer<E> renderer, TextureAtlas armorTrimAtlas) {
         super((RenderLayerParent<E, M>) renderer);
         this.armorTrimAtlas = armorTrimAtlas;
     }
@@ -58,17 +60,6 @@ public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>
 
         boolean innerModel = slot == EquipmentSlot.LEGS;
         ArmorMaterial armormaterial = armoritem.getMaterial().value();
-
-        //net.neoforged.neoforge.client.extensions.common.IClientItemExtensions extensions = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack);
-        //int fallbackColor = extensions.getDefaultDyeColor(itemstack);
-        //for (int layerIdx = 0; layerIdx < armormaterial.layers().size(); layerIdx++) {
-        //    ArmorMaterial.Layer armormaterial$layer = armormaterial.layers().get(layerIdx);
-        //    int j = extensions.getArmorLayerTintColor(itemstack, entity, armormaterial$layer, layerIdx, fallbackColor);
-        //    if (j != 0) {
-        //        var texture = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(entity, itemstack, armormaterial$layer, innerModel, slot);
-        //        this.renderModel(poseStack, buffer, light, j, texture);
-        //    }
-        //}
 
         int color = itemstack.is(ItemTags.DYEABLE) ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemstack, -6265536)) : -1;
         for (int layerIdx = 0; layerIdx < armormaterial.layers().size(); layerIdx++) {

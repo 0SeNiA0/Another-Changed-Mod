@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;

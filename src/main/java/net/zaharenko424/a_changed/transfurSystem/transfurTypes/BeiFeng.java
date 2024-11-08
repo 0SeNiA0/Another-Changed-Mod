@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLLoader;
 import net.zaharenko424.a_changed.client.model.BeiFengModel;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 

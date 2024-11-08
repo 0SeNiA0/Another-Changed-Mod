@@ -16,10 +16,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
+import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.layers.*;
 import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
@@ -113,8 +111,8 @@ public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntity
         } else model.setAllVisible(true);
         model.setDrawAll(true);
 
-        HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(entity, InteractionHand.MAIN_HAND);
-        HumanoidModel.ArmPose humanoidmodel$armpose1 = getArmPose(entity, InteractionHand.OFF_HAND);
+        HumanoidModel.ArmPose humanoidmodel$armpose = AnimationUtils.getArmPose(entity, InteractionHand.MAIN_HAND);
+        HumanoidModel.ArmPose humanoidmodel$armpose1 = AnimationUtils.getArmPose(entity, InteractionHand.OFF_HAND);
         if (humanoidmodel$armpose.isTwoHanded()) {
             humanoidmodel$armpose1 = entity.getOffhandItem().isEmpty() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
         }
@@ -129,19 +127,19 @@ public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntity
     }
 
     @Override
-    protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float ticks) {
-        float f = entity.getSwimAmount(ticks);
-        float f1 = entity.getViewXRot(ticks);
-        super.setupRotations(entity, poseStack, ageInTicks, yaw, ticks);
+    protected void setupRotations(E entity, PoseStack poseStack, float ageInTicks, float yaw, float partialTick) {
+        float f = entity.getSwimAmount(partialTick);
+        float f1 = entity.getViewXRot(partialTick);
+        super.setupRotations(entity, poseStack, ageInTicks, yaw, partialTick);
         if (entity.isFallFlying() && entity instanceof AbstractClientPlayer player) {
-            float f2 = (float) player.getFallFlyingTicks() + ticks;
+            float f2 = (float) player.getFallFlyingTicks() + partialTick;
             float f3 = Mth.clamp(f2 * f2 / 100.0F, 0.0F, 1.0F);
             if (!player.isAutoSpinAttack()) {
                 poseStack.mulPose(Axis.XP.rotationDegrees(f3 * (-90.0F - f1)));
             }
 
-            Vec3 vec3 = player.getViewVector(ticks);
-            Vec3 vec31 = player.getDeltaMovementLerped(ticks);
+            Vec3 vec3 = player.getViewVector(partialTick);
+            Vec3 vec31 = player.getDeltaMovementLerped(partialTick);
             double d0 = vec31.horizontalDistanceSqr();
             double d1 = vec3.horizontalDistanceSqr();
             if (d0 > 0.0 && d1 > 0.0) {
@@ -156,51 +154,6 @@ public class CustomHumanoidRenderer<E extends LivingEntity> extends LivingEntity
             if (entity.isVisuallySwimming()) {
                 poseStack.translate(0.0F, -1.0F, 0.3F);
             }
-        }
-    }
-
-    private HumanoidModel.ArmPose getArmPose(E entity, InteractionHand hand) {
-        ItemStack itemstack = entity.getItemInHand(hand);
-        if (itemstack.isEmpty()) {
-            return HumanoidModel.ArmPose.EMPTY;
-        } else {
-            if (entity.getUsedItemHand() == hand && entity.getUseItemRemainingTicks() > 0) {
-                UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK) {
-                    return HumanoidModel.ArmPose.BLOCK;
-                }
-
-                if (useanim == UseAnim.BOW) {
-                    return HumanoidModel.ArmPose.BOW_AND_ARROW;
-                }
-
-                if (useanim == UseAnim.SPEAR) {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
-                }
-
-                if (useanim == UseAnim.CROSSBOW && hand == entity.getUsedItemHand()) {
-                    return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                }
-
-                if (useanim == UseAnim.SPYGLASS) {
-                    return HumanoidModel.ArmPose.SPYGLASS;
-                }
-
-                if (useanim == UseAnim.TOOT_HORN) {
-                    return HumanoidModel.ArmPose.TOOT_HORN;
-                }
-
-                if (useanim == UseAnim.BRUSH) {
-                    return HumanoidModel.ArmPose.BRUSH;
-                } else if (!entity.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
-                    return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-                }
-            }
-
-            HumanoidModel.ArmPose forgeArmPose = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(entity, hand, itemstack);
-            if (forgeArmPose != null) return forgeArmPose;
-
-            return HumanoidModel.ArmPose.ITEM;
         }
     }
 

@@ -24,6 +24,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -47,6 +48,7 @@ public class ModelPart {
     private final List<Cube> cubes;
     private final List<Mesh> meshes;
     private final Map<String, ModelPart> children;
+    private final Map<String, ModelPart> allChildren;
     private final Map<String, ModelPart> allParts;
     private final boolean armor;
     private final boolean glowing;
@@ -59,6 +61,16 @@ public class ModelPart {
         this.armor = armor;
         this.glowing = glowing;
         this.children = Map.copyOf(children);
+
+        Map<String, ModelPart> map = new HashMap<>();//TODO test, replace with something better?
+        this.children.forEach((name, part) -> map.putAll(part.allChildren));
+        if(map.isEmpty()){
+            allChildren = this.children;
+        } else {
+            map.putAll(this.children);
+            allChildren = Map.copyOf(map);
+        }
+
         this.allParts = allParts;
     }
 
@@ -137,13 +149,17 @@ public class ModelPart {
         return !children.isEmpty();
     }
 
-    public ModelPart getChild(String name) {
+    public ModelPart getDirectChild(String name) {
         ModelPart modelPart = children.get(name);
         if (modelPart == null) {
             throw new NoSuchElementException("Can't find part " + name);
         } else {
             return modelPart;
         }
+    }
+
+    public @Nullable ModelPart getPart(String name) {
+        return allParts.get(name);
     }
 
     public void setPos(float newX, float newY, float newZ) {
@@ -171,7 +187,7 @@ public class ModelPart {
     }
 
     private void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha, List<Mesh> animated) {
-        if(!visible || (isEmpty() && children.isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
+        if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
         PoseStack.Pose last = poseStack.last();
         poseStack.pushPose();
         translateAndRotate(poseStack);
@@ -248,7 +264,7 @@ public class ModelPart {
     }
 
     public boolean isEmpty() {
-        return cubes.isEmpty() && meshes.isEmpty();
+        return cubes.isEmpty() && meshes.isEmpty() && children.isEmpty();
     }
 
     public void offsetPos(Vector3f pos) {
@@ -269,10 +285,6 @@ public class ModelPart {
         zScale += scale.z();
     }
 
-    public ModelPart partByName(String name){
-        return allParts.get(name);
-    }
-
     /**
      * @return Unmodifiable map
      */
@@ -282,6 +294,10 @@ public class ModelPart {
 
     public Stream<ModelPart> getAllParts() {
         return allParts.values().stream();
+    }
+
+    public Stream<ModelPart> getAllChildParts(){
+        return allChildren.values().stream();
     }
 
     public static class Cube extends Mesh {

@@ -24,9 +24,9 @@ public class RoombaModel extends EntityModel<RoombaEntity> {
     private final ModelPart brushLeft;
 
     public RoombaModel(){
-        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getChild("root");
-        brushRight = root.getChild("brush_right");
-        brushLeft = root.getChild("brush_left");
+        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getDirectChild("root");
+        brushRight = root.getDirectChild("brush_right");
+        brushLeft = root.getDirectChild("brush_left");
     }
 
     @Override

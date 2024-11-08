@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

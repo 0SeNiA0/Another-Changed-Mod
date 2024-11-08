@@ -1,16 +1,31 @@
 package net.zaharenko424.a_changed.client.cmrs.animation;
 
 import com.google.common.collect.Maps;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @ParametersAreNonnullByDefault
 public record AnimationDefinition(float lengthInSeconds, boolean looping, Map<String, List<AnimationChannel>> boneAnimations) {
+
+    public static final StreamCodec<FriendlyByteBuf, AnimationDefinition> CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT,
+            AnimationDefinition::lengthInSeconds,
+            ByteBufCodecs.BOOL,
+            AnimationDefinition::looping,
+            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.collection(ArrayList::new, AnimationChannel.CODEC)),
+            AnimationDefinition::boneAnimations,
+            AnimationDefinition::new
+    );
 
     public static class Builder {
         private final float length;

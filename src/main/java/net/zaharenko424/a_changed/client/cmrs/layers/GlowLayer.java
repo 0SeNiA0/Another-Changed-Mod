@@ -1,18 +1,19 @@
 package net.zaharenko424.a_changed.client.cmrs.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class GlowLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E, M> {
+public class GlowLayer<E extends LivingEntity, M extends EntityModel<E> & CustomModel> extends RenderLayer<E, M> {
 
     public GlowLayer(RenderLayerParent<E, M> pRenderer) {
         super(pRenderer);

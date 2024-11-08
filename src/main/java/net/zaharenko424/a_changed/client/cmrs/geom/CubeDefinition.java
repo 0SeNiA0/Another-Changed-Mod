@@ -1,13 +1,40 @@
 package net.zaharenko424.a_changed.client.cmrs.geom;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.joml.Vector3f;
 
 public class CubeDefinition {
+
+    public static final StreamCodec<FriendlyByteBuf, CubeDefinition> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VECTOR3F,
+            cube -> cube.origin,
+            ByteBufCodecs.VECTOR3F,
+            cube -> cube.size,
+            ByteBufCodecs.VECTOR3F,
+            cube -> cube.inflate,
+            ByteBufCodecs.map(Object2ObjectArrayMap::new, NeoForgeStreamCodecs.enumCodec(Direction.class), StreamCodec.<FriendlyByteBuf, UVData>of(
+                    (buffer, uv) -> buffer.writeFloat(uv.u1()).writeFloat(uv.v1()).writeFloat(uv.u2()).writeFloat(uv.v2()),
+                    buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, uv -> uv.uv),
+            cube -> cube.uv,
+            CubeDefinition::new
+    );
 
     private final Vector3f origin;
     private final Vector3f size;
     private final Vector3f inflate;
     private final CubeUV uv;
+
+    CubeDefinition(Vector3f origin, Vector3f size, Vector3f inflate, CubeUV uv){
+        this.origin = origin;
+        this.size = size;
+        this.inflate = inflate;
+        this.uv = uv;
+    }
 
     CubeDefinition(float x, float y, float z, float sizeX, float sizeY, float sizeZ, Vector3f inflate, CubeUV uv){
         origin = new Vector3f(x, y, z);

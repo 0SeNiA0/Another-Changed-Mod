@@ -64,7 +64,7 @@ public class KeyframeAnimator {
     }
 
     public static Optional<ModelPart> getAnyDescendantWithName(ModelPart root, String name) {
-        return Optional.ofNullable(root.partByName(name));
+        return Optional.ofNullable(root.getPart(name));
     }
 
     public static float getElapsedSeconds(AnimationDefinition animation, long time) {

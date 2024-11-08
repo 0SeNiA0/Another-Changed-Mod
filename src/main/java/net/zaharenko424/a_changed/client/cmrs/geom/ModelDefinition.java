@@ -1,5 +1,8 @@
 package net.zaharenko424.a_changed.client.cmrs.geom;
 
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,27 +10,46 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ModelDefinition {
-    private final Builder mesh;
+
+    public static final StreamCodec<FriendlyByteBuf, ModelDefinition> CODEC = StreamCodec.composite(
+            GroupDefinition.CODEC,
+            definition -> definition.root,
+            ByteBufCodecs.FLOAT,
+            definition -> definition.textureWidth,
+            ByteBufCodecs.FLOAT,
+            definition -> definition.textureHeight,
+            ByteBufCodecs.FLOAT,
+            definition -> definition.textureScale,
+            ModelDefinition::new
+    );
+
+    private final GroupDefinition root;
     private final float textureWidth;
     private final float textureHeight;
+    private final float textureScale;
 
-    private ModelDefinition(Builder mesh, float textureWidth, float textureHeight){
-        this.mesh = mesh;
+    private ModelDefinition(GroupDefinition root, float textureWidth, float textureHeight, float textureScale){
+        this.root = root;
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
+        this.textureScale = textureScale;
     }
 
     public ModelPart bake(){
-        return mesh.getRoot().bake(textureWidth, textureHeight);
+        return root.bake(textureWidth / textureScale, textureHeight / textureScale);
     }
 
     @Contract(value = "_,_,_ -> new", pure = true)
     public static @NotNull ModelDefinition create(Builder mesh, int textureWidth, int textureHeight){
-        return new ModelDefinition(mesh,textureWidth,textureHeight);
+        return new ModelDefinition(mesh.root, textureWidth, textureHeight, 1);
     }
 
     public static @NotNull ModelDefinition create(Builder mesh, int textureWidth, int textureHeight, float uvScale){
-        return new ModelDefinition(mesh,textureWidth / uvScale,textureHeight / uvScale);
+        return new ModelDefinition(mesh.root, textureWidth, textureHeight, uvScale);
+    }
+
+    public static GroupDefinition createRoot(){
+        return new GroupDefinition();
     }
 
     public static class Builder {

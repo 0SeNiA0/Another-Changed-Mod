@@ -4,7 +4,7 @@ import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
-public interface Animations {
+public interface Animations {//rotation in blockbench seems to be pre flipped so need to *-1 so it looks right with NoYFlip stuff
 
     AnimationDefinition EAR_ANIM = AnimationDefinition.Builder.withLength(4.0F).looping()
             .addAnimation("left_ear", new AnimationChannel(AnimationChannel.Targets.ROTATION,

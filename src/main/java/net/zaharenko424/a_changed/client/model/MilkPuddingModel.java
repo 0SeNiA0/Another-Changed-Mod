@@ -22,7 +22,7 @@ public class MilkPuddingModel extends EntityModel<MilkPuddingEntity> {
     private final ModelPart root;
 
     public MilkPuddingModel(){
-        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getChild("root");
+        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getDirectChild("root");
     }
 
     @Override

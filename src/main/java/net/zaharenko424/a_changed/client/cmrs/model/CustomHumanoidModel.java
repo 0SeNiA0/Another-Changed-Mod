@@ -7,6 +7,7 @@ import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -19,20 +20,19 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
-import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
 @ParametersAreNonnullByDefault
-public abstract class CustomHumanoidModel<E extends LivingEntity> extends EntityModel<E> implements ArmedModel {
+public abstract class CustomHumanoidModel<E extends LivingEntity> extends EntityModel<E> implements ArmedModel, CustomModel {
 
     private final ModelPart root;
     public final ModelPart head;
@@ -54,13 +54,13 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
 
     public CustomHumanoidModel(ModelPart modelRoot, ResourceLocation texture){
         super(RenderType::entityCutoutNoCull);
-        this.root = modelRoot.getChild("root");
-        head = root.getChild("head");
-        body = root.getChild("body");
-        rightArm = root.getChild("right_arm");
-        leftArm = root.getChild("left_arm");
-        rightLeg = root.getChild("right_leg");
-        leftLeg = root.getChild("left_leg");
+        this.root = modelRoot.getDirectChild("root");
+        head = root.getDirectChild("head");
+        body = root.getDirectChild("body");
+        rightArm = root.getDirectChild("right_arm");
+        leftArm = root.getDirectChild("left_arm");
+        rightLeg = root.getDirectChild("right_leg");
+        leftLeg = root.getDirectChild("left_leg");
         bodyPartsWCubes = ImmutableList.copyOf(root.getAllParts().filter(ModelPart::hasCubes).iterator());
         if(!texture.getPath().startsWith("textures/")) this.texture = AChanged.textureLoc(texture.withPrefix("entity/"));
         else this.texture = texture;
@@ -85,6 +85,11 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color) {
         root().render(poseStack, consumer, light, overlay, color);
+    }
+
+    @Override
+    public void renderToBuffer(@NotNull PoseStack poseStack, @Nullable RenderType suggestedRenderType, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay, int color) {
+        if(suggestedRenderType != null) root().render(poseStack, buffer.getBuffer(suggestedRenderType), packedLight, packedOverlay, color);
     }
 
     public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {
@@ -258,7 +263,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
                 setupArmorPartsIn(glowing, body);
                 setupArmorPartsIn(glowing, rightArm);
                 setupArmorPartsIn(glowing, leftArm);
-                if(body.hasChild("tail")) setDrawAll(false, body.getChild("tail"));
+                if(body.hasChild("tail")) setDrawAll(false, body.getDirectChild("tail"));
             }
             case LEGS -> {
                 setupArmorPartsIn(glowing, body);//TODO remove or add a new armor part for legs -> chest armor
@@ -277,9 +282,9 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     }
 
     protected void setupArmorPartsIn(boolean glowing, String name){
-        Optional<ModelPart> part = KeyframeAnimator.getAnyDescendantWithName(root, name);
-        if(part.isEmpty()) return;
-        setupArmorPartsIn(glowing, part.get());
+        ModelPart part = root.getPart(name);
+        if(part == null) return;
+        setupArmorPartsIn(glowing, part);
     }
 
     @Override
@@ -315,7 +320,8 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
      * @param part starting ModelPart
      */
     public void setDrawAll(boolean b, ModelPart part){
-        part.getAllParts().forEach(part0 -> part0.draw = b);
+        part.draw = b;
+        part.getAllChildParts().forEach(part0 -> part0.draw = b);
     }
 
     /**
@@ -396,7 +402,8 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
      * Sets visibility of all children of provided modelPart.
      */
     public void setAllVisible(boolean visible, ModelPart part){
-        part.getAllParts().forEach(child -> child.visible = visible);
+        part.visible = visible;
+        part.getAllChildParts().forEach(child -> child.visible = visible);
     }
 
     protected void poseRightArm(E entity) {

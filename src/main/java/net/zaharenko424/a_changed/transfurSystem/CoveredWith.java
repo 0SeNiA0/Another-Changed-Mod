@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.util;
+package net.zaharenko424.a_changed.transfurSystem;
 
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;

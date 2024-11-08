@@ -30,12 +30,12 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
     private final ModelPart[] dna = new ModelPart[3];
 
     public LatexEncoderRenderer(){
-        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
-        latexBase = root.getChild("latexBase");
-        dnaRoot = root.getChild("dna");
-        dna[0] = dnaRoot.getChild("dna0");
-        dna[1] = dnaRoot.getChild("dna1");
-        dna[2] = dnaRoot.getChild("dna2");
+        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("root");
+        latexBase = root.getDirectChild("latexBase");
+        dnaRoot = root.getDirectChild("dna");
+        dna[0] = dnaRoot.getDirectChild("dna0");
+        dna[1] = dnaRoot.getDirectChild("dna1");
+        dna[2] = dnaRoot.getDirectChild("dna2");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

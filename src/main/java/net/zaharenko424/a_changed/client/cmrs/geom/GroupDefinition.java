@@ -1,8 +1,10 @@
 package net.zaharenko424.a_changed.client.cmrs.geom;
 
-import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -13,27 +15,59 @@ import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 public class GroupDefinition {
+
+    public static final StreamCodec<FriendlyByteBuf, PartPose> POSE_CODEC = StreamCodec.of((buffer, pose) -> {
+        int flag = pose.xRot == 0 && pose.yRot == 0 && pose.zRot == 0 ? 1 : 3;
+        flag += pose.x == 0 && pose.y == 0 && pose.z == 0 ? -1 : 0;
+        buffer.writeByte(flag);
+
+        if(flag == 1 || flag == 3) buffer.writeFloat(pose.x).writeFloat(pose.y).writeFloat(pose.z);
+        if(flag == 2 || flag == 3) buffer.writeFloat(pose.xRot).writeFloat(pose.yRot).writeFloat(pose.zRot);
+    }, buffer -> switch(buffer.readByte()){
+        case 0 -> PartPose.ZERO;
+        case 1 -> PartPose.offset(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+        case 2 -> PartPose.rotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+        default -> PartPose.offsetAndRotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+    });
+
+    public static final StreamCodec<FriendlyByteBuf, GroupDefinition> CODEC = StreamCodec.composite(
+            ByteBufCodecs.collection(ArrayList::new, CubeDefinition.CODEC),
+            definition -> definition.cubes,
+            ByteBufCodecs.collection(ArrayList::new, MeshDefinition.CODEC),
+            definition -> definition.meshes,
+            POSE_CODEC,
+            definition -> definition.partPose,
+            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, GroupDefinition.CODEC),
+            definition -> definition.children,
+            ByteBufCodecs.BOOL,
+            definition -> definition.armor,
+            ByteBufCodecs.BOOL,
+            definition -> definition.glowing,
+            GroupDefinition::new
+    );
+
     private final List<CubeDefinition> cubes;
     private final List<MeshDefinition> meshes;
     private final PartPose partPose;
-    private final Map<String, GroupDefinition> children = Maps.newHashMap();
+    private final Map<String, GroupDefinition> children;
     private final boolean armor;
     private final boolean glowing;
 
     GroupDefinition(){
-        cubes = new ArrayList<>();
-        meshes = new ArrayList<>();
-        partPose = PartPose.ZERO;
-        armor = false;
-        glowing = false;
+        this(List.of(), List.of(), PartPose.ZERO, new HashMap<>(), false, false);
     }
 
     GroupDefinition(GroupBuilder builder, PartPose pose) {
-        this.cubes = builder.cubes();
-        this.meshes = builder.meshes();
+        this(builder.cubes(), builder.meshes(), pose, new HashMap<>(), builder.armor, builder.glowing);
+    }
+
+    GroupDefinition(List<CubeDefinition> cubes, List<MeshDefinition> meshes, PartPose pose, Map<String, GroupDefinition> children, boolean armor, boolean glowing){
+        this.cubes = cubes;
+        this.meshes = meshes;
         this.partPose = pose;
-        armor = builder.armor;
-        glowing = builder.glowing;
+        this.children = children;
+        this.armor = armor;
+        this.glowing = glowing;
     }
 
     public GroupDefinition addOrReplaceChild(String name, GroupBuilder builder){

@@ -7,7 +7,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.Vec3;
@@ -147,11 +146,6 @@ public class Utils {
             }
         }
         return false;
-    }
-
-    public static <E extends MobEffectInstance> E makeUnremovable(E effect){
-        effect.getCures().clear();
-        return effect;
     }
 
     public static boolean containsClass(Class<?> clazz, List<Class<?>> list){

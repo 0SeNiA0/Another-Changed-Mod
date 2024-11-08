@@ -24,7 +24,7 @@ public class CannedOrangesRenderer implements BlockEntityRenderer<CannedOrangesE
     private final ModelPart oranges;
 
     public CannedOrangesRenderer(){
-        oranges = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("circle");
+        oranges = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("circle");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

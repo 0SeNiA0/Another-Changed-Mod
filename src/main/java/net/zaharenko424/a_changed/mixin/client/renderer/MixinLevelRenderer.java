@@ -25,7 +25,7 @@ import net.zaharenko424.a_changed.item.BuildersWand;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

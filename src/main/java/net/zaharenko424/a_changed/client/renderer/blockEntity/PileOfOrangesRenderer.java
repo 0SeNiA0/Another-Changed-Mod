@@ -22,7 +22,7 @@ public class PileOfOrangesRenderer implements BlockEntityRenderer<PileOfOrangesE
     private final ModelPart orange;
 
     public PileOfOrangesRenderer(){
-        orange = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
+        orange = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("root");
     }
 
     public static @NotNull ModelDefinition bodyLayer() {

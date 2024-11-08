@@ -25,11 +25,11 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     private final ModelPart[] tubes = new ModelPart[4];
 
     public DNAExtractorRenderer(){
-        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
-        tubes[0] = root.getChild("tube0");
-        tubes[1] = root.getChild("tube1");
-        tubes[2] = root.getChild("tube2");
-        tubes[3] = root.getChild("tube3");
+        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("root");
+        tubes[0] = root.getDirectChild("tube0");
+        tubes[1] = root.getDirectChild("tube1");
+        tubes[2] = root.getDirectChild("tube2");
+        tubes[3] = root.getDirectChild("tube3");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

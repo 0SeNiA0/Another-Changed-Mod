@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.item.*;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;

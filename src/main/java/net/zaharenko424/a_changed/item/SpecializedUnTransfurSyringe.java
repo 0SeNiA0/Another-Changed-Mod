@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.item;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 
 public class SpecializedUnTransfurSyringe extends UnTransfurSyringeItem {
 
