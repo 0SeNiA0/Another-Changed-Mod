@@ -26,6 +26,7 @@
     "entityai.MixinVillagerHostileSensor"
   ],
   "client": [
+    "client.renderer.MixinBufferSource",
     "client.MixinBlockModelShaper",
     "client.MixinDebugScreenOverlay",
     "client.MixinGui",

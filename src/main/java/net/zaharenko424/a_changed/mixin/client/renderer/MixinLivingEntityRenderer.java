@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> {
@@ -96,7 +97,18 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private RenderType renderCustomModel(RenderType original, @Local(argsOnly = true) PoseStack poseStack, @Local(argsOnly = true) MultiBufferSource buffer, @Local(argsOnly = true) int packedLight, @Local(argsOnly = true) T entity, @Local(ordinal = 1, argsOnly = true) float partialTicks, @Local Minecraft minecraft){
         if(!(model instanceof CustomModel custom)) return original;
 
-        custom.renderToBuffer(poseStack, original, buffer, packedLight, getOverlayCoords(entity, getWhiteOverlayProgress(entity, partialTicks)), !isBodyVisible(entity) && !entity.isInvisibleTo(minecraft.player) ? 654311423 : -1);
+        boolean visible = isBodyVisible(entity);
+        boolean translucent = !visible && !entity.isInvisibleTo(minecraft.player);
+        Function<ResourceLocation, RenderType> func;
+        if(original == null){
+            func = null;
+        } else if(translucent){
+            func = RenderType::itemEntityTranslucentCull;
+        } else if(visible){
+            func = model::renderType;
+        } else func = minecraft.shouldEntityAppearGlowing(entity) ? RenderType::outline : null;
+
+        custom.renderToBuffer(entity, poseStack, func, packedLight, getOverlayCoords(entity, getWhiteOverlayProgress(entity, partialTicks)), translucent ? 654311423 : -1);
         return null;
     }
 

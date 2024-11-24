@@ -7,7 +7,6 @@ import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -23,7 +22,6 @@ import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
@@ -32,7 +30,7 @@ import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
 @ParametersAreNonnullByDefault
-public abstract class CustomHumanoidModel<E extends LivingEntity> extends EntityModel<E> implements ArmedModel, CustomModel {
+public abstract class CustomHumanoidModel<E extends LivingEntity> extends EntityModel<E> implements ArmedModel {
 
     private final ModelPart root;
     public final ModelPart head;
@@ -85,11 +83,6 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color) {
         root().render(poseStack, consumer, light, overlay, color);
-    }
-
-    @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @Nullable RenderType suggestedRenderType, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay, int color) {
-        if(suggestedRenderType != null) root().render(poseStack, buffer.getBuffer(suggestedRenderType), packedLight, packedOverlay, color);
     }
 
     public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {

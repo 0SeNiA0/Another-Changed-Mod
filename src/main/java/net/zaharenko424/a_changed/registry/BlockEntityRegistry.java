@@ -55,7 +55,7 @@ public class BlockEntityRegistry {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatexPurifierEntity>> LATEX_PURIFIER_ENTITY = BLOCK_ENTITIES
             .register("latex_purifier", () -> BlockEntityType.Builder.of(LatexPurifierEntity::new, LATEX_PURIFIER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NoteEntity>> NOTE_ENTITY = BLOCK_ENTITIES
-            .register("note", () -> BlockEntityType.Builder.of(NoteEntity::new, NOTE.get()).build(null));
+            .register("note", () -> BlockEntityType.Builder.of(NoteEntity::new, NOTE.get(), NOTEPAD.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SignEntity>> SIGN_ENTITY = BLOCK_ENTITIES
             .register("sign", ()-> BlockEntityType.Builder.of(SignEntity::new, ORANGE_SIGN.get(), ORANGE_WALL_SIGN.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmartSewageEntity>> SMART_SEWAGE_ENTITY = BLOCK_ENTITIES

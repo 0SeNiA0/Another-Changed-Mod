@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.client.cmrs.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -25,13 +24,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.neoforge.client.ClientHooks;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.NoYFlip;
+import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ArmorLayer<E extends LivingEntity, M extends EntityModel<E> & CustomModel> extends RenderLayer<E,M> implements NoYFlip {
+public class ArmorLayer<E extends LivingEntity, M extends CustomHumanoidModel<E>> extends RenderLayer<E, M> implements NoYFlip {
 
     protected final TextureAtlas armorTrimAtlas;
     protected M model;
@@ -79,7 +78,7 @@ public class ArmorLayer<E extends LivingEntity, M extends EntityModel<E> & Custo
 
         if(!model.hasGlowingArmor()) return;
         model.setupArmorPart(slot, true);
-        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.eyes(ClientHooks.getArmorTexture(entity, itemstack, armormaterial.layers().get(0), innerModel, slot))), light, OverlayTexture.NO_OVERLAY, 1);
+        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.eyes(ClientHooks.getArmorTexture(entity, itemstack, armormaterial.layers().getFirst(), innerModel, slot))), light, OverlayTexture.NO_OVERLAY);
     }
 
     protected void renderModel(PoseStack poseStack, MultiBufferSource buffer, int light, int color, ResourceLocation armorResource) {
@@ -90,10 +89,10 @@ public class ArmorLayer<E extends LivingEntity, M extends EntityModel<E> & Custo
     protected void renderTrim(Holder<ArmorMaterial> material, PoseStack poseStack, MultiBufferSource buffer, int light, ArmorTrim trim, boolean innerTexture) {
         TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(innerTexture ? trim.innerTexture(material) : trim.outerTexture(material));
         VertexConsumer vertexconsumer = textureatlassprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
-        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1);
+        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY);
     }
 
     protected void renderGlint(PoseStack poseStack, MultiBufferSource buffer, int light) {
-        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY, 1);
+        model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY);
     }
 }
