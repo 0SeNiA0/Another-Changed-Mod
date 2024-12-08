@@ -1,17 +1,15 @@
-package net.zaharenko424.a_changed.atest;
+package net.zaharenko424.a_changed.client.cmrs.api;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationDefinition;
+import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 
 public abstract class AnimationComponent {
 
     //REGISTRY_CODEC -> lookUp the builtIn animations in animation component registry
 
-    public abstract void animate(ModelPart root, AnimationContext context);
+    public abstract <E extends LivingEntity> void animate(ModelPart root, E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
 
-    public static final class Dynamic extends AnimationComponent {
+    /*public static final class Dynamic extends AnimationComponent {
 
         public static final StreamCodec<FriendlyByteBuf, Dynamic> CODEC = StreamCodec.composite(
                 AnimationDefinition.CODEC,
@@ -29,9 +27,7 @@ public abstract class AnimationComponent {
         public void animate(ModelPart root, AnimationContext context) {
             //KeyframeAnimator.animate(root, context);
         }
-    }
+    }*/
 
-    public static class AnimationContext {
-
-    }
+    //public static class AnimationContext {}
 }

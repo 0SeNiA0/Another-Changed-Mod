@@ -1,99 +1,30 @@
-package net.zaharenko424.a_changed.client.cmrs.model;
+package net.zaharenko424.a_changed.client.cmrs.animation;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.GrabMode;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
+import net.zaharenko424.a_changed.client.cmrs.api.AnimationComponent;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Predicate;
 
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
-@ParametersAreNonnullByDefault
-public abstract class CustomHumanoidModel<E extends LivingEntity> extends EntityModel<E> implements ArmedModel {
-
-    private final ModelPart root;
-    public final ModelPart head;
-    public final ModelPart body;
-    public final ModelPart rightArm;
-    public final ModelPart leftArm;
-    public final ModelPart rightLeg;
-    public final ModelPart leftLeg;
-    protected final ImmutableList<ModelPart> bodyPartsWCubes;
-    public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
-    public HumanoidModel.ArmPose rightArmPose = HumanoidModel.ArmPose.EMPTY;
-    public boolean crouching;
-    public float swimAmount;
-    protected final ResourceLocation texture;
-
-    public CustomHumanoidModel(ModelLayerLocation location, ResourceLocation texture) {
-        this(ModelDefinitionCache.INSTANCE.bake(location), texture);
-    }
-
-    public CustomHumanoidModel(ModelPart modelRoot, ResourceLocation texture){
-        super(RenderType::entityCutoutNoCull);
-        this.root = modelRoot.getDirectChild("root");
-        head = root.getDirectChild("head");
-        body = root.getDirectChild("body");
-        rightArm = root.getDirectChild("right_arm");
-        leftArm = root.getDirectChild("left_arm");
-        rightLeg = root.getDirectChild("right_leg");
-        leftLeg = root.getDirectChild("left_leg");
-        bodyPartsWCubes = ImmutableList.copyOf(root.getAllParts().filter(ModelPart::hasCubes).iterator());
-        if(!texture.getPath().startsWith("textures/")) this.texture = AChanged.textureLoc(texture.withPrefix("entity/"));
-        else this.texture = texture;
-    }
-
-    public boolean hasArmor(){
-        return true;
-    }
-
-    public boolean hasGlowingArmor(){
-        return false;
-    }
-
-    public boolean hasGlowParts(){
-        return false;
-    }
-
-    public ResourceLocation getTexture(){
-        return texture;
-    }
+//Hardcoded animations. Bad but will do for now. Will be split later on.
+public class HumanoidAnim extends AnimationComponent {//TODO test
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color) {
-        root().render(poseStack, consumer, light, overlay, color);
-    }
+    public <E extends LivingEntity> void animate(ModelPart root, E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+        ModelPart head = root.getPart("head");
+        float partialTick = ageInTicks - entity.tickCount;//ageInTicks == entity.tickCount + partialTick
 
-    public void prepareMobModel(@NotNull E entity, float limbSwing, float limbSwingAmount, float tick) {
-        swimAmount = entity.getSwimAmount(tick);
-        super.prepareMobModel(entity, limbSwing, limbSwingAmount, tick);
-    }
+        float swimAmount = entity.getSwimAmount(partialTick);
 
-    @Override
-    public void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
-        hideArmorAndGlow();
-        root.getAllParts().forEach(ModelPart::resetPose);
+        headYaw *= -1;//TMP fix flipped angles
+        headPitch *= -1;
 
         boolean flag = entity.getFallFlyingTicks() > 4;
         boolean flag1 = entity.isVisuallySwimming();
@@ -119,48 +50,72 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
 
         if (f < 1.0F) f = 1.0F;
 
+        ModelPart rightArm = root.getPart("right_arm");
+        ModelPart leftArm = root.getPart("left_arm");
+        ModelPart rightLeg = root.getPart("right_leg");
+        ModelPart leftLeg = root.getPart("left_leg");
+
         rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F / f;
         leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F / f;
         rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / f;
         leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / f;
 
-        if (riding) setupRiding();
+        if (entity.isPassenger() && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit()))
+            setupRiding(rightArm, leftArm, rightLeg, leftLeg);
 
-        setupArms(entity);
+        HumanoidModel.ArmPose humanoidmodel$armpose = AnimationUtils.getArmPose(entity, InteractionHand.MAIN_HAND);
+        HumanoidModel.ArmPose leftArmPose = AnimationUtils.getArmPose(entity, InteractionHand.OFF_HAND);
+        if (humanoidmodel$armpose.isTwoHanded()) {
+            leftArmPose = entity.getOffhandItem().isEmpty() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
+        }
 
-        setupAttackAnimation(entity);
+        HumanoidModel.ArmPose rightArmPose;
 
-        if (crouching) setupCrouching();
+        if (entity.getMainArm() == HumanoidArm.RIGHT) {
+            rightArmPose = humanoidmodel$armpose;
+        } else {
+            rightArmPose = leftArmPose;
+            leftArmPose = humanoidmodel$armpose;
+        }
+
+        setupArms(entity, head, rightArm, leftArm, rightArmPose, leftArmPose);
+
+        ModelPart body = root.getPart("body");
+        float attackTime = entity.getAttackAnim(partialTick);
+
+        setupAttackAnimation(entity, head, body, rightArm, leftArm, attackTime);
+
+        if (entity.isCrouching()) setupCrouching(head, body, rightArm, leftArm, rightLeg, leftLeg);
 
         if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(rightArm, ageInTicks, 1.0F);
 
         if (leftArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(leftArm, ageInTicks, -1.0F);
 
-        if (swimAmount > 0.0F) setupSwimAnimation(entity,limbSwing);
+        if (swimAmount > 0.0F) setupSwimAnimation(entity, rightArm, leftArm, rightLeg, leftLeg, limbSwing, attackTime, swimAmount);
     }
 
-    protected void setupArms(E entity){
+    protected <E extends LivingEntity> void setupArms(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm , HumanoidModel.ArmPose rightArmPose, HumanoidModel.ArmPose leftArmPose){
         boolean flag2 = entity.getMainArm() == HumanoidArm.RIGHT;
         if (entity.isUsingItem()) {
             boolean flag3 = entity.getUsedItemHand() == InteractionHand.MAIN_HAND;
             if (flag3 == flag2) {
-                poseRightArm(entity);
+                poseRightArm(entity, head, rightArm, leftArm, rightArmPose);
             } else {
-                poseLeftArm(entity);
+                poseLeftArm(entity, head, rightArm, leftArm, leftArmPose);
             }
         } else {
             boolean flag4 = flag2 ? leftArmPose.isTwoHanded() : rightArmPose.isTwoHanded();
             if (flag2 != flag4) {
-                poseLeftArm(entity);
-                poseRightArm(entity);
+                poseLeftArm(entity, head, rightArm, leftArm, leftArmPose);
+                poseRightArm(entity, head, rightArm, leftArm, rightArmPose);
             } else {
-                poseRightArm(entity);
-                poseLeftArm(entity);
+                poseRightArm(entity, head, rightArm, leftArm, rightArmPose);
+                poseLeftArm(entity, head, rightArm, leftArm, leftArmPose);
             }
         }
     }
 
-    protected void setupRiding(){
+    protected void setupRiding(ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg){
         rightArm.xRot += (float) Math.PI / 5;
         leftArm.xRot += (float) Math.PI / 5;
         rightLeg.xRot = 1.4137167F;
@@ -171,7 +126,7 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         leftLeg.zRot = -0.07853982F;
     }
 
-    protected void setupCrouching(){
+    protected void setupCrouching(ModelPart head, ModelPart body, ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg){
         body.xRot -= 0.5f;
         body.z += 5;
         rightArm.xRot -= 0.4f;
@@ -185,7 +140,12 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         head.y -= 3;
     }
 
-    protected void setupSwimAnimation(E entity, float limbSwing){
+    protected <E extends LivingEntity> HumanoidArm getAttackArm(E entity) {
+        HumanoidArm humanoidarm = entity.getMainArm();
+        return entity.swingingArm == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.getOpposite();
+    }
+
+    protected <E extends LivingEntity> void setupSwimAnimation(E entity, ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg, float limbSwing, float attackTime, float swimAmount){
         float f5 = limbSwing % 26.0F;
         HumanoidArm humanoidarm = getAttackArm(entity);
         float f1 = humanoidarm == HumanoidArm.RIGHT && attackTime > 0.0F ? 0.0F : swimAmount;
@@ -221,10 +181,10 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         rightLeg.xRot = Mth.lerp(swimAmount, rightLeg.xRot, 0.3F * Mth.cos(limbSwing * 0.33333334F));
     }
 
-    protected void setupAttackAnimation(E entity) {
+    protected <E extends LivingEntity> void setupAttackAnimation(E entity, ModelPart head, ModelPart body, ModelPart rightArm, ModelPart leftArm, float attackTime) {
         if (attackTime > 0.0F) {
             HumanoidArm humanoidarm = getAttackArm(entity);
-            ModelPart arm = getArm(humanoidarm);
+            ModelPart arm = humanoidarm == HumanoidArm.RIGHT ? rightArm : leftArm;
             float f = attackTime;
             body.yRot -= Mth.sin(Mth.sqrt(f) * (float) (Math.PI * 2)) * 0.2F;
             if (humanoidarm == HumanoidArm.LEFT) {
@@ -246,164 +206,14 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         }
     }
 
-    public void setupArmorPart(EquipmentSlot slot, boolean glowing){
-        setDrawAll(false);
-        switch(slot){
-            case HEAD -> setupArmorPartsIn(glowing, head);
-            case CHEST -> {
-                setupArmorPartsIn(glowing, body);
-                setupArmorPartsIn(glowing, rightArm);
-                setupArmorPartsIn(glowing, leftArm);
-                if(body.hasChild("tail")) setDrawAll(false, body.getDirectChild("tail"));
-            }
-            case LEGS -> {
-                setupArmorPartsIn(glowing, body);//TODO remove or add a new armor part for legs -> chest armor
-                setupArmorPartsIn(glowing, rightLeg);
-                setupArmorPartsIn(glowing, leftLeg);
-            }
-            case FEET -> {
-                setupArmorPartsIn(glowing, "right_leg_");
-                setupArmorPartsIn(glowing, "left_leg_");
-            }
-        }
-    }
-
-    protected void setupArmorPartsIn(boolean glowing, ModelPart bodyPart){
-        setupDrawArmor(glowing, bodyPart);
-    }
-
-    protected void setupArmorPartsIn(boolean glowing, String name){
-        ModelPart part = root.getPart(name);
-        if(part == null) return;
-        setupArmorPartsIn(glowing, part);
-    }
-
-    @Override
-    public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
-        getArm(arm).translateAndRotate(poseStack);
-        poseStack.scale(-1,-1,1);
-        if(arm == HumanoidArm.RIGHT) poseStack.translate(-1 / 16f, 0, 0);
-        else poseStack.translate(1 / 16f, 0, 0);
-    }
-
-    protected HumanoidArm getAttackArm(E entity) {
-        HumanoidArm humanoidarm = entity.getMainArm();
-        return entity.swingingArm == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.getOpposite();
-    }
-
-    public ModelPart getArm(HumanoidArm arm) {
-        return arm == HumanoidArm.LEFT ? leftArm : rightArm;
-    }
-
-    public ModelPart getRandomModelPart(RandomSource p_233439_) {
-        return bodyPartsWCubes.get(p_233439_.nextInt(bodyPartsWCubes.size()));
-    }
-
-    /**
-     * Sets whether to draw all parts of the model
-     */
-    public void setDrawAll(boolean b){
-        setDrawAll(b, root);
-    }
-
-    /**
-     * Sets whether to draw all parts after provided part (including it)
-     * @param part starting ModelPart
-     */
-    public void setDrawAll(boolean b, ModelPart part){
-        part.draw = b;
-        part.getAllChildParts().forEach(part0 -> part0.draw = b);
-    }
-
-    /**
-     * Sets whether to draw all children of provided modelPart until matching predicate.
-     * @param draw whether to draw modelParts.
-     * @param predicate if true, stops setting draw.
-     * @param part starting modelPart.
-     */
-    public void setDrawAllUntil(boolean draw, Predicate<ModelPart> predicate, ModelPart part){
-        part.draw = draw;
-        part.getChildren().forEach((name, part1) -> {
-            if(predicate.test(part1)) return;
-            setDrawAllUntil(draw, predicate, part1);
-        });
-    }
-
-    /**
-     * Sets whether to draw all armor parts.
-     * @param glowing should glowing armor parts also be drawn?
-     */
-    public void setupDrawArmor(boolean glowing){
-        setupDrawArmor(glowing, root);
-    }
-
-    public void setupDrawArmor(boolean glowing, ModelPart part){
-        part.getChildren().forEach((name, part1) -> {
-            if(part1.isGlowing() && !glowing) return;
-            if(part1.isArmor()) setDrawAllUntil(true, part2 -> part2.isGlowing() && !glowing, part1);
-            else setupDrawArmor(glowing, part1);
-        });
-    }
-
-    /**
-     * Sets whether to draw all glowing parts.
-     * @param armor should glowing armor parts also be drawn?
-     */
-    public void setupDrawGlow(boolean armor){
-        setupDrawGlow(armor, root());
-    }
-
-    public void setupDrawGlow(boolean armor, ModelPart part){
-        part.getChildren().forEach((name, part1) -> {
-            if(part1.isArmor() && !armor) return;
-            if(part1.isGlowing()) setDrawAllUntil(true, part2 -> part2.isArmor() && !armor, part1);
-            else setupDrawGlow(armor, part1);
-        });
-    }
-
-    /**
-     * Sets all armor and glow parts to be invisible.
-     */
-    public void hideArmorAndGlow(){
-        hideArmorAndGlow(root());
-    }
-
-    /**
-     * Sets all armor and glow parts to be invisible.
-     * @param part starting modelPart.
-     */
-    public void hideArmorAndGlow(ModelPart part){
-        part.getChildren().forEach((name, part1) -> {
-            if(part1.isArmor() || part1.isGlowing()){
-                part1.visible = false;
-                return;
-            }
-            hideArmorAndGlow(part1);
-        });
-    }
-
-    /**
-     * Sets visibility of all parts except for root.
-     */
-    public void setAllVisible(boolean visibility){
-        root().getAllParts().filter(part -> part != root()).forEach(child -> child.visible = visibility);
-    }
-
-    /**
-     * Sets visibility of all children of provided modelPart.
-     */
-    public void setAllVisible(boolean visible, ModelPart part){
-        part.visible = visible;
-        part.getAllChildParts().forEach(child -> child.visible = visible);
-    }
-
-    protected void poseRightArm(E entity) {
+    protected <E extends LivingEntity> void poseRightArm(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm, HumanoidModel.ArmPose pose) {
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
             rightArm.xRot = Mth.PI / 2f + head.xRot;
             rightArm.yRot = 0.1F + head.yRot;
             return;
         }
-        switch(rightArmPose) {
+
+        switch(pose) {
             case EMPTY -> rightArm.yRot = 0.0F;
             case BLOCK -> {
                 rightArm.xRot = rightArm.xRot * -0.5F + 0.9424779F;
@@ -440,13 +250,13 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
         }
     }
 
-    protected void poseLeftArm(E entity) {
+    protected <E extends LivingEntity> void poseLeftArm(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm, HumanoidModel.ArmPose pose) {
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
             leftArm.xRot = Mth.PI / 2f + head.xRot;
             leftArm.yRot = -0.1F + head.yRot;
             return;
         }
-        switch(leftArmPose) {
+        switch(pose) {
             case EMPTY:
                 leftArm.yRot = 0.0F;
                 break;
@@ -486,9 +296,5 @@ public abstract class CustomHumanoidModel<E extends LivingEntity> extends Entity
                 leftArm.xRot = -(Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F);
                 leftArm.yRot = head.yRot - (float) (Math.PI / 6);
         }
-    }
-
-    public ModelPart root() {
-        return root;
     }
 }

@@ -5,84 +5,126 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectObjectMutablePair;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.zaharenko424.a_changed.client.cmrs.BufferSourceAccess;
+import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
+import net.zaharenko424.a_changed.util.NonPoolablePool;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.*;
 
 @Mixin(MultiBufferSource.BufferSource.class)
 public abstract class MixinBufferSource implements BufferSourceAccess {
 
-    @Shadow
-    protected abstract void endBatch(RenderType renderType, BufferBuilder builder);
+    @Unique
+    private static final IntComparator cmrs$COMPARATOR = IntComparators.asIntComparator(Integer::compareTo);
 
     @Unique
-    protected final SequencedMap<RenderType, ByteBufferBuilder> a_changed$bufferMap = new Object2ObjectLinkedOpenHashMap<>();
+    final NonPoolablePool<ByteBufferBuilder> cmrs$byteBufPool = new NonPoolablePool<>() {
+        @Override
+        protected ByteBufferBuilder newObject() {
+            return new ByteBufferBuilder(77824);//76KB
+        }
+
+        @Override
+        protected void reset(ByteBufferBuilder element) {
+        }
+    };
     @Unique
-    protected final List<ByteBufferBuilder> a_changed$pool = new ArrayList<>();
+    final NonPoolablePool<Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>>> cmrs$mapPool = new NonPoolablePool<>() {
+
+        @Override
+        protected Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>> newObject() {
+            return new Object2ObjectArrayMap<>();
+        }
+
+        @Override
+        protected void reset(Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>> element) {
+            element.clear();
+        }
+    };
     @Unique
-    protected final Map<RenderType, BufferBuilder> a_changed$startedBuilders = new HashMap<>();
+    final NonPoolablePool<Pair<BufferBuilder, ByteBufferBuilder>> cmrs$pairPool = new NonPoolablePool<>() {
+        @Override
+        protected Pair<BufferBuilder, ByteBufferBuilder> newObject() {
+            return ObjectObjectMutablePair.of(null, null);
+        }
+
+        @Override
+        protected void reset(Pair<BufferBuilder, ByteBufferBuilder> element) {
+            element.first(null).second(null);
+        }
+    };
+
+    @Unique
+    final Int2ObjectArrayMap<Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>>> cmrs$batches = new Int2ObjectArrayMap<>();
+    @Unique
+    final IntList cmrs$sortingList = new IntArrayList();
+    @Unique
+    int cmrs$marker;
+    @Unique
+    int cmrs$tmp;
 
     @Override
-    public VertexConsumer a_changed$getPooledBuffer(RenderType renderType) {
-        BufferBuilder bufferbuilder = a_changed$startedBuilders.get(renderType);
-        if (bufferbuilder != null) {
-            if(renderType.canConsolidateConsecutiveGeometry()) return bufferbuilder;
-            endBatch(renderType, bufferbuilder);
-        }
-
-        ByteBufferBuilder byteBuilder = a_changed$bufferMap.get(renderType);
-        if (byteBuilder == null) {
-            byteBuilder = a_changed$pollBuffer();
-            a_changed$bufferMap.put(renderType, byteBuilder);
-        }
-        bufferbuilder = new BufferBuilder(byteBuilder, renderType.mode(), renderType.format());
-
-        a_changed$startedBuilders.put(renderType, bufferbuilder);
-        return bufferbuilder;
+    public void cmrs$startSubBatch() {
+        if(cmrs$batches.isEmpty()) return;
+        cmrs$tmp++;
+        cmrs$marker = cmrs$tmp;
     }
 
-    public void a_changed$endPooledBatch(){
-        RenderType renderType;
-        BufferBuilder builder;
-        for (Map.Entry<RenderType, ByteBufferBuilder> entry : a_changed$bufferMap.entrySet()){
-            renderType = entry.getKey();
-            builder = a_changed$startedBuilders.remove(renderType);
-            if(builder != null) endBatch(renderType, builder);
-            a_changed$pool.add(entry.getValue());
+    @Override
+    public VertexConsumer cmrs$getBuffer(@NotNull RenderType type, int subBatchIndex) {
+        if(!type.canConsolidateConsecutiveGeometry()) throw new IllegalStateException("RenderType has to be able to consolidate geometry!");
+        int index = cmrs$marker + subBatchIndex;
+        if(subBatchIndex > cmrs$tmp) cmrs$tmp = subBatchIndex;
+
+        Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>> map = cmrs$batches.computeIfAbsent(index, k -> cmrs$mapPool.obtain());
+
+        Pair<BufferBuilder, ByteBufferBuilder> pair = map.computeIfAbsent(type, k -> {
+            ByteBufferBuilder byteBuilder = cmrs$byteBufPool.obtain();
+            return cmrs$pairPool.obtain().first(new BufferBuilder(byteBuilder, type.mode, type.format)).second(byteBuilder);
+        });
+
+        return pair.first();
+    }
+
+    @Override
+    public void cmrs$finishBatched() {
+        if(cmrs$batches.isEmpty()) return;
+        cmrs$marker = 0;
+        cmrs$tmp = 0;
+
+        cmrs$sortingList.addAll(cmrs$batches.keySet());
+        cmrs$sortingList.unstableSort(cmrs$COMPARATOR);//Sort, just in case
+
+        Object2ObjectArrayMap<RenderType, Pair<BufferBuilder, ByteBufferBuilder>> m;
+        RenderType type;
+        Pair<BufferBuilder, ByteBufferBuilder> pair;
+        for(int i : cmrs$sortingList){
+            m = cmrs$batches.get(i);
+            for(Object2ObjectMap.Entry<RenderType, Pair<BufferBuilder, ByteBufferBuilder>> entry1 : m.object2ObjectEntrySet()){
+                type = entry1.getKey();
+                pair = entry1.getValue();
+                cmrs$endBatch(type, pair.first(), pair.second());
+                cmrs$byteBufPool.free(pair.second());
+                cmrs$pairPool.free(pair);
+            }
+            cmrs$mapPool.free(m);
         }
-        a_changed$bufferMap.clear();
+        cmrs$batches.clear();
+        cmrs$sortingList.clear();
     }
 
     @Unique
-    private ByteBufferBuilder a_changed$pollBuffer(){
-        if(!a_changed$pool.isEmpty()) return a_changed$pool.removeLast();
-        return new ByteBufferBuilder(77824);//76KB
-    }
-
-    @Inject(at = @At("RETURN"), method = "endBatch()V")
-    private void onEndBatch(CallbackInfo ci){
-        a_changed$endPooledBatch();
-    }
-
-    @Inject(at = @At("HEAD"), method = "endBatch(Lnet/minecraft/client/renderer/RenderType;Lcom/mojang/blaze3d/vertex/BufferBuilder;)V", cancellable = true)
-    private void onEndBatch(RenderType renderType, BufferBuilder builder, CallbackInfo ci){
-        if(!a_changed$bufferMap.containsKey(renderType) || !a_changed$startedBuilders.containsValue(builder)) return;
-        ci.cancel();
+    void cmrs$endBatch(RenderType renderType, BufferBuilder builder, ByteBufferBuilder byteBuilder){
         MeshData meshdata = builder.build();
         if(meshdata == null) return;
-        if (renderType.sortOnUpload()) {
-            ByteBufferBuilder bytebufferbuilder = a_changed$bufferMap.get(renderType);
-            meshdata.sortQuads(bytebufferbuilder, RenderSystem.getVertexSorting());
-        }
+        if(renderType.sortOnUpload()) meshdata.sortQuads(byteBuilder, RenderSystem.getVertexSorting());
 
         renderType.draw(meshdata);
     }

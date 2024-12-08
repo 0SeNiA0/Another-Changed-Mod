@@ -4,7 +4,6 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.client.cmrs.model.DummyModel;
 import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
@@ -33,26 +32,24 @@ public final class ModelDefinitionCache {
 
         modelCache.put(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
 
-        modelCache.put(DummyModel.bodyLayer, DummyModel.bodyLayer());
-
 
         modelCache.put(MilkPuddingModel.bodyLayer, MilkPuddingModel.bodyLayer());
         modelCache.put(RoombaModel.bodyLayer, RoombaModel.bodyLayer());
 
-        modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.bodyLayer());
+        modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.model());
 
-        modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.bodyLayer());
+        modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.model());
 
-        modelCache.put(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.bodyLayer());
-        modelCache.put(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.bodyLayer());
+        modelCache.put(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.model());
+        modelCache.put(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.model());
 
-        modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.bodyLayer());
-        modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.bodyLayer());
+        modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.model());
+        modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.model());
 
-        modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.bodyLayer());
-        modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.bodyLayer());
+        modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.model());
+        modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.model());
 
-        modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.bodyLayer());
+        modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.model());
 
         ModLoader.postEvent(new RegisterModelDefinitionsEvent(modelCache));
     }

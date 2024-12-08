@@ -11,6 +11,7 @@ public class MeshDefinition {
             (buffer, mesh) -> {
                 CodecUtils.FLOAT_ARR.encode(buffer, mesh.vertices);
                 CodecUtils.FLOAT_ARR.encode(buffer, mesh.quads);
+                buffer.writeVarInt(mesh.renderId);
                 buffer.writeBoolean(mesh.smooth);
 
                 if(mesh.groups == null){
@@ -26,34 +27,38 @@ public class MeshDefinition {
                 float[] arr1 = CodecUtils.FLOAT_ARR.decode(buffer);
                 boolean smooth = buffer.readBoolean();
 
-                if(buffer.readByte() == 0) return new MeshDefinition(arr0, arr1, smooth);
+                if(buffer.readByte() == 0) return new MeshDefinition(arr0, arr1, buffer.readVarInt(), smooth);
                 String[] arr2 = buffer.readArray(String[]::new, ByteBufCodecs.STRING_UTF8);
-                return new MeshDefinition(arr0, arr1, arr2, CodecUtils.FLOAT_ARR2.decode(buffer), smooth);}
+                return new MeshDefinition(arr0, arr1, arr2, CodecUtils.FLOAT_ARR2.decode(buffer), buffer.readVarInt(), smooth);}
     );
 
     private final float[] vertices;
     private final float[] quads;
+    private final int renderId;
     private final boolean smooth;
     final String[] groups;
     final float[][] vertexInfluence;
 
-    MeshDefinition(float[] vertices, float[] quads, boolean smooth){
+    MeshDefinition(float[] vertices, float[] quads, int renderId, boolean smooth){
         this.vertices = vertices;
         this.quads = quads;
+        this.renderId = renderId;
         this.smooth = smooth;
         groups = null;
         vertexInfluence = null;
     }
 
-    MeshDefinition(float[] vertices, float[] quads, String[] groups, float[][] vertexInfluence, boolean smooth){
+    MeshDefinition(float[] vertices, float[] quads, String[] groups, float[][] vertexInfluence, int renderId, boolean smooth){
         this.vertices = vertices;
         this.quads = quads;
+        this.renderId = renderId;
         this.smooth = smooth;
         this.groups = groups;
         this.vertexInfluence = vertexInfluence;
     }
+
     public ModelPart.Mesh bake(float textureWidth, float textureHeight){
-        return smooth ? new ModelPart.SmoothMesh(vertices, quads, textureWidth, textureHeight)
-                : new ModelPart.Mesh(vertices, quads, textureWidth, textureHeight);
+        return smooth ? new ModelPart.SmoothMesh(vertices, quads, textureWidth, textureHeight, renderId)
+                : new ModelPart.Mesh(vertices, quads, textureWidth, textureHeight, renderId);
     }
 }

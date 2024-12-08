@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.event;
 
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -25,10 +26,11 @@ import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtension
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomBEWLR;
-import net.zaharenko424.a_changed.client.cmrs.CustomHumanoidRenderer;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.MilkPuddingRenderer;
@@ -202,37 +204,37 @@ public class ClientMod {
         event.registerEntityRenderer(MILK_PUDDING.get(), MilkPuddingRenderer::new);
         event.registerEntityRenderer(ROOMBA_ENTITY.get(), RoombaRenderer::new);
 
-        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomHumanoidRenderer<>(a, BEI_FENG_TF.get().getModel()));
+        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomModelRenderer<>(a, BEI_FENG_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(BENIGN.get(), a -> new CustomHumanoidRenderer<>(a, BENIGN_TF.get().getModel()));
+        event.registerEntityRenderer(BENIGN.get(), a -> new CustomModelRenderer<>(a, BENIGN_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getModel()));
-        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getModel()));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getModel(), .5f));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, GAS_WOLF_TF.get().getModel()));
+        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomModelRenderer<>(a, GAS_WOLF_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomHumanoidRenderer<>(a, HYPNO_CAT_TF.get().getModel()));
+        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomModelRenderer<>(a, HYPNO_CAT_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_F_TF.get().getModel()));
-        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomHumanoidRenderer<>(a, LATEX_SHARK_M_TF.get().getModel()));
+        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_F_TF.get().getModel(), .5f));
+        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_M_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomHumanoidRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel()));
+        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomModelRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(SNOW_LEOPARD_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, SNOW_LEOPARD_F_TF.get().getModel()));
-        event.registerEntityRenderer(SNOW_LEOPARD_MALE.get(), a -> new CustomHumanoidRenderer<>(a, SNOW_LEOPARD_M_TF.get().getModel()));
+        event.registerEntityRenderer(SNOW_LEOPARD_FEMALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_F_TF.get().getModel(), .5f));
+        event.registerEntityRenderer(SNOW_LEOPARD_MALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_M_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel()));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomHumanoidRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel()));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getModel(), .5f));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getModel(), .5f));
 
-        event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomHumanoidRenderer<>(a, YUFENG_DRAGON_TF.get().getModel()));
+        event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomModelRenderer<>(a, YUFENG_DRAGON_TF.get().getModel(), .5f));
     }
 
     @SubscribeEvent
-    public static void onLoadModelsToCache(LoadModelsToCacheEvent event){
-        CustomModelManager modelManager = CustomModelManager.getInstance();
+    public static <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void onLoadModelsToCache(LoadModelsToCacheEvent event){
+        CustomModelManager<E, M> modelManager = CustomModelManager.getInstance();
         TRANSFUR_REGISTRY.stream().forEach(transfurType -> {
             if (!(transfurType instanceof Special))
-                modelManager.registerModel(transfurType.id, transfurType.getModel());
+                modelManager.registerModel(transfurType.id, (M) transfurType.getModel());
         });
     }
 

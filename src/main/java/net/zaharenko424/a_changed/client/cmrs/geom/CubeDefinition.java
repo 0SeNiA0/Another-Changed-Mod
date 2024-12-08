@@ -21,6 +21,8 @@ public class CubeDefinition {
                     (buffer, uv) -> buffer.writeFloat(uv.u1()).writeFloat(uv.v1()).writeFloat(uv.u2()).writeFloat(uv.v2()),
                     buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, uv -> uv.uv),
             cube -> cube.uv,
+            ByteBufCodecs.VAR_INT,
+            cube -> cube.renderId,
             CubeDefinition::new
     );
 
@@ -28,22 +30,25 @@ public class CubeDefinition {
     private final Vector3f size;
     private final Vector3f inflate;
     private final CubeUV uv;
+    private final int renderId;
 
-    CubeDefinition(Vector3f origin, Vector3f size, Vector3f inflate, CubeUV uv){
+    CubeDefinition(Vector3f origin, Vector3f size, Vector3f inflate, CubeUV uv, int renderId){
         this.origin = origin;
         this.size = size;
         this.inflate = inflate;
         this.uv = uv;
+        this.renderId = renderId;
     }
 
-    CubeDefinition(float x, float y, float z, float sizeX, float sizeY, float sizeZ, Vector3f inflate, CubeUV uv){
+    CubeDefinition(float x, float y, float z, float sizeX, float sizeY, float sizeZ, Vector3f inflate, CubeUV uv, int renderId){
         origin = new Vector3f(x, y, z);
         size = new Vector3f(sizeX, sizeY, sizeZ);
         this.inflate = inflate;
         this.uv = uv;
+        this.renderId = renderId;
     }
 
     public ModelPart.Cube bake(float textureWidth, float textureHeight){
-        return new ModelPart.Cube(origin.x, origin.y, origin.z, size.x, size.y, size.z, inflate.x, inflate.y, inflate.z, uv, textureWidth, textureHeight);
+        return new ModelPart.Cube(origin.x, origin.y, origin.z, size.x, size.y, size.z, inflate.x, inflate.y, inflate.z, uv, textureWidth, textureHeight, renderId);
     }
 }

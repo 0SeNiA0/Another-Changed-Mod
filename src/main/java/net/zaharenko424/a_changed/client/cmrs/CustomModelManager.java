@@ -3,61 +3,48 @@ package net.zaharenko424.a_changed.client.cmrs;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.mojang.blaze3d.platform.NativeImage;
-import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.floats.FloatArrays;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
+import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.event.custom.LoadModelsToCacheEvent;
-import net.zaharenko424.a_changed.util.FriendlierByteBuf;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class CustomModelManager {
+public class CustomModelManager <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> {
 
-    private static CustomModelManager modelManager;
-    private final ConcurrentHashMap<AbstractClientPlayer, CustomHumanoidModel<?>> render = new ConcurrentHashMap<>();
-    private final Multimap<AbstractClientPlayer, Pair<CustomHumanoidModel<?>, Integer>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
-    private final ConcurrentHashMap<ResourceLocation, CustomHumanoidModel<?>> modelCache = new ConcurrentHashMap<>();
+    private static CustomModelManager<?, ?> modelManager;
+    private final ConcurrentHashMap<AbstractClientPlayer, M> render = new ConcurrentHashMap<>();
+    private final Multimap<AbstractClientPlayer, Pair<M, Integer>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
+    private final ConcurrentHashMap<ResourceLocation, M> modelCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ResourceLocation> urlLoaded = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> beingLoaded = new ConcurrentHashMap<>();
+    //private final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> beingLoaded = new ConcurrentHashMap<>();
 
     private CustomModelManager(){}
 
     /**
      * Should not be called before all registries are registered!
      */
-    public static CustomModelManager getInstance(){
+    public static <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelManager<E, M> getInstance(){
         if(modelManager == null) {
-            modelManager = new CustomModelManager();
+            modelManager = new CustomModelManager<>();
             ModLoader.postEvent(new LoadModelsToCacheEvent());
         }
-        return modelManager;
+        return (CustomModelManager<E, M>) modelManager;
     }
 
     public Set<ResourceLocation> getRegisteredModels(){
@@ -66,7 +53,7 @@ public class CustomModelManager {
 
     public Set<ResourceLocation> getQueuedModels(AbstractClientPlayer player){
         if(!modelQueue.containsKey(player)) return Set.of();
-        List<CustomHumanoidModel<?>> models = new ArrayList<>();
+        List<M> models = new ArrayList<>();
         modelQueue.get(player).forEach(pair -> models.add(pair.getKey()));
         List<ResourceLocation> ids = new ArrayList<>();
         modelCache.forEach((key, value) -> {
@@ -79,27 +66,28 @@ public class CustomModelManager {
         return render.containsKey(player);
     }
 
-    public @Nullable <E extends LivingEntity> CustomHumanoidModel<E> getModel(@NotNull AbstractClientPlayer player){
-        return (CustomHumanoidModel<E>) render.get(player);
+    public @Nullable M getModel(@NotNull AbstractClientPlayer player){
+        return render.get(player);
     }
 
-    public void setLocalPlayerModel(@NotNull ResourceLocation modelId, @Nullable Supplier<CustomHumanoidModel<?>> model, int priority){
+    public void setLocalPlayerModel(@NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
         if(Minecraft.getInstance().player == null) return;
         setPlayerModel(Minecraft.getInstance().player, modelId, model, priority);
     }
 
-    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, @Nullable Supplier<CustomHumanoidModel<?>> model, int priority){
+    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
         if(!modelCache.containsKey(modelId) && model == null) throw new IllegalArgumentException("Model is not cached & supplier is null " + modelId);
-        CustomHumanoidModel<?> model1 = modelCache.computeIfAbsent(modelId, id -> model.get());
+        M model1 = modelCache.computeIfAbsent(modelId, id -> model.get());
         modelQueue.put(player, Pair.of(model1, priority));
         recalculatePlayerModel(player);
     }
 
-    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomHumanoidModel<?>> func, int priority){
+    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull UniversalCustomModel<?>> func, int priority){
         if(urlLoaded.containsKey(url)){
             setPlayerModel(player, urlLoaded.get(url), null, priority);
-        } else loadModel(url, func).whenComplete((modelId, err) ->
-                setPlayerModel(player, modelId, null, priority));
+        } else throw new UnsupportedOperationException("Model loading not implemented");
+
+            //loadModel(url, func).whenComplete((modelId, err) -> setPlayerModel(player, modelId, null, priority));
     }
 
     public void removeLocalPlayerModel(@NotNull ResourceLocation modelId){
@@ -119,7 +107,7 @@ public class CustomModelManager {
 
     public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
-        CustomHumanoidModel<?> model = modelCache.get(modelId);
+        M model = modelCache.get(modelId);
         if(render.get(player) == model) render.remove(player);
         synchronized (modelQueue){
             modelQueue.get(player).removeIf(pair -> pair.getKey() == model);
@@ -130,8 +118,8 @@ public class CustomModelManager {
     public void recalculatePlayerModel(@NotNull AbstractClientPlayer player){
         if(!modelQueue.containsKey(player)) return;
         int priority = Integer.MIN_VALUE;
-        CustomHumanoidModel<?> model = null;
-        for(Pair<CustomHumanoidModel<?>, Integer> pair : modelQueue.get(player)){
+        M model = null;
+        for(Pair<M, Integer> pair : modelQueue.get(player)){
             if(pair.getValue() <= priority) continue;
             model = pair.getKey();
             priority = pair.getValue();
@@ -140,12 +128,12 @@ public class CustomModelManager {
         render.put(player, model);
     }
 
-    public void registerModel(@NotNull ResourceLocation modelId, @NotNull CustomHumanoidModel<?> model){
+    public void registerModel(@NotNull ResourceLocation modelId, @NotNull M model){
         if(modelCache.containsKey(modelId)) return;
         modelCache.put(modelId, model);
     }
 
-    public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomHumanoidModel<?>> func) {
+    /*public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomHumanoidModel<?>> func) {
         if(urlLoaded.containsKey(url)) return CompletableFuture.supplyAsync(() -> urlLoaded.get(url));
         if(beingLoaded.containsKey(url)) return beingLoaded.get(url);
 
@@ -269,7 +257,7 @@ public class CustomModelManager {
         });
         beingLoaded.put(url, future);
         return future;
-    }
+    }*/
 
     public void resetPlayerModels(@NotNull AbstractClientPlayer player){
         render.remove(player);
@@ -278,7 +266,7 @@ public class CustomModelManager {
 
     public void unloadModel(@NotNull ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
-        CustomHumanoidModel<?> model = modelCache.remove(modelId);
+        M model = modelCache.remove(modelId);
 
         render.values().removeIf(model1 -> model1 == model);
         synchronized (modelQueue){

@@ -12,15 +12,15 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -60,16 +60,11 @@ public class ModelPart {
         this.meshes = meshes;
         this.armor = armor;
         this.glowing = glowing;
-        this.children = Map.copyOf(children);
+        this.children = children;
 
-        Map<String, ModelPart> map = new HashMap<>();//TODO test, replace with something better?
-        this.children.forEach((name, part) -> map.putAll(part.allChildren));
-        if(map.isEmpty()){
-            allChildren = this.children;
-        } else {
-            map.putAll(this.children);
-            allChildren = Map.copyOf(map);
-        }
+        allChildren = new HashMap<>();
+        this.children.forEach((name, part) -> allChildren.putAll(part.allChildren));
+        allChildren.putAll(this.children);
 
         this.allParts = allParts;
     }
@@ -175,18 +170,14 @@ public class ModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay) {
-        render(poseStack, consumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+        render(poseStack, consumer, light, overlay, -1);
     }
 
-    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int color){
-        render(poseStack, consumer, light, overlay, FastColor.ARGB32.red(color) / 255f, FastColor.ARGB32.green(color) / 255f, FastColor.ARGB32.blue(color) / 255f, FastColor.ARGB32.alpha(color) / 255f);
+    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int argb){
+        render(poseStack, consumer, light, overlay, argb, new ObjectArrayList<>());
     }
 
-    public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha){
-        render(poseStack, consumer, light, overlay, r, g, b, alpha, new ObjectArrayList<>());
-    }
-
-    private void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha, List<Mesh> animated) {
+    private void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int argb, List<Mesh> animated) {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
         PoseStack.Pose last = poseStack.last();
         poseStack.pushPose();
@@ -205,7 +196,7 @@ public class ModelPart {
         }
 
         for (ModelPart modelpart : children.values()) {
-            modelpart.render(poseStack, consumer, light, overlay, r, g, b, alpha, animated);
+            modelpart.render(poseStack, consumer, light, overlay, argb, animated);
         }
 
         PoseStack.Pose pose = poseStack.last();
@@ -223,10 +214,65 @@ public class ModelPart {
 
         if(draw) {
             for (Cube cube : this.cubes) {
-                cube.compile(pose, consumer, light, overlay, r, g, b, alpha);
+                cube.compile(pose, consumer, light, overlay, argb);
             }
             for (Mesh mesh : meshes) {
-                mesh.compile(pose, consumer, light, overlay, r, g, b, alpha);
+                mesh.compile(pose, consumer, light, overlay, argb);
+                animated.remove(mesh);
+            }
+        }
+
+        for(Mesh anim : animated) {
+            anim.offset.sub(initialPose.x, initialPose.y, initialPose.z);
+        }
+        poseStack.popPose();
+    }
+
+    public void render(PoseStack poseStack, RenderStack stack, int light, int overlay, int argb){
+        render(poseStack, stack, light, overlay, argb, new ObjectArrayList<>());
+    }
+
+    private void render(PoseStack poseStack, RenderStack stack, int light, int overlay, int argb, List<Mesh> animated) {
+        if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
+        PoseStack.Pose last = poseStack.last();
+        poseStack.pushPose();
+        translateAndRotate(poseStack);
+
+        for (Mesh anim : animated) {
+            anim.offset.add(initialPose.x, initialPose.y, initialPose.z);
+        }
+
+        if(draw) {
+            for (Cube cube : cubes) cube.resetTransform();
+            for (Mesh mesh : meshes) {
+                mesh.resetTransform();
+                if (mesh.animated) animated.add(mesh);
+            }
+        }
+
+        for (ModelPart modelpart : children.values()) {
+            modelpart.render(poseStack, stack, light, overlay, argb, animated);
+        }
+
+        PoseStack.Pose pose = poseStack.last();
+        if(animatedVertices != null) {
+            VertexData data;
+            Vector3f offset;
+            for (Object2FloatMap.Entry<VertexData> entry : animatedVertices.object2FloatEntrySet()) {
+                data = entry.getKey();
+                offset = data.mesh.offset;
+                poseStack.translate(-offset.x / 16, -offset.y / 16, -offset.z / 16);
+                data.transform(pose, last, entry.getFloatValue());
+                poseStack.translate(offset.x / 16, offset.y / 16, offset.z / 16);
+            }
+        }
+
+        if(draw) {
+            for (Cube cube : this.cubes) {
+                stack.renderMesh(cube, pose, light, overlay, argb);
+            }
+            for (Mesh mesh : meshes) {
+                stack.renderMesh(mesh, pose, light, overlay, argb);
                 animated.remove(mesh);
             }
         }
@@ -240,7 +286,7 @@ public class ModelPart {
     public void translateAndRotate(PoseStack poseStack) {
         poseStack.translate(x / 16.0F, y / 16.0F, z / 16.0F);
         if (xRot != 0.0F || yRot != 0.0F || zRot != 0.0F) {
-            poseStack.mulPose(new Quaternionf().rotationZYX(zRot, yRot, xRot));
+            poseStack.mulPose(Reusable.QUATERNION.get().rotationZYX(zRot, yRot, xRot));
         }
 
         if (xScale != 1.0F || yScale != 1.0F || zScale != 1.0F) {
@@ -310,10 +356,10 @@ public class ModelPart {
         public final float maxZ;
 
         public Cube(float x, float y, float z, float sizeX, float sizeY, float sizeZ,
-                    float inflateX, float inflateY, float inflateZ, CubeUV uv, float textureWidth, float textureHeight) {
+                    float inflateX, float inflateY, float inflateZ, CubeUV uv, float textureWidth, float textureHeight, int renderId) {
             super(buildVertices(x - inflateX, y - inflateY, z - inflateZ,
                             x + sizeX + inflateX, y + sizeY + inflateY, z + sizeZ + inflateZ),
-                    new Quad[uv.uv.size()]);
+                    new Quad[uv.uv.size()], renderId);
             minX = x;
             minY = y;
             minZ = z;
@@ -363,14 +409,18 @@ public class ModelPart {
         protected final ImmutableList<VertexData> vertexData;
         protected final Quad[] quads;
         protected final Vector3f offset = new Vector3f();
-        private boolean animated;
+        protected boolean animated;
+        @VisibleForTesting
+        public int renderId;
 
-        public Mesh(ImmutableList<VertexData> vertexData, Quad[] quads){
+        protected Mesh(ImmutableList<VertexData> vertexData, Quad[] quads, int renderId){
             this.vertexData = vertexData;
             this.quads = quads;
+            this.renderId = renderId;
         }
 
-        public Mesh(float[] vertices, float[] quads, float textureWidth, float textureHeight){
+        public Mesh(float[] vertices, float[] quads, float textureWidth, float textureHeight, int renderId){
+            this.renderId = renderId;
             int size = quads.length / 12;
             this.quads = new Quad[size];
             // key = index of vertices, IntList = quad indices
@@ -407,10 +457,6 @@ public class ModelPart {
             vertexData = builder.build();
         }
 
-        public boolean animated() {
-            return animated;
-        }
-
         protected @NotNull VertexData createData(Vector3f pos, Quad[] quads){
             return new VertexData(pos, quads, this);
         }
@@ -428,7 +474,7 @@ public class ModelPart {
             return new Vertex(readVec(vertices, vertexDataIndexM), Suppliers.memoize(() -> vertexData.get(vertexDataIndex)),
                     quads[vertexIndex + 1] / textureWidth, quads[vertexIndex + 2] / textureHeight);
         }
-
+        //TODO put Map<String(modelPart name), List<IntFloatPair(vert index, influence)>> in each animated mesh ? -> all the data is contained inside the mesh. To check the names would need BiMap(allParts) or use modelPart as key here
         Mesh addAnimatedVertices(String[] groups, float[][] vertexInfluence, Map<String, ModelPart> allParts){
             animated = true;
             for(int i = 0; i < groups.length; i++){
@@ -444,24 +490,24 @@ public class ModelPart {
             offset.set(0);
         }
 
-        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
+        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, int argb) {
             Matrix4f poseM = pose.pose();
             Matrix3f normal = pose.normal();
             for(Quad quad : this.quads) {
                 if(quad.transformedNormal.x == Float.NEGATIVE_INFINITY) quad.transformAndUpdateNormal(poseM);
-                quad.compile(poseM, normal, consumer, light, overlay, r, g, b, alpha);
+                quad.compile(poseM, normal, consumer, light, overlay, argb);
             }
         }
     }
 
     public static class SmoothMesh extends Mesh {
 
-        protected SmoothMesh(ImmutableList<VertexData> vertices, Quad[] quads) {
-            super(vertices, quads);
+        protected SmoothMesh(ImmutableList<VertexData> vertices, Quad[] quads, int renderId) {
+            super(vertices, quads, renderId);
         }
 
-        public SmoothMesh(float[] vertices, float[] quads, float textureWidth, float textureHeight) {
-            super(vertices, quads, textureWidth, textureHeight);
+        public SmoothMesh(float[] vertices, float[] quads, float textureWidth, float textureHeight, int renderId) {
+            super(vertices, quads, textureWidth, textureHeight, renderId);
 
             Vector3f[] buffer = {new Vector3f()};
             for(VertexData data : vertexData){
@@ -477,7 +523,7 @@ public class ModelPart {
             return new VertexData(pos, new Vector3f(), quads, this);
         }
 
-        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha) {
+        public void compile(PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay, int argb) {
             Matrix4f poseM = pose.pose();
             Matrix3f normalM = pose.normal();
             Vector3f pos;
@@ -489,7 +535,7 @@ public class ModelPart {
                     pos = data.transformOrGet(poseM);
                     normal = data.transformOrGetNormal(normalM);
                     consumer.addVertex(pos.x(), pos.y(), pos.z(),
-                            FastColor.ARGB32.colorFromFloat(alpha, r, g, b),
+                            argb,
                             vertex.u, vertex.v,
                             overlay, light,
                             normal.x(), normal.y(), normal.z()
@@ -563,7 +609,7 @@ public class ModelPart {
             return transformedNormal.set(normal).mul(pose);
         }
 
-        public void compile(Matrix4f posTransform, Matrix3f normalTransform, VertexConsumer consumer, int light, int overlay, float r, float g, float b, float alpha){
+        public void compile(Matrix4f posTransform, Matrix3f normalTransform, VertexConsumer consumer, int light, int overlay, int argb){
             Vector3f vector3f = transformOrGetNormal(normalTransform);
             Vector3f pos;
             Vector3f normal;
@@ -573,7 +619,7 @@ public class ModelPart {
                 pos = data.transformOrGet(posTransform);
                 normal = data.normal != null ? data.transformOrGetNormal(normalTransform) : vector3f;
                 consumer.addVertex(pos.x(), pos.y(), pos.z(),
-                        FastColor.ARGB32.colorFromFloat(alpha, r, g, b),
+                        argb,
                         vertex.u, vertex.v,
                         overlay, light,
                         normal.x(), normal.y(), normal.z()
@@ -650,6 +696,10 @@ public class ModelPart {
 
         public Vertex(VertexData data){
             this(data.pos, () -> data, 0, 0);
+        }
+
+        public Vertex(VertexData data, float u, float v){
+            this(data.pos, () -> data, u, v);
         }
 
         public VertexData data(){

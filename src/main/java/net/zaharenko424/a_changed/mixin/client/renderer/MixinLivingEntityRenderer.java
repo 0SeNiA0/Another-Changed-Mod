@@ -19,9 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.client.cmrs.NoYFlip;
+import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -95,7 +95,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;getRenderType(Lnet/minecraft/world/entity/LivingEntity;ZZZ)Lnet/minecraft/client/renderer/RenderType;"),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
     private RenderType renderCustomModel(RenderType original, @Local(argsOnly = true) PoseStack poseStack, @Local(argsOnly = true) MultiBufferSource buffer, @Local(argsOnly = true) int packedLight, @Local(argsOnly = true) T entity, @Local(ordinal = 1, argsOnly = true) float partialTicks, @Local Minecraft minecraft){
-        if(!(model instanceof CustomModel custom)) return original;
+        if(!(model instanceof CustomModel<?> custom)) return original;
 
         boolean visible = isBodyVisible(entity);
         boolean translucent = !visible && !entity.isInvisibleTo(minecraft.player);
@@ -108,7 +108,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             func = model::renderType;
         } else func = minecraft.shouldEntityAppearGlowing(entity) ? RenderType::outline : null;
 
-        custom.renderToBuffer(entity, poseStack, func, packedLight, getOverlayCoords(entity, getWhiteOverlayProgress(entity, partialTicks)), translucent ? 654311423 : -1);
+        ((CustomModel<LivingEntity>)custom).renderToBuffer(entity, poseStack, func, packedLight, getOverlayCoords(entity, getWhiteOverlayProgress(entity, partialTicks)), translucent ? 654311423 : -1);
         return null;
     }
 
@@ -117,13 +117,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private boolean renderLayers(boolean original, @Local(argsOnly = true) PoseStack poseStack, @Local(argsOnly = true) MultiBufferSource bufferSource, @Local(argsOnly = true) int light, @Local(argsOnly = true) T entity, @Local(ordinal = 1, argsOnly = true) float partialTicks) {
         if (original) return true;
         boolean noFlipModel = model instanceof NoYFlip;
+        boolean noFlipLayers = !a_changed$noFlipLayers.isEmpty();
 
-        if (!a_changed$noFlipLayers.isEmpty()) {
+        if (noFlipLayers || model instanceof CustomModel<?>) {
             if (!noFlipModel) {
                 poseStack.scale(-1, -1, 1);
                 poseStack.translate(0, 1.501, 0);
             }
-            a_changed$noFlipLayers.forEach(layer -> layer.render(poseStack, bufferSource, light, entity, a_changed$tmp[0], a_changed$tmp[1], partialTicks, a_changed$tmp[2], a_changed$tmp[3], a_changed$tmp[4]));
+            if(model instanceof CustomModel<?> m) ((CustomModel<LivingEntity>)m).renderLayers(poseStack, light, entity, a_changed$tmp[0], a_changed$tmp[1], partialTicks, a_changed$tmp[2], a_changed$tmp[3], a_changed$tmp[4]);
+            if(noFlipLayers) a_changed$noFlipLayers.forEach(layer -> layer.render(poseStack, bufferSource, light, entity, a_changed$tmp[0], a_changed$tmp[1], partialTicks, a_changed$tmp[2], a_changed$tmp[3], a_changed$tmp[4]));
         } else if (!noFlipModel) return false;
 
         poseStack.scale(-1, -1, 1);

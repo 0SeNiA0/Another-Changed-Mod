@@ -15,10 +15,10 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.client.cmrs.model.CustomHumanoidModel;
+import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public abstract class TransfurType {
      */
     public final List<? extends Ability> abilities;
 
-    public TransfurType(@NotNull Properties properties, @Nullable MemorizingSupplier<CustomHumanoidModel<LivingEntity>> modelSupplier){
+    public TransfurType(@NotNull Properties properties, @Nullable MemorizingSupplier<UniversalCustomModel<LivingEntity>> modelSupplier){
         id = properties.location;
         latex = properties.latex;
         primaryColor = properties.primaryColor;
@@ -70,9 +70,9 @@ public abstract class TransfurType {
         this.modelSupplier = modelSupplier;
     }
 
-    public final Supplier<CustomHumanoidModel<LivingEntity>> modelSupplier;
+    public final Supplier<UniversalCustomModel<LivingEntity>> modelSupplier;
 
-    public final CustomHumanoidModel<LivingEntity> getModel(){
+    public final UniversalCustomModel<LivingEntity> getModel(){
         return modelSupplier.get();
     }
 

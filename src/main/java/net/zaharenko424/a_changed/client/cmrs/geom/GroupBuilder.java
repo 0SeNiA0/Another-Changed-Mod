@@ -15,37 +15,66 @@ public class GroupBuilder {
     private final List<MeshDefinition> meshes = new ArrayList<>();
     boolean armor = false;
     boolean glowing = false;
+    final int defRenderId;
+
+    public GroupBuilder(int defRenderId){
+        this.defRenderId = defRenderId;
+    }
 
     public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, CubeUV uv){
-        return addBox(x1, y1, z1, x2, y2, z2, new Vector3f(), uv);
+        return addBox(x1, y1, z1, x2, y2, z2, new Vector3f(), uv, defRenderId);
+    }
+
+    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, CubeUV uv, int renderId){
+        return addBox(x1, y1, z1, x2, y2, z2, new Vector3f(), uv, renderId);
     }
 
     public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, CubeUV uv){
-        cubes.add(new CubeDefinition(x1, y1, z1, x2, y2, z2, inflate, uv));
+        return addBox(x1, y1, z1, x2, y2, z2, inflate, uv, defRenderId);
+    }
+
+    public GroupBuilder addBox(float x1, float y1, float z1, float x2, float y2, float z2, Vector3f inflate, CubeUV uv, int renderId){
+        cubes.add(new CubeDefinition(x1, y1, z1, x2, y2, z2, inflate, uv, renderId));
         return this;
     }
 
     public GroupBuilder addMesh(float[] vertices, float[] quads){
-        return addMesh(vertices, quads, false);
+        return addMesh(vertices, quads, defRenderId, false);
+    }
+
+    public GroupBuilder addMesh(float[] vertices, float[] quads, int renderId){
+        return addMesh(vertices, quads, renderId, false);
     }
 
     public GroupBuilder addMesh(float[] vertices, float[] quads, boolean smooth){
+        return addMesh(vertices, quads, defRenderId, smooth);
+    }
+
+    public GroupBuilder addMesh(float[] vertices, float[] quads, int renderId, boolean smooth){
         verifyMesh(vertices, quads);
-        meshes.add(new MeshDefinition(vertices, quads, smooth));
+        meshes.add(new MeshDefinition(vertices, quads, renderId, smooth));
         return this;
     }
 
     public GroupBuilder addAnimatedMesh(float[] vertices, float[] quads, String[] groups, float[][] vertexFactors){
-        return addAnimatedMesh(vertices, quads, groups, vertexFactors, false);
+        return addAnimatedMesh(vertices, quads, groups, vertexFactors, defRenderId, false);
+    }
+
+    public GroupBuilder addAnimatedMesh(float[] vertices, float[] quads, String[] groups, float[][] vertexFactors, int renderId){
+        return addAnimatedMesh(vertices, quads, groups, vertexFactors, renderId, false);
     }
 
     public GroupBuilder addAnimatedMesh(float[] vertices, float[] quads, String[] groups, float[][] vertexFactors, boolean smooth){
+        return addAnimatedMesh(vertices, quads, groups, vertexFactors, defRenderId, smooth);
+    }
+
+    public GroupBuilder addAnimatedMesh(float[] vertices, float[] quads, String[] groups, float[][] vertexFactors, int renderId, boolean smooth){
         verifyMesh(vertices, quads);
         if(groups.length != vertexFactors.length) throw new IllegalArgumentException();
         for(float[] ar : vertexFactors){
             if(ar.length % 2 != 0) throw new IllegalArgumentException("Vertex factors must be in format: vertex index, factor");
         }
-        meshes.add(new MeshDefinition(vertices, quads, groups, vertexFactors, smooth));
+        meshes.add(new MeshDefinition(vertices, quads, groups, vertexFactors, renderId, smooth));
         return this;
     }
 
@@ -77,6 +106,10 @@ public class GroupBuilder {
 
     @Contract(" -> new")
     public static @NotNull GroupBuilder create(){
-        return new GroupBuilder();
+        return new GroupBuilder(0);
+    }
+
+    public static @NotNull GroupBuilder create(int defRenderId){
+        return new GroupBuilder(defRenderId);
     }
 }

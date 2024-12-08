@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
+import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
@@ -15,7 +16,7 @@ import net.zaharenko424.a_changed.entity.RoombaEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class RoombaModel extends EntityModel<RoombaEntity> {
+public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(EntityRegistry.ROOMBA_ENTITY.getId(), "main");
 

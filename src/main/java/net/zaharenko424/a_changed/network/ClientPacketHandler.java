@@ -13,7 +13,6 @@ import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
-import net.zaharenko424.a_changed.client.cmrs.model.URLLoadedModel;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;
@@ -76,13 +75,13 @@ public class ClientPacketHandler {
     }
 
     private void removeTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
-        if(transfurType instanceof Special) CustomModelManager.getInstance().removePlayerModel(player, player.getStringUUID());
-        else CustomModelManager.getInstance().removePlayerModel(player, transfurType.id);
+        if(!(transfurType instanceof Special)) CustomModelManager.getInstance().removePlayerModel(player, transfurType.id);
+        //CustomModelManager.getInstance().removePlayerModel(player, player.getStringUUID());
     }
 
     private void setTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
-        if(transfurType instanceof Special) CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
-        else CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
+        if(!(transfurType instanceof Special))  CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
+        //CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
     }
 
     public void handleLTCDataSync(ClientboundLTCDataPacket packet, IPayloadContext context){
