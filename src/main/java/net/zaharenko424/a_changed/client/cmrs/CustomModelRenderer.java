@@ -45,6 +45,8 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
     public static final ModelPropertyType<Glow> GLOW = new ModelPropertyType<>(Glow.CODEC);
     public static final ModelPropertyType<Head> HEAD = new ModelPropertyType<>(Head.CODEC);
     public static final ModelPropertyType<Armed> ARMED = new ModelPropertyType<>(Armed.CODEC);
+    public static final ModelPropertyType<VanillaElytra> VANILLA_ELYTRA = new ModelPropertyType<>(VanillaElytra.CODEC);
+    public static final ModelPropertyType<TridentSpinEffect> TRIDENT_SPIN_EFFECT = new ModelPropertyType<>(TridentSpinEffect.CODEC);
 
     protected final EntityRendererProvider.Context context;
 
@@ -61,7 +63,7 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
     static final Quaternionf rot = new Quaternionf();
     static final ResourceLocation tex = AChanged.textureLoc("misc/loading");
 
-//TODO elytra, spin attack, stuck arrows
+//TODO stuck arrows
     @Override
     public void render(@NotNull E entity, float entityYaw, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         updateCustomPlayerModel(entity);

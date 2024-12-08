@@ -50,16 +50,12 @@ public class ModelPart {
     private final Map<String, ModelPart> children;
     private final Map<String, ModelPart> allChildren;
     private final Map<String, ModelPart> allParts;
-    private final boolean armor;
-    private final boolean glowing;
     private PartPose initialPose = PartPose.ZERO;
     private Object2FloatArrayMap<VertexData> animatedVertices;
 
-    public ModelPart(List<Cube> cubes, List<Mesh> meshes, boolean armor, boolean glowing, Map<String, ModelPart> children, Map<String, ModelPart> allParts) {
+    public ModelPart(List<Cube> cubes, List<Mesh> meshes, Map<String, ModelPart> children, Map<String, ModelPart> allParts) {
         this.cubes = cubes;
         this.meshes = meshes;
-        this.armor = armor;
-        this.glowing = glowing;
         this.children = children;
 
         allChildren = new HashMap<>();
@@ -67,14 +63,6 @@ public class ModelPart {
         allChildren.putAll(this.children);
 
         this.allParts = allParts;
-    }
-
-    public boolean isArmor(){
-        return armor;
-    }
-
-    public boolean isGlowing(){
-        return glowing;
     }
 
     private void addAnimatedVertices(List<VertexData> data, float[] vertices){

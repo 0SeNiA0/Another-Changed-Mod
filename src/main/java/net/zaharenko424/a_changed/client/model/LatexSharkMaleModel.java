@@ -3,9 +3,6 @@ package net.zaharenko424.a_changed.client.model;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.Util;
-import net.minecraft.client.animation.AnimationChannel.Interpolations;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.resources.ResourceLocation;
@@ -15,11 +12,10 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.Animations;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.cmrs.properties.*;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationChannel;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationDefinition;
 import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
@@ -56,129 +52,10 @@ public class LatexSharkMaleModel<E extends LivingEntity> extends UniversalCustom
                 m.put(4, ArmorItem.Type.LEGGINGS);
                 m.put(5, ArmorItem.Type.BOOTS);
             }), new Int2ObjectArrayMap<>(0)));
+            map.put(CustomModelRenderer.VANILLA_ELYTRA, new VanillaElytra(new PoseTransform(null, null, null)));
+            map.put(CustomModelRenderer.TRIDENT_SPIN_EFFECT, new TridentSpinEffect(new PoseTransform(null, null, null)));
         }), Util.make(new ArrayList<>(2), l -> l.add(new HumanoidAnim())));
     }
-
-    public static final AnimationDefinition TAIL_STATIC = AnimationDefinition.Builder.withLength(0)
-            .addAnimation("tail",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0, KeyframeAnimations.degreeVec(42.5f, 0, 0),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail0",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0, KeyframeAnimations.degreeVec(-10, 0, 0),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail1",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0, KeyframeAnimations.degreeVec(-7.5f, 0, 0),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail2",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0, KeyframeAnimations.degreeVec(-7.5f, 0, 0),
-                                    Interpolations.LINEAR))).build();
-    public static final AnimationDefinition TAIL_SWIM = AnimationDefinition.Builder.withLength(3.5f).looping()
-            .addAnimation("tail",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, -1f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(45f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(97.5f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.75f, KeyframeAnimations.degreeVec(135f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.5f, KeyframeAnimations.degreeVec(95f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3.5f, KeyframeAnimations.degreeVec(45f, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail0",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(12.5f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.75f, KeyframeAnimations.degreeVec(-12.5f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.5f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3.5f, KeyframeAnimations.degreeVec(12.5f, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail1",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.75f, KeyframeAnimations.degreeVec(-10f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.5f, KeyframeAnimations.degreeVec(15f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3.5f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail2",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(-10f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.75f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.5f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                    Interpolations.CATMULLROM))).build();
-    public static final AnimationDefinition TAIL_SWING = AnimationDefinition.Builder.withLength(3f).looping()
-            .addAnimation("tail",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(0, 5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.5f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.25f, KeyframeAnimations.degreeVec(0, -5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail0",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(0, 7.5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.5f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.25f, KeyframeAnimations.degreeVec(0, -7.5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail1",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(0, 7.5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.5f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.25f, KeyframeAnimations.degreeVec(0, -7.5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM)))
-            .addAnimation("tail2",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(0.75f, KeyframeAnimations.degreeVec(0, 5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(1.5f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(2.25f, KeyframeAnimations.degreeVec(0, -5f, 0f),
-                                    Interpolations.CATMULLROM),
-                            new Keyframe(3f, KeyframeAnimations.degreeVec(0, 0f, 0f),
-                                    Interpolations.CATMULLROM))).build();
-
 
     AnimationState tail_swim = new AnimationState();
     AnimationState tail_swing = new AnimationState();
@@ -188,9 +65,9 @@ public class LatexSharkMaleModel<E extends LivingEntity> extends UniversalCustom
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch);
         tail_swim.animateWhen(entity.isSwimming() && entity.isInWaterOrBubble(), (int) ageInTicks);
         tail_swing.startIfStopped((int) ageInTicks);
-        if(tail_swim.isStarted()) KeyframeAnimator.animate(tail_swim, root(), TAIL_SWIM, ageInTicks);
-        KeyframeAnimator.animate(tail_swing, root(), TAIL_SWING, ageInTicks);
-        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), TAIL_STATIC);
+        if(tail_swim.isStarted()) KeyframeAnimator.animate(tail_swim, root(), Animations.TAIL_SWIM_SHARK, ageInTicks);
+        KeyframeAnimator.animate(tail_swing, root(), Animations.TAIL_SWING_SHARK, ageInTicks);
+        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), Animations.TAIL_STATIC_SHARK);
     }
 
     public static ModelDefinition model(){

@@ -5,10 +5,6 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationChannel;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -19,8 +15,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.cmrs.properties.*;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationDefinition;
-import net.zaharenko424.a_changed.client.cmrs.animation.Animations;
+import net.zaharenko424.a_changed.client.Animations;
 import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
@@ -57,36 +52,10 @@ public class SnowLeopardMaleModel<E extends LivingEntity>  extends UniversalCust
                 m.put(4, ArmorItem.Type.LEGGINGS);
                 m.put(5, ArmorItem.Type.BOOTS);
             }), new Int2ObjectArrayMap<>(0)));
+            map.put(CustomModelRenderer.VANILLA_ELYTRA, new VanillaElytra(new PoseTransform(null, null, null)));
+            map.put(CustomModelRenderer.TRIDENT_SPIN_EFFECT, new TridentSpinEffect(new PoseTransform(null, null, null)));
         }), Util.make(new ArrayList<>(2), l -> l.add(new HumanoidAnim())));
     }
-
-
-    public static final AnimationDefinition STATIC_TAIL = AnimationDefinition.Builder.withLength(0f)
-            .addAnimation("tail",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(37.5f, 0f, 0f),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail0",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail1",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail2",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-17.5f, 0f, 0f),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail3",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-17.5f, 0f, 0f),
-                                    Interpolations.LINEAR)))
-            .addAnimation("tail4",
-                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-17.5f, 0f, 0f),
-                                    Interpolations.LINEAR))).build();
-
 
     AnimationState ears = new AnimationState();
     AnimationState tail = new AnimationState();
@@ -98,7 +67,7 @@ public class SnowLeopardMaleModel<E extends LivingEntity>  extends UniversalCust
         if(!tail.isStarted()) tail.start((int) ageInTicks);
         KeyframeAnimator.animate(ears, root(), Animations.EAR_ANIM, ageInTicks);
         KeyframeAnimator.animate(tail, root(), Animations.TAIL_CAT, ageInTicks);
-        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), STATIC_TAIL);
+        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), Animations.STATIC_TAIL_LEO);
     }
 
     public static ModelDefinition model(){

@@ -26,10 +26,6 @@ public class GroupDefinition {
             definition -> definition.partPose,
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, GroupDefinition.CODEC),
             definition -> definition.children,
-            ByteBufCodecs.BOOL,
-            definition -> definition.armor,
-            ByteBufCodecs.BOOL,
-            definition -> definition.glowing,
             GroupDefinition::new
     );
 
@@ -37,24 +33,20 @@ public class GroupDefinition {
     private final List<MeshDefinition> meshes;
     private final PartPose partPose;
     private final Map<String, GroupDefinition> children;
-    private final boolean armor;
-    private final boolean glowing;
 
     GroupDefinition(){
-        this(List.of(), List.of(), PartPose.ZERO, new HashMap<>(), false, false);
+        this(List.of(), List.of(), PartPose.ZERO, new HashMap<>());
     }
 
     GroupDefinition(GroupBuilder builder, PartPose pose) {
-        this(builder.cubes(), builder.meshes(), pose, new HashMap<>(), builder.armor, builder.glowing);
+        this(builder.cubes(), builder.meshes(), pose, new HashMap<>());
     }
 
-    GroupDefinition(List<CubeDefinition> cubes, List<MeshDefinition> meshes, PartPose pose, Map<String, GroupDefinition> children, boolean armor, boolean glowing){
+    GroupDefinition(List<CubeDefinition> cubes, List<MeshDefinition> meshes, PartPose pose, Map<String, GroupDefinition> children){
         this.cubes = cubes;
         this.meshes = meshes;
         this.partPose = pose;
         this.children = children;
-        this.armor = armor;
-        this.glowing = glowing;
     }
 
     public GroupDefinition addOrReplaceChild(String name, GroupBuilder builder){
@@ -77,7 +69,7 @@ public class GroupDefinition {
     private ModelPart bake(float textureWidth, float textureHeight, Map<String, ModelPart> allParts) {
         Object2ObjectArrayMap<String, ModelPart> children = this.children.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
-                group -> group.getValue().armor ? group.getValue().bake(64, 32, allParts) : group.getValue().bake(textureWidth, textureHeight, allParts),
+                group ->  group.getValue().bake(textureWidth, textureHeight, allParts),
                 (p_171595_, p_171596_) -> p_171595_,
                 Object2ObjectArrayMap::new
         ));
@@ -90,7 +82,7 @@ public class GroupDefinition {
             return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allParts) : mesh;
         }).toList();
 
-        ModelPart modelpart = new ModelPart(cubes1, meshes1, armor, glowing, children, allParts);
+        ModelPart modelpart = new ModelPart(cubes1, meshes1, children, allParts);
         modelpart.setInitialPose(this.partPose);
         modelpart.loadPose(this.partPose);
         return modelpart;

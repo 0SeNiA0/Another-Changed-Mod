@@ -12,6 +12,7 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.Animations;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.cmrs.properties.*;
@@ -51,6 +52,8 @@ public class LatexSharkFemaleModel<E extends LivingEntity> extends UniversalCust
                 m.put(4, ArmorItem.Type.LEGGINGS);
                 m.put(5, ArmorItem.Type.BOOTS);
             }), new Int2ObjectArrayMap<>(0)));
+            map.put(CustomModelRenderer.VANILLA_ELYTRA, new VanillaElytra(new PoseTransform(null, null, null)));
+            map.put(CustomModelRenderer.TRIDENT_SPIN_EFFECT, new TridentSpinEffect(new PoseTransform(null, null, null)));
         }), Util.make(new ArrayList<>(2), l -> l.add(new HumanoidAnim())));
     }
 
@@ -62,9 +65,9 @@ public class LatexSharkFemaleModel<E extends LivingEntity> extends UniversalCust
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch);
         tail_swim.animateWhen(entity.isSwimming() && entity.isInWaterOrBubble(), (int) ageInTicks);
         tail_swing.startIfStopped((int) ageInTicks);
-        if(tail_swim.isStarted()) KeyframeAnimator.animate(tail_swim, root(), LatexSharkMaleModel.TAIL_SWIM, ageInTicks);
-        KeyframeAnimator.animate(tail_swing, root(), LatexSharkMaleModel.TAIL_SWING, ageInTicks);
-        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), LatexSharkMaleModel.TAIL_STATIC);
+        if(tail_swim.isStarted()) KeyframeAnimator.animate(tail_swim, root(), Animations.TAIL_SWIM_SHARK, ageInTicks);
+        KeyframeAnimator.animate(tail_swing, root(), Animations.TAIL_SWING_SHARK, ageInTicks);
+        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), Animations.TAIL_STATIC_SHARK);
     }
 
     public static ModelDefinition model(){

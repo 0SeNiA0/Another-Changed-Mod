@@ -15,7 +15,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.cmrs.properties.*;
-import net.zaharenko424.a_changed.client.cmrs.animation.Animations;
+import net.zaharenko424.a_changed.client.Animations;
 import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
@@ -52,6 +52,8 @@ public class SnowLeopardFemaleModel<E extends LivingEntity>  extends UniversalCu
                 m.put(4, ArmorItem.Type.LEGGINGS);
                 m.put(5, ArmorItem.Type.BOOTS);
             }), new Int2ObjectArrayMap<>(0)));
+            map.put(CustomModelRenderer.VANILLA_ELYTRA, new VanillaElytra(new PoseTransform(null, null, null)));
+            map.put(CustomModelRenderer.TRIDENT_SPIN_EFFECT, new TridentSpinEffect(new PoseTransform(null, null, null)));
         }), Util.make(new ArrayList<>(2), l -> l.add(new HumanoidAnim())));
     }
 
@@ -65,7 +67,7 @@ public class SnowLeopardFemaleModel<E extends LivingEntity>  extends UniversalCu
         if(!tail.isStarted()) tail.start((int) ageInTicks);
         KeyframeAnimator.animate(ears, root(), Animations.EAR_ANIM, ageInTicks);
         KeyframeAnimator.animate(tail, root(), Animations.TAIL_CAT, ageInTicks);
-        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), SnowLeopardMaleModel.STATIC_TAIL);
+        if(!entity.isInWaterOrBubble()) KeyframeAnimator.applyStatic(root(), Animations.STATIC_TAIL_LEO);
     }
 
     public static ModelDefinition model(){
