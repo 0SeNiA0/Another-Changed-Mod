@@ -5,13 +5,16 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.EntityAccess;
+import net.zaharenko424.a_changed.ability.DLPupMeltAbility;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
@@ -36,6 +39,14 @@ public abstract class MixinEntity implements EntityAccess {
      */
     @Inject(at = @At("HEAD"), method = "push(Lnet/minecraft/world/entity/Entity;)V", cancellable = true)
     private void onPush(Entity entity, CallbackInfo ci){
+        DLPupMeltAbility ability = AbilityRegistry.DL_PUP_MELT.get();
+        if((entity instanceof LivingEntity living
+                && TransfurManager.hasAbility(ability, living) && ability.getAbilityData(living).isMolten())
+            || (getSelf() instanceof LivingEntity self
+                && TransfurManager.hasAbility(ability, self) && ability.getAbilityData(self).isMolten())) {
+            ci.cancel();//Don't push molten DL Pup & don't push entities as molten DL Pup
+            return;
+        }
         if((entity instanceof Player player && TransfurManager.isGrabbed(player))
                 || (getSelf() instanceof Player player1 && GrabData.dataOf(player1).getGrabbedEntity() == entity))
             ci.cancel();

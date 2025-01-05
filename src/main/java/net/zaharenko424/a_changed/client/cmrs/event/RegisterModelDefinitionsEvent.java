@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.event.custom;
+package net.zaharenko424.a_changed.client.cmrs.event;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.bus.api.Event;
@@ -17,6 +17,10 @@ public class RegisterModelDefinitionsEvent extends Event implements IModBusEvent
 
     public RegisterModelDefinitionsEvent(Map<ModelLayerLocation, ModelDefinition> definitions){
         this.definitions = definitions;
+    }
+
+    public boolean isRegistered(@NotNull ModelLayerLocation location){
+        return definitions.containsKey(location);
     }
 
     public void registerModelDefinition(@NotNull ModelLayerLocation location, @NotNull ModelDefinition definition){

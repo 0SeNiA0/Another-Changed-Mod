@@ -14,13 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record ClientboundTransfurSyncPacket(int holderId, ResourceLocation abilityId, float transfurProgress, boolean isTransfurred, TransfurType transfurType, TransfurType transfurTypeO) implements CustomPacketPayload {
+public record ClientboundTransfurSyncPacket(int holderId, ResourceLocation abilityId, float transfurProgress, boolean isTransfurred, TransfurType transfurType) implements CustomPacketPayload {
 
     public static final Type<ClientboundTransfurSyncPacket> TYPE = new Type<>(AChanged.resourceLoc("transfur_sync"));
 
     public ClientboundTransfurSyncPacket(@NotNull FriendlyByteBuf buf){
-        this(buf.readVarInt(), buf.readResourceLocation(), buf.readFloat(), buf.readBoolean(), TransfurManager.getTransfurType(buf.readResourceLocation()),
-                TransfurManager.getTransfurType(buf.readResourceLocation()));
+        this(buf.readVarInt(), buf.readResourceLocation(), buf.readFloat(), buf.readBoolean(), TransfurManager.getTransfurType(buf.readResourceLocation()));
     }
 
     public Ability ability(){
@@ -35,10 +34,6 @@ public record ClientboundTransfurSyncPacket(int holderId, ResourceLocation abili
 
         if(packet.transfurType != null) {
             buf.writeResourceLocation(packet.transfurType.id);
-        } else buf.writeResourceLocation(Utils.NULL_LOC);
-
-        if(packet.transfurTypeO != null) {
-            buf.writeResourceLocation(packet.transfurTypeO.id);
         } else buf.writeResourceLocation(Utils.NULL_LOC);
     }, ClientboundTransfurSyncPacket::new);
 

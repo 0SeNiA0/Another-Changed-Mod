@@ -185,7 +185,7 @@ public class GrabData implements AbilityData {
         return new ClientboundAbilitySyncPacket(holder.getId(), AbilityRegistry.GRAB_ABILITY.getId(), buf);
     }
 
-    public void fromPacket(FriendlyByteBuf buf) {
+    public void fromPacket(@NotNull FriendlyByteBuf buf) {
         Level level = holder.level();
         if(!level.isClientSide) return;
 

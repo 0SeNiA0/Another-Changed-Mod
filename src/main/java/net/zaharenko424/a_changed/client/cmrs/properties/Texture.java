@@ -44,7 +44,7 @@ public final class Texture {
 
     private boolean embedded;
     private ResourceLocation location;
-    private NativeImage image;
+    private NativeImage image;//TODO do not save the bitmap if not embedded/dynamic ?
     private int width;
     private int height;
     private float scale;
@@ -63,7 +63,6 @@ public final class Texture {
         Texture texture = new Texture(false, location, null, 0, 0, scale);
         texture.refresh();
         return texture;
-        //return new Texture(false, location, null, 0, 0, scale);//Defer texture loading. Resources are not ready at registration time...
     }
 //TODO register DynamicTexture here?
     public static Texture dynamic(@NotNull ResourceLocation location, @NotNull NativeImage image, float scale){

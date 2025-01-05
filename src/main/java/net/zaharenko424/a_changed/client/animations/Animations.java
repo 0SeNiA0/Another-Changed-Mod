@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client;
+package net.zaharenko424.a_changed.client.animations;
 
 import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.animation.Keyframe;

@@ -2,14 +2,11 @@ package net.zaharenko424.a_changed.client.model;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.Util;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -18,11 +15,15 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.animation.HumanoidAnim;
-import net.zaharenko424.a_changed.client.cmrs.properties.*;
+import net.zaharenko424.a_changed.client.animations.Animations;
+import net.zaharenko424.a_changed.client.animations.FallFlyingAnim;
+import net.zaharenko424.a_changed.client.animations.HumanoidAnim;
+import net.zaharenko424.a_changed.client.animations.SwimAnim;
+import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
+import net.zaharenko424.a_changed.client.cmrs.animation.AnimationChannel;
 import net.zaharenko424.a_changed.client.cmrs.animation.AnimationDefinition;
-import net.zaharenko424.a_changed.client.Animations;
 import net.zaharenko424.a_changed.client.cmrs.animation.KeyframeAnimator;
+import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.client.cmrs.geom.CubeUV;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
@@ -30,6 +31,7 @@ import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.cmrs.model.PartTransform;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
 import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
+import net.zaharenko424.a_changed.client.cmrs.properties.*;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.util.Int2ObjArrayMap;
 import org.jetbrains.annotations.NotNull;
@@ -43,27 +45,37 @@ public class HypnoCatModel<E extends LivingEntity> extends UniversalCustomModel<
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/hypno_cat");
 
     public HypnoCatModel() {
-        super(model().bake(), Util.make(new Reference2ObjectLinkedOpenHashMap<>(), map -> {
-            map.put(CustomModelRenderer.REMAP_UV, Unit.INSTANCE);
-            map.put(CustomModelRenderer.HEAD, new Head("head"));
-            map.put(CustomModelRenderer.ARMED, new Armed(
-                    "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)), new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
-                    "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1)), new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))));
-            map.put(CustomModelRenderer.TEXTURES, new Textures(Util.make(new Int2ObjArrayMap<>(2), m -> {
+        super(ModelDefinitionCache.getInstance().bake(bodyLayer), Util.make(new ModelPropertyMapImpl(), map -> {
+            map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
+            map.addLast(ModelPropertyRegistry.TEXTURES.get(), new Textures(Util.make(new Int2ObjArrayMap<>(2), m -> {
                 m.put(0, Texture.fromAsset(TEXTURE, 2));
             })));
-            map.put(CustomModelRenderer.ARMOR, new Armor(Util.make(new Int2ObjectArrayMap<>(), m -> {
+            map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
+            map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
+            map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
+                    "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
+                    "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))
+            ));
+            map.addLast(ModelPropertyRegistry.ITEM_IN_HAND.get(), new ItemInHandLayer(
+                    "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
+                    "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
+            ));
+            map.addLast(ModelPropertyRegistry.ARMOR.get(), new Armor(Util.make(new Int2ObjectArrayMap<>(), m -> {
                 m.put(2, ArmorItem.Type.HELMET);
                 m.put(3, ArmorItem.Type.CHESTPLATE);
                 m.put(4, ArmorItem.Type.LEGGINGS);
                 m.put(5, ArmorItem.Type.BOOTS);
             }), new Int2ObjectArrayMap<>(0)));
-            map.put(CustomModelRenderer.GLOW, new Glow(Util.make(new Int2IntArrayMap(), m -> {
+            map.addLast(ModelPropertyRegistry.GLOW.get(), new Glow(Util.make(new Int2IntArrayMap(), m -> {
                 m.put(1, 0);
             })));
-            map.put(CustomModelRenderer.VANILLA_ELYTRA, new VanillaElytra(new PoseTransform(null, null, null)));
-            map.put(CustomModelRenderer.TRIDENT_SPIN_EFFECT, new TridentSpinEffect(new PoseTransform(null, null, null)));
-        }), Util.make(new ArrayList<>(2), l -> l.add(new HumanoidAnim())));
+            map.addLast(ModelPropertyRegistry.VANILLA_ELYTRA.get(), new VanillaElytra());
+            map.addLast(ModelPropertyRegistry.TRIDENT_SPIN_EFFECT.get(), new TridentSpinEffect());
+        }), Util.make(new ArrayList<>(4), l -> {
+            l.add(HumanoidAnim.getInstance());
+            l.add(FallFlyingAnim.getInstance());
+            l.add(SwimAnim.getInstance());
+        }));
     }
 
 

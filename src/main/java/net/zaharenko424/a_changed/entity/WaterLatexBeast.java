@@ -55,7 +55,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
@@ -218,7 +218,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
                 Activity.SWIM, new BrainActivityGroup<WaterLatexBeast>(Activity.SWIM).behaviours(
                         new FirstApplicableBehaviour<>(
                                 new TargetTransfurrable<>(),
-                                new Retaliate<>(),
+                                new RetaliateOrTransfur<>(),
                                 new OneRandomBehaviour<>(
                                         new SetPlayerLookTarget<>()
                                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < LOOK_RANGE_SQR)

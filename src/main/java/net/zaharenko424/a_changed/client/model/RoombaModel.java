@@ -25,7 +25,7 @@ public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
     private final ModelPart brushLeft;
 
     public RoombaModel(){
-        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getDirectChild("root");
+        root = ModelDefinitionCache.getInstance().bake(bodyLayer).getDirectChild("root");
         brushRight = root.getDirectChild("brush_right");
         brushLeft = root.getDirectChild("brush_left");
     }

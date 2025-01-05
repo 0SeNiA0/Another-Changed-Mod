@@ -4,24 +4,18 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.properties.ModelPropertyType;
-import net.zaharenko424.a_changed.client.cmrs.api.AnimationComponent;
-import net.zaharenko424.a_changed.client.cmrs.properties.Armed;
-import net.zaharenko424.a_changed.client.cmrs.properties.Glow;
-import net.zaharenko424.a_changed.client.cmrs.api.ModelLayer;
-import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
-import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
-import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
+import net.zaharenko424.a_changed.client.cmrs.api.*;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.properties.FPArms;
+import net.zaharenko424.a_changed.client.cmrs.properties.Glow;
+import net.zaharenko424.a_changed.client.cmrs.properties.ModelPropertyMapImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,32 +26,35 @@ import java.util.function.Function;
 public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E> implements NoYFlip, CustomModel<E> {
 
     protected final ModelPart root;
-    protected final Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties;
+    protected final ModelPropertyMap propertyMap;
     protected final List<AnimationComponent> animations;
     protected RenderStack stack;
 
-    public UniversalCustomModel(ModelPart root, Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties){
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties){
         this(root, properties, new ArrayList<>(1));
     }
 
-    public UniversalCustomModel(ModelPart root, Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, List<AnimationComponent> animations){
-        super(RenderType::entityCutout);
-        this.root = root;
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, @NotNull List<AnimationComponent> animations){
+        this(root, new ModelPropertyMapImpl(properties), animations);
+    }
+
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations){
+        super(RenderType::entityCutoutNoCull);
+        this.root = root.getPart("root");
         verifyProperties(properties);
-        this.properties = properties;
+        this.propertyMap = properties;
         this.animations = animations;
     }
 
-    protected void verifyProperties(Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties){
-        if(!properties.containsKey(CustomModelRenderer.TEXTURES)) throw new IllegalStateException("Model has to have a texture property");
+    protected void verifyProperties(@NotNull ModelPropertyMap properties){
+        if(!properties.hasProperty(ModelPropertyRegistry.TEXTURES.get())) throw new IllegalStateException("Model has to have a texture property");
 
         IntOpenHashSet set = new IntOpenHashSet();
-        for(Object obj : properties.values()){
-            if(!(obj instanceof ModelLayer layer)) continue;
+        properties.forEachModelLayer(layer ->
             layer.renderIds().forEach(id -> {
                 if(!set.add(id)) throw new IllegalStateException("Repeated renderId: " + id);
-            });
-        }
+            })
+        );
     }
 
     public ModelPart root(){
@@ -68,19 +65,18 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         return root.getPart(name);
     }
 
-    public boolean hasProperty(ModelPropertyType<?> propertyType){
-        return properties.containsKey(propertyType);
+    public boolean hasProperty(@NotNull ModelPropertyType<?> propertyType){
+        return propertyMap.hasProperty(propertyType);
     }
 
-    public <P> P getProperty(ModelPropertyType<P> type){
-        if(!properties.containsKey(type)) return null;
-        return (P) properties.get(type);
+    public <P> P getProperty(@NotNull ModelPropertyType<P> type){
+        return propertyMap.getProperty(type);
     }
 
     protected RenderStack getStack(){
         if(stack == null){
             stack = new RenderStack();
-            stack.setRemap(hasProperty(CustomModelRenderer.REMAP_UV));
+            stack.setRemap(hasProperty(ModelPropertyRegistry.REMAP_UV.get()));
         }
 
         return stack;
@@ -91,7 +87,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
      */
     public void refreshModel(boolean properties){
         if(properties) {
-            getStack().setRemap(hasProperty(CustomModelRenderer.REMAP_UV));
+            getStack().setRemap(hasProperty(ModelPropertyRegistry.REMAP_UV.get()));
             stack.clear();
         }
     }
@@ -117,39 +113,36 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     protected void prepareRenderStack(E entity, Function<ResourceLocation, RenderType> suggestedRenderType, BufferSourceAccess access){
         getStack().reset();
         stack.setRenderTypeFunc(suggestedRenderType);
-
-        for(Object property : properties.values()){
-            if(property instanceof ModelLayer layer) layer.setupRenderStack(this, entity, stack, access);
-        }
+        propertyMap.forEachModelLayer(layer -> layer.setupRenderStack(this, entity, stack, access));
     }
 
-    public void renderLayers(@NotNull PoseStack poseStack, int packedLight, @NotNull E entity,//Works
+    public void renderLayers(@NotNull PoseStack poseStack, int packedLight, @NotNull E entity,
                              float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
         BufferSourceAccess access = BufferSourceAccess.get();
-        for(Object obj : properties.values()){
-            if(obj instanceof RenderLayerLike layer) layer.render(entity, this, poseStack, access, packedLight, limbSwing,
-                    limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
+        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, poseStack, access, packedLight, limbSwing,
+                limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch));
+    }
+
+    public void setupAnim(@NotNull E entity, @NotNull PoseStack poseStack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        root.getAllParts().forEach(ModelPart::resetPose);
+
+        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(entity.level().tickRateManager().isEntityFrozen(entity));
+        for(AnimationComponent anim : animations){
+            anim.animate(root(), entity, poseStack, partialTick, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         }
+
+        setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 
     @Override
-    public void setupAnim(@NotNull E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
+    public void setupAnim(@NotNull E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
 
-        for(AnimationComponent anim : animations){
-            anim.animate(root(), entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        }
-    }
+    public void renderHand(@NotNull E entity, @NotNull PoseStack poseStack, int light, @NotNull HumanoidArm arm){
+        FPArms fpArms = getProperty(ModelPropertyRegistry.FP_ARMS.get());
+        if(fpArms == null) return;
 
-    public void renderHand(@NotNull E entity, @NotNull PoseStack poseStack, int light, @NotNull HumanoidArm arm){//Works
-        Armed armed = getProperty(CustomModelRenderer.ARMED);
-        if(armed == null) return;
-
-        ModelPart part = armed.getArm(this, arm);
+        ModelPart part = fpArms.getTransformed(this, arm);
         if(part == null) return;
-
-        part.resetPose();
-        armed.transformFirstPerson(this, arm);
 
         BufferSourceAccess access = BufferSourceAccess.get();
         access.cmrs$finishBatched();
@@ -157,11 +150,11 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         getStack().reset();
         stack.setRenderTypeFunc(RenderType.ENTITY_CUTOUT);
         //Hardcoded Textures + Glow for first person rendering
-        getProperty(CustomModelRenderer.TEXTURES).setupRenderStack(this, entity, stack, access);
-        Glow glow = getProperty(CustomModelRenderer.GLOW);
+        getProperty(ModelPropertyRegistry.TEXTURES.get()).setupRenderStack(this, entity, stack, access);
+        Glow glow = getProperty(ModelPropertyRegistry.GLOW.get());
         if(glow != null) glow.setupRenderStack(this, entity, stack, access);
         setAllVisible(true, part);
-        //setDrawAll(true, part);
+        setDrawAll(true, part);
         part.render(poseStack, stack, light, OverlayTexture.NO_OVERLAY, -1);
         access.cmrs$finishBatched();
     }
@@ -172,20 +165,20 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     }
 
     protected void setModelProperties(@NotNull E entity){
-        if(entity instanceof Player player && player.isSpectator()){
-            setAllVisible(false);
+        setAllVisible(true);
+        if(entity.isSpectator()){
+            setDrawAll(false);
 
             ModelPart head = null;
-            if(hasProperty(CustomModelRenderer.HEAD)) head = getProperty(CustomModelRenderer.HEAD).getPart(this);
+            if(hasProperty(ModelPropertyRegistry.HEAD.get())) head = getPart(getProperty(ModelPropertyRegistry.HEAD.get()));
             if(head == null) head = getPart("head");
-            if(head != null) setAllVisible(true, head);
-        } else setAllVisible(true);
-        setDrawAll(true);
+            if(head != null) setDrawAll(true, head);
+        } else setDrawAll(true);
     }
 
     @Override
     public ResourceLocation getTexture() {
-        return getProperty(CustomModelRenderer.TEXTURES).firstTexture();
+        return getProperty(ModelPropertyRegistry.TEXTURES.get()).firstTexture();
     }
 
     /**

@@ -26,7 +26,7 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
 
     public SyringeProjectileRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("root");
+        root = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

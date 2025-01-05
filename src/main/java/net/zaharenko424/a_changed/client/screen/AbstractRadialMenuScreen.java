@@ -1,11 +1,15 @@
 package net.zaharenko424.a_changed.client.screen;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -55,27 +59,27 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         float minRad = Mth.DEG_TO_RAD * (minDeg + buttonOffsetDeg);
         float maxRad = Mth.DEG_TO_RAD * (maxDeg - buttonOffsetDeg);
 
-        HashSet<Pair<Integer, Integer>> data = new HashSet<>();
+        HashSet<IntIntPair> data = new HashSet<>();
 
         raycast(innerRadius, radius, minRad, centerX, centerY, data);
         raycast(innerRadius, radius, maxRad, centerX, centerY, data);
         arc(minRad, maxRad, radius, Mth.DEG_TO_RAD / 2, centerX, centerY, data);
         arc(minRad, maxRad, innerRadius, Mth.DEG_TO_RAD / 2, centerX, centerY, data);
 
-        if(maxRad > 2 * Mth.PI) maxRad -= 2 * Mth.PI;
+        if(maxRad > Mth.TWO_PI) maxRad -= Mth.TWO_PI;
 
         return new RadialButton(minRad, maxRad, data);
     }
 
-    protected void arc(float minRad, float maxRad, int radius, float precision, int centerX, int centerY, HashSet<Pair<Integer, Integer>> data){
+    protected void arc(float minRad, float maxRad, int radius, float precision, int centerX, int centerY, HashSet<IntIntPair> data){
         for (float rad = minRad; rad <= maxRad; rad += precision) {
-            data.add(Pair.of((int)(Mth.cos(rad) * radius) + centerX, (int)(Mth.sin(rad) * radius) + centerY));
+            data.add(IntIntPair.of(Math.round((Mth.cos(rad) * radius) + centerX), Math.round((Mth.sin(rad) * radius) + centerY)));
         }
     }
 
-    protected void raycast(int minLength, int maxLength, float rayRad, int originX, int originY, HashSet<Pair<Integer, Integer>> data){
+    protected void raycast(int minLength, int maxLength, float rayRad, int originX, int originY, HashSet<IntIntPair> data){
         for (int i = minLength; i < maxLength; i++) {
-            data.add(Pair.of((int) (Math.cos(rayRad) * i) + originX, (int) (Math.sin(rayRad) * i) + originY));
+            data.add(IntIntPair.of(Math.round((Mth.cos(rayRad) * i) + originX), (int) Math.round((Math.sin(rayRad) * i) + originY)));
         }
     }
 
@@ -93,23 +97,48 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         float minRad, maxRad;
         float radCenter;
         int color, size, x, y;
+        RenderType gui = RenderType.gui();
+        MultiBufferSource.BufferSource source = guiGraphics.bufferSource();
+
         for (int i = 0; i < buttons.size(); i++) {
             button = buttons.get(i);
             color = buttonColor(i);
             size = i == selectedButton ? 2 : 1;
-            for(Pair<Integer, Integer> pos : button.pixels){
-                x = pos.getLeft();
-                y = pos.getRight();
-                guiGraphics.fill(x - size, y - size, x + size, y + size, color);
+            for(IntIntPair pos : button.pixels){
+                x = pos.firstInt();
+                y = pos.secondInt();
+                fill(guiGraphics, gui, x - size, y - size, x + size, y + size, 0, color);
             }
+            source.endBatch(gui);
 
             minRad = button.radMin();
             maxRad = button.radMax();
-            if(minRad > maxRad) maxRad += 2 * Mth.PI;//TMP temporary fix. save clamped & non clamped rad values in buttons?
-            radCenter = (maxRad - minRad) / 2 + minRad;
+            if(minRad > maxRad) maxRad += Mth.TWO_PI;//TMP temporary fix. save clamped & non clamped rad values in buttons?
+            radCenter = (maxRad - minRad) / 2 + minRad;//Nothing is more permanent than a temporary solution...
 
             renderIcon(guiGraphics, (int) (Mth.cos(radCenter) * radius + halfWidth) - 16, (int) (Mth.sin(radCenter) * radius + halfHeight) - 16, pPartialTick, i);
         }
+    }
+
+    public static void fill(GuiGraphics graphics, RenderType renderType, int minX, int minY, int maxX, int maxY, int z, int color) {
+        Matrix4f matrix4f = graphics.pose().last().pose();
+        if (minX < maxX) {
+            int i = minX;
+            minX = maxX;
+            maxX = i;
+        }
+
+        if (minY < maxY) {
+            int j = minY;
+            minY = maxY;
+            maxY = j;
+        }
+
+        VertexConsumer vertexconsumer = graphics.bufferSource().getBuffer(renderType);
+        vertexconsumer.addVertex(matrix4f, minX, minY, z).setColor(color);
+        vertexconsumer.addVertex(matrix4f, minX, maxY, z).setColor(color);
+        vertexconsumer.addVertex(matrix4f, maxX, maxY, z).setColor(color);
+        vertexconsumer.addVertex(matrix4f, maxX, minY, z).setColor(color);
     }
 
     @Override
@@ -125,7 +154,7 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         float mouseRad = (float) Math.atan((mouseY - halfHeight) / (mouseX - halfWidth));
 
         if(mouseX < halfWidth) mouseRad += Mth.PI;
-        if(mouseX > halfWidth && mouseY < halfHeight) mouseRad += 2 * Mth.PI;
+        if(mouseX > halfWidth && mouseY < halfHeight) mouseRad += Mth.TWO_PI;
 
         RadialButton button;
         for(int i = 0; i < buttons.size(); i++){
@@ -139,5 +168,5 @@ public abstract class AbstractRadialMenuScreen extends Screen {
         selectedButton = -1;
     }
 
-    protected record RadialButton(float radMin, float radMax, HashSet<Pair<Integer, Integer>> pixels){}
+    protected record RadialButton(float radMin, float radMax, HashSet<IntIntPair> pixels){}
 }

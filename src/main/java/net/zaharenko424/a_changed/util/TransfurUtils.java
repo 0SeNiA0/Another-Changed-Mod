@@ -1,7 +1,9 @@
 package net.zaharenko424.a_changed.util;
 
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -19,18 +21,21 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import static net.zaharenko424.a_changed.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TOLERANCE;
-import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.getTransfurEntity;
 
 public class TransfurUtils {
 
@@ -44,7 +49,27 @@ public class TransfurUtils {
             handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
     };
 
-    public static void addModifiers(LivingEntity holder, TransfurType transfurType){
+    /**
+     * Applies the new transfur model to the provided player and returns its id.
+     *
+     * @param modelIdO Current modelId
+     * @return New modelId
+     */
+    @Contract("_, _, null -> null")
+    public static ResourceLocation updateTFModel(@NotNull AbstractClientPlayer player, @Nullable ResourceLocation modelIdO, @Nullable TransfurType transfurType){
+        ResourceLocation modelId = null;
+        if(transfurType != null){
+            modelId = transfurType.getModelIdFor(player);//Leave it like this for now. Might be a problem if getModelId() will check for ability data that isn't synced yet
+        }
+        if(modelIdO != modelId){
+            CustomModelManager manager = CustomModelManager.getInstance();
+            if(modelIdO != null) manager.removePlayerModel(player, modelIdO);
+            if(modelId != null) manager.setPlayerModel(player, modelId, null, 1);
+        }//Will throw if the model isn't registered ^
+        return modelId;
+    }
+
+    public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
         AttributeMap map = holder.getAttributes();
         AttributeInstance[] instance = new AttributeInstance[1];
         transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
@@ -71,7 +96,7 @@ public class TransfurUtils {
         });
     }
 
-    public static void removeModifiers(LivingEntity holder, TransfurType transfurType){
+    public static void removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
         AttributeMap map = holder.getAttributes();
         AttributeInstance[] instance = new AttributeInstance[1];
         transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
@@ -94,11 +119,14 @@ public class TransfurUtils {
         });
     }
 
-    public static AbstractLatexBeast spawnLatex(@NotNull TransfurType transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
-        return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
+    /**
+     * Returned entity can be safely cast to LivingEntity.
+     */
+    public static LatexBeast spawnLatex(@NotNull TransfurType transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
+        return Objects.requireNonNullElseGet(TransfurManager.getTransfurEntity(transfurType), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
     }
 
-    public static Vec2 targetLookAngles(Vec3 looker, Vec3 target){
+    public static Vec2 targetLookAngles(@NotNull Vec3 looker, @NotNull Vec3 target){
         double dx = target.x() - looker.x();
         double dy = target.y() - looker.y();
         double dz = target.z() - looker.z();
@@ -117,7 +145,7 @@ public class TransfurUtils {
      * @param speed applies only to players. Dictates the speed with which the player will look at target.
      * @return whether the looker was pointed to target
      */
-    public static boolean smoothLookAt(LivingEntity looker, EntityAnchorArgument.Anchor anchor, Vec3 target, boolean mustSee, float speed){
+    public static boolean smoothLookAt(@NotNull LivingEntity looker, @NotNull EntityAnchorArgument.Anchor anchor, @NotNull Vec3 target, boolean mustSee, float speed){
         if(looker.level().isClientSide) return false;
 
         Vec3 lookerPos = anchor.apply(looker);

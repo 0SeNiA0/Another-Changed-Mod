@@ -32,8 +32,8 @@ public abstract class AbstractMultiBlock extends Block {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public AbstractMultiBlock(Properties p_54120_) {
-        super(p_54120_);
+    public AbstractMultiBlock(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
@@ -96,8 +96,8 @@ public abstract class AbstractMultiBlock extends Block {
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
-            BlockPos pos1 = part.toSecondaryPos(pos, direction);
-            if(id != 0) level.setBlockAndUpdate(pos1, state.setValue(part(), id));
+            if(id == 0) return;
+            level.setBlockAndUpdate(part.toSecondaryPos(pos, direction), state.setValue(part(), id));
         });
     }
 

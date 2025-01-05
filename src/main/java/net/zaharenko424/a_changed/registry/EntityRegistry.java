@@ -50,6 +50,11 @@ public class EntityRegistry {
             EntityType.Builder.of((a, b) -> new LatexBeast(a, b, BENIGN_TF.get()), MobCategory.MONSTER)
     );
 
+    public static final DeferredHolder<EntityType<?>, EntityType<DarkLatexPup>> DARK_LATEX_PUP = registerEntity(
+            "dark_latex_pup",
+            EntityType.Builder.of(DarkLatexPup::new, MobCategory.CREATURE)
+    );
+
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_MALE = registerEntity(
             "dark_latex_wolf_male",
             EntityType.Builder.of((a, b) -> new LatexBeast(a,b, DARK_LATEX_WOLF_M_TF.get()), MobCategory.MONSTER)

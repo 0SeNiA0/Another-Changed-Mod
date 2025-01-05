@@ -4,9 +4,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.zaharenko424.a_changed.attachments.GrabData;
-import net.zaharenko424.a_changed.attachments.HypnosisData;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachments.*;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,6 +14,16 @@ import static net.zaharenko424.a_changed.AChanged.MODID;
 public class AttachmentRegistry {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
+
+    //DL Pup aging ability data
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DLPupAgingData>> DL_PUP_AGING_DATA = ATTACHMENTS
+            .register("dl_pup_age", () -> AttachmentType.builder(DLPupAgingData::new)
+                    .serialize(DLPupAgingData.SERIALIZER).build());
+
+    //DL Pup melt ability data
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DLPupMeltData>> DL_PUP_MELT_DATA = ATTACHMENTS
+            .register("dl_pup_melt", () -> AttachmentType.builder(DLPupMeltData::new)
+                    .serialize(DLPupMeltData.SERIALIZER).build());
 
     //Hypnosis ability data
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HypnosisData>> HYPNOSIS_DATA = ATTACHMENTS

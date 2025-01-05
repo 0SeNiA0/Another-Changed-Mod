@@ -14,6 +14,12 @@ public class AbilityRegistry {
     public static final DeferredHolder<Ability, CatAbility> CAT_PASSIVE = ABILITIES
             .register("cat_ability", CatAbility::new);
 
+    public static final DeferredHolder<Ability, DLPupAgingAbility> DL_PUP_AGE = ABILITIES
+            .register("dl_pup_age", DLPupAgingAbility::new);
+
+    public static final DeferredHolder<Ability, DLPupMeltAbility> DL_PUP_MELT = ABILITIES
+            .register("dl_pup_melt", DLPupMeltAbility::new);
+
     public static final DeferredHolder<Ability, FallFlyingAbility> FALL_FLYING_PASSIVE = ABILITIES
             .register("fall_flying_ability", FallFlyingAbility::new);
 

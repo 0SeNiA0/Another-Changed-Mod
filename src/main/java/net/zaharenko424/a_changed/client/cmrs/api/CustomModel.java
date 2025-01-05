@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.properties.ModelPropertyType;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,9 +17,9 @@ public interface CustomModel <E extends LivingEntity> {
 
     ModelPart getPart(@NotNull String name);
 
-    boolean hasProperty(ModelPropertyType<?> type);
+    boolean hasProperty(@NotNull ModelPropertyType<?> type);
 
-    <P> P getProperty(ModelPropertyType<P> type);
+    <P> P getProperty(@NotNull ModelPropertyType<P> type);
 
     void renderToBuffer(@NotNull E entity, @NotNull PoseStack poseStack, @Nullable Function<ResourceLocation, RenderType> suggestedRenderType, int packedLight, int packedOverlay, int color);
 
@@ -30,6 +29,8 @@ public interface CustomModel <E extends LivingEntity> {
      * For rendering hands in first person view.
      */
     void renderHand(@NotNull E entity, @NotNull PoseStack poseStack, int light, @NotNull HumanoidArm arm);
+
+    void setupAnim(@NotNull E entity, @NotNull PoseStack poseStack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
 
     ResourceLocation getTexture();
 

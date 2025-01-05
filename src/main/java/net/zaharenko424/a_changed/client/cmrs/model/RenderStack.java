@@ -63,7 +63,7 @@ public class RenderStack {
         ParameterList parameters = map.get(mesh.renderId);
         if(parameters == null || parameters.list.isEmpty()) return;
 
-        for(RenderParameters param : parameters){
+        for(RenderParameters param : parameters){//TODO wrap into multiConsumer?
             mesh.compile(pose, param.consumer, light, param.overlay != 0 ? param.overlay : overlay, param.color != 0 ? param.color : color);
         }
     }

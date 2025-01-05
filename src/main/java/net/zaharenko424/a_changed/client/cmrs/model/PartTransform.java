@@ -44,6 +44,10 @@ public final class PartTransform {
     public boolean relativeS;
     public final Vector3f scale;
 
+    public PartTransform(){
+        this(false, null, false, null, false, null);
+    }
+
     public PartTransform(boolean relativeT, @Nullable Vector3f translate, boolean relativeR, @Nullable Vector3f rotate, boolean relativeS, @Nullable Vector3f scale){
         this.relativeT = relativeT;
         this.translate = translate == null ? (relativeT ? new Vector3f() : new Vector3f(Float.POSITIVE_INFINITY)) : translate;

@@ -29,8 +29,8 @@ public class BlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(CARDBOARD_BOX.get(), ORANGE_TREE_LOG.get(), SMALL_CARDBOARD_BOX.get(),
                 TALL_CARDBOARD_BOX.get());
 
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AIR_CONDITIONER.get(), BIG_LAB_DOOR.get(), BIG_LAB_LAMP.get(), BIG_LIBRARY_DOOR.get(),
-                BIG_MAINTENANCE_DOOR.get(), BLUE_LAB_BLOCK.get(), BLUE_LAB_TILE.get(), BLUE_LAB_TILE_SLAB.get(),
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AIR_CONDITIONER.get(), BACKUP_GENERATOR.get(), BIG_LAB_DOOR.get(), BIG_LAB_LAMP.get(),
+                BIG_LIBRARY_DOOR.get(), BIG_MAINTENANCE_DOOR.get(), BLUE_LAB_BLOCK.get(), BLUE_LAB_TILE.get(), BLUE_LAB_TILE_SLAB.get(),
                 BLUE_LAB_TILE_STAIRS.get(), BOLTED_BLUE_LAB_TILE.get(), BOLTED_LAB_TILE.get(), BROWN_LAB_BLOCK.get(),
                 CANNED_ORANGES.get(), CAPACITOR.get(), CHAIR.get(), COMPRESSOR.get(), COMPUTER.get(), CONNECTED_BLUE_LAB_TILE.get(),
                 CONNECTED_LAB_TILE.get(), CRYO_CHAMBER.get(), DARK_LATEX_CRYSTAL.get(), DARK_LATEX_CRYSTAL_ICE.get(),

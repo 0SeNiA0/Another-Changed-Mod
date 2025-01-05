@@ -25,7 +25,7 @@ public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
 
     public ChairRenderer(EntityRendererProvider.Context context) {
         super(context);
-        chair = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("root");
+        chair = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

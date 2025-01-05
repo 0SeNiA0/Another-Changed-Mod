@@ -1,8 +1,13 @@
 package net.zaharenko424.a_changed.util;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
+import net.minecraft.network.codec.StreamEncoder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CodecUtils {
 
@@ -51,4 +56,16 @@ public class CodecUtils {
         case 2 -> PartPose.rotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
         default -> PartPose.offsetAndRotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
     });
+
+    public static <T, B extends ByteBuf> void writeOptionally(T value, boolean write, @NotNull B buffer, @NotNull StreamEncoder<B, T> writer){
+        buffer.writeBoolean(write);
+        if(write) writer.encode(buffer, value);
+    }
+
+    public static <T, B extends ByteBuf> @Nullable T readOptionally(@NotNull B buffer, @NotNull StreamDecoder<B, T> reader){
+        if(buffer.readBoolean()){
+            return reader.decode(buffer);
+        }
+        return null;
+    }
 }

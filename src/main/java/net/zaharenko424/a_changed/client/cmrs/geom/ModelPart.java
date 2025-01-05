@@ -274,7 +274,7 @@ public class ModelPart {
     public void translateAndRotate(PoseStack poseStack) {
         poseStack.translate(x / 16.0F, y / 16.0F, z / 16.0F);
         if (xRot != 0.0F || yRot != 0.0F || zRot != 0.0F) {
-            poseStack.mulPose(Reusable.QUATERNION.get().rotationZYX(zRot, yRot, xRot));
+            poseStack.mulPose(Reusable.QUATERNION.get().identity().rotationZYX(zRot, yRot, xRot));
         }
 
         if (xScale != 1.0F || yScale != 1.0F || zScale != 1.0F) {

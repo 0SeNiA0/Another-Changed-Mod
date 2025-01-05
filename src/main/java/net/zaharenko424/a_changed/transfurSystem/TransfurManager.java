@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
@@ -82,7 +83,7 @@ public class TransfurManager {
     }
 
     public static boolean hasAbility(Ability ability, LivingEntity holder){
-        if(holder instanceof AbstractLatexBeast latex) return latex.transfurType.abilities.contains(ability);
+        if(holder instanceof AbilityHolder abilityHolder) return abilityHolder.hasAbility(ability);
 
         TransfurHandler handler = TransfurHandler.of(holder);
         return handler != null && handler.hasAbility(ability);
@@ -104,13 +105,13 @@ public class TransfurManager {
         return hasAbility(AbilityRegistry.WOLF_PASSIVE, entity);
     }
 
-    public static @Nullable EntityType<AbstractLatexBeast> getTransfurEntity(@NotNull ResourceLocation transfurType){
+    public static <T extends LivingEntity & LatexBeast> @Nullable EntityType<T> getTransfurEntity(@NotNull TransfurType transfurType){
         try {
-            EntityType<?> entity = BuiltInRegistries.ENTITY_TYPE.get(getTransfurType(transfurType).id);
+            EntityType<?> entity = BuiltInRegistries.ENTITY_TYPE.get(transfurType.id);
             if(entity == EntityType.PIG) return null;
-            return (EntityType<AbstractLatexBeast>) entity;
+            return (EntityType<T>) entity;
         } catch (Exception exception){
-            AChanged.LOGGER.error("Exception occurred while fetching entity for transfur type "+ transfurType, exception);
+            AChanged.LOGGER.error("Exception occurred while fetching entity for transfur type {}", transfurType, exception);
             return null;
         }
     }

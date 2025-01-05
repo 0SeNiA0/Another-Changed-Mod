@@ -5,7 +5,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +16,12 @@ import org.jetbrains.annotations.Nullable;
 public class TransfurredEvent extends Event {
 
     private final LivingEntity entity;
-    private final AbstractLatexBeast latex;
+    private final LatexBeast latex;
     private final TransfurType transfurType;
     private final DamageSource source;
 
     @ApiStatus.Internal
-    public TransfurredEvent(LivingEntity entity, AbstractLatexBeast latex, TransfurType transfurType){
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType){
         this.entity = entity;
         this.latex = latex;
         this.transfurType = transfurType;
@@ -41,7 +41,7 @@ public class TransfurredEvent extends Event {
         return entity;
     }
 
-    public @Nullable AbstractLatexBeast getLatex() {
+    public @Nullable LatexBeast getLatex() {
         return latex;
     }
 

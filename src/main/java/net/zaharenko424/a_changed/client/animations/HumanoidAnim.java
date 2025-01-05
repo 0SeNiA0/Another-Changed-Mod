@@ -1,11 +1,13 @@
-package net.zaharenko424.a_changed.client.cmrs.animation;
+package net.zaharenko424.a_changed.client.animations;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.ability.GrabMode;
+import net.zaharenko424.a_changed.client.cmrs.animation.AnimationUtils;
 import net.zaharenko424.a_changed.client.cmrs.api.AnimationComponent;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -16,10 +18,16 @@ import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 //Hardcoded animations. Bad but will do for now. Will be split later on.
 public class HumanoidAnim extends AnimationComponent {//TODO test
 
+    private static HumanoidAnim instance;
+
+    public static HumanoidAnim getInstance() {
+        if(instance == null) instance = new HumanoidAnim();
+        return instance;
+    }
+
     @Override
-    public <E extends LivingEntity> void animate(ModelPart root, E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+    public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
         ModelPart head = root.getPart("head");
-        float partialTick = ageInTicks - entity.tickCount;//ageInTicks == entity.tickCount + partialTick
 
         float swimAmount = entity.getSwimAmount(partialTick);
 

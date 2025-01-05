@@ -52,6 +52,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         doublePartBlockDrops(AIR_CONDITIONER.get());
+        ninePartMultiBlockDrops(BACKUP_GENERATOR.get());
         ninePartMultiBlockDrops(BIG_LAB_DOOR.get());
         doublePartBlockDrops(BIG_LAB_LAMP.get());
         ninePartMultiBlockDrops(BIG_LIBRARY_DOOR.get());

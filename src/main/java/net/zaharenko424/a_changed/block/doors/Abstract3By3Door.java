@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class Abstract3By3Door extends AbstractMultiDoor {
 
-    protected static final ImmutableMap<Integer, Part> PARTS;
+    public static final ImmutableMap<Integer, Part> PARTS;
     public static final IntegerProperty PART = StateProperties.PART9;
 
     public Abstract3By3Door(Properties p_54120_) {

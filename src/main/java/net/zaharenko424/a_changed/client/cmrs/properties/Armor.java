@@ -64,6 +64,7 @@ public final class Armor implements ModelLayer {
 
     @Override
     public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access) {
+        if(entity.isSpectator()) return;
         access.cmrs$startSubBatch();
         ArmorItem.Type type;
         EquipmentSlot slot;

@@ -121,6 +121,7 @@ public class CreativeTabs {
                     output.accept(LATEX_RESISTANT_GLASS_ITEM);
                     output.accept(LATEX_RESISTANT_GLASS_PANE_ITEM);
                     output.accept(GENERATOR_ITEM);
+                    output.accept(BACKUP_GENERATOR_ITEM);
                     output.accept(POWER_CELL);
                     output.accept(CAPACITOR_ITEM);
                     output.accept(COMPRESSOR_ITEM);

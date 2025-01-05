@@ -42,7 +42,7 @@ public class HypnosisAbility implements Ability {
     @Override
     public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
         graphics.drawCenteredString(Minecraft.getInstance().font, "Hypnosis", x + 16, y + 6, Color.MAGENTA.getRGB());
-        if(overlay && getAbilityData(player).isActivated()) graphics.blit(activated,x - 8, y - 8, 0, 0, 48, 48, 48, 48);
+        if(overlay && getAbilityData(player).isActivated()) graphics.blit(activated,x - 16, y - 16, 0, 0, 0, 64, 64, 64, 64);
         //TODO add icon
     }
 

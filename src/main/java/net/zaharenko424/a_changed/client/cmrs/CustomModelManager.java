@@ -3,62 +3,78 @@ package net.zaharenko424.a_changed.client.cmrs;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
-import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.event.custom.LoadModelsToCacheEvent;
-import org.apache.commons.lang3.tuple.Pair;
+import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class CustomModelManager <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> {
+public class CustomModelManager {
 
-    private static CustomModelManager<?, ?> modelManager;
-    private final ConcurrentHashMap<AbstractClientPlayer, M> render = new ConcurrentHashMap<>();
-    private final Multimap<AbstractClientPlayer, Pair<M, Integer>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
-    private final ConcurrentHashMap<ResourceLocation, M> modelCache = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, ResourceLocation> urlLoaded = new ConcurrentHashMap<>();
-    //private final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> beingLoaded = new ConcurrentHashMap<>();
+    private static CustomModelManager modelManager;
+    private final ConcurrentHashMap<AbstractClientPlayer, CustomModelWrapper<?, ?>> render = new ConcurrentHashMap<>();
+    private final Multimap<AbstractClientPlayer, ObjectIntPair<CustomModelWrapper<?, ?>>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
+    private final ConcurrentHashMap<ResourceLocation, DynamicCustomModel<?, ?>> modelCache = new ConcurrentHashMap<>();
+    //private final ConcurrentHashMap<ResourceLocation, ModelLoadingState> beingLoaded = new ConcurrentHashMap<>();
+    private final Map<ResourceLocation, BuiltInCustomModel<?, ?>> builtInModels;
 
-    private CustomModelManager(){}
-
-    /**
-     * Should not be called before all registries are registered!
-     */
-    public static <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelManager<E, M> getInstance(){
-        if(modelManager == null) {
-            modelManager = new CustomModelManager<>();
-            ModLoader.postEvent(new LoadModelsToCacheEvent());
-        }
-        return (CustomModelManager<E, M>) modelManager;
+    private <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelManager(Map<ResourceLocation, Supplier<?>> modelSuppliers){
+        builtInModels = HashMap.newHashMap(modelSuppliers.size());
+        modelSuppliers.forEach((loc, supplier) ->
+                builtInModels.put(loc, new BuiltInCustomModel<>(loc, (Supplier<M>)supplier)));
     }
 
-    public Set<ResourceLocation> getRegisteredModels(){
-        return modelCache.keySet().stream().collect(Collectors.toUnmodifiableSet());
+    public static void init(){
+        if(modelManager != null) throw new IllegalStateException("CMM already initialized!");
+
+        Map<ResourceLocation, Supplier<?>> map = new HashMap<>();
+        ModLoader.postEvent(new RegisterBuiltInModelsEvent(map));
+        modelManager = new CustomModelManager(map);
+    }
+
+    /**
+     * Should not be called before FMLClientSetup!
+     */
+    public static CustomModelManager getInstance(){
+        if(modelManager == null) throw new IllegalStateException("CMM not initialized!");
+        return modelManager;
+    }
+
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(@NotNull ResourceLocation location){
+        CustomModelWrapper<E, M> wrapper = getModelWrapper(location);
+        return wrapper != null ? wrapper.getModel() : null;
+    }
+
+    private <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelWrapper<E, M> getModelWrapper(@NotNull ResourceLocation location){
+        BuiltInCustomModel<E, M> builtIn = (BuiltInCustomModel<E, M>) builtInModels.get(location);
+
+        if(builtIn != null) return builtIn;
+
+        return (CustomModelWrapper<E, M>) modelCache.get(location);
+    }
+
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(@NotNull AbstractClientPlayer player){
+        return (M) render.get(player).getModel();
     }
 
     public Set<ResourceLocation> getQueuedModels(AbstractClientPlayer player){
         if(!modelQueue.containsKey(player)) return Set.of();
-        List<M> models = new ArrayList<>();
-        modelQueue.get(player).forEach(pair -> models.add(pair.getKey()));
+
         List<ResourceLocation> ids = new ArrayList<>();
-        modelCache.forEach((key, value) -> {
-            if (models.contains(value)) ids.add(key);
-        });
+        modelQueue.get(player).forEach(pair -> ids.add(pair.key().getModelId()));
+
         return Set.copyOf(ids);
     }
 
@@ -66,214 +82,80 @@ public class CustomModelManager <E extends LivingEntity, M extends EntityModel<E
         return render.containsKey(player);
     }
 
-    public @Nullable M getModel(@NotNull AbstractClientPlayer player){
-        return render.get(player);
+    public Set<ResourceLocation> getRegisteredModels(){//Optimize? extend Set & store an unmodifiable view inside? Will have to update the Set each time models are added/removed...
+        return Stream.concat(builtInModels.keySet().stream(), modelCache.keySet().stream()).collect(Collectors.toUnmodifiableSet());
     }
 
-    public void setLocalPlayerModel(@NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
-        if(Minecraft.getInstance().player == null) return;
-        setPlayerModel(Minecraft.getInstance().player, modelId, model, priority);
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setLocalPlayerModel(@NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
+        AbstractClientPlayer player = Minecraft.getInstance().player;
+        if(player != null) setPlayerModel(player, modelId, model, priority);
     }
 
-    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
-        if(!modelCache.containsKey(modelId) && model == null) throw new IllegalArgumentException("Model is not cached & supplier is null " + modelId);
-        M model1 = modelCache.computeIfAbsent(modelId, id -> model.get());
-        modelQueue.put(player, Pair.of(model1, priority));
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, @Nullable Supplier<M> modelSupplier, int priority){
+        CustomModelWrapper<E, M> wrapper = getModelWrapper(modelId);
+        if(wrapper == null) {
+            if(modelSupplier == null) throw new IllegalArgumentException("Model is not cached & supplier is null " + modelId);
+            M model = modelSupplier.get();//TODO use Supplier<CustomModelWrapper> instead? or use CompletableFuture<M>  Or add separate method to handle loading the model from bytes
+            if(model == null) throw new IllegalStateException("null model returned by supplier");
+            wrapper = new DynamicCustomModel<>(modelId, model);
+            modelCache.put(modelId, (DynamicCustomModel<E, M>)wrapper);
+        }
+        modelQueue.put(player, ObjectIntPair.of(wrapper, priority));
         recalculatePlayerModel(player);
-    }
-
-    public void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull UniversalCustomModel<?>> func, int priority){
-        if(urlLoaded.containsKey(url)){
-            setPlayerModel(player, urlLoaded.get(url), null, priority);
-        } else throw new UnsupportedOperationException("Model loading not implemented");
-
-            //loadModel(url, func).whenComplete((modelId, err) -> setPlayerModel(player, modelId, null, priority));
     }
 
     public void removeLocalPlayerModel(@NotNull ResourceLocation modelId){
-        if(Minecraft.getInstance().player == null) return;
-        removePlayerModel(Minecraft.getInstance().player, modelId);
-    }
-
-    public void removeLocalPlayerModel(@NotNull String url){
-        if(Minecraft.getInstance().player == null || !urlLoaded.containsKey(url)) return;
-        removePlayerModel(Minecraft.getInstance().player, urlLoaded.get(url));
-    }
-
-    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull String url){
-        if(!urlLoaded.containsKey(url)) return;
-        removePlayerModel(player, urlLoaded.get(url));
+        AbstractClientPlayer player = Minecraft.getInstance().player;
+        if(player != null) removePlayerModel(player, modelId);
     }
 
     public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
-        if(!modelCache.containsKey(modelId)) return;
-        M model = modelCache.get(modelId);
-        if(render.get(player) == model) render.remove(player);
-        synchronized (modelQueue){
-            modelQueue.get(player).removeIf(pair -> pair.getKey() == model);
+        CustomModelWrapper<?, ?> pair = render.get(player);
+        if(pair == null) return;//No models queued for player.
+
+        boolean recalculate = false;
+        if(pair.getModelId() == modelId) {
+            render.remove(player);
+            recalculate = true;
         }
-        recalculatePlayerModel(player);
+        synchronized (modelQueue){
+            recalculate = modelQueue.get(player).removeIf(pair1 -> pair1.key().getModelId() == modelId)
+                    || recalculate;
+        }
+        if(recalculate) recalculatePlayerModel(player);
+    }
+
+    public void unloadPlayer(@NotNull AbstractClientPlayer player){
+        render.remove(player);
+        modelQueue.removeAll(player);
     }
 
     public void recalculatePlayerModel(@NotNull AbstractClientPlayer player){
         if(!modelQueue.containsKey(player)) return;
         int priority = Integer.MIN_VALUE;
-        M model = null;
-        for(Pair<M, Integer> pair : modelQueue.get(player)){
-            if(pair.getValue() <= priority) continue;
-            model = pair.getKey();
-            priority = pair.getValue();
+        CustomModelWrapper<?, ?> model = null;
+        for(ObjectIntPair<CustomModelWrapper<?, ?>> pair : modelQueue.get(player)){
+            if(pair.valueInt() <= priority) continue;
+            model = pair.key();
+            priority = pair.valueInt();
         }
         assert model != null;
         render.put(player, model);
     }
 
-    public void registerModel(@NotNull ResourceLocation modelId, @NotNull M model){
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void registerDynamicModel(@NotNull ResourceLocation modelId, @NotNull M model){
         if(modelCache.containsKey(modelId)) return;
-        modelCache.put(modelId, model);
-    }
-
-    /*public CompletableFuture<ResourceLocation> loadModel(@NotNull String url, @NotNull BiFunction<ModelPart, ResourceLocation, @NotNull CustomHumanoidModel<?>> func) {
-        if(urlLoaded.containsKey(url)) return CompletableFuture.supplyAsync(() -> urlLoaded.get(url));
-        if(beingLoaded.containsKey(url)) return beingLoaded.get(url);
-
-        CompletableFuture<ResourceLocation> future = CompletableFuture.supplyAsync(()-> {
-            try {
-                URL link = new URL("https://raw.githubusercontent.com/0SeNiA0/special_tf_models/main/" + url + ".ccm");
-                HttpsURLConnection connection = (HttpsURLConnection) link.openConnection();
-                if(connection.getResponseCode() == 404) throw new FileNotFoundException();
-                InputStream in = connection.getInputStream();
-                byte[] bytes = in.readAllBytes();
-                in.close();
-                FriendlierByteBuf buf = new FriendlierByteBuf(Unpooled.wrappedBuffer(bytes));
-
-                ResourceLocation modelId = buf.readResourceLocation();
-                ModelDefinition.Builder modelBuilder = new ModelDefinition.Builder();
-
-                HashMap<String, GroupDefinition> groups = new HashMap<>();
-                groups.put("groupDefinition", modelBuilder.getRoot());
-
-                String name, parent;
-                GroupBuilder groupBuilder;
-                GroupDefinition group;
-                float[] ar0, ar1, ar2, ar3;
-                char c;
-                while(buf.peekChar() != '!') {  // '!' end of model def
-                    name = buf.readUtf();
-                    parent = buf.readUtf();
-
-                    groupBuilder = GroupBuilder.create();
-
-                    ar2 = FloatArrays.EMPTY_ARRAY;
-                    ar3 = FloatArrays.EMPTY_ARRAY;
-                    c = buf.readChar();
-                    if(c == 'o'){
-                        ar2 = buf.readFloatArray();
-                        c = buf.readChar();
-                    }
-                    if(c == 'r'){
-                        ar3 = buf.readFloatArray();
-                        c = buf.readChar();
-                    }
-
-                    Vector3f inflation;
-                    boolean smooth;
-                    while (c != ';') {//  ';' at the end of group definition!
-                        switch (c) {
-                            case 'a' -> groupBuilder.armor();
-                            case 'g' -> groupBuilder.glowing();
-                            case 'c' -> {
-                                ar0 = buf.readFloatArray();
-                                c = buf.readChar();
-
-                                if (c == 'i') {
-                                    inflation = new Vector3f(buf.readFloat());
-                                    c = buf.readChar();
-                                } else inflation = null;
-
-                                CubeUV uv = new CubeUV();
-                                while (c == 'n' || c == 's' || c == 'w' || c == 'e' || c == 'u' || c == 'd') {
-                                    ar1 = buf.readFloatArray();
-                                    if (c == 'n') uv.north(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    if (c == 's') uv.south(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    if (c == 'w') uv.west(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    if (c == 'e') uv.east(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    if (c == 'u') uv.up(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    if (c == 'd') uv.down(ar1[0], ar1[1], ar1[2], ar1[3]);
-                                    c = buf.readChar();
-                                }
-                                buf.unreadChar();
-
-                                if (inflation != null)
-                                    groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], inflation, uv);
-                                else groupBuilder.addBox(ar0[0], ar0[1], ar0[2], ar0[3], ar0[4], ar0[5], uv);
-                            }
-                            case 'm' -> {
-                                if(buf.peekChar() == 's'){
-                                    smooth = true;
-                                    buf.skipChar();
-                                } else smooth = false;
-                                groupBuilder.addMesh(buf.readFloatArray(), buf.readFloatArray(), smooth);
-                            }
-                        }
-                        c = buf.readChar();
-                    }
-                    group = groups.get(parent);
-                    if(ar2.length == 3 && ar3.length == 3){
-                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.offsetAndRotation(ar2[0], ar2[1], ar2[2], ar3[0], ar3[1], ar3[2]));
-                    } else if(ar2.length == 3) {
-                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.offset(ar2[0], ar2[1], ar2[2]));
-                    } else if(ar3.length == 3) {
-                        group = group.addOrReplaceChild(name, groupBuilder, PartPose.rotation(ar3[0], ar3[1], ar3[2]));
-                    } else group = group.addOrReplaceChild(name, groupBuilder);
-
-                    groups.put(name, group);
-                }
-                buf.skipChar();
-
-                CustomHumanoidModel<?> model = func.apply(ModelDefinition.create(modelBuilder, buf.readVarInt(), buf.readVarInt(), buf.readFloat()).bake(), modelId);
-
-                byte[] textureBytes = new byte[buf.readableBytes()];
-                buf.readBytes(textureBytes);
-                buf.release();
-
-                Minecraft.getInstance().getTextureManager().register(model.getTexture(),
-                        new DynamicTexture(NativeImage.read(textureBytes)));
-
-                modelCache.put(modelId, model);
-                urlLoaded.put(url, modelId);
-                beingLoaded.remove(url);
-                return modelId;
-            } catch (IOException e){//TODO silence errors if no internet?
-                throw new RuntimeException(e);
-            }
-        }).exceptionally(err -> {
-            if(!(err.getCause().getCause() instanceof FileNotFoundException)){
-                AChanged.LOGGER.error("Error occurred while loading model from {}", url);
-                err.printStackTrace();
-            }
-            beingLoaded.remove(url);
-            return null;
-        });
-        beingLoaded.put(url, future);
-        return future;
-    }*/
-
-    public void resetPlayerModels(@NotNull AbstractClientPlayer player){
-        render.remove(player);
-        modelQueue.removeAll(player);
+        modelCache.put(modelId, new DynamicCustomModel<>(modelId, model));
     }
 
     public void unloadModel(@NotNull ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
-        M model = modelCache.remove(modelId);
-
-        render.values().removeIf(model1 -> model1 == model);
-        synchronized (modelQueue){
-            modelQueue.values().removeIf(pair -> pair.getKey() == model);
-        }
-        urlLoaded.values().removeIf(id -> id == modelId);
         modelCache.remove(modelId);
+
+        render.values().removeIf(model1 -> model1.getModelId() == modelId);
+        synchronized (modelQueue){
+            modelQueue.values().removeIf(pair -> pair.key().getModelId() == modelId);
+        }
 
         modelQueue.keys().forEach(this::recalculatePlayerModel);
     }
@@ -282,6 +164,57 @@ public class CustomModelManager <E extends LivingEntity, M extends EntityModel<E
         render.clear();
         modelQueue.clear();
         modelCache.clear();
-        urlLoaded.clear();
+    }
+
+    interface CustomModelWrapper <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>>{
+
+        @NotNull ResourceLocation getModelId();
+
+        M getModel();
+    }
+
+    static class DynamicCustomModel <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements CustomModelWrapper<E, M> {
+        private final ResourceLocation location;
+        private final M model;
+
+        public DynamicCustomModel(@NotNull ResourceLocation location, @NotNull M model){
+            this.location = location;
+            this.model = model;
+        }
+
+        @Override
+        public @NotNull ResourceLocation getModelId() {
+            return location;
+        }
+
+        @Override
+        public M getModel() {
+            return model;
+        }
+    }
+
+    static class BuiltInCustomModel <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements CustomModelWrapper<E, M>{
+        private final ResourceLocation location;
+        private final Supplier<M> modelSupplier;
+        private M model;
+
+        public BuiltInCustomModel(ResourceLocation location, Supplier<M> modelSupplier){
+            this.location = location;
+            this.modelSupplier = modelSupplier;
+        }
+
+        @Override
+        public @NotNull ResourceLocation getModelId() {
+            return location;
+        }
+
+        public M getModel(){
+            if(model == null) model = modelSupplier.get();
+            return model;
+        }
+
+        public void rebuild(){
+            model = null;
+        }
     }
 }

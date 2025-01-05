@@ -44,6 +44,9 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
 
         add(BENIGN.get(), new LootTable.Builder());
 
+        add(DARK_LATEX_PUP.get(), new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(latex(false))));
         add(DARK_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));

@@ -8,7 +8,7 @@ import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
 import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
 import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.event.custom.RegisterModelDefinitionsEvent;
+import net.zaharenko424.a_changed.client.cmrs.event.RegisterModelDefinitionsEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -17,8 +17,18 @@ import java.util.NoSuchElementException;
 @ParametersAreNonnullByDefault
 public final class ModelDefinitionCache {
 
-    public static final ModelDefinitionCache INSTANCE = new ModelDefinitionCache();
+    private static ModelDefinitionCache instance;
     private final HashMap<ModelLayerLocation, ModelDefinition> modelCache = new HashMap<>();
+
+    public static void init(){
+        if(instance != null) throw new IllegalStateException("ModelDefinitionCache already initialized!");
+        instance = new ModelDefinitionCache();
+    }
+
+    public static ModelDefinitionCache getInstance() {
+        if(instance == null) throw new IllegalStateException("ModelDefinitionCache not initialized!");
+        return instance;
+    }
 
     private ModelDefinitionCache(){
         modelCache.put(CannedOrangesRenderer.LAYER, CannedOrangesRenderer.bodyLayer());
@@ -37,6 +47,9 @@ public final class ModelDefinitionCache {
         modelCache.put(RoombaModel.bodyLayer, RoombaModel.bodyLayer());
 
         modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.model());
+
+        modelCache.put(DarkLatexPupModel.bodyLayer, DarkLatexPupModel.model());
+        modelCache.put(DLPupMoltenModel.bodyLayer, DLPupMoltenModel.model());
 
         modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.model());
 

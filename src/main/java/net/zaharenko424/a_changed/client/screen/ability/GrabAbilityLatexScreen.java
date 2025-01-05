@@ -49,7 +49,7 @@ public class GrabAbilityLatexScreen extends AbstractRadialMenuScreen {
 
     @Override
     protected void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button) {
-        guiGraphics.blit(grabMode.get(button).texture, x, y, 0, 0, 32, 32, 32, 32);
+        guiGraphics.blit(grabMode.get(button).texture, x, y, 32, 32, 0, 0, 64, 64, 64, 64);
     }
 
     @Override

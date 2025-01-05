@@ -23,7 +23,7 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
     private final ModelPart fluid;
 
     public CryoChamberRenderer(){
-        fluid = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("fluid");
+        fluid = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("fluid");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

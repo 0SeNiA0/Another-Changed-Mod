@@ -27,6 +27,7 @@
   "attribute.a_changed.air_decrease_speed": "Air Decrease Speed",
 
   "block.a_changed.air_conditioner": "Air Conditioner",
+  "block.a_changed.backup_power_generator": "Backup Power Generator",
   "block.a_changed.big_lab_door": "Big Lab Door",
   "block.a_changed.big_lab_lamp": "Big Lab Lamp",
   "block.a_changed.big_library_door": "Big Library Door",
@@ -175,6 +176,7 @@
 
   "entity.a_changed.bei_feng": "Bei Feng",
   "entity.a_changed.benign": "Benign",
+  "entity.a_changed.dark_latex_pup": "Dark Latex Pup",
   "entity.a_changed.dark_latex_wolf_female": "Dark Latex Wolf Female",
   "entity.a_changed.dark_latex_wolf_male": "Dark Latex Wolf Male",
   "entity.a_changed.gas_wolf": "Gas Wolf",
@@ -196,7 +198,7 @@
   "gamerule.transfurIsDeath": "Kill player if it is transfurred (ignores chooseTransfurOrDie)",
 
   "key.a_changed.ability_key": "Ability key",
-  "key.a_changed.ability_selection": "Ability selection menu/ability menu (in some cases)",
+  "key.a_changed.ability_selection": "Ability selection menu / Ability menu",
   "key.a_changed.quick_select_ability_1": "Quick select first active ability",
   "key.a_changed.quick_select_ability_2": "Quick select second active ability",
   "key.a_changed.quick_select_ability_3": "Quick select third active ability",
@@ -251,6 +253,7 @@
 
   "item.a_changed.bei_feng_spawn_egg": "Bei Feng Spawn Egg",
   "item.a_changed.benign_spawn_egg": "Benign Spawn Egg",
+  "item.a_changed.dark_latex_pup_spawn_egg": "Dark Latex Pup Spawn Egg",
   "item.a_changed.dark_latex_wolf_female_spawn_egg": "Dark Latex Wolf Female Spawn Egg",
   "item.a_changed.dark_latex_wolf_male_spawn_egg": "Dark Latex Wolf Male Spawn Egg",
   "item.a_changed.gas_wolf_spawn_egg": "Gas Wolf Spawn Egg",
@@ -319,6 +322,7 @@
 
   "transfur.a_changed.bei_feng": "bei feng",
   "transfur.a_changed.benign": "benign",
+  "transfur.a_changed.dark_latex_pup": "dark latex pup",
   "transfur.a_changed.dark_latex_wolf_female": "dark latex wolf female",
   "transfur.a_changed.dark_latex_wolf_male": "dark latex wolf male",
   "transfur.a_changed.gas_wolf": "gas wolf",

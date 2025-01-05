@@ -3,7 +3,6 @@ package net.zaharenko424.a_changed.event;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -133,6 +132,9 @@ public class CommonMod {
                 new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 4), ItemRegistry.SYRINGE_COIL_GUN);
 
         //BlockEntity
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BlockEntityRegistry.BACKUP_GENERATOR_ENTITY.get(), (machine, side) ->
+                machine.getCapability(Capabilities.EnergyStorage.BLOCK, side));
+
         registerMachineEntityCaps(event, BlockEntityRegistry.CAPACITOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.COMPRESSOR_ENTITY.get());
         registerMachineEntityCaps(event, BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get());
@@ -163,6 +165,7 @@ public class CommonMod {
 
         event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
         event.put(BENIGN.get(), LatexBeast.createAttributes().build());
+        event.put(DARK_LATEX_PUP.get(), DarkLatexPup.createAttributes().build());
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
         event.put(GAS_WOLF.get(), LatexBeast.createAttributes().build());

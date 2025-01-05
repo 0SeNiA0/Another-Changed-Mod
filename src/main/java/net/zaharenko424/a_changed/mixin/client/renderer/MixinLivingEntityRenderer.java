@@ -17,10 +17,11 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
@@ -90,6 +91,14 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         a_changed$tmp[2] = ageInTicks;
         a_changed$tmp[3] = netHeadYaw;
         a_changed$tmp[4] = headPitch;
+    }
+
+    @WrapWithCondition(at = @At(value = "INVOKE", target = "net/minecraft/client/model/EntityModel.setupAnim(Lnet/minecraft/world/entity/Entity;FFFFF)V"),
+            method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
+    private boolean onSetupAnim(M instance, Entity t, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, @Local(argsOnly = true) PoseStack poseStack){
+        if(!(model instanceof CustomModel<?>)) return true;
+        ((CustomModel<T>)model).setupAnim((T) t, poseStack, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        return false;
     }
     
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;getRenderType(Lnet/minecraft/world/entity/LivingEntity;ZZZ)Lnet/minecraft/client/renderer/RenderType;"),

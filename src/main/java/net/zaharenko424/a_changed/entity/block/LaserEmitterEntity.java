@@ -71,23 +71,24 @@ public class LaserEmitterEntity extends BlockEntity {
         if(tick < 10) return;
         tick = 0;
 
-        directionCache = getBlockState().getValue(LaserEmitter.FACING);
+        Direction direction = getBlockState().getValue(LaserEmitter.FACING);
         BlockPos.MutableBlockPos pos = worldPosition.mutable();
         BlockState state;
         int length = 0;
 
         while (length <= 20){
-            pos.move(directionCache);
+            pos.move(direction);
             state = level.getBlockState(pos);
             if(!state.is(AChanged.LASER_TRANSPARENT)) break;
             length++;
         }
 
-        if(lengthCache == length){
+        if(lengthCache == length && direction == directionCache){
             transfurEntities();
             return;
         }
         lengthCache = length;
+        directionCache = direction;
 
         float halfLength = (float) length / 2;
         Vector3f step = directionCache.step();

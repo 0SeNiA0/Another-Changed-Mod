@@ -15,11 +15,12 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
 import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.MemorizingSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class TransfurType {
 
@@ -48,7 +48,7 @@ public abstract class TransfurType {
      */
     public final List<? extends Ability> abilities;
 
-    public TransfurType(@NotNull Properties properties, @Nullable MemorizingSupplier<UniversalCustomModel<LivingEntity>> modelSupplier){
+    public TransfurType(@NotNull Properties properties){
         id = properties.location;
         latex = properties.latex;
         primaryColor = properties.primaryColor;
@@ -66,14 +66,29 @@ public abstract class TransfurType {
             if(active0 == active1) return 0;
             return active0 ? -1 : 1;
         }).toList();
-
-        this.modelSupplier = modelSupplier;
     }
 
-    public final Supplier<UniversalCustomModel<LivingEntity>> modelSupplier;
+    /**
+     * Called during FMLClientSetup to register builtIn model suppliers for CustomModelManager
+     */
+    public abstract void registerModels(@NotNull RegisterBuiltInModelsEvent event);
 
-    public final UniversalCustomModel<LivingEntity> getModel(){
-        return modelSupplier.get();
+    public UniversalCustomModel<LivingEntity> getDefaultModel(){
+        return CustomModelManager.getInstance().getModel(id);
+    }
+
+    /**
+     * @param entity Transfurred entity.
+     * @return ID of the model to render(must be registered to CustomModelManager)
+     */
+    public @Nullable ResourceLocation getModelIdFor(@NotNull LivingEntity entity){
+        return id;
+    }
+
+    public @Nullable UniversalCustomModel<LivingEntity> getModelFor(@NotNull LivingEntity entity){
+        ResourceLocation modelId = getModelIdFor(entity);
+        if(modelId == null) return null;
+        return CustomModelManager.getInstance().getModel(modelId);
     }
 
     public int getPrimaryColor(){
@@ -84,9 +99,9 @@ public abstract class TransfurType {
         return secondaryColor;
     }
 
-    public EntityDimensions getPoseDimensions(Pose pose){
-        if(dimensions.isEmpty() || !dimensions.containsKey(pose)) return EntityDimensions.scalable(.6f, 1.9f);
-        return dimensions.get(pose);
+    public @Nullable EntityDimensions getPoseDimensions(@NotNull LivingEntity entity, @NotNull Pose pose){
+        if(dimensions.isEmpty() || !dimensions.containsKey(pose)) return null;
+        return dimensions.get(pose).scale(entity.getAgeScale());
     }
 
     public Gender getGender(){
@@ -97,11 +112,11 @@ public abstract class TransfurType {
         return organic;
     }
 
-    public void onTransfur(LivingEntity entity){
+    public void onTransfur(@NotNull LivingEntity entity){
         if(onTransfur != null) onTransfur.accept(entity);
     }
 
-    public void onUnTransfur(LivingEntity entity){
+    public void onUnTransfur(@NotNull LivingEntity entity){
         if(onUnTransfur != null) onUnTransfur.accept(entity);
     }
 
@@ -111,7 +126,7 @@ public abstract class TransfurType {
 
     @Override
     public String toString() {
-        return id.toString();
+        return "TransfurType: " + id.toString();
     }
 
     public static class Properties {
@@ -252,11 +267,18 @@ public abstract class TransfurType {
             return this;
         }
 
-        public Properties addAbility(DeferredHolder<Ability, ? extends Ability> ability, int index){
+        public Properties addAbilityBefore(DeferredHolder<Ability, ? extends Ability> before, DeferredHolder<Ability, ? extends Ability> ability){
             if(abilities.size() == TransfurManager.MAX_ABILITIES || abilities.contains(ability)) return this;
-            if(index > abilities.size()) {
-                abilities.add(ability);
-            } else abilities.add(index, ability);
+            int index = abilities.indexOf(before);
+            if(index < 1) index = 0; else index--;
+            abilities.add(index, ability);
+            return this;
+        }
+
+        public Properties addAbilityAfter(DeferredHolder<Ability, ? extends Ability> after, DeferredHolder<Ability, ? extends Ability> ability){
+            if(abilities.size() == TransfurManager.MAX_ABILITIES || abilities.contains(ability)) return this;
+            int index = abilities.indexOf(after) + 1;
+            abilities.add(index, ability);
             return this;
         }
 

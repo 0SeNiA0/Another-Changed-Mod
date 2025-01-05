@@ -53,12 +53,12 @@ public class GrabAbility implements Ability {
         GrabData holderData = getAbilityData(player);
         if(TransfurManager.isTransfurred(player)) {
             if(holderData.isActivated())
-                graphics.blit(HypnosisAbility.activated, x - 8, y - 8, 0, 0, 48, 48, 48, 48);
+                graphics.blit(HypnosisAbility.activated, x - 16, y - 16, 0, 0, 0, 64, 64, 64, 64);
             graphics.blit(holderData.getMode().texture,
-                    x, y, 0, 0, 32, 32, 32, 32);
+                    x, y, 32, 32, 0, 0, 64, 64, 64, 64);
         } else {
             graphics.blit(holderData.wantsToBeGrabbed() ? GrabAbilityPlayerScreen.yes : GrabAbilityPlayerScreen.nope,
-                    x, y, 0, 0, 32, 32, 32, 32);
+                    x, y, 32, 32, 0, 0, 64, 64, 64, 64);
         }
     }
 

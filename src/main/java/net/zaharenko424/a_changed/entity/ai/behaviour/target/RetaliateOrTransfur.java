@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
@@ -23,9 +22,9 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E> {
+public class RetaliateOrTransfur<E extends AbstractLatexBeast> extends ExtendedBehaviour<E> {
 
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.HURT_BY, MemoryStatus.VALUE_PRESENT));
+    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT));
 
     protected Predicate<LivingEntity> canAttackPredicate = entity -> entity.isAlive() && (!(entity instanceof Player player) || !player.isCreative());
     protected BiPredicate<E, Entity> alertAlliesPredicate = (owner, attacker) -> false;
@@ -42,14 +41,14 @@ public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E
     };
 
     protected LivingEntity toTarget = null;
-    protected MemoryModuleType<? extends LivingEntity> priorityTargetMemory = MemoryModuleType.NEAREST_ATTACKABLE;
+    protected MemoryModuleType<? extends LivingEntity> priorityTargetMemory = MemoryModuleType.HURT_BY_ENTITY;
 
     /**
      * Set the predicate to determine whether a given entity should be targeted or not.
      * @param predicate The predicate
      * @return this
      */
-    public Retaliate<E> attackablePredicate(Predicate<LivingEntity> predicate) {
+    public RetaliateOrTransfur<E> attackablePredicate(Predicate<LivingEntity> predicate) {
         this.canAttackPredicate = predicate;
 
         return this;
@@ -60,7 +59,7 @@ public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E
      * Useful for switching to player-only targeting
      * @return this
      */
-    public Retaliate<E> useMemory(MemoryModuleType<? extends LivingEntity> memory) {
+    public RetaliateOrTransfur<E> useMemory(MemoryModuleType<? extends LivingEntity> memory) {
         this.priorityTargetMemory = memory;
 
         return this;
@@ -71,7 +70,7 @@ public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E
      * @param predicate The predicate
      * @return this
      */
-    public Retaliate<E> alertAlliesWhen(BiPredicate<E, Entity> predicate) {
+    public RetaliateOrTransfur<E> alertAlliesWhen(BiPredicate<E, Entity> predicate) {
         this.alertAlliesPredicate = predicate;
 
         return this;
@@ -83,7 +82,7 @@ public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E
      * @param predicate The predicate
      * @return this
      */
-    public Retaliate<E> isAllyIf(BiPredicate<E, LivingEntity> predicate) {
+    public RetaliateOrTransfur<E> isAllyIf(BiPredicate<E, LivingEntity> predicate) {
         this.allyPredicate = predicate;
 
         return this;
@@ -95,20 +94,15 @@ public class Retaliate<E extends AbstractLatexBeast> extends ExtendedBehaviour<E
     }
 
     @Override
-    protected boolean checkExtraStartConditions(@NotNull ServerLevel level, E owner) {
-        Brain<?> brain = owner.getBrain();
-        this.toTarget = BrainUtils.getMemory(brain, this.priorityTargetMemory);
+    protected boolean checkExtraStartConditions(@NotNull ServerLevel level, @NotNull E owner) {
+        toTarget = BrainUtils.getMemory(owner, this.priorityTargetMemory);
 
-        if(priorityTargetMemory != MemoryModuleType.HURT_BY_ENTITY && this.toTarget == null) {
-            this.toTarget = BrainUtils.getMemory(brain, MemoryModuleType.HURT_BY_ENTITY);
-        }
-
-        if(this.toTarget == null) return false;
+        if(toTarget == null || !toTarget.isAlive() || toTarget.level() != level || !canAttackPredicate.test(toTarget)) return false;
 
         if(this.alertAlliesPredicate.test(owner, this.toTarget))
             alertAllies(level, owner);
 
-        return this.canAttackPredicate.test(this.toTarget);
+        return true;
     }
 
     @Override

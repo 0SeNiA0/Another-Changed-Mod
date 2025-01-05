@@ -18,14 +18,14 @@ import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -35,13 +35,12 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Latex entity contract -> result of getAllowedAbilities() should stay the same throughout the runtime.
  */
 @ParametersAreNonnullByDefault
-public abstract class AbstractLatexBeast extends Monster implements AbilityHolder {
+public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
 
     public final @NotNull TransfurType transfurType;
     protected Ability selectedAbility;
@@ -49,7 +48,11 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
-        dimensions = transfurType.getPoseDimensions(Pose.STANDING);
+        EntityDimensions dimensions = transfurType.getPoseDimensions(this, Pose.STANDING);
+        if(dimensions != null) {
+            this.dimensions = dimensions;
+            refreshDimensions();
+        }
 
         TransfurUtils.addModifiers(this, transfurType);
         transfurType.onTransfur(this);
@@ -71,13 +74,13 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     }
 
     @Override
-    public Ability getSelectedAbility() {
-        return selectedAbility;
+    public @NotNull TransfurType transfurType() {
+        return transfurType;
     }
 
     @Override
-    public @NotNull List<? extends Ability> getAllowedAbilities() {
-        return transfurType.abilities;
+    public Ability getSelectedAbility() {
+        return selectedAbility;
     }
 
     @Override
@@ -105,14 +108,15 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
 
     @Override
     public @NotNull EntityDimensions getDefaultDimensions(Pose pPose) {
-        return transfurType.getPoseDimensions(pPose);
+        EntityDimensions dimensions = transfurType.getPoseDimensions(this, pPose);
+        return dimensions != null ? dimensions : super.getDefaultDimensions(pPose);
     }
 
     @SuppressWarnings("unchecked")
     protected <E extends AbstractLatexBeast> FirstApplicableBehaviour<E> targetRetaliateLook(float lookRangeSqr){
         return new FirstApplicableBehaviour<>(
                 new TargetTransfurrable<E>().startCondition(latex -> !latex.transfurType.isOrganic()),
-                new Retaliate<>(),
+                new RetaliateOrTransfur<>(),
                 new OneRandomBehaviour<>(
                         new SetPlayerLookTarget<E>()
                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < lookRangeSqr)
@@ -133,7 +137,7 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
         return true;
     }
 
-    public void copyEquipment(LivingEntity copyFrom){
+    public void copyEquipment(@NotNull LivingEntity copyFrom){
         for(EquipmentSlot slot : EquipmentSlot.values()){
             if(!copyFrom.hasItemInSlot(slot)) continue;
             setItemSlot(slot, copyFrom.getItemBySlot(slot));

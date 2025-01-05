@@ -10,6 +10,7 @@ import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySyncPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Whoever modifies the data is responsible for its synchronisation!
@@ -59,7 +60,7 @@ public class HypnosisData implements AbilityData {
     }
 
     @Override
-    public void syncClient(ServerPlayer receiver) {
+    public void syncClient(@NotNull ServerPlayer receiver) {
         PacketDistributor.sendToPlayer(receiver, updatePacket());
     }
 
@@ -71,7 +72,7 @@ public class HypnosisData implements AbilityData {
     }
 
     @Override
-    public void fromPacket(FriendlyByteBuf packet) {
+    public void fromPacket(@NotNull FriendlyByteBuf packet) {
         //int id = packet.readVarInt();
         //hypnotisedBy = id == -1 ? null : !(holder.level().getEntity(id) instanceof LivingEntity living) ? null : living;
         activated = packet.readBoolean();

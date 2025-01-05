@@ -46,10 +46,11 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     @Override
     protected void registerStatesAndModels() {
         rotatedDoublePartBlock(AIR_CONDITIONER,null);
-        threeByThreeDoorWithItem(BIG_LAB_DOOR);
+        backupGenerator();
+        threeByThreeDoor(BIG_LAB_DOOR);
         rotatedDoublePartBlock(BIG_LAB_LAMP, null);
-        threeByThreeDoorWithItem(BIG_LIBRARY_DOOR);
-        threeByThreeDoorWithItem(BIG_MAINTENANCE_DOOR);
+        threeByThreeDoor(BIG_LIBRARY_DOOR);
+        threeByThreeDoor(BIG_MAINTENANCE_DOOR);
         blockWithItem(BLUE_LAB_BLOCK);
         blockWithItem(BLUE_LAB_TILE);
         slabWithItem(BLUE_LAB_TILE_SLAB, blockLoc(BLUE_LAB_TILE));
@@ -96,7 +97,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(LAB_BLOCK);
         slabWithItem(LAB_SLAB, blockLoc(LAB_BLOCK));
         stairsWithItem(LAB_STAIRS, blockLoc(LAB_BLOCK));
-        twoByTwoDoorWithItem(LAB_DOOR);
+        twoByTwoDoor(LAB_DOOR);
         allDirectionalBlockWithItem(LAB_LAMP);
         blockWithItem(LAB_TILE);
         slabWithItem(LAB_TILE_SLAB, blockLoc(LAB_TILE));
@@ -109,9 +110,9 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlockWithItem(LATEX_RESISTANT_GLASS.get(), models().cubeAll(LATEX_RESISTANT_GLASS.getId().getPath(), blockLoc(LATEX_RESISTANT_GLASS)).renderType("translucent"));
         paneBlockWithRenderType(LATEX_RESISTANT_GLASS_PANE.get(), blockLoc(LATEX_RESISTANT_GLASS), blockLoc(LATEX_RESISTANT_GLASS), "translucent");
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
-        twoByTwoDoorWithItem(LIBRARY_DOOR);
+        twoByTwoDoor(LIBRARY_DOOR);
         blockWithItem(LIGHT_BLUE_LAB_BLOCK);
-        twoByTwoDoorWithItem(MAINTENANCE_DOOR);
+        twoByTwoDoor(MAINTENANCE_DOOR);
         rotatedDoublePartBlock(METAL_BOX,null);
         metalCan(METAL_CAN);
         horizontalDirectionalBlockWithItem(BlockRegistry.NOTE);
@@ -506,14 +507,20 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                         + (state.getValue(CryoChamber.OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
     }
 
-    private void threeByThreeDoorWithItem(DeferredBlock<? extends Abstract3By3Door> block){
+    private void backupGenerator(){
+        DeferredBlock<BackupGenerator> block = BACKUP_GENERATOR;
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART9) + (state.getValue(ACTIVE) ? "_on" : ""))), state.getValue(HORIZONTAL_FACING)));
+    }
+
+    private void threeByThreeDoor(DeferredBlock<? extends Abstract3By3Door> block){
         ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART9) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
-
     }
 
-    private void twoByTwoDoorWithItem(DeferredBlock<? extends Abstract2By2Door> block){
+    private void twoByTwoDoor(DeferredBlock<? extends Abstract2By2Door> block){
         ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART4) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));

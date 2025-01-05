@@ -6,11 +6,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.ModelLayer;
+import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
+import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 
 public final class Glow implements ModelLayer {
 
@@ -44,7 +44,7 @@ public final class Glow implements ModelLayer {
     @Override
     public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access) {
         access.cmrs$startSubBatch();
-        Textures textures = model.getProperty(CustomModelRenderer.TEXTURES);//TODO add requiredProperties set?
+        Textures textures = model.getProperty(ModelPropertyRegistry.TEXTURES.get());//TODO add requiredProperties set?
 
         renderIdToTexture.forEach((renderId, textureId) -> {//forEach -> fastutil fastForEach
             Texture texture = textures.textureByIndex(textureId);

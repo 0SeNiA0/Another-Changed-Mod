@@ -50,6 +50,7 @@ public class BlockRegistry {
 
     //Blocks
     public static final DeferredBlock<AirConditioner> AIR_CONDITIONER = BLOCKS.register("air_conditioner", ()-> new AirConditioner(softMetal()));
+    public static final DeferredBlock<BackupGenerator> BACKUP_GENERATOR = BLOCKS.register("backup_power_generator", ()-> new BackupGenerator(hardMetal()));
     public static final DeferredBlock<BigLabDoor> BIG_LAB_DOOR = BLOCKS.register("big_lab_door", ()-> new BigLabDoor(bigDoorProperties()));
     public static final DeferredBlock<BigLabLamp> BIG_LAB_LAMP = BLOCKS.register("big_lab_lamp", ()-> new BigLabLamp(decorProperties().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<BigLibraryDoor> BIG_LIBRARY_DOOR = BLOCKS.register("big_library_door", ()-> new BigLibraryDoor(glassDoorProperties()));

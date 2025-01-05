@@ -28,7 +28,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     private final ModelPart beam;
 
     public LaserEmitterRenderer(){
-        beam = ModelDefinitionCache.INSTANCE.bake(LAYER).getDirectChild("beam");
+        beam = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("beam");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

@@ -32,6 +32,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.block.blocks.Note;
@@ -60,6 +62,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        DLPupAging.register(dispatcher);
         GiveDNASample.register(dispatcher);
         LatexGrabChance.register(dispatcher);
         Transfur.register(dispatcher);
@@ -91,7 +94,8 @@ public class CommonEvent {
         handler.syncClients();
         if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
 
-        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
+        Ability selected = handler.getSelectedAbility();
+        if(selected != null) selected.select(player);
 
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
@@ -102,7 +106,10 @@ public class CommonEvent {
         if(player.level().isClientSide) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().deactivate(player);
+        Ability selected = handler.getSelectedAbility();
+        if(selected == null) return;
+        selected.deactivate(player);
+        selected.unselect(player);
     }
 
     @SubscribeEvent
@@ -268,7 +275,11 @@ public class CommonEvent {
         TransfurHandler handler = TransfurHandler.of(target);
         if(handler != null) {
             handler.syncClient(player);
-            if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(target).syncClient(player);
+
+            Ability selected = handler.getSelectedAbility();
+            if(selected == null) return;
+            AbilityData data = selected.getAbilityData(target);
+            if(data != null) data.syncClient(player);
         }
     }
 
@@ -295,7 +306,9 @@ public class CommonEvent {
             public void run() {
                 TransfurHandler handler = TransfurHandler.nonNullOf(player);
                 handler.syncClients();
-                if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
+
+                Ability selected = handler.getSelectedAbility();
+                if(selected != null) selected.select(player);
             }
         },25);
     }

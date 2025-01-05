@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,9 +19,10 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -39,6 +41,14 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
 
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
+    }
+
+    @ModifyReturnValue(at = @At("RETURN"), method = "isBaby")
+    private boolean onIsBaby(boolean original){
+        if(self() instanceof Player player && TransfurManager.hasAbility(AbilityRegistry.DL_PUP_AGE, player)){
+            return AbilityRegistry.DL_PUP_AGE.get().getAbilityData(player).isBaby();
+        }
+        return original;
     }
 
     /**

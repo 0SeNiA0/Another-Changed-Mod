@@ -36,7 +36,7 @@ public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optiona
         return new TransfurTypePredicate(Optional.empty(), Optional.of(type));
     }
 
-    public enum Type {
+    public enum Type {//TODO replace with ability predicate?
         CAT(type -> type.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())),
         SWIMMING(type -> type.abilities.contains(AbilityRegistry.FISH_PASSIVE.get())),
         FLYING(type -> type.abilities.contains(AbilityRegistry.FALL_FLYING_PASSIVE.get()));

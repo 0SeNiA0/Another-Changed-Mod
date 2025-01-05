@@ -34,6 +34,10 @@ public class TransfurRegistry {
                         entity.addEffect(unremovableBlindness);
                     }).onUnTransfur(entity -> entity.removeEffect(MobEffects.BLINDNESS)).colors(-14211289, -14803426)));
 
+    public static final DeferredHolder<TransfurType, DarkLatexPup> DARK_LATEX_PUP_TF = TRANSFUR_TYPES
+            .register("dark_latex_pup", ()-> new DarkLatexPup(TransfurType.Properties
+                    .of(resourceLoc("dark_latex_pup"), Latex.DARK)));
+
     public static final DeferredHolder<TransfurType, LatexWolf> DARK_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("dark_latex_wolf_female", ()-> new LatexWolf(TransfurType.Properties
                     .of(resourceLoc("dark_latex_wolf_female"), Latex.DARK).gender(Gender.FEMALE).colors(-13686230, -14146010)));

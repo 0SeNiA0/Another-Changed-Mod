@@ -30,6 +30,7 @@ public class ItemRegistry {
 
     //BlockItems
     public static final DeferredItem<BlockItem> AIR_CONDITIONER_ITEM = ITEMS.registerSimpleBlockItem(AIR_CONDITIONER);
+    public static final DeferredItem<BlockItem> BACKUP_GENERATOR_ITEM = ITEMS.registerSimpleBlockItem(BACKUP_GENERATOR);
     public static final DeferredItem<BlockItem> BIG_LAB_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_DOOR);
     public static final DeferredItem<BlockItem> BIG_LAB_LAMP_ITEM = ITEMS.registerSimpleBlockItem(BIG_LAB_LAMP);
     public static final DeferredItem<BlockItem> BIG_LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(BIG_LIBRARY_DOOR);

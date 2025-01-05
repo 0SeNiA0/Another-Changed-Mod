@@ -21,9 +21,11 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.criterion.TransfurTrigger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -139,5 +141,7 @@ public class AChanged {
         PARTICLE_TYPES.register(modEventBus);
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
+
+        if(FMLEnvironment.dist.isClient()) ModelPropertyRegistry.PROPERTIES.register(modEventBus);//Server doesn't crash
     }
 }

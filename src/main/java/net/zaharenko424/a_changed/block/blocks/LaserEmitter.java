@@ -3,17 +3,24 @@ package net.zaharenko424.a_changed.block.blocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.zaharenko424.a_changed.block.machines.Wrenchable;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static net.zaharenko424.a_changed.util.StateProperties.ACTIVE;
 
 @ParametersAreNonnullByDefault
-public class LaserEmitter extends DirectionalBlock implements EntityBlock {
+public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenchable {
 
     public LaserEmitter(Properties p_52591_) {
         super(p_52591_);
@@ -40,6 +47,16 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
         return new LaserEmitterEntity(p_153215_, p_153216_);
+    }
+
+    @Override
+    public @NotNull InteractionResult useWrenchOn(BlockState state, BlockPos pos, ServerLevel level, @NotNull UseOnContext context) {
+        Player player = context.getPlayer();
+        if(player != null && player.isCrouching()){
+            level.removeBlock(pos, false);
+            ItemHandlerHelper.giveItemToPlayer(player, asItem().getDefaultInstance());
+        } else rotate(state, level, pos, Rotation.CLOCKWISE_90);
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable

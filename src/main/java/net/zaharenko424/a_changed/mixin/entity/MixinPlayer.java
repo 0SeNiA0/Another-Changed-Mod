@@ -53,8 +53,9 @@ public abstract class MixinPlayer extends LivingEntity {
     @ModifyReturnValue(at = @At("RETURN"), method = "getDefaultDimensions")
     private EntityDimensions onGetDimensions(EntityDimensions original, Pose pose) {
         TransfurHandler handler = TransfurHandler.of(this);
-        if(handler != null && handler.isTransfurred()) return handler.getTransfurType().getPoseDimensions(pose);
-        return original;
+        EntityDimensions dimensions = null;
+        if(handler != null && handler.isTransfurred()) dimensions = handler.getTransfurType().getPoseDimensions(self(), pose);
+        return dimensions != null ? dimensions : original;
     }
 
     /**

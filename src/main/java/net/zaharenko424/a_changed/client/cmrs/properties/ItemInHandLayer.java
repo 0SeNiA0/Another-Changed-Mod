@@ -14,45 +14,55 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.model.PartTransform;
-import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
+import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
+import net.zaharenko424.a_changed.util.CodecUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class Armed implements RenderLayerLike {
+public final class ItemInHandLayer implements RenderLayerLike {
 //absolute translate, rotate, scale for now(not additive)
-    public static final StreamCodec<FriendlyByteBuf, Armed> CODEC = StreamCodec.composite(
-        ByteBufCodecs.STRING_UTF8, armed -> armed.armR,
-        PoseTransform.CODEC, armed -> armed.transformR,
-        PartTransform.CODEC, armed -> armed.transformRFP,
-        ByteBufCodecs.STRING_UTF8, armed -> armed.armL,
-        PoseTransform.CODEC, armed -> armed.transformL,
-        PartTransform.CODEC, armed -> armed.transformRFP,
-        Armed::new
-    );
+    public static final StreamCodec<FriendlyByteBuf, ItemInHandLayer> CODEC = StreamCodec.of((buffer, itemInHand) -> {
+            CodecUtils.writeOptionally(itemInHand.armR, itemInHand.armR != null, buffer, ByteBufCodecs.STRING_UTF8);
+            CodecUtils.writeOptionally(itemInHand.transformR, !itemInHand.transformR.isEmpty(), buffer, PoseTransform.CODEC);
+            CodecUtils.writeOptionally(itemInHand.armL, itemInHand.armL != null, buffer, ByteBufCodecs.STRING_UTF8);
+            CodecUtils.writeOptionally(itemInHand.transformL, !itemInHand.transformL.isEmpty(), buffer, PoseTransform.CODEC);
+            CodecUtils.writeOptionally(itemInHand.headOverride, itemInHand.headOverride != null, buffer, ByteBufCodecs.STRING_UTF8);
+        }, buffer -> {
+            String armR = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+            PoseTransform transformR = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            String armL = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+            PoseTransform transformL = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            return new ItemInHandLayer(armR, transformR, armL, transformL, CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8));
+    });
 
     private String armR;
     private final PoseTransform transformR;//TODO switch to modifying the modelPart instead?
-    private final PartTransform transformRFP;//first person
     private String armL;
     private final PoseTransform transformL;
-    private final PartTransform transformLFP;//first person
+    //Set to empty or unused string to cancel the spyglass rendering
+    private String headOverride;
     private final ItemInHandRenderer renderer = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
 
-    public Armed(@NotNull String armR, @NotNull PoseTransform transformR, @NotNull PartTransform transformRFP, @NotNull String armL, @NotNull PoseTransform transformL, @NotNull PartTransform transformLFP){
+    public ItemInHandLayer(@Nullable String armR, @Nullable PoseTransform transformR, @Nullable String armL, @Nullable PoseTransform transformL){
+        this(armR, transformR, armL, transformL, null);
+    }
+
+    public ItemInHandLayer(@Nullable String armR, @Nullable PoseTransform transformR, @Nullable String armL, @Nullable PoseTransform transformL, @Nullable String headOverride){
         this.armR = armR;
-        this.transformR = transformR;
-        this.transformRFP = transformRFP;
+        this.transformR = transformR == null ? new PoseTransform(null, null, null) : transformR;
         this.armL = armL;
-        this.transformL = transformL;
-        this.transformLFP = transformLFP;
+        this.transformL = transformL == null ? new PoseTransform(null, null, null) : transformL;
+        this.headOverride = headOverride;
     }
 
     public ModelPart getArm(CustomModel<?> model, HumanoidArm arm){
-        return model.getPart(arm == HumanoidArm.RIGHT ? armR : armL);
+        String target = arm == HumanoidArm.RIGHT ? armR : armL;
+        if(target == null) return null;
+        return model.getPart(target);
     }
 
     public void transformToArm(CustomModel<?> model, HumanoidArm arm, PoseStack poseStack){
@@ -63,32 +73,23 @@ public final class Armed implements RenderLayerLike {
         } else transformL.apply(poseStack);
     }
 
-    public void transformFirstPerson(CustomModel<?> model, HumanoidArm arm){
-        ModelPart part = getArm(model, arm);
-        if(part == null) return;
-        if(arm == HumanoidArm.RIGHT){
-            transformRFP.apply(part);
-        } else transformLFP.apply(part);
-    }
-
     @Override
     public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean flag = livingEntity.getMainArm() == HumanoidArm.RIGHT;
         ItemStack itemstack = flag ? livingEntity.getOffhandItem() : livingEntity.getMainHandItem();
         ItemStack itemstack1 = flag ? livingEntity.getMainHandItem() : livingEntity.getOffhandItem();
-        if (!itemstack.isEmpty() || !itemstack1.isEmpty()) {
-            this.renderArmWithItem(livingEntity, model, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, poseStack, buffer, packedLight);
-            this.renderArmWithItem(livingEntity, model, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, poseStack, buffer, packedLight);
-        }
+        if(!itemstack.isEmpty())
+            renderArmWithItem(livingEntity, model, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, poseStack, buffer, packedLight);
+
+        if(!itemstack1.isEmpty())
+            renderArmWithItem(livingEntity, model, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, poseStack, buffer, packedLight);
     }
 
     private <E extends LivingEntity> void renderArmWithItem(E livingEntity, CustomModel<E> model, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         if (itemStack.is(Items.SPYGLASS) && livingEntity.getUseItem() == itemStack && livingEntity.swingTime == 0
-                && model.hasProperty(CustomModelRenderer.HEAD)) {
-            renderArmWithSpyglass(livingEntity, model, itemStack, arm, poseStack, buffer, packedLight);
-            return;
+                && (headOverride != null || model.hasProperty(ModelPropertyRegistry.HEAD.get()))) {
+            if(renderArmWithSpyglass(livingEntity, model, itemStack, arm, poseStack, buffer, packedLight)) return;
         }
-        if(itemStack.isEmpty()) return;
         poseStack.pushPose();
         transformToArm(model, arm, poseStack);
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
@@ -99,17 +100,19 @@ public final class Armed implements RenderLayerLike {
         poseStack.popPose();
     }
 
-    private <E extends LivingEntity> void renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int combinedLight) {
+    private <E extends LivingEntity> boolean renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int combinedLight) {
         poseStack.pushPose();
-        ModelPart modelpart = model.getProperty(CustomModelRenderer.HEAD).getPart(model);
+        ModelPart modelpart = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyRegistry.HEAD.get()));
+        if(modelpart == null) return false;
         float f = modelpart.xRot;
         modelpart.xRot = Mth.clamp(modelpart.xRot, (float) (-Math.PI / 6), (float) (Math.PI / 2));
         modelpart.translateAndRotate(poseStack);
         modelpart.xRot = f;
-        Head.translateToHead(poseStack, false);
+        ItemOnHead.translateToHead(poseStack, false);
         boolean flag = arm == HumanoidArm.LEFT;
         poseStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625F, 0.0F);
         renderer.renderItem(entity, stack, ItemDisplayContext.HEAD, false, poseStack, buffer, combinedLight);
         poseStack.popPose();
+        return true;
     }
 }

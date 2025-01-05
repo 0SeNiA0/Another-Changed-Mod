@@ -9,9 +9,10 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
+import net.zaharenko424.a_changed.client.cmrs.DynamicModelRenderer;
+import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 
     @Inject(at = @At("RETURN"),method = "<init>")
     private void onInit(EntityRendererProvider.Context context, boolean p_174558_, CallbackInfo ci){
-        cmrs$renderer = new CustomModelRenderer<>(context, null, .5f);
+        cmrs$renderer = new DynamicModelRenderer<>(context, player -> CustomModelManager.getInstance().getModel((AbstractClientPlayer) player), .5f);
     }
 
     @Inject(at = @At("HEAD"),

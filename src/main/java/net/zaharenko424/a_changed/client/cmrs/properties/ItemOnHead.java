@@ -26,20 +26,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class Head implements RenderLayerLike {
+public final class ItemOnHead implements RenderLayerLike {
 
-    public static final StreamCodec<FriendlyByteBuf, Head> CODEC = StreamCodec.composite(
+    public static final StreamCodec<FriendlyByteBuf, ItemOnHead> CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             head -> head.headName,
-            Head::new
+            ItemOnHead::new
     );
 
-    private final String headName;
+    private final String headName;//TODO add PoseTransform?
     private final Minecraft minecraft = Minecraft.getInstance();
     private final Map<SkullBlock.Type, SkullModelBase> skullModels = SkullBlockRenderer.createSkullRenderers(minecraft.getEntityModels());
 
-    public Head(@NotNull String name){
-        headName = name;
+    public ItemOnHead(@NotNull String head){
+        headName = head;
     }
 
     public ModelPart getPart(@NotNull CustomModel<?> model){
@@ -96,7 +96,7 @@ public final class Head implements RenderLayerLike {
         }
     }
 
-    public static void translateToHead(PoseStack poseStack, boolean isVillager) {//TODO test
+    public static void translateToHead(PoseStack poseStack, boolean isVillager) {
         poseStack.translate(0.0F, 0.25F, 0.0F);
         poseStack.scale(0.625F, 0.625F, 0.625F);
         if (isVillager) {

@@ -32,7 +32,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -132,7 +132,7 @@ public class PureWhiteLatex extends LatexBeast {
                                 BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
                             }).startCondition(latex -> !latex.getInBlockState().is(BlockRegistry.WHITE_LATEX_PILLAR)),
                             new TargetTransfurrable<>(),
-                            new Retaliate<>())
+                            new RetaliateOrTransfur<>())
                 ).requireAndWipeMemoriesOnUse(MemoryTypeRegistry.INSIDE_PILLAR.get())
         );
     }

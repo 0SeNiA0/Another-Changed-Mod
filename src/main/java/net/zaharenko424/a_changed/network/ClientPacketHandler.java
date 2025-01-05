@@ -12,7 +12,6 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;
@@ -24,8 +23,7 @@ import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySync
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.Special;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,25 +61,13 @@ public class ClientPacketHandler {
             }
 
             TransfurHandler handler = TransfurHandler.nonNullOf(holder);
-
-            if(packet.transfurTypeO() != null) removeTransfurModel((AbstractClientPlayer) holder, packet.transfurTypeO());
-            if(packet.isTransfurred()){
-                setTransfurModel((AbstractClientPlayer) holder, packet.transfurType());
+            if(holder instanceof AbstractClientPlayer player) {
+                handler.setLastTFModelId(TransfurUtils.updateTFModel(player, handler.getLastTFModelId(), packet.transfurType()));
             }
 
             handler.loadSyncedData(packet.ability(), packet.transfurProgress(), packet.isTransfurred(), packet.transfurType());
             holder.refreshDimensions();
         });
-    }
-
-    private void removeTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
-        if(!(transfurType instanceof Special)) CustomModelManager.getInstance().removePlayerModel(player, transfurType.id);
-        //CustomModelManager.getInstance().removePlayerModel(player, player.getStringUUID());
-    }
-
-    private void setTransfurModel(AbstractClientPlayer player, TransfurType transfurType){
-        if(!(transfurType instanceof Special))  CustomModelManager.getInstance().setPlayerModel(player, transfurType.id, transfurType::getModel, 1);
-        //CustomModelManager.getInstance().setPlayerModel(player, player.getStringUUID(), URLLoadedModel::new, 1);
     }
 
     public void handleLTCDataSync(ClientboundLTCDataPacket packet, IPayloadContext context){

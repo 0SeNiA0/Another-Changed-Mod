@@ -16,22 +16,28 @@ import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
+import net.zaharenko424.a_changed.util.CodecUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class TridentSpinEffect implements RenderLayerLike {
+public final class TridentSpinEffect implements RenderLayerLike {
 
-    public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.composite(
-            PoseTransform.CODEC,
-            tridentSpinEffect -> tridentSpinEffect.transform,
-            TridentSpinEffect::new
+    public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.of((buffer, value) -> {
+            CodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC);
+    }, buffer ->
+            new TridentSpinEffect(CodecUtils.readOptionally(buffer, PoseTransform.CODEC))
     );
 
     private final ModelPart box;
     private final PoseTransform transform;
 
-    public TridentSpinEffect(PoseTransform transform){
+    public TridentSpinEffect(){
+        this(null);
+    }
+
+    public TridentSpinEffect(@Nullable PoseTransform transform){
         box = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SPIN_ATTACK).getChild("box");
-        this.transform = transform;
+        this.transform = transform == null ? new PoseTransform() : transform;
     }
 
     @Override
@@ -40,6 +46,7 @@ public class TridentSpinEffect implements RenderLayerLike {
         poseStack.pushPose();
         poseStack.scale(-1, -1, 1);
         poseStack.translate(0, -1.501, 0);
+        transform.apply(poseStack);
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(SpinAttackEffectLayer.TEXTURE));
 
         for (int i = 0; i < 3; i++) {
