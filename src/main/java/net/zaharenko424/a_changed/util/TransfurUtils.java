@@ -46,7 +46,7 @@ public class TransfurUtils {
 
         if(handler.isTransfurred() || handler.isBeingTransfurred()) return;
         if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
-            handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
+            handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     };
 
     /**

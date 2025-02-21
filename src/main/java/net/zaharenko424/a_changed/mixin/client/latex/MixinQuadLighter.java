@@ -46,9 +46,7 @@ public abstract class MixinQuadLighter {
     private boolean onProcess(boolean original, @Local(argsOnly = true) BakedQuad quad){
         if(achanged$coveredWith == CoveredWith.NOTHING) return quad.isTinted();
 
-        if(achanged$coveredWith == CoveredWith.DARK_LATEX){
-            ((BakedQuadExtension)quad).achanged$darkLatex();
-        } else ((BakedQuadExtension)quad).achanged$whiteLatex();
+        ((BakedQuadExtension)quad).achanged$prepareLatex(achanged$coveredWith);
 
         return quad.isTinted();
     }

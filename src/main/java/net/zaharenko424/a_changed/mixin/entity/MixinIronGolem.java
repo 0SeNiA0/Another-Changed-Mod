@@ -10,8 +10,8 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.entity.ai.GolemTargetGoalFix;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +33,7 @@ public abstract class MixinIronGolem extends AbstractGolem {
             method = "registerGoals", index = 1)
     private Goal registerTargetGoal(Goal pGoal){
         return new GolemTargetGoalFix<>(this, LivingEntity.class, 5, false, false, entity -> {
-            if(entity instanceof AbstractLatexBeast latex && latex.transfurType.isOrganic()) return false;
+            if(entity instanceof LatexBeast latex && latex.transfurType().isOrganic()) return false;
             if(entity instanceof Player player && TransfurManager.isTransfurred(player) && !TransfurManager.isOrganic(player)) return true;
             return entity instanceof Enemy && !(entity instanceof Creeper);
         });
@@ -41,7 +41,7 @@ public abstract class MixinIronGolem extends AbstractGolem {
 
     @Inject(at = @At("HEAD"), method = "doPush", cancellable = true)
     private void onDoPush(Entity pEntity, CallbackInfo ci){
-        if((!(pEntity instanceof AbstractLatexBeast latex) || !latex.transfurType.isOrganic())
+        if((!(pEntity instanceof LatexBeast latex) || !latex.transfurType().isOrganic())
                 && pEntity instanceof Enemy && !(pEntity instanceof Creeper)
                 && getRandom().nextInt(20) == 0) setTarget((LivingEntity) pEntity);
         super.doPush(pEntity);

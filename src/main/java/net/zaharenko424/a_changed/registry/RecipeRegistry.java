@@ -18,8 +18,8 @@ public class RecipeRegistry {
     public static final DeferredHolder<RecipeSerializer<?>, SingleInputRecipe.Serializer<CompressorRecipe>> COMPRESSOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("compressor", ()-> new SingleInputRecipe.Serializer<>(CompressorRecipe::new, 32, 120));
 
-    public static final DeferredHolder<RecipeSerializer<?>, DNAExtractorRecipe.Serializer> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register("dna_extractor", DNAExtractorRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeSerializer<?>, SingleInputRecipe.Serializer<DNAExtractorRecipe>> DNA_EXTRACTOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register("dna_extractor", () -> new SingleInputRecipe.Serializer<>(DNAExtractorRecipe::new, 64, 600));
 
     public static final DeferredHolder<RecipeSerializer<?>, LatexEncoderRecipe.Serializer> LATEX_ENCODER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("latex_encoder", ()-> new LatexEncoderRecipe.Serializer(96, 300));

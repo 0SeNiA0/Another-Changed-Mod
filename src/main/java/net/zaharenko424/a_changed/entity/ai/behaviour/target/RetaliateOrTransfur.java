@@ -108,7 +108,7 @@ public class RetaliateOrTransfur<E extends AbstractLatexBeast> extends ExtendedB
     @Override
     protected void start(E entity) {
         BrainUtils.setTargetOfEntity(entity, this.toTarget);
-        if(!entity.transfurType.isOrganic() && DamageSources.checkTarget(toTarget)) BrainUtils.setMemory(entity, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get(), true);
+        if(!entity.transfurType.isOrganic() && DamageSources.checkTFTarget(toTarget)) BrainUtils.setMemory(entity, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get(), true);
         BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
 
         this.toTarget = null;

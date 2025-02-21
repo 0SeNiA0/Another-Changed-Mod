@@ -41,7 +41,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     public LatexEncoderRecipeBuilder(@NotNull ItemStack result, @NotNull Gender gender) {
-        ResourceLocation tf = LatexSyringeItem.decodeTransfur(result);
+        ResourceLocation tf = LatexSyringeItem.decodeTransfurId(result);
         if(tf == null || TransfurManager.getTransfurType(tf) == null)
             throw new IllegalArgumentException("Invalid latex syringe encoding! (" + tf + ")");
 
@@ -147,7 +147,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
 
     @Override
     public void save(@NotNull RecipeOutput pRecipeOutput) {
-        save(pRecipeOutput, Objects.requireNonNull(LatexSyringeItem.decodeTransfur(result)));
+        save(pRecipeOutput, Objects.requireNonNull(LatexSyringeItem.decodeTransfurId(result)));
     }
 
     @Override

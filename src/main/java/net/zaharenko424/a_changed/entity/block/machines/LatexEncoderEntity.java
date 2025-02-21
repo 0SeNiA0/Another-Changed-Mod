@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -29,15 +30,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
+public class LatexEncoderEntity extends ProcessingMachine<ItemStackHandler, ExtendedEnergyStorage> {
 
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 7);
     private final RangedWrapper out = new RangedWrapper(inventory, 7, 8);
     private Gender gender = Gender.FEMALE;
-    private boolean enabled;
-    private int progress;
-    private int energyConsumption;
-    private int recipeProcessingTime;
     private RecipeHolder<LatexEncoderRecipe> currentRecipe;
 
 
@@ -70,26 +67,20 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
         return new ExtendedEnergyStorage(50000, 256, 0);
     }
 
-    public int getProgress(){
-        return progress;
-    }
-
-    public int getRecipeProcessingTime() {
-        return recipeProcessingTime;
-    }
-
     public Gender getSelectedGender(){
         return gender;
     }
 
-    public boolean isEnabled(){
-        return enabled;
+    public boolean hasRecipe(){
+        return currentRecipe != null;
     }
 
     public void setData(int index, int data){
-        if(index == 0) gender = Gender.values()[data];
-        if(index == 1) enabled = data == 1;
-        if(index == 0 || index == 1) update();
+        super.setData(index, data);
+        if(index == 1) {
+            gender = Gender.values()[data];
+            update();
+        }
     }
 
     @Nullable
@@ -100,22 +91,25 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
 
     @Override
     public void tick() {
-        if(!enabled || (currentRecipe != null
-                && (getEnergy() < energyConsumption || !currentRecipe.value().matches(container, level)))){
+        if(!enabled || (hasRecipe() && getEnergy() < energyConsumption)){
             setActive(false);
             return;
         }
 
-        if(currentRecipe == null){
+        if(!hasRecipe()){
             Optional<RecipeHolder<LatexEncoderRecipe>> recipe = getRecipe();
             if(recipe.isEmpty() || !inventory.insertItem(7, recipe.get().value().getResultItem(), true).isEmpty()) {
+                setActive(false);
                 return;
             }
 
             currentRecipe = recipe.get();
+            currentRecipe.value().assemble(container, level.registryAccess());
             energyConsumption = currentRecipe.value().getEnergyConsumption();
             recipeProcessingTime = currentRecipe.value().getProcessingTime();
             setActive(true);
+            update();
+            return;
         }
 
         energyStorage.addEnergy(-energyConsumption);
@@ -123,20 +117,13 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
         if(progress < recipeProcessingTime){
             progress++;
         } else {
-            inventory.insertItem(7, currentRecipe.value().assemble(container, level.registryAccess()), false);
-            progress = 0;
-        }
-
-        update();
-    }
-
-    @Override
-    protected void setActive(boolean active) {
-        if(!active){
+            inventory.insertItem(7, currentRecipe.value().getResultItem(), false);
             progress = 0;
             currentRecipe = null;
         }
-        super.setActive(active);
+
+        setActive(true);
+        update();
     }
 
     private final LatexEncoderRecipeWrapper container = new LatexEncoderRecipeWrapper(in, this);
@@ -160,23 +147,13 @@ public class LatexEncoderEntity extends AbstractMachineEntity<ItemStackHandler, 
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.loadAdditional(tag, lookup);
         if(tag.contains("selectedGender"))  gender = Gender.valueOf(tag.getString("selectedGender"));
-        enabled = tag.getBoolean("enabled");
-        if(enabled){
-            progress = tag.getInt("progress");
-            energyConsumption = tag.getInt("energyConsumption");
-            recipeProcessingTime = tag.getInt("recipeProcessingTime");
-        } else progress = 0;
+        currentRecipe = tag.contains("recipe") ? level.getRecipeManager().byKeyTyped(RecipeRegistry.LATEX_ENCODER_RECIPE.get(), ResourceLocation.parse(tag.getString("recipe"))) : null;
     }
 
     @Override
     void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.save(tag, lookup);
         tag.putString("selectedGender", gender.toString());
-        tag.putBoolean("enabled", enabled);
-        if(enabled && progress > 0){
-            tag.putInt("progress", progress);
-            tag.putInt("energyConsumption", energyConsumption);
-            tag.putInt("recipeProcessingTime", recipeProcessingTime);
-        }
+        if(currentRecipe != null) tag.putString("recipe", currentRecipe.id().toString());
     }
 }

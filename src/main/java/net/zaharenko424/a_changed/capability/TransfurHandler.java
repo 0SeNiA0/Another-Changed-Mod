@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.capability;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +10,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.IAttachmentCopyHandler;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
@@ -25,6 +30,7 @@ import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbili
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.registry.ArmorMaterialRegistry;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.*;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
@@ -90,6 +96,7 @@ public class TransfurHandler implements AbilityHolder {
         if(!(holder instanceof LivingEntity living) || !living.getType().is(AChanged.TRANSFURRABLE_TAG))
             throw new IllegalStateException("Tried to create TransfurHandler for unsupported holder: " + holder);
         this.holder = living;
+        if(isTransfurred()) return;
         if(living instanceof Player && !living.level().isClientSide) selectedAbility = AbilityRegistry.GRAB_ABILITY.get();//make sure that players have access to (don't)wantToBeGrabbed screen
     }
 
@@ -100,7 +107,7 @@ public class TransfurHandler implements AbilityHolder {
 
     @Override
     public @NotNull List<? extends Ability> getAllowedAbilities() {
-        return isTransfurred() ? transfurType.abilities : List.of();
+        return isTransfurred() ? transfurType.abilities : selectedAbility != null ? List.of(selectedAbility) : List.of();
     }
 
     @Override
@@ -136,20 +143,16 @@ public class TransfurHandler implements AbilityHolder {
         if(holder.level().isClientSide) return;
         if(isBeingTransfurred() || isTransfurred()) return;
 
-        AddTransfurProgressEvent event = new AddTransfurProgressEvent(holder, transfurType, amount);
+        AddTransfurProgressEvent event = new AddTransfurProgressEvent(holder, transfurType, amount, context);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return;
+        amount = event.getProgressToAdd();
+        context = event.getContext();
 
-        float progress;
-        if(event.getProgressToAdd() > 0) {
-            progress = event.getProgressToAdd();
-        } else {
-            if (context.checkResistance()) {
-                float resistance = (float) holder.getAttributeValue(LATEX_RESISTANCE);
-                amount *= 1 - resistance;
-            }
-            progress = getTransfurProgress() + amount;
+        if(context.checkResistance()){
+            amount *= 1 - calculateResistance();
         }
+        float progress = getTransfurProgress() + amount;
 
         if(progress >= TRANSFUR_TOLERANCE) {
             transfur(transfurType, context);
@@ -163,17 +166,43 @@ public class TransfurHandler implements AbilityHolder {
         syncClients();
     }
 
+    protected float calculateResistance(){
+        Iterable<ItemStack> iterable = holder.getArmorSlots();
+        int armorSlots = 0, armorPieces = 0, armorPoints = 0;
+
+        Holder<ArmorMaterial> material;
+        for (ItemStack stack : iterable) {
+            armorSlots++;
+
+            if(!(stack.getItem() instanceof ArmorItem armor)) continue;
+
+            material = armor.getMaterial();
+            if(material == ArmorMaterials.LEATHER || material == ArmorMaterials.CHAIN || material == ArmorMaterialRegistry.LATEX.getDelegate()) continue;
+
+            armorPieces++;
+            armorPoints += armor.getDefense();
+        }
+
+        float covered = armorSlots > 0 && armorPieces > 0 ? (armorSlots == armorPieces ? 1 : (float)armorPieces / (float)armorSlots) : 0;
+        if(covered == 0) return 0;
+
+        float armorRes = Math.min(armorPoints, 20) / 20f * .2f;//Balanced for vanilla (diamond/netherite full set 20 armor)
+        float attributeRes = (float) (holder.getAttributeValue(LATEX_RESISTANCE) * .6f);
+
+        return (armorRes + attributeRes) * covered;//Max .8
+    }
+
     public @Nullable TransfurType getTransfurType() {
         return transfurType;
     }
 
     public void setTransfurType(@NotNull TransfurType transfurType) {
             this.transfurType = transfurType;
-        }
+    }
 
     public boolean isTransfurred() {
             return isTransfurred && transfurType != null;
-        }
+    }
 
     public void transfur(@NotNull TransfurType transfurType, @NotNull TransfurContext context) {
         Level level = holder.level();
@@ -187,7 +216,7 @@ public class TransfurHandler implements AbilityHolder {
             if(onTransfurSound != null) holder.playSound(onTransfurSound);
             holder.discard();
 
-            NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, latexBeast, transfurType));
+            NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, latexBeast, transfurType, context));
             return;
         }
 
@@ -196,9 +225,8 @@ public class TransfurHandler implements AbilityHolder {
         if(isTransfurred() && !player.isCreative() && result != TransfurResult.TRANSFUR) return;
         if(onTransfurSound != null) level.playSound(null, player, onTransfurSound, SoundSource.PLAYERS,1,1);
 
-
         if(player.isCreative() || player.isSpectator() || result == TransfurResult.TRANSFUR){
-            actuallyTransfur(transfurType);
+            actuallyTransfur(transfurType, context);
             return;
         }
         switch (result != null ? result
@@ -211,34 +239,36 @@ public class TransfurHandler implements AbilityHolder {
                 player.setInvulnerable(false);
                 player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
 
-                NeoForge.EVENT_BUS.post(new TransfurredEvent((LivingEntity) latexBeast, latexBeast, transfurType));
+                NeoForge.EVENT_BUS.post(new TransfurredEvent(player, latexBeast, transfurType, context));
             }
             case PROMPT -> {
                 setBeingTransfurred(true);
                 this.transfurType = transfurType;
                 PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
             }
-            case TRANSFUR -> actuallyTransfur(transfurType);
+            case TRANSFUR -> actuallyTransfur(transfurType, context);
         }
     }
 
-    private void actuallyTransfur(TransfurType transfurType){
+    private void actuallyTransfur(TransfurType transfurType, TransfurContext context){
         setBeingTransfurred(false);
 
         if(isTransfurred()){
-            TransfurUtils.removeModifiers(holder, this.transfurType);
             this.transfurType.onUnTransfur(holder);
+            TransfurUtils.removeModifiers(holder, this.transfurType);
+            this.transfurType.abilities.forEach(ability -> ability.remove(holder));
         }
 
         loadSyncedData(transfurType.abilities.isEmpty() ? null : transfurType.abilities.get(0),
                 TRANSFUR_TOLERANCE, true, transfurType);
 
+        transfurType.abilities.forEach(ability -> ability.add(holder));
         TransfurUtils.addModifiers(holder, transfurType);
         transfurType.onTransfur(holder);
 
         syncClients();
 
-        NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType));
+        NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType, context));
     }
 
     public void unTransfur(@NotNull TransfurContext context) {
@@ -246,19 +276,20 @@ public class TransfurHandler implements AbilityHolder {
 
         setBeingTransfurred(false);
 
-        TransfurType transfurTypeO = transfurType;//needed to tell client what player model to remove
+        TransfurType transfurTypeO = transfurType;
         if(isTransfurred()) {
-            TransfurUtils.removeModifiers(holder, transfurType);
             transfurType.onUnTransfur(holder);
+            TransfurUtils.removeModifiers(holder, transfurType);
+            this.transfurType.abilities.forEach(ability -> ability.remove(holder));
         }
 
         loadSyncedData(AbilityRegistry.GRAB_ABILITY.get(),0, false, null);//assign grab ability to be able to switch (don't)wantToBeGrabbed
         syncClients();
 
-        if(context.sound() != null)
-            holder.level().playSound(null, holder.blockPosition(), context.sound(), SoundSource.PLAYERS);
+        if(context.onUntransfurSound() != null)
+            holder.level().playSound(null, holder.blockPosition(), context.onUntransfurSound(), SoundSource.PLAYERS);
 
-        if(transfurTypeO != null) NeoForge.EVENT_BUS.post(new UnTransfurredEvent((Player) holder, transfurTypeO));
+        if(transfurTypeO != null) NeoForge.EVENT_BUS.post(new UnTransfurredEvent((Player) holder, transfurTypeO, context));
     }
 
     public boolean isBeingTransfurred() {

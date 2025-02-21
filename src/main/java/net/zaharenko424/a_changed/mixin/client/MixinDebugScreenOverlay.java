@@ -28,8 +28,8 @@ public abstract class MixinDebugScreenOverlay {
 
         CoveredWith coveredWith = LatexCoveredData.of(getLevel().getChunkAt(pos)).getCoveredWith(pos);
         list.add("covered_with: " + switch(coveredWith){
-            case DARK_LATEX -> ChatFormatting.BLACK;
-            case WHITE_LATEX -> ChatFormatting.WHITE;
+            case LIGHT_DARK_LATEX, DARK_LATEX -> ChatFormatting.BLACK;
+            case LIGHT_WHITE_LATEX, WHITE_LATEX -> ChatFormatting.WHITE;
             case NOTHING -> ChatFormatting.GRAY;
         } + coveredWith);
     }

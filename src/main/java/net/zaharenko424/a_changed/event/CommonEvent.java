@@ -24,6 +24,7 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -40,15 +41,11 @@ import net.zaharenko424.a_changed.block.blocks.Note;
 import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.commands.*;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
-import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
-import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.*;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -116,6 +113,11 @@ public class CommonEvent {
     public static void onPlayerDeath(LivingDeathEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
         if(TransfurManager.isHoldingEntity(player)) AbilityRegistry.GRAB_ABILITY.get().deactivate(player);
+    }
+
+    @SubscribeEvent
+    public static void onSwapItems(LivingSwapItemsEvent.Hands event){
+        if(AbilityUtils.hasDLPupAbilities(event.getEntity())) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -217,23 +219,22 @@ public class CommonEvent {
         TransfurHandler tfHandler = TransfurHandler.of(entity);
         if(tfHandler != null){
             tfHandler.tick();
-            if(DamageSources.checkTarget(entity)){
+            if(DamageSources.checkTFTarget(entity)){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.DEF);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
                     if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.DEF);
                     return;
                 }
             }
         }
 
-        if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
-        if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
-            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT,200));
+        if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get()) || !TransfurManager.isTransfurred(entity)) return;
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT,200));
     }
 
     /**
@@ -242,11 +243,8 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onLivingHurt(LivingDamageEvent.Pre event){
         LivingEntity entity = event.getEntity();
-        if(event.getSource().is(DamageTypeTags.IS_FALL)){
-            if((entity instanceof Player player && TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player))
-                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())))
-                event.setNewDamage(event.getNewDamage() / 2);
-        }
+        if(!event.getSource().is(DamageTypeTags.IS_FALL)) return;
+        if(TransfurManager.isTransfurred(entity) && AbilityUtils.hasCatAbility(entity)) event.setNewDamage(event.getNewDamage() / 2);
     }
 
     /**
@@ -256,12 +254,12 @@ public class CommonEvent {
     public static void onLivingDeath(LivingDeathEvent event){
         LivingEntity entity = event.getEntity();
         if(entity.level().isClientSide) return;
-        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTarget(entity)) return;
+        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTFTarget(entity)) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(entity);
         if(handler.getTransfurProgress() == 0 || handler.getTransfurType() == null) return;
 
-        handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
+        handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     }
 
     /**

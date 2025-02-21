@@ -18,7 +18,7 @@ import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,9 @@ public class DLPupMeltAbility implements Ability {
 
     @Override
     public void deactivate(@NotNull LivingEntity holder) {
-        getAbilityData(holder).setMolten(false);
+        DLPupMeltData data = getAbilityData(holder);
+        if(!data.isMolten()) return;
+        data.setMolten(false);
         holder.refreshDimensions();
     }
 
@@ -97,7 +99,7 @@ public class DLPupMeltAbility implements Ability {
         holder.forceAddEffect(new MobEffectInstance(MobEffectRegistry.INVISIBLE_SLOWDOWN, 15, 3, false, false, false), null);
 
         holder.level().getEntitiesOfClass(LivingEntity.class, holder.getBoundingBox(), entity ->
-                entity != holder && (!TransfurManager.hasAbility(this, entity) || !getAbilityData(entity).isMolten())
+                entity != holder && (!AbilityUtils.hasAbility(this, entity) || !getAbilityData(entity).isMolten())
         ).forEach(entity ->
                 entity.forceAddEffect(new MobEffectInstance(MobEffectRegistry.INVISIBLE_SLOWDOWN, 15, 3, false, false, false), holder));
     }

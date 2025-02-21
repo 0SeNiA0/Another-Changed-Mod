@@ -85,7 +85,7 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
     }
 
     /*
-    *    handleUpdateTag is a scam. override is ignored
+    *    use onDataPacket for handling updateTag on client
     */
 
     @Override

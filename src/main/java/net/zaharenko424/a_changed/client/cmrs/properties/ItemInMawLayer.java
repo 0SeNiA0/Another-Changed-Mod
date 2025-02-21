@@ -72,7 +72,7 @@ public class ItemInMawLayer implements RenderLayerLike {
             poseStack.translate(-.09, -.1, 0);
         }
 
-        renderer.renderItem(livingEntity, stack, ItemDisplayContext.GROUND, livingEntity.getMainArm() == HumanoidArm.LEFT, poseStack, buffer, packedLight);
+        renderer.renderItem(livingEntity, stack, ItemDisplayContext.NONE, livingEntity.getMainArm() == HumanoidArm.LEFT, poseStack, buffer, packedLight);
         poseStack.popPose();
     }
 

@@ -104,9 +104,9 @@ public class LatexPuddle extends Block {
 
     @Override
     public void entityInside(BlockState p_60495_, Level p_60496_, BlockPos p_60497_, Entity p_60498_) {
-        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0 || !DamageSources.checkTarget(p_60498_)) return;
+        if(p_60496_.isClientSide || p_60498_.tickCount % 10 != 0 || !DamageSources.checkTFTarget(p_60498_)) return;
         if(p_60498_.getBoundingBox().intersects(AABB_CACHE.computeIfAbsent(getShape(p_60495_, p_60496_, p_60497_, CollisionContext.empty()), shape -> shape.bounds().expandTowards(0, .1, 0)).move(p_60497_)))
-            TransfurHandler.nonNullOf((LivingEntity) p_60498_).addTransfurProgress(5f, transfurType.get(), TransfurContext.ADD_PROGRESS_DEF);
+            TransfurHandler.nonNullOf((LivingEntity) p_60498_).addTransfurProgress(5f, transfurType.get(), TransfurContext.DEF);
     }
 
     @Override

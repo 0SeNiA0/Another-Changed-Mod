@@ -76,15 +76,15 @@ public class GroupDefinition {
 
         allParts.putAll(children);
 
-        List<ModelPart.Cube> cubes1 = this.cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
+        List<ModelPart.Cube> cubes1 = cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
         List<ModelPart.Mesh> meshes1 = meshes.stream().map(meshDef -> {
             ModelPart.Mesh mesh = meshDef.bake(textureWidth, textureHeight);
             return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allParts) : mesh;
         }).toList();
 
         ModelPart modelpart = new ModelPart(cubes1, meshes1, children, allParts);
-        modelpart.setInitialPose(this.partPose);
-        modelpart.loadPose(this.partPose);
+        modelpart.setInitialPose(partPose);
+        modelpart.loadPose(partPose);
         return modelpart;
     }
 }

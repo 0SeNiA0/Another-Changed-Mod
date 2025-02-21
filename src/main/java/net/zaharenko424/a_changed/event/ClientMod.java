@@ -1,5 +1,8 @@
 package net.zaharenko424.a_changed.event;
 
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectObjectMutablePair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -25,6 +28,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtension
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomBEWLR;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
@@ -41,11 +45,18 @@ import net.zaharenko424.a_changed.client.renderer.misc.SeatRenderer;
 import net.zaharenko424.a_changed.client.screen.PneumaticSyringeRifleScreen;
 import net.zaharenko424.a_changed.client.screen.SyringeCoilGunScreen;
 import net.zaharenko424.a_changed.client.screen.machines.*;
+import net.zaharenko424.a_changed.event.custom.AddSpritesToAtlasEvent;
+import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.item.AbstractSyringeRifle;
 import net.zaharenko424.a_changed.registry.*;
+import net.zaharenko424.a_changed.util.IOUtils;
+import net.zaharenko424.a_changed.util.Thing;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.HashMap;
 
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
@@ -93,6 +104,74 @@ public class ClientMod {
     }
 
     @SubscribeEvent
+    public static void onAddSprites(AddSpritesToAtlasEvent event){
+        if(!event.getAtlasLocation().equals(AddSpritesToAtlasEvent.BLOCK_ATLAS)) return;
+
+        HashMap<ResourceLocation, Thing<File, File, File, File>> map = ((ModelManagerAccess)Minecraft.getInstance().getModelManager()).achanged$getConvertedTextures();
+        if(!map.isEmpty()){
+            map.forEach((loc, pair) -> {
+                ResourceLocation loc1 = loc.withSuffix("_darkltx");
+                if(pair.second() != null) {
+                    event.addSprite(loc1,
+                            () -> new FileInputStream(pair.first()),
+                            event.streamToResource(() -> new FileInputStream(pair.second())));
+                } else event.addSprite(loc1, () -> new FileInputStream(pair.first()), null);
+
+                loc1 = loc.withSuffix("_whiteltx");
+                if(pair.fourth() != null) {
+                    event.addSprite(loc1,
+                            () -> new FileInputStream(pair.third()),
+                            event.streamToResource(() -> new FileInputStream(pair.fourth())));
+                } else event.addSprite(loc1, () -> new FileInputStream(pair.third()), null);
+            });
+            map.clear();
+            return;
+        }
+
+        File convertedDir = new File(Minecraft.getInstance().gameDirectory, "converted_textures");
+        if(!convertedDir.exists()) return;
+        File[] subDirectories = convertedDir.listFiles(File::isDirectory);
+        if(subDirectories == null) return;
+        HashMap<String, Pair<File, File>> textures = new HashMap<>();
+        for(File subDir : subDirectories){
+            collectAllTextures(textures, subDir, "block/");//only look for textures in block directory
+
+            String namespace = subDir.getName();
+            textures.forEach((k, pair) -> {
+                if(pair.second() != null) {
+                    event.addSprite(ResourceLocation.fromNamespaceAndPath(namespace, k),
+                            () -> new FileInputStream(pair.first()),
+                            event.streamToResource(() -> new FileInputStream(pair.second())));
+                }
+
+                event.addSprite(ResourceLocation.fromNamespaceAndPath(namespace, k),
+                        () -> new FileInputStream(pair.first()), null);
+            });
+            textures.clear();
+        }
+    }
+
+    public static void collectAllTextures(HashMap<String, Pair<File, File>> textures, File dir, String relativePath){
+        IOUtils.visitAllFiles((path, file, filename) -> {
+            if(filename.endsWith(".png")){
+                textures.compute(relativePath + filename.replace(".png", ""), (k, v) -> {
+                    if(v == null) return ObjectObjectMutablePair.of(file, null);
+                    return v.left(file);
+                });
+                return;
+            }
+
+            if(filename.endsWith(".mcmeta")){
+                textures.compute(relativePath + filename.replace(".png.mcmeta", ""), (k, v) -> {
+                    if(v == null) return ObjectObjectMutablePair.of(null, file);
+                    return v.right(file);
+                });
+            }
+        }, dir, "");
+
+    }
+
+    @SubscribeEvent
     public static void onRegisterBlockColorHandlers(RegisterColorHandlersEvent.Block event){
         event.register((state, tintGetter, pos, d)->
                 tintGetter != null && pos != null ? BiomeColors.getAverageFoliageColor(tintGetter, pos)
@@ -104,6 +183,12 @@ public class ClientMod {
         event.register((itemStack, i) ->
                 event.getBlockColors().getColor(((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
                 , null, null, i), BlockRegistry.ORANGE_LEAVES);
+
+        event.register((stack, i) -> switch (i){
+            case 0 -> ((AbstractSyringe)stack.getItem()).getContentsColor(stack);
+            case 1 -> ((AbstractSyringe)stack.getItem()).getSecondaryColor(stack);
+            default -> -1;
+        }, ItemRegistry.STABILIZED_LATEX_SYRINGE, ItemRegistry.LATEX_SYRINGE);
     }
 
     @SubscribeEvent
@@ -115,6 +200,13 @@ public class ClientMod {
                 return CustomBEWLR.getInstance();
             }
         }, ItemRegistry.ABSOLUTE_SOLVER.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
+                return HumanoidModel.ArmPose.EMPTY;
+            }
+        }, ItemRegistry.STUN_LANCE.asItem());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
@@ -173,7 +265,8 @@ public class ClientMod {
             public boolean isVisibleInGui(MobEffectInstance instance) {
                 return false;
             }
-        }, MobEffectRegistry.FRESH_AIR.get(), MobEffectRegistry.GRAB_COOLDOWN.get(), MobEffectRegistry.INVISIBLE_SLOWDOWN.get());
+        }, MobEffectRegistry.FRESH_AIR.get(), MobEffectRegistry.GRAB_COOLDOWN.get(), MobEffectRegistry.INVISIBLE_SLOWDOWN.get(),
+                MobEffectRegistry.UNTRANSFUR_STACK.get());
     }
 
     @SubscribeEvent

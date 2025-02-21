@@ -14,7 +14,7 @@ public class AbilityOverlay {
         Player player = Minecraft.getInstance().player;
 
         if(!player.isDeadOrDying()) lastSelected = TransfurHandler.nonNullOf(player).getSelectedAbility();
-        if(lastSelected == null) return;
+        if(lastSelected == null || !lastSelected.isActive()) return;
 
         int screenHeight = guiGraphics.guiHeight();
         lastSelected.drawIcon(player, guiGraphics, guiGraphics.guiWidth() / 16, screenHeight - screenHeight / 4, true);

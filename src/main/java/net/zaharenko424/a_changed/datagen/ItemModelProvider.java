@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
     protected void registerModels() {
         basicItem(BUILDERS_WAND.getId());
 
+        basicItem(BIO_WASTE.getId());
         basicItem(BLACK_LATEX_SHORTS.getId());
         basicItem(BLOOD_SYRINGE.getId());
         basicItem(CARDBOARD.getId());
@@ -50,7 +52,8 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         basicItem(LATEX_RESISTANT_FABRIC.getId());
         basicItemBlockTexture(LATEX_RESISTANT_GLASS_PANE_ITEM, BlockRegistry.LATEX_RESISTANT_GLASS).renderType("translucent");
         basicItem(LATEX_SOLVENT_BUCKET.getId());
-        basicItem(LATEX_SYRINGE.getId());
+        basicItem(LATEX_SOLVENT_SYRINGE.getId());
+        latexSyringe(LATEX_SYRINGE);
 
         ResourceLocation planks = blockLoc(BlockRegistry.ORANGE_PLANKS);
         buttonInventory(ORANGE_BUTTON_ITEM.getId().getPath(), planks);
@@ -65,14 +68,14 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
         basicItem(ORANGE_JUICE_ITEM.getId());
         basicItem(POWER_CELL.getId());
-        basicItem(STABILIZED_LATEX_SYRINGE.getId());
+        latexSyringe(STABILIZED_LATEX_SYRINGE);
         basicItem(STATE_KEY.getId());
         basicItem(SYRINGE_ITEM.getId());
         basicItem(UNTRANSFUR_BOTTLE_ITEM.getId());
         basicItem(UNTRANSFUR_SYNTHESIZER_COMPONENTS.getId());
-        basicItem(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM.getId());
-        basicItem(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM.getId());
-        basicItem(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM.getId());
+        basicItem(UNIVERSAL_UNTRANSFUR_SYRINGE.getId());
+        basicItem(DARK_LATEX_UNTRANSFUR_SYRINGE.getId());
+        basicItem(WHITE_LATEX_UNTRANSFUR_SYRINGE.getId());
         basicItem(WHITE_LATEX_BASE.getId());
         basicItem(WHITE_LATEX_BUCKET.getId());
         basicItem(WHITE_LATEX_ITEM.getId());
@@ -96,6 +99,10 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(YUFENG_DRAGON_EGG);
     }
 
+    private @NotNull ResourceLocation itemLoc(@NotNull DeferredItem<?> item){
+        return item.getId().withPrefix(ITEM_FOLDER + "/");
+    }
+
     private @NotNull ResourceLocation blockLoc(@NotNull DeferredBlock<?> block){
         return block.getId().withPrefix(BLOCK_FOLDER + "/");
     }
@@ -103,6 +110,14 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
     private @NotNull ItemModelBuilder basicItemBlockTexture(@NotNull DeferredItem<?> item, @NotNull DeferredBlock<?> block){
         return getBuilder(item.getId().getPath()).parent(new ModelFile.UncheckedModelFile("item/generated"))
                 .texture("layer0", blockLoc(block));
+    }
+
+    private void latexSyringe(DeferredItem<? extends LatexSyringeItem> syringe){
+        ResourceLocation loc = itemLoc(syringe);
+        getBuilder(syringe.getId().getPath()).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", loc.withSuffix("_contents"))
+                .texture("layer1", loc.withSuffix("_highlight"))
+                .texture("layer2", loc);
     }
 
     protected void spawnEgg(@NotNull DeferredItem<SpawnEggItem> egg){

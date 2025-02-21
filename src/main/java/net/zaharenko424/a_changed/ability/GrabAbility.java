@@ -178,17 +178,17 @@ public class GrabAbility implements Ability {
 
         if(!grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)) {
             if(mode == GrabMode.ASSIMILATE) {
-                grabbedEntity.hurt(DamageSources.assimilation(holder, null), Integer.MAX_VALUE);
+                grabbedEntity.hurt(DamageSources.assimilation(holder), Integer.MAX_VALUE);
                 holder.addEffect(new MobEffectInstance(MobEffectRegistry.ASSIMILATION_BUFF, 6000, 0, false, false));
                 if(holder instanceof Player player) player.getFoodData().eat(6, 1);
             } else if(mode == GrabMode.REPLICATE) {
                 TransfurHandler handler = TransfurHandler.of(grabbedEntity);
-                if(handler != null) handler.transfur(TransfurManager.getTransfurType(holder), TransfurContext.TRANSFUR_TF);
+                if(handler != null) handler.transfur(TransfurManager.getTransfurType(holder), TransfurContext.TRANSFUR);
             }
             holderData.drop();
         } else if(mode == GrabMode.REPLICATE){
             TransfurHandler handler = TransfurHandler.of(grabbedEntity);
-            handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.ADD_PROGRESS_DEF);
+            handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.DEF);
         }
     }
 
@@ -270,7 +270,7 @@ public class GrabAbility implements Ability {
         } else grabbedEntity.setDeltaMovement(pos.x, pos.y, pos.z);
 
         if(grabbedEntity instanceof ServerPlayer player) {
-            Utils.sendToClient(player, new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
+            Utils.sendVanillaToClient(player, new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
             TransfurUtils.smoothLookAt(player, EntityAnchorArgument.Anchor.EYES, holder.getEyePosition(), false, .6f);
         } else grabbedEntity.lookAt(EntityAnchorArgument.Anchor.EYES, holder.getEyePosition());
     }

@@ -22,7 +22,7 @@ import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,7 +45,7 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
 
     @ModifyReturnValue(at = @At("RETURN"), method = "isBaby")
     private boolean onIsBaby(boolean original){
-        if(self() instanceof Player player && TransfurManager.hasAbility(AbilityRegistry.DL_PUP_AGE, player)){
+        if(self() instanceof Player player && AbilityUtils.hasAbility(AbilityRegistry.DL_PUP_AGE, player)){
             return AbilityRegistry.DL_PUP_AGE.get().getAbilityData(player).isBaby();
         }
         return original;
@@ -89,7 +89,7 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     private boolean onUpdateFallFlying(boolean par2){
         if(!getSharedFlag(7) || onGround() || isPassenger() || hasEffect(MobEffects.LEVITATION)) return false;
 
-        if(!TransfurManager.hasFallFlyingAbility(self())) return par2;
+        if(!AbilityUtils.hasFallFlyingAbility(self())) return par2;
         gameEvent(GameEvent.ELYTRA_GLIDE);
         return true;
     }

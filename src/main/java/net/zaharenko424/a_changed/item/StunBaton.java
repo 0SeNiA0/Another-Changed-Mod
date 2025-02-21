@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
+import net.zaharenko424.a_changed.registry.ArmorMaterialRegistry;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.util.Utils;
@@ -25,8 +26,8 @@ import java.util.List;
 public class StunBaton extends SwordItem {
 
     public StunBaton() {
-        super(Tiers.WOOD, new Properties().durability(100).rarity(Rarity.UNCOMMON)
-                .attributes(createAttributes(Tiers.WOOD, 3, -2.4f)));
+        super(ArmorMaterialRegistry.ITEM_TIER, new Properties().rarity(Rarity.UNCOMMON)
+                .attributes(createAttributes(ArmorMaterialRegistry.ITEM_TIER, 3, -2.4f)));
     }
 
     @Override
@@ -38,6 +39,13 @@ public class StunBaton extends SwordItem {
     public int getBarColor(@NotNull ItemStack pStack) {
         if(pStack.has(ComponentRegistry.ENABLED)) return super.getBarColor(pStack);
         return -4795971;
+    }
+
+    @Override
+    public @NotNull ItemStack getDefaultInstance() {
+        ItemStack stack = super.getDefaultInstance();
+        stack.setDamageValue(stack.getMaxDamage());
+        return stack;
     }
 
     @Override

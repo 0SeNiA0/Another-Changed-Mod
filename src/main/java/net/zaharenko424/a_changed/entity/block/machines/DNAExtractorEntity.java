@@ -1,45 +1,44 @@
 package net.zaharenko424.a_changed.entity.block.machines;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
+import net.zaharenko424.a_changed.item.BloodSyringe;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
-import net.zaharenko424.a_changed.recipe.RecipeWrapper;
+import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;
-import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, ExtendedEnergyStorage> {
+public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, ExtendedEnergyStorage> {
 
-    public static final int energyConsumption = 64;
-    public static final int maxProgress = 600;
+    protected final RangedWrapper in = new RangedWrapper(inventory, 0, 2);
+    protected final RangedWrapper output = new RangedWrapper(inventory, 2, 4);
+    protected int rotationDeg;
+    protected int rotationDegO;
 
-    private final RangedWrapper output = new RangedWrapper(inventory, 4, 8);
-    private int[] progress = new int[4];
-    private int rotationDeg;
-    private int rotationDegO;
+    protected RecipeHolder<DNAExtractorRecipe> currentRecipe;
+    protected static final byte maxParallel = 4;
+    protected int parallelRecipes;
 
     public DNAExtractorEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), pPos, pBlockState);
@@ -47,7 +46,12 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
 
     @Override
     ItemStackHandler initInv() {
-        return new ItemStackHandler(8){
+        return new ItemStackHandler(4){
+            @Override
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+                return slot == 3 && stack.is(ItemRegistry.SYRINGE_ITEM) || super.isItemValid(slot, stack);
+            }
+
             @Override
             protected void onContentsChanged(int slot) {
                 update();
@@ -68,100 +72,99 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
         return rotationDegO;
     }
 
+    public int getParallelRecipes(){
+        return parallelRecipes;
+    }
+
+    @Override
+    public boolean hasRecipe() {
+        return currentRecipe != null;
+    }
+
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
         return new DNAExtractorMenu(i, inventory, this);
     }
 
-//Eats 64/t for now
     @Override
     public void tick() {
-        if(energyStorage.getEnergyStored() < energyConsumption) {
+        if(!enabled || (hasRecipe() && energyStorage.getEnergyStored() < energyConsumption)) {
             setActive(false);
             return;
         }
 
-        Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> map = new Int2ObjectArrayMap<>();
-        boolean hasAnyRecipes = false;
-        Optional<RecipeHolder<DNAExtractorRecipe>> recipe;
-        for(int i = 0; i < 4; i++){
-            recipe = getRecipe(i);
-            if(recipe.isEmpty()) {
-                if(progress[i] > 0) progress[i] = 0;
-                continue;
+        if(!hasRecipe()){
+            Optional<RecipeHolder<DNAExtractorRecipe>> recipe = getRecipe();
+            if(recipe.isEmpty() || !resultsFit(recipe.get().value())){
+                setActive(false);
+                return;
             }
-            map.put(i, recipe);
-            hasAnyRecipes = true;
+
+            currentRecipe = recipe.get();
+            for(int i = 0; i < parallelRecipes; i++){
+                currentRecipe.value().assemble(container, level.registryAccess());
+            }
+            if(currentRecipe.value().getIngredient().getItems()[0].getItem() instanceof BloodSyringe) output.insertItem(1, ItemRegistry.SYRINGE_ITEM.toStack(parallelRecipes), false);
+            energyConsumption = currentRecipe.value().getEnergyConsumption();
+            recipeProcessingTime = currentRecipe.value().getProcessingTime();
+            setActive(true);
+            update();
+            return;
         }
 
-        if(!hasAnyRecipes || !hasEnoughOutputSpace(map)){
-            setActive(false);
-            return;
+        energyStorage.addEnergy(-energyConsumption);
+        rotationDeg = (rotationDeg + 20) % 360;
+
+        if(progress < recipeProcessingTime){
+            progress++;
+        } else {
+            ItemStack result = currentRecipe.value().getResultItem(level.registryAccess());
+            result.setCount(result.getCount() * parallelRecipes);
+            inventory.insertItem(2, result, false);
+            progress = 0;
+            currentRecipe = null;
+            parallelRecipes = 0;
         }
 
         setActive(true);
-        energyStorage.addEnergy(-energyConsumption);
-        rotationDeg = Mth.wrapDegrees(rotationDeg + 20);
-
-        map.forEach((slot, r) -> {
-            if(progress[slot] < maxProgress){
-                progress[slot]++;
-                return;
-            }
-            progress[slot] = 0;
-            ItemStack result = r.get().value().assemble(container, slot);
-
-            for(int i0 = 0; i0 < 4; i0++){
-                result = output.insertItem(i0, result, false);
-                if(result.isEmpty()) return;
-            }
-        });
-
         update();
     }
 
     @Override
     protected void setActive(boolean active) {
-        if(!active) Arrays.fill(progress, 0);
+        if(!active && currentRecipe != null){
+            ItemStack waste = output.insertItem(0, ItemRegistry.BIO_WASTE.toStack(parallelRecipes), false);
+            if(!waste.isEmpty()) Block.popResource(level, getBlockPos(), waste);
+            currentRecipe = null;
+            parallelRecipes = 0;
+        }
         super.setActive(active);
     }
 
-    private boolean hasEnoughOutputSpace(@NotNull Int2ObjectArrayMap<Optional<RecipeHolder<DNAExtractorRecipe>>> recipes){
-        List<ItemStack> results = recipes.values().stream().filter(Optional::isPresent)
-                .map(optional -> optional.get().value().getResultItem(level.registryAccess()).copy()).toList();
+    private final SingleInputRecipeWrapper container = new SingleInputRecipeWrapper(inventory, 0);
 
-        List<ItemStack> outSlots = new ArrayList<>();
-        for(int i = 0; i < 4; i++){
-            outSlots.add(output.getStackInSlot(i).copy());
+    private Optional<RecipeHolder<DNAExtractorRecipe>> getRecipe(){
+        return level.getRecipeManager().getRecipeFor(RecipeRegistry.DNA_EXTRACTOR_RECIPE.get(), container, level);
+    }
+
+    private boolean resultsFit(DNAExtractorRecipe recipe){
+        ItemStack[] outSlots = {output.getStackInSlot(0).copy(), output.getStackInSlot(1).copy()};
+
+        parallelRecipes = Math.min(maxParallel, inventory.getStackInSlot(0).getCount());
+        ItemStack result = recipe.getResultItem(level.registryAccess());
+        result.setCount(result.getCount() * parallelRecipes);
+
+        if(!outSlots[0].isEmpty()
+                && (!ItemStack.isSameItemSameComponents(result, outSlots[0]) || result.getCount() + outSlots[0].getCount() > result.getMaxStackSize())){
+            return false;
         }
 
-        for(ItemStack result : results){
-            for(ItemStack out : outSlots){
-                if(!Utils.canStacksStack(result, out)) continue;
-                int toAdd = Math.min(result.getCount(), out.getMaxStackSize() - out.getCount());
-                out.grow(toAdd);
-                result.shrink(toAdd);
-                if(result.isEmpty()) break;
-            }
-            if(!result.isEmpty()) return false;
-        }
+        if(in.getStackInSlot(0).getItem() instanceof BloodSyringe
+                && (!outSlots[1].isEmpty()
+                    && parallelRecipes + outSlots[1].getCount() > outSlots[1].getMaxStackSize())) return false;
 
         return true;
-    }
-
-    private final RecipeWrapper container = new RecipeWrapper(inventory);
-
-    private @NotNull Optional<RecipeHolder<DNAExtractorRecipe>> getRecipe(int slot){
-        return level.getRecipeManager().getAllRecipesFor(RecipeRegistry.DNA_EXTRACTOR_RECIPE.get()).stream()
-                .filter(holder -> holder.value().matches(container, slot, level)).findFirst();
-    }
-
-    public boolean hasAnyProgress(){
-        for(int i = 0; i < 4;i++){
-            if(progress[i] > 0) return true;
-        }
-        return false;
     }
 
     @Override
@@ -173,30 +176,29 @@ public class DNAExtractorEntity extends AbstractMachineEntity<ItemStackHandler, 
     protected <CT> CT getItemCap(@NotNull BlockCapability<CT, ?> cap, @Nullable Direction side) {
         if(side == null) return null;
         return (CT) switch(side){
-            case UP -> new RangedWrapper(inventory, 0, 4);
-            case NORTH -> new RangedWrapper(inventory, 0, 1);
-            case EAST -> new RangedWrapper(inventory, 1, 2);
-            case SOUTH -> new RangedWrapper(inventory, 2, 3);
-            case WEST -> new RangedWrapper(inventory, 3, 4);
             case DOWN -> output;
+            default -> in;
         };
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.loadAdditional(tag, lookup);
-        int[] ar = tag.getIntArray("progress");
-        if(ar.length == 4) progress = ar;
         int rot = rotationDeg;
         rotationDeg = tag.getInt("rotation");
-        if(level != null && level.isClientSide)
-            if(hasAnyProgress()) rotationDegO = rot; else rotationDegO = rotationDeg;
+        if(level != null && level.isClientSide) rotationDegO = progress > 0 ? rot : rotationDeg;
+
+        currentRecipe = tag.contains("recipe") ? level.getRecipeManager().byKeyTyped(RecipeRegistry.DNA_EXTRACTOR_RECIPE.get(), ResourceLocation.parse(tag.getString("recipe"))) : null;
+        if(currentRecipe != null) parallelRecipes = tag.getInt("parallel");
     }
 
     @Override
     void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.save(tag, lookup);
-        tag.putIntArray("progress", progress);
         tag.putInt("rotation", rotationDeg);
+        if(currentRecipe != null) {
+            tag.putString("recipe", currentRecipe.id().toString());
+            tag.putInt("parallel", parallelRecipes);
+        }
     }
 }

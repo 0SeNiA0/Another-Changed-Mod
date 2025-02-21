@@ -20,8 +20,8 @@ public class DamageTypeTagProvider extends DamageTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_270108_) {
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.electricity);
-        tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.electricity, DamageSources.transfur);
-        tag(Tags.DamageTypes.NO_FLINCH).add(DamageSources.transfur);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.electricity, DamageSources.syringe);
+        tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.electricity, DamageSources.syringe, DamageSources.transfur, DamageSources.untransfur);
+        tag(Tags.DamageTypes.NO_FLINCH).add(DamageSources.transfur, DamageSources.untransfur);
     }
 }

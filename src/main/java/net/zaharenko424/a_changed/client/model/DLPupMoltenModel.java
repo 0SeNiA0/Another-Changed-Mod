@@ -36,7 +36,7 @@ public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomMo
                 m.put(1, Texture.fromAsset(TEXTURE1, 1));
             })));
             map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
-            map.addLast(ModelPropertyRegistry.ITEM_IN_MAW.get(), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, .1f, -.4f), null, null)));
+            map.addLast(ModelPropertyRegistry.ITEM_IN_MAW.get(), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, .1f, -.4f), null, new Vector3f(.5f))));
         }), Util.make(new ArrayList<>(1), list ->
                 list.add(new AnimationComponent() {
                     @Override

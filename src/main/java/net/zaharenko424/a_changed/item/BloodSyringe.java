@@ -23,7 +23,7 @@ import java.util.List;
 public class BloodSyringe extends Item {
 
     public BloodSyringe() {
-        super(new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Properties().stacksTo(4).rarity(Rarity.UNCOMMON));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.entityai;
+package net.zaharenko424.a_changed.mixin.entity.ai;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.sounds.SoundEvents;
@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,7 +31,7 @@ public abstract class MixinPhantomSweepAttackGoal extends Goal {
                 .getEntitiesOfClass(Player.class, this$0.getBoundingBox().inflate(16.0), EntitySelector.ENTITY_STILL_ALIVE);
         boolean latexCat = false;
         for(Player player : list) {
-            if(TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player)){
+            if(TransfurManager.isTransfurred(player) && AbilityUtils.hasCatAbility(player)){
                 latexCat = true;
                 player.level().playSound(null, player, SoundEvents.CAT_HISS, SoundSource.PLAYERS, 1, player.getVoicePitch());
             }

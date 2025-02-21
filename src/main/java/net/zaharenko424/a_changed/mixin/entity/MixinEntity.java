@@ -18,6 +18,7 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,9 +42,9 @@ public abstract class MixinEntity implements EntityAccess {
     private void onPush(Entity entity, CallbackInfo ci){
         DLPupMeltAbility ability = AbilityRegistry.DL_PUP_MELT.get();
         if((entity instanceof LivingEntity living
-                && TransfurManager.hasAbility(ability, living) && ability.getAbilityData(living).isMolten())
+                && AbilityUtils.hasAbility(ability, living) && ability.getAbilityData(living).isMolten())
             || (getSelf() instanceof LivingEntity self
-                && TransfurManager.hasAbility(ability, self) && ability.getAbilityData(self).isMolten())) {
+                && AbilityUtils.hasAbility(ability, self) && ability.getAbilityData(self).isMolten())) {
             ci.cancel();//Don't push molten DL Pup & don't push entities as molten DL Pup
             return;
         }

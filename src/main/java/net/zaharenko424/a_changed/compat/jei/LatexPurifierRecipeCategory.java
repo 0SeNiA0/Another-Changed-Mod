@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.compat;
+package net.zaharenko424.a_changed.compat.jei;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -23,47 +23,29 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
     public static final RecipeType<LatexPurifierRecipe> TYPE = new RecipeType<>(RecipeRegistry.LATEX_PURIFIER_RECIPE.getId(), LatexPurifierRecipe.class);
 
-    protected final IGuiHelper guiHelper;
+    private final IGuiHelper guiHelper;
+    private final IDrawable background;
+    private final IDrawable icon;
 
     public LatexPurifierRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-    }
-
-    @Override
-    public @NotNull RecipeType<LatexPurifierRecipe> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public @NotNull Component getTitle() {
-        return Component.translatable("container.a_changed.latex_purifier");
-    }
-
-    @Override
-    public @NotNull IDrawable getBackground() {
-        return new IDrawable() {
-
+        background = new IDrawable() {
             @Override
             public int getWidth() {
-                return 82;
+                return 162;
             }
 
             @Override
             public int getHeight() {
-                return 54;
+                return 76;
             }
 
             @Override
             public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(LatexPurifierScreen.TEXTURE, xOffset, yOffset, 82, 54, 55, 16, 82, 54, 256, 166);
+                guiGraphics.blit(LatexPurifierScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
             }
         };
-    }
-
-    @Override
-    public @NotNull IDrawable getIcon() {
-        return new IDrawable() {
-
+        icon = new IDrawable() {
             @Override
             public int getWidth() {
                 return 16;
@@ -82,19 +64,39 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
     }
 
     @Override
+    public @NotNull RecipeType<LatexPurifierRecipe> getRecipeType() {
+        return TYPE;
+    }
+
+    @Override
+    public @NotNull Component getTitle() {
+        return Component.translatable("container.a_changed.latex_purifier");
+    }
+
+    @Override
+    public @NotNull IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public @NotNull IDrawable getIcon() {
+        return icon;
+    }
+
+    @Override
     public void draw(@NotNull LatexPurifierRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 20, 45);
-        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth(), 45);
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
+        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 100, 64);
     }
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull LatexPurifierRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().getFirst());
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(RecipeUtil.getResultItem(recipe));
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 30).addIngredients(recipe.getIngredients().getFirst());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 30).addItemStack(RecipeUtil.getResultItem(recipe));
     }
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull LatexPurifierRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(24, 18)));
+        builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(69, 30)));
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +51,14 @@ public class CustomModelManager {
     public static CustomModelManager getInstance(){
         if(modelManager == null) throw new IllegalStateException("CMM not initialized!");
         return modelManager;
+    }
+
+    public boolean isBuiltIn(ResourceLocation modelId){
+        return builtInModels.containsKey(modelId);
+    }
+
+    public boolean isModelLoaded(ResourceLocation modelId){
+        return getModelWrapper(modelId) != null;
     }
 
     public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(@NotNull ResourceLocation location){
@@ -104,6 +113,19 @@ public class CustomModelManager {
         recalculatePlayerModel(player);
     }
 
+    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, int priority){
+        CustomModelWrapper<?, ?> pair = render.get(player);
+        if(pair == null) return;//No models queued for player.
+
+        boolean recalculate = false;
+        synchronized (modelQueue){
+            recalculate = modelQueue.get(player).removeIf(pair1 ->
+                        pair1.key().getModelId() == modelId && pair1.valueInt() == priority)
+                    || recalculate;
+        }
+        if(recalculate) recalculatePlayerModel(player);
+    }
+
     public void removeLocalPlayerModel(@NotNull ResourceLocation modelId){
         AbstractClientPlayer player = Minecraft.getInstance().player;
         if(player != null) removePlayerModel(player, modelId);
@@ -114,10 +136,6 @@ public class CustomModelManager {
         if(pair == null) return;//No models queued for player.
 
         boolean recalculate = false;
-        if(pair.getModelId() == modelId) {
-            render.remove(player);
-            recalculate = true;
-        }
         synchronized (modelQueue){
             recalculate = modelQueue.get(player).removeIf(pair1 -> pair1.key().getModelId() == modelId)
                     || recalculate;
@@ -131,7 +149,10 @@ public class CustomModelManager {
     }
 
     public void recalculatePlayerModel(@NotNull AbstractClientPlayer player){
-        if(!modelQueue.containsKey(player)) return;
+        if(!modelQueue.containsKey(player)) {
+            render.remove(player);//Remove just in case
+            return;
+        }
         int priority = Integer.MIN_VALUE;
         CustomModelWrapper<?, ?> model = null;
         for(ObjectIntPair<CustomModelWrapper<?, ?>> pair : modelQueue.get(player)){
@@ -141,6 +162,12 @@ public class CustomModelManager {
         }
         assert model != null;
         render.put(player, model);
+    }
+
+    @ApiStatus.Internal
+    public void rebuildBuiltInModel(ResourceLocation modelId){
+        BuiltInCustomModel<?, ?> builtIn = builtInModels.get(modelId);
+        if(builtIn != null) builtIn.rebuild();
     }
 
     public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void registerDynamicModel(@NotNull ResourceLocation modelId, @NotNull M model){

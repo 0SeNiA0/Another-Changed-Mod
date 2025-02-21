@@ -62,7 +62,7 @@ public class ClientPacketHandler {
 
             TransfurHandler handler = TransfurHandler.nonNullOf(holder);
             if(holder instanceof AbstractClientPlayer player) {
-                handler.setLastTFModelId(TransfurUtils.updateTFModel(player, handler.getLastTFModelId(), packet.transfurType()));
+                handler.setLastTFModelId(TransfurUtils.updateTFModel(player, handler.getLastTFModelId(), packet.isTransfurred() ? packet.transfurType() : null));
             }
 
             handler.loadSyncedData(packet.ability(), packet.transfurProgress(), packet.isTransfurred(), packet.transfurType());

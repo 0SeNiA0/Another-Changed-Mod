@@ -36,6 +36,8 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
             int offset = 14 * burnTicks / generatorEntity.getMaxBurnTicks();
             int y = 14 - offset;
             guiGraphics.blit(TEXTURE, leftPos + 45, topPos + 57 + y, 0, 177, y, 14, offset, 256, 166);
+            guiGraphics.blit(TEXTURE, leftPos + 73, topPos + 33, 32, 21,
+                    177, 15, 32, 21, 128, 96);
         }
 
         int energy = generatorEntity.getEnergy();
@@ -43,13 +45,13 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
         if(energy > 0) {
             int size = 55 * energy / capacity;
-            guiGraphics.blit(AbstractMachineScreen.SIDEBAR, leftPos + 139, topPos + 70 - size, 20, size,
+            guiGraphics.blit(AbstractMachineScreen.SIDEBAR, leftPos + 113, topPos + 70 - size, 22, size,
                     74, size < 9 ? 82 : size < 27 ? 56 : 0, 20, size, 128, 96);
         }
 
-        guiGraphics.drawString(font, "EU: ", leftPos + 75, topPos + 72, 4210752, false);
+        guiGraphics.drawString(font, "EU: ", leftPos + 105, topPos + 72, 4210752, false);
         String str = Utils.formatEnergy(energy);
-        guiGraphics.drawString(font, str, leftPos + 105 - font.width(str) / 2, topPos + 72, 4210752, false);
-        guiGraphics.drawString(font, "/" + Utils.formatEnergy(capacity), leftPos + 120, topPos + 72, 4210752, false);
+        guiGraphics.drawString(font, str, leftPos + 135 - font.width(str) / 2, topPos + 72, 4210752, false);
+        guiGraphics.drawString(font, "/" + Utils.formatEnergy(capacity), leftPos + 150, topPos + 72, 4210752, false);
     }
 }

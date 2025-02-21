@@ -15,6 +15,7 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.block.blocks.LatexPuddle;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
@@ -38,7 +39,7 @@ public class LatexCoveredData {
     }
 
     public static boolean isLatex(BlockState state){
-        return state.is(BlockRegistry.DARK_LATEX_BLOCK) || state.is(BlockRegistry.WHITE_LATEX_BLOCK);
+        return state.is(BlockRegistry.DARK_LATEX_BLOCK) || state.is(BlockRegistry.WHITE_LATEX_BLOCK) || state.getBlock() instanceof LatexPuddle;
     }
 
     /**

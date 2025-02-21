@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.entityai;
+package net.zaharenko424.a_changed.mixin.entity.ai;
 
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;

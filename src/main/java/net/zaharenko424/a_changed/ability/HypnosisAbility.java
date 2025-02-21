@@ -96,7 +96,7 @@ public class HypnosisAbility implements Ability {
 
         if(holder instanceof Targeting latex){
             LivingEntity target = latex.getTarget();
-            if(!DamageSources.checkTarget(target)) return;
+            if(!DamageSources.checkTFTarget(target)) return;
 
             doHypnotise(holder, target, HypnosisData.dataOf(target));
             return;
@@ -104,7 +104,7 @@ public class HypnosisAbility implements Ability {
         if(!(holder instanceof Player)) return; //player
 
         List<LivingEntity> targets = holder.level().getEntitiesOfClass(LivingEntity.class, holder.getBoundingBox().inflate(playerHypnosisRange), entity ->
-                DamageSources.checkTarget(entity) && entity.distanceToSqr(holder) <= playerHypnosisRangeSqr);
+                DamageSources.checkTFTarget(entity) && entity.distanceToSqr(holder) <= playerHypnosisRangeSqr);
         targets.remove(holder);//TODO add a limit for how many entities can be selected?
 
         Vec3 playerPos = holder.getEyePosition();

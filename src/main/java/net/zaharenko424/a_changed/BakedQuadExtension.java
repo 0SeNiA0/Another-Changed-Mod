@@ -1,20 +1,16 @@
 package net.zaharenko424.a_changed;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
-
-import java.util.function.Consumer;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 
 public interface BakedQuadExtension {
 
-    Consumer<BakedQuad> dlMode = quad -> ((BakedQuadExtension)quad).achanged$darkLatex();
+    void achanged$prepareLatex(CoveredWith latex);
 
-    Consumer<BakedQuad> wlMode = quad -> ((BakedQuadExtension)quad).achanged$whiteLatex();
+    boolean achanged$isCovered();
 
-    Consumer<BakedQuad> clearMode = quad -> ((BakedQuadExtension)quad).achanged$clear();
+    float achanged$getU(int vertId);
 
-    void achanged$darkLatex();
-
-    void achanged$whiteLatex();
+    float achanged$getV(int vertId);
 
     void achanged$clear();
 

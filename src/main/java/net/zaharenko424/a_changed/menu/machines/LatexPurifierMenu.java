@@ -24,12 +24,17 @@ public class LatexPurifierMenu extends AbstractMachineMenu<LatexPurifierEntity> 
     @Override
     protected void createMenuSlots() {
         ItemStackHandler inv = entity.getInventory();
-        addSlot(new SlotItemHandler(inv, 0, 56, 53));//36
-        addSlot(new SlotItemHandler(inv, 1, 56, 17));//37
+        addSlot(new SlotItemHandler(inv, 0, 44, 35));//36
+        addSlot(new SlotItemHandler(inv, 1, 80, 62));//37
         addSlot(new SlotItemHandler(inv, 2, 116, 35){//38
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
+            }
+
+            @Override
+            public boolean isFake() {
+                return true;
             }
         });
     }

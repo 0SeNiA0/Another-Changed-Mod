@@ -24,32 +24,28 @@ public class DNAExtractorMenu extends AbstractMachineMenu<DNAExtractorEntity> {
     @Override
     protected void createMenuSlots() {
         ItemStackHandler inv = entity.getInventory();
-        addSlot(new SlotItemHandler(inv, 0, 82, 10));
-        addSlot(new SlotItemHandler(inv, 1, 56, 36));
-        addSlot(new SlotItemHandler(inv, 2, 108, 36));
-        addSlot(new SlotItemHandler(inv, 3, 82, 62));
-        addSlot(new SlotItemHandler(inv, 4, 144, 8){
+        addSlot(new SlotItemHandler(inv, 0, 44, 35));
+        addSlot(new SlotItemHandler(inv, 1, 80, 62));
+        addSlot(new SlotItemHandler(inv, 2, 116, 35){
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
             }
+
+            @Override
+            public boolean isFake() {
+                return true;
+            }
         });
-        addSlot(new SlotItemHandler(inv, 5, 144, 26){
+        addSlot(new SlotItemHandler(inv, 3, 134, 35){
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
             }
-        });
-        addSlot(new SlotItemHandler(inv, 6, 144, 44){
+
             @Override
-            public boolean mayPlace(@NotNull ItemStack stack) {
-                return false;
-            }
-        });
-        addSlot(new SlotItemHandler(inv, 7, 144, 62){
-            @Override
-            public boolean mayPlace(@NotNull ItemStack stack) {
-                return false;
+            public boolean isFake() {
+                return true;
             }
         });
     }

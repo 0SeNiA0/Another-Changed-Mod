@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,8 +23,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.function.Consumer;
 
 @Mixin(BlockRenderDispatcher.class)
 public abstract class MixinBlockRendererDispatcher {
@@ -45,15 +42,14 @@ public abstract class MixinBlockRendererDispatcher {
         if(coveredWith == CoveredWith.NOTHING) return model;
 
         achanged$wasLatexCovered = true;
-        Consumer<BakedQuad> consumer = coveredWith == CoveredWith.DARK_LATEX ? BakedQuadExtension.dlMode : BakedQuadExtension.wlMode;
 
         long seed = state.getSeed(pos);
         for(Direction direction : Direction.values()){
             random.setSeed(seed);
-            model.getQuads(state, direction, random, data, renderType).forEach(consumer);
+            model.getQuads(state, direction, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).achanged$prepareLatex(coveredWith));
         }
         random.setSeed(seed);
-        model.getQuads(state, null, random, data, renderType).forEach(consumer);
+        model.getQuads(state, null, random, data, renderType).forEach(quad -> ((BakedQuadExtension)quad).achanged$prepareLatex(coveredWith));
         return model;
     }
 

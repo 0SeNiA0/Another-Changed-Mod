@@ -2,14 +2,15 @@ package net.zaharenko424.a_changed.item;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,25 +23,40 @@ public class SyringeItem extends AbstractSyringe {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(!TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
-        return super.use(pLevel, pPlayer, pUsedHand);
+    public int getContentsColor(ItemStack stack) {
+        return 0;
     }
 
     @Override
-    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player pPlayer, @NotNull LivingEntity pInteractionTarget, @NotNull InteractionHand pUsedHand) {
-        if(pPlayer.level().isClientSide || pUsedHand != InteractionHand.MAIN_HAND || !pPlayer.isCrouching()
-                || pInteractionTarget instanceof AbstractLatexBeast) return super.interactLivingEntity(pStack, pPlayer, pInteractionTarget, pUsedHand);
-        ItemHandlerHelper.giveItemToPlayer(pPlayer, BloodSyringe.encodeEntity(pInteractionTarget));
-        if(!pPlayer.isCreative()) pStack.shrink(1);
-        pInteractionTarget.hurt(pPlayer.damageSources().generic(), .1f);
+    public int getSecondaryColor(ItemStack stack) {
+        return 0;
+    }
+
+    @Override
+    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player player, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
+        if(player.level().isClientSide || hand != InteractionHand.MAIN_HAND || !player.isCrouching()
+                || TransfurManager.isTransfurred(target) || target instanceof AbstractFish) return super.interactLivingEntity(pStack, player, target, hand);
+
+        target.hurt(DamageSources.syringe(player.level(), player), 2);
+        onUse(pStack, applyUseEffects(pStack, player.level(), target), player);
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
-        Player player = (Player) pLivingEntity;
-        if(player.level().isClientSide) return pStack;
-        return onUse(pStack, LatexSyringeItem.encodeTransfur(Objects.requireNonNull(TransfurManager.getTransfurType(player))), player);
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        if(!level.isClientSide) entity.hurt(DamageSources.syringe(level, entity), 2);
+        return super.finishUsingItem(stack, level, entity);
+    }
+
+    @Override
+    protected ItemStack applyUseEffects(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        return TransfurManager.isTransfurred(entity) ? LatexSyringeItem.encodeTransfur(Objects.requireNonNull(TransfurManager.getTransfurType(entity)))
+                : BloodSyringe.encodeEntity(entity);
+    }
+
+    @Override
+    public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile syringe, Entity shooter) {
+        if(!level.isClientSide) entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
+        return stack;
     }
 }

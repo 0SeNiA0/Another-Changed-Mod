@@ -5,15 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
@@ -27,14 +22,16 @@ public class TransfurManager {
     public static final String TRANSFUR_PROGRESS_KEY = "transfur_progress";
     public static final String BEING_TRANSFURRED_KEY = "isBeingTransfurred";
     public static final String TRANSFURRED_KEY = "transfurred";
-    public static final int LATEX_DAMAGE_BONUS = 1;
+    public static final int LATEX_DAMAGE_BONUS = 1;//TODO move to attribute modifier?
     public static final float DEF_TRANSFUR_TOLERANCE = 20;
     @ApiStatus.Internal
     public static float TRANSFUR_TOLERANCE = DEF_TRANSFUR_TOLERANCE;
     public static final int MAX_ABILITIES = 6;
 
     public static boolean isTransfurred(@NotNull LivingEntity entity){
-        return entity instanceof AbstractLatexBeast || TransfurHandler.nonNullOf(entity).isTransfurred();
+        if(entity instanceof LatexBeast) return true;
+        TransfurHandler handler = TransfurHandler.of(entity);
+        return handler != null && handler.isTransfurred();
     }
 
     public static boolean isBeingTransfurred(@NotNull Player player){
@@ -46,7 +43,7 @@ public class TransfurManager {
     }
 
     public static @Nullable TransfurType getTransfurType(@NotNull LivingEntity entity){
-        if(entity instanceof AbstractLatexBeast latex) return latex.transfurType;
+        if(entity instanceof LatexBeast latex) return latex.transfurType();
         TransfurHandler handler = TransfurHandler.of(entity);
         return handler == null ? null : handler.getTransfurType();
     }
@@ -76,33 +73,6 @@ public class TransfurManager {
 
     public static boolean wantsToBeGrabbed(@NotNull Player player){
         return GrabData.dataOf(player).wantsToBeGrabbed();
-    }
-
-    public static boolean hasAbility(DeferredHolder<Ability, ? extends Ability> ability, LivingEntity holder){
-        return hasAbility(ability.get(), holder);
-    }
-
-    public static boolean hasAbility(Ability ability, LivingEntity holder){
-        if(holder instanceof AbilityHolder abilityHolder) return abilityHolder.hasAbility(ability);
-
-        TransfurHandler handler = TransfurHandler.of(holder);
-        return handler != null && handler.hasAbility(ability);
-    }
-
-    public static boolean hasCatAbility(LivingEntity entity){
-        return hasAbility(AbilityRegistry.CAT_PASSIVE, entity);
-    }
-
-    public static boolean hasFallFlyingAbility(LivingEntity entity){
-        return hasAbility(AbilityRegistry.FALL_FLYING_PASSIVE, entity);
-    }
-
-    public static boolean hasFishAbility(LivingEntity entity){
-        return hasAbility(AbilityRegistry.FISH_PASSIVE, entity);
-    }
-
-    public static boolean hasWolfAbility(LivingEntity entity){
-        return hasAbility(AbilityRegistry.WOLF_PASSIVE, entity);
     }
 
     public static <T extends LivingEntity & LatexBeast> @Nullable EntityType<T> getTransfurEntity(@NotNull TransfurType transfurType){

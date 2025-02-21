@@ -24,6 +24,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -256,8 +261,7 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                                     if(owner != null){
                                         target = owner.getLastHurtMob();
                                         if(target == null) target = owner.getLastHurtByMob();
-                                        if(target == null && pup.isOrderedToSit()) return null;
-                                        if(target != null){
+                                        if(target != null && pup.wantsToAttack(target, owner)){
                                             pup.setOrderedToSit(false);
                                             pup.setInSittingPose(false);
                                             return target;
@@ -268,9 +272,9 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                                     NearestVisibleLivingEntities entities = BrainUtils.getMemory(pup, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
                                     if(entities == null) return null;
                                     target = entities.findClosest(target1 ->
-                                            target1.isAlive() && (!(target1 instanceof Player player) || (!player.isCreative() && pup.getOwner() != player)) && DamageSources.checkTarget(target1))
+                                            target1.isAlive() && (!(target1 instanceof Player player) || (!player.isCreative() && pup.getOwner() != player)) && DamageSources.checkTFTarget(target1))
                                             .orElse(null);
-                                    return target;
+                                    return target == null ? null : (pup.wantsToAttack(target, owner) ? target : null);
                                 }),
                         new FollowOwner<>().startCondition(pup -> !pup.isOrderedToSit())
                 ).startCondition(pup -> !pup.isMolten()),
@@ -527,9 +531,9 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
     @Override
     protected void applyTamingSideEffects() {
         if (isTame()) {
-            getAttribute(Attributes.MAX_HEALTH).setBaseValue(40.0);//TODO less health?
-            setHealth(40.0F);
-        } else getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0);
+            getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);//TODO less health?
+            setHealth(20);
+        } else getAttribute(Attributes.MAX_HEALTH).setBaseValue(8);
     }
 
     @Override
@@ -560,7 +564,7 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                         return InteractionResult.SUCCESS;
                     }
 
-                    if (itemstack.is(Items.WOLF_ARMOR) && isOwnedBy(player) && getBodyArmorItem().isEmpty() && !isBaby()) {
+                    if (itemstack.is(Items.WOLF_ARMOR) && isOwnedBy(player) && getBodyArmorItem().isEmpty()) {
                         setBodyArmorItem(itemstack.copyWithCount(1));
                         itemstack.consume(1, player);
                         return InteractionResult.SUCCESS;
@@ -647,6 +651,23 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
 
     boolean isAngry(){
         return getTarget() != null;
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @Nullable LivingEntity owner) {
+        if(target == this) return false;
+        if (target instanceof Creeper || target instanceof Ghast || target instanceof ArmorStand) {
+            return false;
+        } else {
+            return switch (target) {
+                case Wolf wolf -> !wolf.isTame() || wolf.getOwner() != owner;
+                case DarkLatexPup pup -> !pup.isTame() || pup.getOwner() != owner;
+                case Player player when owner instanceof Player player1 && !player1.canHarmPlayer(player) -> false;
+                case AbstractHorse horse when horse.isTamed() -> false;
+                case TamableAnimal animal when animal.isTame() -> false;
+                default -> true;
+            };
+        }
     }
 
     @Override

@@ -24,12 +24,17 @@ public class CompressorMenu extends AbstractMachineMenu<CompressorEntity> {
     @Override
     protected void createMenuSlots() {
         ItemStackHandler inv = entity.getInventory();
-        addSlot(new SlotItemHandler(inv, 0, 56, 53));
-        addSlot(new SlotItemHandler(inv, 1, 56, 17));//37
+        addSlot(new SlotItemHandler(inv, 0, 44, 35));
+        addSlot(new SlotItemHandler(inv, 1, 80, 62));
         addSlot(new SlotItemHandler(inv, 2, 116, 35){
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
+            }
+
+            @Override
+            public boolean isFake() {
+                return true;
             }
         });
     }

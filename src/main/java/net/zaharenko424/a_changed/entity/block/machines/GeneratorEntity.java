@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.machines.GeneratorMenu;
@@ -34,8 +35,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
         return new ItemStackHandler(2){
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return slot == 0 ? stack.getBurnTime(null) > 0 && !(stack.getItem() instanceof BucketItem)
-                        : checkItemEnergyCap(stack);
+                return slot == 0 ? stack.getBurnTime(null) > 0 && !(stack.getItem() instanceof BucketItem) : super.isItemValid(slot, stack);
             }
 
             @Override
@@ -92,8 +92,11 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
         }
 
         if(!energyStorage.isEmpty() && !inventory.getStackInSlot(1).isEmpty()){
-            energyStorage.transferEnergyTo(inventory.getStackInSlot(1).getCapability(Capabilities.EnergyStorage.ITEM), 100, false);
-            changed = true;
+            IEnergyStorage storage = inventory.getStackInSlot(1).getCapability(Capabilities.EnergyStorage.ITEM);
+            if(storage != null) {
+                energyStorage.transferEnergyTo(storage, 100, false);
+                changed = true;
+            }
         }
 
         BlockEntity entity;

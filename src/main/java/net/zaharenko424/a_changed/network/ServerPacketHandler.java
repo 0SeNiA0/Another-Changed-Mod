@@ -2,15 +2,16 @@ package net.zaharenko424.a_changed.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.block.KeypadEntity;
 import net.zaharenko424.a_changed.entity.block.NoteEntity;
-import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
+import net.zaharenko424.a_changed.entity.block.machines.ProcessingMachine;
 import net.zaharenko424.a_changed.network.packets.ServerboundEditNotePacket;
-import net.zaharenko424.a_changed.network.packets.ServerboundLatexEncoderScreenPacket;
+import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import net.zaharenko424.a_changed.network.packets.ServerboundTryPasswordPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
@@ -82,12 +83,12 @@ public class ServerPacketHandler {
         if(!handler.isBeingTransfurred()) return;
 
         TransfurType transfurType = handler.getTransfurType();
-        if(packet.becomeTransfur()) handler.transfur(transfurType, TransfurContext.TRANSFUR_TF);
+        if(packet.becomeTransfur()) handler.transfur(transfurType, TransfurContext.TRANSFUR);
         else handler.transfur(transfurType, TransfurContext.TRANSFUR_DEATH);
     }
 
-    public void handleLatexEncoderScreenPacket(@NotNull ServerboundLatexEncoderScreenPacket packet, IPayloadContext context){
-        blockEntityInteract(context, packet.pos(), LatexEncoderEntity.class, (player, encoder) ->
+    public void handleProcessingMachinePacket(@NotNull ServerboundProcessingMachinePacket packet, IPayloadContext context){
+        blockEntityInteract(context, packet.pos(), ProcessingMachine.class, (player, encoder) ->
                 encoder.setData(packet.index(), packet.data()));
     }
 
@@ -106,8 +107,9 @@ public class ServerPacketHandler {
 
     private <E extends BlockEntity> void blockEntityInteract(@NotNull IPayloadContext context, BlockPos pos, Class<E> clazz, BiConsumer<ServerPlayer, E> task){
         ServerPlayer sender = (ServerPlayer) context.player();
-        if(sender.distanceToSqr(pos.getCenter()) > 64) {
-            LOGGER.warn("Player {} tried to interact with {} from more than 8 blocks away!", sender, clazz);
+
+        if(sender.distanceToSqr(pos.getCenter()) > Math.pow(sender.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 2)) {
+            LOGGER.warn("Player {} tried to interact with {} from too far away!", sender, clazz);
             return;
         }
         context.enqueueWork(()->{

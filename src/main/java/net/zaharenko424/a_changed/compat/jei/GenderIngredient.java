@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.compat;
+package net.zaharenko424.a_changed.compat.jei;
 
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientRenderer;
@@ -60,18 +60,42 @@ public class GenderIngredient {
         }
     };
 
-    static final IIngredientRenderer<Gender> RENDERER = new IIngredientRenderer<>() {
-
+    static final IIngredientRenderer<Gender> WHY = new IIngredientRenderer<>() {//Why don't allow size that is not 16x16?
         @Override
         public void render(@NotNull GuiGraphics guiGraphics, @NotNull Gender ingredient) {
-            if(ingredient != Gender.NONE)
-                guiGraphics.blit(LatexEncoderScreen.TEXTURE, (ingredient.ordinal() == 0 ? 122 : 142), 56, 0,
-                        176, 24, 18, 18, 256, 166);
+            if(ingredient != Gender.MALE)
+                guiGraphics.blit(LatexEncoderScreen.TEXTURE, 0, 0, 0,
+                        ingredient == Gender.FEMALE ? 176 : 191, 49, 14, 14, 256, 166);
         }
 
         @Override
         public @NotNull @Unmodifiable List<Component> getTooltip(@NotNull Gender ingredient, @NotNull TooltipFlag tooltipFlag) {
-            return List.of();
+            return List.of(Component.literal(ingredient.toString().substring(0, 1).concat(ingredient.toString().substring(1).toLowerCase())));
+        }
+    };
+
+    public static final IIngredientRenderer<Gender> RENDERER = new IIngredientRenderer<>() {
+
+        @Override
+        public int getWidth() {
+            return 14;
+        }
+
+        @Override
+        public int getHeight() {
+            return 14;
+        }
+
+        @Override
+        public void render(@NotNull GuiGraphics guiGraphics, @NotNull Gender ingredient) {
+            if(ingredient != Gender.MALE)
+                guiGraphics.blit(LatexEncoderScreen.TEXTURE, 0, 0, 0,
+                        ingredient == Gender.FEMALE ? 176 : 191, 49, 14, 14, 256, 166);
+        }
+
+        @Override
+        public @NotNull @Unmodifiable List<Component> getTooltip(@NotNull Gender ingredient, @NotNull TooltipFlag tooltipFlag) {
+            return List.of(Component.literal(ingredient.toString().substring(0, 1).concat(ingredient.toString().substring(1).toLowerCase())));
         }
     };
 }

@@ -60,11 +60,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
 
         //DNA extractor recipes
-        DNAExtractorRecipeBuilder.of(DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
-        DNAExtractorRecipeBuilder.of(DNATypeRegistry.CAT_DNA).unlockedByMaterial().save(out);
-        DNAExtractorRecipeBuilder.of(DNATypeRegistry.COD_DNA).unlockedByMaterial().save(out);
-        DNAExtractorRecipeBuilder.of(DNATypeRegistry.SALMON_DNA).unlockedByMaterial().save(out);
-        DNAExtractorRecipeBuilder.of(DNATypeRegistry.WOLF_DNA).unlockedByMaterial().save(out);
+        DNAExtractorRecipeBuilder.of("dna_extractor", DNATypeRegistry.APPLE_DNA).unlockedByMaterial().save(out);
+        DNAExtractorRecipeBuilder.of("dna_extractor", DNATypeRegistry.CAT_DNA).unlockedByMaterial().save(out);
+        DNAExtractorRecipeBuilder.of("dna_extractor", DNATypeRegistry.COD_DNA).unlockedByMaterial().save(out);
+        DNAExtractorRecipeBuilder.of("dna_extractor", DNATypeRegistry.SALMON_DNA).unlockedByMaterial().save(out);
+        DNAExtractorRecipeBuilder.of("dna_extractor", DNATypeRegistry.WOLF_DNA).unlockedByMaterial().save(out);
 
 
         //Latex encoder recipes
@@ -785,10 +785,22 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, STUN_BATON)
                 .pattern("CI ")
-                .pattern("CI ")
+                .pattern("CE ")
                 .pattern("IPI")
                 .define('C', ItemTagProvider.WIRES_COPPER)
                 .define('I', ItemTagProvider.PLATES_IRON)
+                .define('E', PIPE_ITEM)
+                .define('P', POWER_CELL)
+                .unlockedBy(getHasName(POWER_CELL), has(POWER_CELL))
+                .save(out);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, STUN_LANCE)
+                .pattern("CE ")
+                .pattern("CE ")
+                .pattern("IPI")
+                .define('C', ItemTagProvider.WIRES_COPPER)
+                .define('I', ItemTagProvider.PLATES_IRON)
+                .define('E', PIPE_ITEM)
                 .define('P', POWER_CELL)
                 .unlockedBy(getHasName(POWER_CELL), has(POWER_CELL))
                 .save(out);

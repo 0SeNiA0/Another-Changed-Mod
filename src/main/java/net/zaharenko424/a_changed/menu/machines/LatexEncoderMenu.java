@@ -2,6 +2,7 @@ package net.zaharenko424.a_changed.menu.machines;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
@@ -23,14 +24,24 @@ public class LatexEncoderMenu extends AbstractMachineMenu<LatexEncoderEntity> {
     @Override
     protected void createMenuSlots() {
         ItemStackHandler inv = entity.getInventory();
-        addSlot(new SlotItemHandler(inv, 0, 52, 47));
-        addSlot(new SlotItemHandler(inv, 1, 52, 25));
-        addSlot(new SlotItemHandler(inv, 2, 74, 10));
-        addSlot(new SlotItemHandler(inv, 3, 94, 10));
-        addSlot(new SlotItemHandler(inv, 4, 114, 10));
-        addSlot(new SlotItemHandler(inv, 5, 81, 62));
-        addSlot(new SlotItemHandler(inv, 6, 107, 62));
-        addSlot(new SlotItemHandler(inv, 7, 140, 35));
+        addSlot(new SlotItemHandler(inv, 0, 38, 47));
+        addSlot(new SlotItemHandler(inv, 1, 38, 25));
+        addSlot(new SlotItemHandler(inv, 2, 60, 10));
+        addSlot(new SlotItemHandler(inv, 3, 80, 10));
+        addSlot(new SlotItemHandler(inv, 4, 100, 10));
+        addSlot(new SlotItemHandler(inv, 5, 67, 62));
+        addSlot(new SlotItemHandler(inv, 6, 93, 62));
+        addSlot(new SlotItemHandler(inv, 7, 122, 35){
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return false;
+            }
+
+            @Override
+            public boolean isFake() {
+                return true;
+            }
+        });
     }
 
     @Override

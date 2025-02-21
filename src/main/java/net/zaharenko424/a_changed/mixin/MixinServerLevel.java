@@ -59,6 +59,10 @@ public abstract class MixinServerLevel extends Level {
         } else {
             coveredWith = data.getCoveredWith(pos);
             if(coveredWith == CoveredWith.NOTHING) return original;
+            if(coveredWith.isLightlyCovered) {//Fully convert current block with 25% chance
+                if(random.nextFloat() > .75f) data.coverWith(pos, coveredWith == CoveredWith.LIGHT_DARK_LATEX ? CoveredWith.DARK_LATEX : CoveredWith.WHITE_LATEX);
+                return original;
+            }
         }
 
         BlockPos pos1;
@@ -74,8 +78,8 @@ public abstract class MixinServerLevel extends Level {
             chunk1 = getChunkAt(pos1);
             data1 = (chunk == chunk1 ? data : LatexCoveredData.of(chunk1));
 
-            if(data1.getCoveredWith(pos1) != CoveredWith.NOTHING) continue;
-            data1.coverWith(pos1, coveredWith);
+            if(data1.getCoveredWith(pos1) != CoveredWith.NOTHING) continue;//Lightly convert neighbouring block
+            data1.coverWith(pos1, coveredWith == CoveredWith.DARK_LATEX ? CoveredWith.LIGHT_DARK_LATEX : CoveredWith.LIGHT_WHITE_LATEX);
             break;
         }
 

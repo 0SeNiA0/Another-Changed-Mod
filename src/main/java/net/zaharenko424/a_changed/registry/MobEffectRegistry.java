@@ -53,4 +53,7 @@ public class MobEffectRegistry {
 
     public static final DeferredHolder<MobEffect, UnTransfurEffect> UNTRANSFUR = EFFECTS
             .register("untransfur", UnTransfurEffect::new);
+
+    public static final DeferredHolder<MobEffect, UnRemovableEffect> UNTRANSFUR_STACK = EFFECTS
+            .register("untransfur_stack", () -> new UnRemovableEffect(MobEffectCategory.HARMFUL, 0));
 }

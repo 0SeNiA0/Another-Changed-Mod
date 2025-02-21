@@ -40,9 +40,9 @@ public class ModelPart {
     public float xRot;
     public float yRot;
     public float zRot;
-    public float xScale = 1.0F;
-    public float yScale = 1.0F;
-    public float zScale = 1.0F;
+    public float xScale = 1;
+    public float yScale = 1;
+    public float zScale = 1;
     public boolean visible = true;
     public boolean draw = true;
     private final List<Cube> cubes;
@@ -272,12 +272,13 @@ public class ModelPart {
     }
 
     public void translateAndRotate(PoseStack poseStack) {
-        poseStack.translate(x / 16.0F, y / 16.0F, z / 16.0F);
-        if (xRot != 0.0F || yRot != 0.0F || zRot != 0.0F) {
+        if(x != 0 || y != 0 || z != 0) poseStack.translate(x / 16, y / 16, z / 16);
+
+        if (xRot != 0 || yRot != 0 || zRot != 0) {
             poseStack.mulPose(Reusable.QUATERNION.get().identity().rotationZYX(zRot, yRot, xRot));
         }
 
-        if (xScale != 1.0F || yScale != 1.0F || zScale != 1.0F) {
+        if (xScale != 1 || yScale != 1 || zScale != 1) {
             poseStack.scale(xScale, yScale, zScale);
         }
     }

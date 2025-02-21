@@ -37,7 +37,7 @@ public abstract class AbstractMenu extends AbstractContainerMenu {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (pIndex < 36) {
-                if (!this.moveItemStackTo(itemstack1, 36, this.slots.size(), true)) {
+                if (!this.moveItemStackTo(itemstack1, 36, this.slots.size(), false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (!this.moveItemStackTo(itemstack1, 0, 36, false)) {

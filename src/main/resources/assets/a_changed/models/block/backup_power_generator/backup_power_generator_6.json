@@ -3,7 +3,7 @@
 	"texture_size": [128, 128],
 	"textures": {
 		"0": "a_changed:block/backup_power_generator",
-		"particle": "#0"
+		"particle": "a_changed:block/backup_power_generator"
 	},
 	"elements": [
 		{
@@ -12,11 +12,11 @@
 			"rotation": {"angle": 0, "axis": "y", "origin": [16, 16, 0]},
 			"faces": {
 				"north": {"uv": [4, 4, 6, 6], "texture": "#0"},
-				"east": {"uv": [6, 10, 7.875, 12], "texture": "#0"},
+				"east": {"uv": [6.125, 10, 7.875, 12], "texture": "#0"},
 				"south": {"uv": [0, 10, 2, 12], "texture": "#0"},
-				"west": {"uv": [6, 10, 7.875, 12], "texture": "#0"},
+				"west": {"uv": [6.125, 10, 7.875, 12], "texture": "#0"},
 				"up": {"uv": [13.875, 1.875, 11.875, 0], "texture": "#0"},
-				"down": {"uv": [13.875, 1.875, 11.875, 3.75], "texture": "#0"}
+				"down": {"uv": [13.875, 1.875, 11.875, 3.625], "texture": "#0"}
 			}
 		},
 		{

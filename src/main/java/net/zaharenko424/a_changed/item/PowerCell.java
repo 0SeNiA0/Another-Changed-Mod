@@ -24,6 +24,13 @@ public class PowerCell extends Item {
     }
 
     @Override
+    public @NotNull ItemStack getDefaultInstance() {
+        ItemStack stack = super.getDefaultInstance();
+        stack.setDamageValue(stack.getMaxDamage());
+        return stack;
+    }
+
+    @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);

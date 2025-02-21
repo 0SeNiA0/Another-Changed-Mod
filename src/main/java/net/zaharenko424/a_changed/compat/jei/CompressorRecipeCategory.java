@@ -1,8 +1,9 @@
-package net.zaharenko424.a_changed.compat;
+package net.zaharenko424.a_changed.compat.jei;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -10,6 +11,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
 import net.zaharenko424.a_changed.client.screen.machines.CompressorScreen;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
@@ -22,46 +24,28 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
     public static final RecipeType<CompressorRecipe> TYPE = new RecipeType<>(RecipeRegistry.COMPRESSOR_RECIPE.getId(), CompressorRecipe.class);
 
     private final IGuiHelper guiHelper;
+    private final IDrawable background;
+    private final IDrawable icon;
 
     public CompressorRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-    }
-
-    @Override
-    public @NotNull RecipeType<CompressorRecipe> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public @NotNull Component getTitle() {
-        return Component.translatable("container.a_changed.compressor");
-    }
-
-    @Override
-    public @NotNull IDrawable getBackground() {
-        return new IDrawable() {
-
+        background = new IDrawable() {
             @Override
             public int getWidth() {
-                return 82;
+                return 162;
             }
 
             @Override
             public int getHeight() {
-                return 54;
+                return 76;
             }
 
             @Override
             public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(CompressorScreen.TEXTURE, xOffset, yOffset, 82, 54, 55, 16, 82, 54, 256, 166);
+                guiGraphics.blit(CompressorScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
             }
         };
-    }
-
-    @Override
-    public @NotNull IDrawable getIcon() {
-        return new IDrawable() {
-
+        icon = new IDrawable() {
             @Override
             public int getWidth() {
                 return 16;
@@ -80,19 +64,40 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
     }
 
     @Override
+    public @NotNull RecipeType<CompressorRecipe> getRecipeType() {
+        return TYPE;
+    }
+
+    @Override
+    public @NotNull Component getTitle() {
+        return Component.translatable("container.a_changed.compressor");
+    }
+
+    @Override
+    public @NotNull IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public @NotNull IDrawable getIcon() {
+        return icon;
+    }
+
+    @Override
     public void draw(@NotNull CompressorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 20, 45);
-        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth(), 45);
+        JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
+        JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 100, 64);
     }
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CompressorRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().getFirst());
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(RecipeUtil.getResultItem(recipe));
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 30).addIngredients(recipe.getIngredients().getFirst());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 30).addItemStack(RecipeUtil.getResultItem(recipe));
     }
 
-    //@Override//TODO use correct texture for arrow
-    //public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull CompressorRecipe recipe, @NotNull IFocusGroup focuses) {
-    //    builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(24, 18)));
-    //}
+    @Override
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull CompressorRecipe recipe, @NotNull IFocusGroup focuses) {
+        builder.addWidget(new ProcessingArrowRecipeWidget(recipe.getProcessingTime(), new ScreenPosition(69, 30),
+                guiHelper.drawableBuilder(CompressorScreen.TEXTURE, 176, 0, 24, 16).setTextureSize(256,166)));
+    }
 }

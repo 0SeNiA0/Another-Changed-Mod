@@ -1,13 +1,11 @@
-package net.zaharenko424.a_changed.compat;
+package net.zaharenko424.a_changed.compat.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.helpers.IStackHelper;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.*;
-import mezz.jei.common.network.IConnectionToServer;
 import mezz.jei.neoforge.network.ConnectionToServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,10 +20,8 @@ import net.zaharenko424.a_changed.client.screen.machines.CompressorScreen;
 import net.zaharenko424.a_changed.client.screen.machines.DNAExtractorScreen;
 import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
 import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
-import net.zaharenko424.a_changed.compat.encoder.LatexEncoderRecipeCategory;
-import net.zaharenko424.a_changed.compat.encoder.LatexEncoderTransferHandler;
-import net.zaharenko424.a_changed.compat.extractor.DNAExtractorRecipeCategory;
-import net.zaharenko424.a_changed.compat.extractor.DNAExtractorTransferHandler;
+import net.zaharenko424.a_changed.compat.jei.encoder.LatexEncoderRecipeCategory;
+import net.zaharenko424.a_changed.compat.jei.encoder.LatexEncoderTransferHandler;
 import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
@@ -67,14 +63,14 @@ public class JeiPlugin implements IModPlugin {
     @Override
     public void registerIngredients(@NotNull IModIngredientRegistration registration) {
         registration.register(GenderIngredient.TYPE, Arrays.stream(Gender.values()).toList(),
-                GenderIngredient.HELPER, GenderIngredient.RENDERER);
+                GenderIngredient.HELPER, GenderIngredient.WHY);
     }
 
     @Override
     public void registerCategories(@NotNull IRecipeCategoryRegistration registration) {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
-        registration.addRecipeCategories(new CompressorRecipeCategory(guiHelper), new DNAExtractorRecipeCategory(),
-                new LatexEncoderRecipeCategory(), new LatexPurifierRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new CompressorRecipeCategory(guiHelper), new DNAExtractorRecipeCategory(guiHelper),
+                new LatexEncoderRecipeCategory(guiHelper), new LatexPurifierRecipeCategory(guiHelper));
     }
 
     @Override
@@ -103,23 +99,20 @@ public class JeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeTransferHandlers(@NotNull IRecipeTransferRegistration registration) {
         IJeiHelpers helpers = registration.getJeiHelpers();
-        IConnectionToServer connectionToServer = new ConnectionToServer();
-        IStackHelper stackHelper = helpers.getStackHelper();
         IRecipeTransferHandlerHelper transferHelper = registration.getTransferHelper();
 
         registration.addRecipeTransferHandler(CompressorMenu.class, MenuRegistry.COMPRESSOR_MENU.get(),
-                CompressorRecipeCategory.TYPE, 37, 1, 0, 36);
+                CompressorRecipeCategory.TYPE, 36, 1, 0, 36);
 
-        registration.addRecipeTransferHandler(new DNAExtractorTransferHandler(connectionToServer, stackHelper, transferHelper,
-                transferHelper.createBasicRecipeTransferInfo(DNAExtractorMenu.class, MenuRegistry.DNA_EXTRACTOR_MENU.get(),
-                        DNAExtractorRecipeCategory.TYPE, 36, 1, 0, 36)), DNAExtractorRecipeCategory.TYPE);
+        registration.addRecipeTransferHandler(DNAExtractorMenu.class, MenuRegistry.DNA_EXTRACTOR_MENU.get(),
+                DNAExtractorRecipeCategory.TYPE, 36, 1, 0, 36);
 
-        registration.addRecipeTransferHandler(new LatexEncoderTransferHandler(connectionToServer, stackHelper, transferHelper,
+        registration.addRecipeTransferHandler(new LatexEncoderTransferHandler(new ConnectionToServer(), helpers.getStackHelper(), transferHelper,
                 transferHelper.createBasicRecipeTransferInfo(LatexEncoderMenu.class, null,
                         LatexEncoderRecipeCategory.TYPE, 36, 7, 0, 36)), LatexEncoderRecipeCategory.TYPE);
 
         registration.addRecipeTransferHandler(LatexPurifierMenu.class, MenuRegistry.LATEX_PURIFIER_MENU.get(),
-                LatexPurifierRecipeCategory.TYPE, 37, 1, 0, 36);
+                LatexPurifierRecipeCategory.TYPE, 36, 1, 0, 36);
     }
 
     @Override

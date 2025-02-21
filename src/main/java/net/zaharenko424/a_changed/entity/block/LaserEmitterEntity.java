@@ -103,10 +103,10 @@ public class LaserEmitterEntity extends BlockEntity {
     }
 
     protected void transfurEntities(){
-        level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTarget).forEach(entity -> {
+        level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTFTarget).forEach(entity -> {
             if(!entity.getItemBySlot(EquipmentSlot.LEGS).is(ItemRegistry.BLACK_LATEX_SHORTS.get())) return;
             TransfurHandler handler = TransfurHandler.of(entity);
-            if(handler != null) handler.transfur(TransfurRegistry.BENIGN_TF.get(), TransfurContext.TRANSFUR_DEF);
+            if(handler != null) handler.transfur(TransfurRegistry.BENIGN_TF.get(), TransfurContext.DEF);
         });
     }
 

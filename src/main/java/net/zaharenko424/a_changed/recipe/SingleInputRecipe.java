@@ -59,7 +59,7 @@ public abstract class SingleInputRecipe implements Recipe<SingleInputRecipeWrapp
 
     @Override
     public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
-        return result;
+        return result.copy();
     }
 
     public int getEnergyConsumption() {

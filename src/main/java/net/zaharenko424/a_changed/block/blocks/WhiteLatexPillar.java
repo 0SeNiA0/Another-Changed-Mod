@@ -62,9 +62,9 @@ public class WhiteLatexPillar extends NotRotatedMultiBlock {
     protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity) {
         if(level.isClientSide || entity.tickCount % 10 != 0) return;
         if(!entity.getBoundingBox().intersects((state.getValue(TallCrystal.PART) == 0 ? aabb0 : aabb1).move(pos))
-                || !DamageSources.checkTarget(entity)) return;
+                || !DamageSources.checkTFTarget(entity)) return;
         TransfurHandler handler = TransfurHandler.of((LivingEntity) entity);
-        if(handler != null) handler.addTransfurProgress(5f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_CRYSTAL);
+        if(handler != null) handler.addTransfurProgress(5f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.CRYSTAL);
     }
 
     @Override

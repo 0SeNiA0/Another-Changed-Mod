@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.ability.DLPupAgingAbility;
 import net.zaharenko424.a_changed.attachments.DLPupAgingData;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class DLPupAging {
@@ -49,7 +49,7 @@ public class DLPupAging {
 
     private static int setAge(CommandContext<CommandSourceStack> context, Entity target, int age){
         DLPupAgingAbility ability = AbilityRegistry.DL_PUP_AGE.get();
-        if(!(target instanceof LivingEntity entity) || !TransfurManager.hasAbility(ability, entity)) {
+        if(!(target instanceof LivingEntity entity) || !AbilityUtils.hasAbility(ability, entity)) {
             context.getSource().sendFailure(Component.literal("Invalid target"));
             return -1;
         }
@@ -60,7 +60,7 @@ public class DLPupAging {
 
     private static int freeze(CommandContext<CommandSourceStack> context, Entity target, boolean freeze){
         DLPupAgingAbility ability = AbilityRegistry.DL_PUP_AGE.get();
-        if(!(target instanceof LivingEntity entity) || !TransfurManager.hasAbility(ability, entity)) {
+        if(!(target instanceof LivingEntity entity) || !AbilityUtils.hasAbility(ability, entity)) {
             context.getSource().sendFailure(Component.literal("Invalid target"));
             return -1;
         }
@@ -70,7 +70,7 @@ public class DLPupAging {
 
     private static int getAge(CommandContext<CommandSourceStack> context, Entity target){
         DLPupAgingAbility ability = AbilityRegistry.DL_PUP_AGE.get();
-        if(!(target instanceof LivingEntity entity) || !TransfurManager.hasAbility(ability, entity)) {
+        if(!(target instanceof LivingEntity entity) || !AbilityUtils.hasAbility(ability, entity)) {
             context.getSource().sendFailure(Component.literal("Invalid target"));
             return -1;
         }

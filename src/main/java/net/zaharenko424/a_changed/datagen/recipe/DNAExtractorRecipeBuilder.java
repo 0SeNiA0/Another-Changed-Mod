@@ -16,6 +16,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.DNAType;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
+import net.zaharenko424.a_changed.recipe.SingleInputRecipe;
+import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,15 +29,21 @@ public class DNAExtractorRecipeBuilder implements RecipeBuilder {
     private final ItemStack result;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
-    protected DNAExtractorRecipeBuilder(@NotNull Ingredient ingredient, @NotNull ItemStack result){
-        this.recipe = new DNAExtractorRecipe(ingredient, result);
+    protected DNAExtractorRecipeBuilder(String group, @NotNull Ingredient ingredient, @NotNull ItemStack result){
+        SingleInputRecipe.Serializer<?> serializer = RecipeRegistry.DNA_EXTRACTOR_RECIPE_SERIALIZER.get();
+        this.recipe = new DNAExtractorRecipe(group, ingredient, result, serializer.defaultEnergyConsumption, serializer.defaultProcessingTime);
         this.result = result;
     }
 
-    public static @NotNull DNAExtractorRecipeBuilder of(@NotNull DeferredHolder<DNAType, DNAType> dnaType){
+    protected DNAExtractorRecipeBuilder(String group, @NotNull Ingredient ingredient, @NotNull ItemStack result, int energyConsumption, int processingTime){
+        this.recipe = new DNAExtractorRecipe(group, ingredient, result, energyConsumption, processingTime);
+        this.result = result;
+    }
+
+    public static @NotNull DNAExtractorRecipeBuilder of(String group, @NotNull DeferredHolder<DNAType, DNAType> dnaType){
         DNAType type = dnaType.get();
         ItemStack item = type.getMaterial();
-        return new DNAExtractorRecipeBuilder(DataComponentIngredient.of(false, item), DNASample.encodeDNA(type));
+        return new DNAExtractorRecipeBuilder(group, DataComponentIngredient.of(false, item), DNASample.encodeDNA(type));
     }
 
     @Override

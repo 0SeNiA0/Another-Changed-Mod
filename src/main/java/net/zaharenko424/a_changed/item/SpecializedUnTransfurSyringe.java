@@ -1,9 +1,12 @@
 package net.zaharenko424.a_changed.item;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import org.jetbrains.annotations.NotNull;
 
 public class SpecializedUnTransfurSyringe extends UnTransfurSyringeItem {
 
@@ -15,13 +18,14 @@ public class SpecializedUnTransfurSyringe extends UnTransfurSyringeItem {
     }
 
     @Override
-    protected void use(ItemStack item, ServerPlayer player) {
-        if(TransfurManager.getTransfurType(player).latex == latex){
-            giveDebuffs(player, 1);
-            super.use(item, player);
+    protected void untransfur(@NotNull ItemStack item, @NotNull LivingEntity entity) {
+        if(TransfurManager.getTransfurType(entity).latex == latex){
+            TransfurHandler.nonNullOf(entity).unTransfur(TransfurContext.UNTRANSFUR);
+            giveDebuffs(entity, 1);
+            giveWither(entity, .2f, .25f);
         } else {
-            giveDebuffs(player, 2);
-            giveWither(player, .4f);
+            giveDebuffs(entity, 2);
+            giveWither(entity, .4f, entity.getRandom().nextFloat() + .2f);
         }
     }
 }

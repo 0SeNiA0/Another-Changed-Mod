@@ -40,8 +40,8 @@ public abstract class MixinBlockModelShaper {
         CoveredWith coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
         return switch(coveredWith){
             case NOTHING -> original;
-            case DARK_LATEX -> getBlockModel(BlockRegistry.DARK_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
-            case WHITE_LATEX -> getBlockModel(BlockRegistry.WHITE_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
+            case LIGHT_DARK_LATEX, DARK_LATEX -> getBlockModel(BlockRegistry.DARK_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
+            case LIGHT_WHITE_LATEX, WHITE_LATEX -> getBlockModel(BlockRegistry.WHITE_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
         };
     }
 

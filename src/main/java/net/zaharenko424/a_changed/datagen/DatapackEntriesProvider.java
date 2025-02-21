@@ -5,6 +5,7 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.world.damagesource.DamageEffects;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.biome.Biome;
@@ -45,8 +46,10 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
     private static void damageType(BootstrapContext<DamageType> context){
         context.register(DamageSources.assimilation, new DamageType("assimilation", DamageScaling.NEVER, 0));
         context.register(DamageSources.electricity, new DamageType("electricity", DamageScaling.NEVER, 0));
-        context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0));
+        context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0, DamageEffects.BURNING));
+        context.register(DamageSources.syringe, new DamageType("syringe", DamageScaling.ALWAYS, 0, DamageEffects.POKING));
         context.register(DamageSources.transfur, new DamageType("transfur", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
+        context.register(DamageSources.untransfur, new DamageType("untransfur", DamageScaling.NEVER, 0));
     }
 
     private static void biome(BootstrapContext<Biome> context){

@@ -75,7 +75,7 @@ public class DLPupAgingData implements AbilityData {
 
     public void speedUpAging(){
         if(holder.level().isClientSide || freezeAging) return;
-        setAge(AgeableMob.getSpeedUpSecondsWhenFeeding(babyUntil - age));
+        setAge(age + AgeableMob.getSpeedUpSecondsWhenFeeding(babyUntil - age));
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.mixin.entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Fox;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -18,6 +19,6 @@ public abstract class MixinFox {
     @ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/goal/AvoidEntityGoal;<init>(Lnet/minecraft/world/entity/PathfinderMob;Ljava/lang/Class;FDDLjava/util/function/Predicate;)V", ordinal = 0),
             index = 5, method = "registerGoals")
     private Predicate<LivingEntity> onRegisterGoals(Predicate<LivingEntity> original){
-        return original.and(entity -> !TransfurManager.isTransfurred(entity) || !TransfurManager.hasCatAbility(entity));
+        return original.and(entity -> !TransfurManager.isTransfurred(entity) || !AbilityUtils.hasCatAbility(entity));
     }
 }

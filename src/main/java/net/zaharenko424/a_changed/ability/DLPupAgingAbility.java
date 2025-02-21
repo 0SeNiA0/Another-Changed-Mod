@@ -59,7 +59,7 @@ public class DLPupAgingAbility implements PassiveAbility {
         if(data.isAboutToTurn()){
             TransfurType type = randomType(holder.getRandom());
             if(holder instanceof Player player){
-                TransfurHandler.nonNullOf(player).transfur(type, TransfurContext.TRANSFUR_TF);
+                TransfurHandler.nonNullOf(player).transfur(type, TransfurContext.TRANSFUR);
             } else {
                 TransfurUtils.spawnLatex(type, (ServerLevel) holder.level(), holder.blockPosition());
                 holder.discard();

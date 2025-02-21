@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
@@ -61,13 +60,16 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     @Override
     public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource pBuffer, int packedLight, int pPackedOverlay) {
         prepareTubes();
-        ItemStackHandler inv = extractor.getInventory();
-        for(int i = 0; i < 4; i++){
-            if(inv.getStackInSlot(i).isEmpty()) continue;
-            tubes[i].visible = true;
+
+        if(extractor.hasRecipe()) {
+            for (int i = 0; i < extractor.getParallelRecipes(); i++) {
+                tubes[i].visible = true;
+            }
         }
 
-        root.yRot = Mth.rotLerp(partialTick, extractor.getRotO(), extractor.getRot()) * Mth.DEG_TO_RAD;
+        int rotO = extractor.getRotO();
+        int rot = extractor.getRot();
+        root.yRot = Mth.lerp(partialTick, rotO, rotO > rot ? rot + 360 : rot) * Mth.DEG_TO_RAD;
 
         poseStack.pushPose();
         poseStack.translate(.5,0,.5);

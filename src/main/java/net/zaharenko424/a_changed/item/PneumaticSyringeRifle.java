@@ -15,18 +15,15 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PneumaticSyringeRifle extends AbstractSyringeRifle {
 
     public PneumaticSyringeRifle() {
-        super(new Properties().rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Properties().rarity(Rarity.UNCOMMON).stacksTo(1), 3, 20);
     }
 
     @Override
@@ -38,12 +35,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
+    ItemStack useFirst(@NotNull IItemHandler handler, boolean simulate) {
         for(int i = 1; i < 9; i++){
-            if(!handler.getStackInSlot(i).isEmpty()) return TransfurManager.getTransfurType(
-                    Objects.requireNonNull(LatexSyringeItem.decodeTransfur(handler.extractItem(i, 1, simulate))));
+            if(!handler.getStackInSlot(i).isEmpty()) return simulate ? handler.extractItem(i, 1, true).copy()
+                    : handler.extractItem(i, 1, false);
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -59,23 +56,13 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    int velocity() {
-        return 3;
-    }
-
-    @Override
-    float accuracy() {
+    float inaccuracy(@NotNull Player player) {
         return 1.2f;
     }
 
     @Override
     void playSound(@NotNull Level level, @NotNull Player player) {
         level.playSound(null, player.blockPosition(), SoundRegistry.PNEUMATIC_RIFLE.get(), SoundSource.PLAYERS, .6f, .6f);
-    }
-
-    @Override
-    int cooldown() {
-        return 20;
     }
 
     @Override

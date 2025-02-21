@@ -62,9 +62,9 @@ public class TallCrystal extends NotRotatedMultiBlock {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if(level.isClientSide || entity.tickCount % 10 != 0) return;
         if(!entity.getBoundingBox().intersects((state.getValue(PART) == 0 ? aabb0 : aabb1).move(pos))
-                || !DamageSources.checkTarget(entity)) return;
+                || !DamageSources.checkTFTarget(entity)) return;
         TransfurHandler handler = TransfurHandler.of((LivingEntity) entity);
-        if(handler != null) handler.addTransfurProgress(5f, transfurType.get(), TransfurContext.ADD_PROGRESS_CRYSTAL);
+        if(handler != null) handler.addTransfurProgress(5f, transfurType.get(), TransfurContext.CRYSTAL);
     }
 
     @Override

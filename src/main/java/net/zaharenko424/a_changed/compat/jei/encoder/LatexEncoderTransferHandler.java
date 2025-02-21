@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.compat.encoder;
+package net.zaharenko424.a_changed.compat.jei.encoder;
 
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IStackHelper;
@@ -10,7 +10,7 @@ import mezz.jei.library.transfer.BasicRecipeTransferHandler;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
-import net.zaharenko424.a_changed.network.packets.ServerboundLatexEncoderScreenPacket;
+import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +26,7 @@ public class LatexEncoderTransferHandler extends BasicRecipeTransferHandler<Late
         IRecipeTransferError error = super.transferRecipe(container, recipe, recipeSlotsView, player, maxTransfer, doTransfer);
         if(error != null || !doTransfer) return error;
 
-        PacketDistributor.sendToServer(new ServerboundLatexEncoderScreenPacket(container.getEntity().getBlockPos(),
+        PacketDistributor.sendToServer(new ServerboundProcessingMachinePacket(container.getEntity().getBlockPos(),
                 0, recipe.getGender().ordinal()));
 
         return null;

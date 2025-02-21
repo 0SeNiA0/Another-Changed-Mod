@@ -127,13 +127,13 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
+        if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTFTarget(target)) return super.doHurtTarget(target);
 
         if(!target.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
 
         setLastHurtMob(target);
         TransfurHandler.nonNullOf((LivingEntity) target)
-                .addTransfurProgress(5f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
+                .addTransfurProgress(5f, transfurType, TransfurContext.DEF);
         return true;
     }
 

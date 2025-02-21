@@ -3,9 +3,9 @@ package net.zaharenko424.a_changed.mixin.client.latex;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.neoforge.client.model.IQuadTransformer;
 import net.zaharenko424.a_changed.BakedQuadExtension;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
@@ -20,17 +20,10 @@ import java.util.WeakHashMap;
 @Mixin(BakedQuad.class)
 public abstract class MixinBakedQuad implements BakedQuadExtension {
 
-    @Shadow @Final protected int[] vertices;
+    @Shadow @Final protected TextureAtlasSprite sprite;
 
     @Unique
-    private static TextureAtlasSprite dl_sprite;
-    @Unique
-    private static TextureAtlasSprite wl_sprite;
-
-    @Unique
-    private int[] achanged$dark_latex;
-    @Unique
-    private int[] achanged$white_latex;
+    private final TextureAtlasSprite[] achanged$sprites = new TextureAtlasSprite[4];
 
     @Unique
     private float[] achanged$uv;
@@ -39,37 +32,47 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
     private final WeakHashMap<Thread, CoveredWith> achanged$map = new WeakHashMap<>();
 
     @Override
-    public void achanged$darkLatex() {
-        achanged$map.put(Thread.currentThread(), CoveredWith.DARK_LATEX);
-        if(dl_sprite == null) dl_sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("block/"));
+    public void achanged$prepareLatex(CoveredWith latex){
+        achanged$map.put(Thread.currentThread(), latex);
+        if(latex == CoveredWith.NOTHING) return;
 
-        if(achanged$dark_latex != null) return;
-
-        achanged$dark_latex = vertices.clone();
-
-        for(int i = 0; i < 4; i++){
-            int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
-
-            achanged$dark_latex[offset] = Float.floatToRawIntBits(dl_sprite.getU(achanged$uv[i * 2]));
-            achanged$dark_latex[offset + 1] = Float.floatToRawIntBits(dl_sprite.getV(achanged$uv[i * 2 + 1]));
-        }
+        TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
+        achanged$sprites[latex.ordinal() - 1] = switch (latex) {
+            case DARK_LATEX -> atlas.getSprite(BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("block/"));
+            case WHITE_LATEX -> atlas.getSprite(BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("block/"));
+            case LIGHT_DARK_LATEX -> atlas.getSprite(sprite.contents().name().withSuffix("_darkltx"));
+            case LIGHT_WHITE_LATEX -> atlas.getSprite(sprite.contents().name().withSuffix("_whiteltx"));
+            default -> throw new IllegalStateException("Unexpected value: " + latex);
+        };
     }
 
     @Override
-    public void achanged$whiteLatex() {
-        achanged$map.put(Thread.currentThread(), CoveredWith.WHITE_LATEX);
-        if(wl_sprite == null) wl_sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("block/"));
+    public boolean achanged$isCovered() {
+        return achanged$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING) != CoveredWith.NOTHING;
+    }
 
-        if(achanged$white_latex != null) return;
+    @Unique
+    private TextureAtlasSprite achanged$getSprite(){
+        CoveredWith coveredWith = achanged$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING);
+        if(coveredWith == CoveredWith.NOTHING) return null;
 
-        achanged$white_latex = vertices.clone();
+        return achanged$sprites[coveredWith.ordinal() - 1];
+    }
 
-        for(int i = 0; i < 4; i++){
-            int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
+    @Override
+    public float achanged$getU(int vertId) {
+        TextureAtlasSprite sprite = achanged$getSprite();
+        if(sprite == null) return 0;
 
-            achanged$white_latex[offset] = Float.floatToRawIntBits(wl_sprite.getU(achanged$uv[i * 2]));
-            achanged$white_latex[offset + 1] = Float.floatToRawIntBits(wl_sprite.getV(achanged$uv[i * 2 + 1]));
-        }
+        return sprite.getU(achanged$uv[vertId * 2]);
+    }
+
+    @Override
+    public float achanged$getV(int vertId) {
+        TextureAtlasSprite sprite = achanged$getSprite();
+        if(sprite == null) return 0;
+
+        return sprite.getV(achanged$uv[vertId * 2 + 1]);
     }
 
     @Override
@@ -79,16 +82,7 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
 
     @Override
     public void achanged$initUV(float[] uv) {
-        this.achanged$uv = uv;
-    }
-
-    @ModifyReturnValue(at = @At("TAIL"), method = "getVertices")
-    private int[] modifyGetVertices(int[] original){
-        return switch (achanged$map.getOrDefault(Thread.currentThread(), CoveredWith.NOTHING)){
-            case DARK_LATEX -> achanged$dark_latex;
-            case WHITE_LATEX -> achanged$white_latex;
-            default -> original;
-        };
+        achanged$uv = uv;
     }
 
     @ModifyReturnValue(at = @At("TAIL"), method = "isTinted")

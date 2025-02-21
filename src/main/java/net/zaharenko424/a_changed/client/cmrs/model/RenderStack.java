@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 public class RenderStack {
 
-    protected final Int2ObjectOpenHashMap<ParameterList> map = new Int2ObjectOpenHashMap<>(2);
+    protected final Int2ObjectOpenHashMap<ParameterList> map = new Int2ObjectOpenHashMap<>(4);
     protected static final Pool<RenderParameters> paramPool = new Pool<>() {
         @Override
         protected RenderParameters newObject() {
@@ -39,22 +39,37 @@ public class RenderStack {
         return map.computeIfAbsent(renderId, k -> new ParameterList());
     }
 
+    /**
+     * Resets parameters for rendering.
+     */
     public void reset(){
         map.values().forEach(ParameterList::clear);
     }
 
+    /**
+     * Sets whether to remap absolute uv coordinates to relative.
+     */
     public void setRemap(boolean remap){
         this.remap = remap;
     }
 
+    /**
+     * Sets the default Texture to RenderType function.
+     */
     public void setRenderTypeFunc(Function<ResourceLocation, RenderType> func){
         this.func = func;
     }
 
+    /**
+     * Applies the default Texture to RenderType function if present or fallback.
+     */
     public RenderType defRenderType(ResourceLocation texture, @NotNull Function<ResourceLocation, RenderType> fallback){
         return func != null ? func.apply(texture) : fallback.apply(texture);
     }
 
+    /**
+     * Clears the ParameterList map.
+     */
     public void clear(){
         map.clear();
     }
@@ -63,7 +78,7 @@ public class RenderStack {
         ParameterList parameters = map.get(mesh.renderId);
         if(parameters == null || parameters.list.isEmpty()) return;
 
-        for(RenderParameters param : parameters){//TODO wrap into multiConsumer?
+        for(RenderParameters param : parameters){
             mesh.compile(pose, param.consumer, light, param.overlay != 0 ? param.overlay : overlay, param.color != 0 ? param.color : color);
         }
     }

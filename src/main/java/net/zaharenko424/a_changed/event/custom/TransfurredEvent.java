@@ -6,6 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -18,13 +19,15 @@ public class TransfurredEvent extends Event {
     private final LivingEntity entity;
     private final LatexBeast latex;
     private final TransfurType transfurType;
+    private final TransfurContext context;
     private final DamageSource source;
 
     @ApiStatus.Internal
-    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType){
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType, TransfurContext context){
         this.entity = entity;
         this.latex = latex;
         this.transfurType = transfurType;
+        this.context = context;
         this.source = entity.getLastDamageSource();
 
         if(entity instanceof ServerPlayer player) {
@@ -47,6 +50,10 @@ public class TransfurredEvent extends Event {
 
     public TransfurType getTransfurType(){
         return transfurType;
+    }
+
+    public TransfurContext getContext() {
+        return context;
     }
 
     public @Nullable DamageSource getSource(){

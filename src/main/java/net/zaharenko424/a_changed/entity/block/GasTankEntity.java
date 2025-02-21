@@ -69,9 +69,9 @@ public class GasTankEntity extends BlockEntity {
         tick = 0;
         canister.hurtAndBreak(1, ((ServerLevel)level),null, item -> {});
         level.playSound(null, worldPosition, SoundRegistry.GAS_LEAK.get(), SoundSource.BLOCKS);
-        level.getEntitiesOfClass(LivingEntity.class, ab, DamageSources::checkTarget).forEach((entity -> {
+        level.getEntitiesOfClass(LivingEntity.class, ab, DamageSources::checkTFTarget).forEach((entity -> {
             if(entity.hasEffect(MobEffectRegistry.FRESH_AIR) || isFullHazmat(entity)) return;
-            TransfurHandler.nonNullOf(entity).addTransfurProgress(5f, TransfurRegistry.GAS_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
+            TransfurHandler.nonNullOf(entity).addTransfurProgress(5f, TransfurRegistry.GAS_WOLF_TF.get(), TransfurContext.DEF);
         }));
         if(isEmpty()) open = false;
     }

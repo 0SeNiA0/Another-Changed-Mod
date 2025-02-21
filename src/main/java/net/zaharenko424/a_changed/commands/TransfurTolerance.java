@@ -64,7 +64,7 @@ public class TransfurTolerance {
         if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set").append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to {}", tolerance);
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
-            if(DamageSources.checkTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
+            if(DamageSources.checkTFTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
         PacketDistributor.sendToAllPlayers(new ClientboundTransfurToleranceSyncPacket());
         return Command.SINGLE_SUCCESS;

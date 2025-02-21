@@ -83,4 +83,16 @@ public interface Ability {
      * @return ability data or null if there is no data.
      */
     AbilityData getAbilityData(@NotNull LivingEntity holder);
+
+    /**
+     * Called serverside when this ability is added to the specified holder.
+     */
+    default void add(@NotNull LivingEntity holder){}
+
+    /**
+     * Called serverside when this ability is removed from specified holder.
+     */
+    default void remove(@NotNull LivingEntity holder){
+        deactivate(holder);
+    }
 }

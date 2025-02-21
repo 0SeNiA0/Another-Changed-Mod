@@ -122,7 +122,7 @@ public class CreativeTabs {
                     output.accept(LATEX_RESISTANT_GLASS_PANE_ITEM);
                     output.accept(GENERATOR_ITEM);
                     output.accept(BACKUP_GENERATOR_ITEM);
-                    output.accept(POWER_CELL);
+                    output.accept(POWER_CELL.toStack());//Do toStack so that override that sets damage is called
                     output.accept(CAPACITOR_ITEM);
                     output.accept(COMPRESSOR_ITEM);
                     output.accept(COMPRESSED_AIR_CANISTER);
@@ -164,7 +164,8 @@ public class CreativeTabs {
                     output.accept(HAZMAT_LEGGINGS);
                     output.accept(HAZMAT_BOOTS);
 
-                    output.accept(STUN_BATON);
+                    output.accept(STUN_BATON.toStack());//Do toStack so that override that sets damage is called
+                    output.accept(STUN_LANCE.toStack());
 
                     output.accept(BLACK_LATEX_SHORTS);
 
@@ -185,9 +186,10 @@ public class CreativeTabs {
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
-                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM);
-                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM);
-                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(LATEX_SOLVENT_SYRINGE);
+                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE);
+                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE);
+                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
                     output.accept(LATEX_MANIPULATOR);
 
@@ -197,7 +199,7 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_BASE);
 
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
-                    output.accept(SYRINGE_COIL_GUN);
+                    output.accept(SYRINGE_COIL_GUN.toStack());//Do toStack so that override that sets damage is called
 
                     output.accept(ROOMBA_SPAWN_EGG);
 

@@ -39,7 +39,7 @@ public class Utils {
         return obj;
     }
 
-    public static void sendToClient(ServerPlayer player, Packet<?> packet){
+    public static void sendVanillaToClient(ServerPlayer player, Packet<?> packet){
         player.connection.send(packet);
     }
 
@@ -59,11 +59,6 @@ public class Utils {
             if ((bits & 1 << i) != 0)
                 booleans[i] = true;
         return booleans;
-    }
-
-    public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
-        if(stackWith.isEmpty() || !ItemStack.isSameItemSameComponents(stack, stackWith)) return true;
-        return stackWith.getCount() < stackWith.getMaxStackSize();
     }
 
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");

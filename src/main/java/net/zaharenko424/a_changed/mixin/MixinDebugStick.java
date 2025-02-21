@@ -93,8 +93,8 @@ public abstract class MixinDebugStick {
 
         int i = achanged$data.getCoveredWith(achanged$pos).ordinal() + (backwards ? -1 : 1);
 
-        if(i < 0) i += 3;
-        if(i > 2) i -= 3;
+        if(i < 0) i += 5;
+        if(i > 4) i -= 5;
 
         achanged$data.coverWith(achanged$pos, CoveredWith.values()[i]);
 

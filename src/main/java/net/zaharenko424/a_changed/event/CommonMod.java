@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.event;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,6 +23,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.*;
 import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
+import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
@@ -94,9 +96,8 @@ public class CommonMod {
         registrar.playToClient(ClientboundLTCDataPacket.TYPE, ClientboundLTCDataPacket.CODEC,
                 (packet, context) -> ClientPacketHandler.INSTANCE.handleLTCDataSync(packet, context));
 
-        //Latex encoder
-        registrar.playToServer(ServerboundLatexEncoderScreenPacket.TYPE, ServerboundLatexEncoderScreenPacket.CODEC,
-                ServerPacketHandler.INSTANCE::handleLatexEncoderScreenPacket);
+        registrar.playToServer(ServerboundProcessingMachinePacket.TYPE, ServerboundProcessingMachinePacket.CODEC,
+                ServerPacketHandler.INSTANCE::handleProcessingMachinePacket);
 
         //Note
         registrar.playToClient(ClientboundOpenNotePacket.TYPE, ClientboundOpenNotePacket.CODEC,
@@ -122,14 +123,26 @@ public class CommonMod {
         event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
                 ItemEnergyCapability.getCapability(10000, 128, item), ItemRegistry.POWER_CELL);
         event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
-                ItemEnergyCapability.getCapability(25000, 128, item), ItemRegistry.STUN_BATON);
+                ItemEnergyCapability.getCapability(25000, 128, item), ItemRegistry.STUN_BATON, ItemRegistry.STUN_LANCE);
         event.registerItem(Capabilities.EnergyStorage.ITEM, (item, context) ->
                 ItemEnergyCapability.getCapability(50000, 256, item), ItemRegistry.SYRINGE_COIL_GUN);
 
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 9), ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
+                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 9){
+                    @Override
+                    public boolean isItemValid(int slot, ItemStack stack) {
+                        if(stack.isEmpty()) return true;
+                        return slot == 0 ? stack.is(ItemRegistry.COMPRESSED_AIR_CANISTER) : stack.getItem() instanceof AbstractSyringe;
+                    }
+                }, ItemRegistry.PNEUMATIC_SYRINGE_RIFLE);
         event.registerItem(Capabilities.ItemHandler.ITEM, (item, context) ->
-                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 4), ItemRegistry.SYRINGE_COIL_GUN);
+                new ComponentItemHandler(item, ComponentRegistry.ITEM_INVENTORY.get(), 4){
+                    @Override
+                    public boolean isItemValid(int slot, ItemStack stack) {
+                        if(stack.isEmpty()) return true;
+                        return stack.getItem() instanceof AbstractSyringe;
+                    }
+                }, ItemRegistry.SYRINGE_COIL_GUN);
 
         //BlockEntity
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BlockEntityRegistry.BACKUP_GENERATOR_ENTITY.get(), (machine, side) ->
