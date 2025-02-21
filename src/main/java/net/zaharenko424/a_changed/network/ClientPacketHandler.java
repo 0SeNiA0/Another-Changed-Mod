@@ -23,7 +23,7 @@ import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySync
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.TransfurUtils;
+import net.zaharenko424.a_changed.util.TransfurUtilsClient;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +62,7 @@ public class ClientPacketHandler {
 
             TransfurHandler handler = TransfurHandler.nonNullOf(holder);
             if(holder instanceof AbstractClientPlayer player) {
-                handler.setLastTFModelId(TransfurUtils.updateTFModel(player, handler.getLastTFModelId(), packet.isTransfurred() ? packet.transfurType() : null));
+                handler.setLastTFModelId(TransfurUtilsClient.updateTFModel(player, handler.getLastTFModelId(), packet.isTransfurred() ? packet.transfurType() : null));
             }
 
             handler.loadSyncedData(packet.ability(), packet.transfurProgress(), packet.isTransfurred(), packet.transfurType());

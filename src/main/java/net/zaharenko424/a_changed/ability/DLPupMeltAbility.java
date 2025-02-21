@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbi
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.util.AbilityUtils;
-import net.zaharenko424.a_changed.util.TransfurUtils;
+import net.zaharenko424.a_changed.util.TransfurUtilsClient;
 import org.jetbrains.annotations.NotNull;
 
 public class DLPupMeltAbility implements Ability {
@@ -57,9 +57,9 @@ public class DLPupMeltAbility implements Ability {
         getAbilityData(holder).fromPacket(buf);
         holder.refreshDimensions();
 
-        if(!(holder instanceof AbstractClientPlayer player)) return;
+        if(!(holder instanceof Player player)) return;
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        handler.setLastTFModelId(TransfurUtils.updateTFModel(player, handler.getLastTFModelId(), handler.getTransfurType()));
+        handler.setLastTFModelId(TransfurUtilsClient.updateTFModel((AbstractClientPlayer) player, handler.getLastTFModelId(), handler.getTransfurType()));
     }
 
     @Override

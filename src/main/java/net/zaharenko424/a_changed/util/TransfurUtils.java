@@ -1,9 +1,7 @@
 package net.zaharenko424.a_changed.util;
 
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -21,15 +19,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -48,26 +43,6 @@ public class TransfurUtils {
         if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
             handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     };
-
-    /**
-     * Applies the new transfur model to the provided player and returns its id.
-     *
-     * @param modelIdO Current modelId
-     * @return New modelId
-     */
-    @Contract("_, _, null -> null")
-    public static ResourceLocation updateTFModel(@NotNull AbstractClientPlayer player, @Nullable ResourceLocation modelIdO, @Nullable TransfurType transfurType){
-        ResourceLocation modelId = null;
-        if(transfurType != null){
-            modelId = transfurType.getModelIdFor(player);//Leave it like this for now. Might be a problem if getModelId() will check for ability data that isn't synced yet
-        }
-        if(modelIdO != modelId){
-            CustomModelManager manager = CustomModelManager.getInstance();
-            if(modelIdO != null) manager.removePlayerModel(player, modelIdO);
-            if(modelId != null) manager.setPlayerModel(player, modelId, null, 1);
-        }//Will throw if the model isn't registered ^
-        return modelId;
-    }
 
     public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
         AttributeMap map = holder.getAttributes();
