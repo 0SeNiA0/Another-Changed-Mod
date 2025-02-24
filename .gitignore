@@ -27,3 +27,4 @@ repo
 /src/generated/
 /bbmodels/
 /.run/
+/heart_templates/

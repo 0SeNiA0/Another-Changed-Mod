@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -57,17 +58,18 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.ItemTemptingSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.DLPupMeltAbility;
 import net.zaharenko424.a_changed.attachments.DLPupAgingData;
 import net.zaharenko424.a_changed.attachments.DLPupMeltData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetAttackTarget;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -194,7 +196,8 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
     public List<? extends ExtendedSensor<? extends DarkLatexPup>> getSensors() {
         return List.of(
                 new ItemTemptingSensor<DarkLatexPup>().temptedWith(TamableAnimal::isFood),
-                new NearbyLivingEntitySensor<>()
+                new NearbyLivingEntitySensor<>(),
+                new NearbyPlayersSensor<>()
         );
     }
 
@@ -240,7 +243,9 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                 new AllApplicableBehaviours<>(
                         new FloatToSurfaceOfFluid<>(),
                         new LookAtTarget<>().runFor(entity -> entity.getRandom().nextIntBetweenInclusive(40, 100)),
-                        new MoveToWalkTarget<DarkLatexPup>().startCondition(pup -> !pup.isInSittingPose())
+                        new MoveToWalkTarget<DarkLatexPup>()
+                                .startCondition(pup -> !pup.isInSittingPose())
+                                .stopIf(TamableAnimal::isInSittingPose)
                 ).startCondition(pup -> !pup.isMolten())
         );
     }
@@ -279,11 +284,14 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                         new FollowOwner<>().startCondition(pup -> !pup.isOrderedToSit())
                 ).startCondition(pup -> !pup.isMolten()),
                 new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>().setRadius(16, 8),
+                        new SetRandomWalkTarget<DarkLatexPup>()
+                                .setRadius(16, 8)
+                                .startCondition(pup -> !pup.isOrderedToSit()),
                         new SetRandomLookTarget<>(),
                         new SetPlayerLookTarget<DarkLatexPup>()
                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < 48)
-                                .runFor(pup -> pup.random.nextInt(60, 90)),
+                                .lookChance(ConstantFloat.of(.1f))
+                                .lookTime(pup -> pup.random.nextInt(60, 90)),
                         new Idle<>().runFor(entity -> random.nextInt(60, 90))
                 ).startCondition(pup -> !pup.isMolten())
         ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT);

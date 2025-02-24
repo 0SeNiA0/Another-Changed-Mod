@@ -23,10 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.block.blocks.CryoChamber;
@@ -43,6 +40,7 @@ import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
 import net.zaharenko424.a_changed.commands.client.RemoveModel;
 import net.zaharenko424.a_changed.commands.client.SetModel;
@@ -103,6 +101,12 @@ public class ClientEvent {
             }
         }
         return false;
+    }
+
+    @SubscribeEvent
+    public static void onClientPlayerClone(ClientPlayerNetworkEvent.Clone event){
+        TransfurHandler.nonNullOf(event.getOldPlayer()).setLastTFModelId(TransfurHandler.nonNullOf(event.getNewPlayer()).getLastTFModelId());
+        CustomModelManager.getInstance().updatePlayer(event.getNewPlayer());
     }
 
     @SubscribeEvent

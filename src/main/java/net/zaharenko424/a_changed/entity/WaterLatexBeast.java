@@ -43,7 +43,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomSwimTarge
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
@@ -56,6 +55,7 @@ import net.zaharenko424.a_changed.attachments.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
@@ -222,7 +222,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
                                 new OneRandomBehaviour<>(
                                         new SetPlayerLookTarget<>()
                                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < LOOK_RANGE_SQR)
-                                                .runFor(entity -> random.nextInt(60, 120)),
+                                                .lookTime(entity -> random.nextInt(60, 120)),
                                         new SetRandomLookTarget<>())
                         ),
                         new OneRandomBehaviour<>(

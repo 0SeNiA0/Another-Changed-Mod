@@ -15,13 +15,13 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
@@ -120,7 +120,7 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
                 new OneRandomBehaviour<>(
                         new SetPlayerLookTarget<E>()
                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < lookRangeSqr)
-                                .runFor(latex -> latex.random.nextInt(60, 120)),
+                                .lookTime(latex -> latex.random.nextInt(60, 120)),
                         new SetRandomLookTarget<>())
         );
     }

@@ -28,27 +28,10 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
     public static final RecipeType<LatexEncoderRecipe> TYPE = new RecipeType<>(RecipeRegistry.LATEX_ENCODER_RECIPE.getId(), LatexEncoderRecipe.class);
 
     private final IGuiHelper guiHelper;
-    private final IDrawable background;
     private final IDrawable icon;
 
     public LatexEncoderRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-        background = new IDrawable() {
-            @Override
-            public int getWidth() {
-                return 162;
-            }
-
-            @Override
-            public int getHeight() {
-                return 76;
-            }
-
-            @Override
-            public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(LatexEncoderScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
-            }
-        };
         icon = new IDrawable() {
             @Override
             public int getWidth() {
@@ -78,8 +61,13 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return 162;
+    }
+
+    @Override
+    public int getHeight() {
+        return 76;
     }
 
     @Override
@@ -89,6 +77,8 @@ public class LatexEncoderRecipeCategory implements IRecipeCategory<LatexEncoderR
 
     @Override
     public void draw(@NotNull LatexEncoderRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        guiGraphics.blit(LatexEncoderScreen.TEXTURE, 0, 0, 162, 76, 7, 5, 162, 76, 256, 166);
+
         JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 5, 10);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 5, 22);
     }

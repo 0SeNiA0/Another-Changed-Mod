@@ -18,13 +18,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CustomModelManager {
 
-    private static CustomModelManager modelManager;
+    private static CustomModelManager modelManager;//TODO use UUID instead of player object?
     private final ConcurrentHashMap<AbstractClientPlayer, CustomModelWrapper<?, ?>> render = new ConcurrentHashMap<>();
     private final Multimap<AbstractClientPlayer, ObjectIntPair<CustomModelWrapper<?, ?>>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
     private final ConcurrentHashMap<ResourceLocation, DynamicCustomModel<?, ?>> modelCache = new ConcurrentHashMap<>();
@@ -113,34 +114,33 @@ public class CustomModelManager {
         recalculatePlayerModel(player);
     }
 
-    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, int priority){
-        CustomModelWrapper<?, ?> pair = render.get(player);
-        if(pair == null) return;//No models queued for player.
-
-        boolean recalculate = false;
-        synchronized (modelQueue){
-            recalculate = modelQueue.get(player).removeIf(pair1 ->
-                        pair1.key().getModelId() == modelId && pair1.valueInt() == priority)
-                    || recalculate;
-        }
-        if(recalculate) recalculatePlayerModel(player);
-    }
-
-    public void removeLocalPlayerModel(@NotNull ResourceLocation modelId){
-        AbstractClientPlayer player = Minecraft.getInstance().player;
-        if(player != null) removePlayerModel(player, modelId);
-    }
 
     public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
+        removePlayerModelInternal(player, pair -> pair.key().getModelId().equals(modelId));
+    }
+
+    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, int priority){
+        removePlayerModelInternal(player, pair -> pair.key().getModelId().equals(modelId) && pair.valueInt() == priority);
+    }
+
+    private void removePlayerModelInternal(@NotNull AbstractClientPlayer player, @NotNull Predicate<ObjectIntPair<CustomModelWrapper<?, ?>>> predicate){
         CustomModelWrapper<?, ?> pair = render.get(player);
         if(pair == null) return;//No models queued for player.
 
-        boolean recalculate = false;
+        boolean recalculate;
         synchronized (modelQueue){
-            recalculate = modelQueue.get(player).removeIf(pair1 -> pair1.key().getModelId() == modelId)
-                    || recalculate;
+            recalculate = modelQueue.get(player).removeIf(predicate);
         }
         if(recalculate) recalculatePlayerModel(player);
+    }
+
+    public void updatePlayer(@NotNull AbstractClientPlayer player){//Should make sure that only the "live" localPlayer is in the map
+        if(!render.containsKey(player)) return;
+
+        render.put(player, render.remove(player));//TODO use identityMaps ?
+        synchronized (modelQueue) {
+            modelQueue.putAll(player, modelQueue.removeAll(player));
+        }
     }
 
     public void unloadPlayer(@NotNull AbstractClientPlayer player){
@@ -179,9 +179,9 @@ public class CustomModelManager {
         if(!modelCache.containsKey(modelId)) return;
         modelCache.remove(modelId);
 
-        render.values().removeIf(model1 -> model1.getModelId() == modelId);
+        render.values().removeIf(model1 -> model1.getModelId().equals(modelId));
         synchronized (modelQueue){
-            modelQueue.values().removeIf(pair -> pair.key().getModelId() == modelId);
+            modelQueue.values().removeIf(pair -> pair.key().getModelId().equals(modelId));
         }
 
         modelQueue.keys().forEach(this::recalculatePlayerModel);

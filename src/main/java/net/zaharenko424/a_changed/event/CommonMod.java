@@ -71,6 +71,9 @@ public class CommonMod {
         registrar.playToClient(ClientboundAbilitySyncPacket.TYPE, ClientboundAbilitySyncPacket.CODEC,
                 (packet, context) -> ClientPacketHandler.INSTANCE.handleAbilitySyncPacket(packet, context));
 
+        registrar.playToClient(ClientboundRemoveAttachmentPacket.TYPE, ClientboundRemoveAttachmentPacket.CODEC,
+                (packet, context) -> ClientPacketHandler.INSTANCE.handleRemoveAttachmentPacket(packet, context));
+
         registrar.playToServer(ServerboundAbilityPacket.TYPE, ServerboundAbilityPacket.CODEC,
                 ServerPacketHandler.INSTANCE::handleAbilityPacket);
 

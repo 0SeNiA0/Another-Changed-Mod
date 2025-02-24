@@ -1,5 +1,7 @@
 package net.zaharenko424.a_changed.compat.jei;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.ingredients.IIngredientType;
@@ -98,4 +100,15 @@ public class GenderIngredient {
             return List.of(Component.literal(ingredient.toString().substring(0, 1).concat(ingredient.toString().substring(1).toLowerCase())));
         }
     };
+
+    public static final Codec<Gender> CODEC = Codec.STRING.flatXmap(
+            name -> {
+                try {
+                    return DataResult.success(Enum.valueOf(Gender.class, name));
+                } catch (IllegalArgumentException ignored) {
+                    return DataResult.error(() -> "Unknown enum name: '" + name + "' for Gender");
+                }
+            },
+            e -> DataResult.success(e.name())
+    );;
 }

@@ -16,6 +16,7 @@ import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.loot_table.LabLoot;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -52,5 +53,7 @@ public final class DatagenEvent {
         generator.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, helper, List.of(
                 new AdvancementSubProvider()
         )));
+
+        generator.addProvider(event.includeClient(), new HeartConverter(new File("..\\..\\heart_templates"), out, AChanged.MODID));
     }
 }

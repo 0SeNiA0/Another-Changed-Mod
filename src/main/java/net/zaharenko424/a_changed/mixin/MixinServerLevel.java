@@ -21,6 +21,7 @@ import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
@@ -44,7 +45,7 @@ public abstract class MixinServerLevel extends Level {
         final LatexCoveredData data = LatexCoveredData.of(chunk);
 
         if(!LatexCoveredData.isLatex(original) && LatexCoveredData.isStateNotCoverable(original)) {//If block should not be covered, but is covered, uncover it.
-            data.coverWith(pos, CoveredWith.NOTHING);
+            if(data.getCoveredWith(pos) != CoveredWith.NOTHING) data.coverWith(pos, CoveredWith.NOTHING);
             return original;
         }
 
@@ -70,7 +71,8 @@ public abstract class MixinServerLevel extends Level {
         LevelChunk chunk1;
         LatexCoveredData data1;
 
-        for(Direction direction : Direction.values()){
+        Collection<Direction> list = Direction.allShuffled(random);
+        for(Direction direction : list){
             pos1 = pos.relative(direction);
             if(!isLoaded(pos1)) continue;
             state1 = getBlockState(pos1);

@@ -45,7 +45,7 @@ public class DarkLatexPupModel <E extends LivingEntity> extends UniversalCustomM
                     "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.PI), false, null),
                     "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.PI), false, null)
             ));
-            map.addLast(ModelPropertyRegistry.ITEM_IN_MAW.get(), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, -.15f, -.3f), null, new Vector3f(.5f))));
+            map.addLast(ModelPropertyRegistry.ITEM_IN_MAW.get(), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, -.15f, -.3f), null, new Vector3f(.4f))));
             map.addLast(ModelPropertyRegistry.ARMOR.get(), new Armor(Util.make(new Int2ObjectArrayMap<>(), m -> {
                 m.put(2, ArmorItem.Type.BODY);
             }), new Int2ObjectArrayMap<>(0)));

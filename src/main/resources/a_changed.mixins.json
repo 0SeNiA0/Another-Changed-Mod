@@ -6,6 +6,7 @@
   "injectors": {
     "defaultRequire": 1
   },
+  "plugin": "net.zaharenko424.a_changed.MixinConfig",
   "mixins": [
     "MixinBlockBehaviour",
     "MixinDebugStick",
@@ -29,6 +30,7 @@
   ],
   "client": [
     "client.MixinBlockModelShaper",
+    "client.MixinClientPacketListener",
     "client.MixinContainerScreen",
     "client.MixinDebugScreenOverlay",
     "client.MixinGui",

@@ -3,7 +3,8 @@ package net.zaharenko424.a_changed.compat.jei;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.*;
 import mezz.jei.neoforge.network.ConnectionToServer;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -33,9 +35,11 @@ import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @mezz.jei.api.JeiPlugin
@@ -46,24 +50,39 @@ public class JeiPlugin implements IModPlugin {
         return AChanged.resourceLoc("jei_plugin");
     }
 
+    private ISubtypeInterpreter<ItemStack> interpreter(BiFunction<ItemStack, UidContext, Object> func){
+        return new ISubtypeInterpreter<>() {
+            @Override
+            public @Nullable Object getSubtypeData(@NotNull ItemStack ingredient, @NotNull UidContext context) {
+                return func.apply(ingredient, context);
+            }
+
+            @Override
+            public @NotNull String getLegacyStringSubtypeInfo(@NotNull ItemStack ingredient, @NotNull UidContext context) {
+                return "";
+            }
+        };
+    }
+
     @Override
     public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
-        registration.registerSubtypeInterpreter(ItemRegistry.BLOOD_SYRINGE.asItem(), (ingredient, context) ->
-                ingredient.has(ComponentRegistry.BLOOD_TYPE) ? ingredient.get(ComponentRegistry.BLOOD_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+        registration.registerSubtypeInterpreter(ItemRegistry.BLOOD_SYRINGE.asItem(), interpreter((ingredient, context) ->
+                ingredient.has(ComponentRegistry.BLOOD_TYPE) ? ingredient.get(ComponentRegistry.BLOOD_TYPE).toString() : ""));
 
-        registration.registerSubtypeInterpreter(ItemRegistry.DNA_SAMPLE.asItem(), (ingredient, context) ->
-                ingredient.has(ComponentRegistry.DNA_TYPE) ? ingredient.get(ComponentRegistry.DNA_TYPE).toString() : IIngredientSubtypeInterpreter.NONE);
+        registration.registerSubtypeInterpreter(ItemRegistry.DNA_SAMPLE.asItem(), interpreter((ingredient, context) ->
+                ingredient.has(ComponentRegistry.DNA_TYPE) ? ingredient.get(ComponentRegistry.DNA_TYPE).toString() : ""));
 
-        registration.registerSubtypeInterpreter(ItemRegistry.LATEX_SYRINGE.asItem(), ((ingredient, context) ->
-                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
-        registration.registerSubtypeInterpreter(ItemRegistry.STABILIZED_LATEX_SYRINGE.asItem(), ((ingredient, context) ->
-                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : IIngredientSubtypeInterpreter.NONE));
+        registration.registerSubtypeInterpreter(ItemRegistry.LATEX_SYRINGE.asItem(), interpreter((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : ""));
+
+        registration.registerSubtypeInterpreter(ItemRegistry.STABILIZED_LATEX_SYRINGE.asItem(), interpreter((ingredient, context) ->
+                ingredient.has(ComponentRegistry.TRANSFUR_TYPE) ? ingredient.get(ComponentRegistry.TRANSFUR_TYPE).toString() : ""));
     }
 
     @Override
     public void registerIngredients(@NotNull IModIngredientRegistration registration) {
         registration.register(GenderIngredient.TYPE, Arrays.stream(Gender.values()).toList(),
-                GenderIngredient.HELPER, GenderIngredient.WHY);
+                GenderIngredient.HELPER, GenderIngredient.WHY, GenderIngredient.CODEC);
     }
 
     @Override

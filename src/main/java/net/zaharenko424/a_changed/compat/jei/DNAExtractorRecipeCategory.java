@@ -25,27 +25,10 @@ public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorR
     public static final RecipeType<DNAExtractorRecipe> TYPE = new RecipeType<>(RecipeRegistry.DNA_EXTRACTOR_RECIPE.getId(), DNAExtractorRecipe.class);
 
     private final IGuiHelper guiHelper;
-    private final IDrawable background;
     private final IDrawable icon;
 
     public DNAExtractorRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-        background = new IDrawable() {
-            @Override
-            public int getWidth() {
-                return 162;
-            }
-
-            @Override
-            public int getHeight() {
-                return 76;
-            }
-
-            @Override
-            public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(DNAExtractorScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
-            }
-        };
         icon = new IDrawable() {
             @Override
             public int getWidth() {
@@ -75,8 +58,13 @@ public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorR
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return 162;
+    }
+
+    @Override
+    public int getHeight() {
+        return 76;
     }
 
     @Override
@@ -86,6 +74,8 @@ public class DNAExtractorRecipeCategory implements IRecipeCategory<DNAExtractorR
 
     @Override
     public void draw(@NotNull DNAExtractorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        guiGraphics.blit(DNAExtractorScreen.TEXTURE, 0, 0, 162, 76, 7, 5, 162, 76, 256, 166);
+
         JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 96, 64);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 32, 64);
     }

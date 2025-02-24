@@ -49,6 +49,7 @@ public class BlockTagProvider extends BlockTagsProvider {
 
         tag(AChanged.LATEX_RESISTANT).add(Blocks.BARRIER, Blocks.BEDROCK, Blocks.CHAIN_COMMAND_BLOCK, Blocks.COMMAND_BLOCK,
                 Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.STRUCTURE_VOID, Blocks.LIGHT,
+                DARK_LATEX_CRYSTAL.get(), DARK_LATEX_CRYSTAL_ICE.get(), GREEN_CRYSTAL.get(), WHITE_LATEX_PILLAR.get(),
 
 
                 LATEX_RESISTANT_BLOCK.get(), LATEX_RESISTANT_GLASS.get(), LATEX_RESISTANT_GLASS_PANE.get());

@@ -24,27 +24,10 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
     public static final RecipeType<CompressorRecipe> TYPE = new RecipeType<>(RecipeRegistry.COMPRESSOR_RECIPE.getId(), CompressorRecipe.class);
 
     private final IGuiHelper guiHelper;
-    private final IDrawable background;
     private final IDrawable icon;
 
     public CompressorRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-        background = new IDrawable() {
-            @Override
-            public int getWidth() {
-                return 162;
-            }
-
-            @Override
-            public int getHeight() {
-                return 76;
-            }
-
-            @Override
-            public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(CompressorScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
-            }
-        };
         icon = new IDrawable() {
             @Override
             public int getWidth() {
@@ -74,8 +57,13 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return 162;
+    }
+
+    @Override
+    public int getHeight() {
+        return 76;
     }
 
     @Override
@@ -85,6 +73,8 @@ public class CompressorRecipeCategory implements IRecipeCategory<CompressorRecip
 
     @Override
     public void draw(@NotNull CompressorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        guiGraphics.blit(CompressorScreen.TEXTURE, 0, 0, 162, 76, 7, 5, 162, 76, 256, 166);
+
         JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 100, 64);
     }

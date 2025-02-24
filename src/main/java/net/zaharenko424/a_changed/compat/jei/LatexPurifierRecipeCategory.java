@@ -11,7 +11,6 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
 import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
@@ -24,27 +23,10 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
     public static final RecipeType<LatexPurifierRecipe> TYPE = new RecipeType<>(RecipeRegistry.LATEX_PURIFIER_RECIPE.getId(), LatexPurifierRecipe.class);
 
     private final IGuiHelper guiHelper;
-    private final IDrawable background;
     private final IDrawable icon;
 
     public LatexPurifierRecipeCategory(IGuiHelper guiHelper){
         this.guiHelper = guiHelper;
-        background = new IDrawable() {
-            @Override
-            public int getWidth() {
-                return 162;
-            }
-
-            @Override
-            public int getHeight() {
-                return 76;
-            }
-
-            @Override
-            public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-                guiGraphics.blit(LatexPurifierScreen.TEXTURE, xOffset, yOffset, 162, 76, 7, 5, 162, 76, 256, 166);
-            }
-        };
         icon = new IDrawable() {
             @Override
             public int getWidth() {
@@ -74,8 +56,13 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return 162;
+    }
+
+    @Override
+    public int getHeight() {
+        return 76;
     }
 
     @Override
@@ -85,6 +72,8 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
     @Override
     public void draw(@NotNull LatexPurifierRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        guiGraphics.blit(LatexPurifierScreen.TEXTURE, 0, 0, 162, 76, 7, 5, 162, 76, 256, 166);
+
         JeiPlugin.drawEnergyConsumption(recipe.getEnergyConsumption(), guiGraphics, getWidth() - 120, 64);
         JeiPlugin.drawProcessingTime(recipe.getProcessingTime(), guiGraphics, getWidth() - 100, 64);
     }
@@ -97,6 +86,6 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, @NotNull LatexPurifierRecipe recipe, @NotNull IFocusGroup focuses) {
-        builder.addWidget(new ProcessingArrowRecipeWidget(guiHelper, recipe.getProcessingTime(), new ScreenPosition(69, 30)));
+        builder.addAnimatedRecipeArrow(recipe.getProcessingTime()).setPosition(69, 30);
     }
 }

@@ -7,7 +7,9 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
@@ -20,6 +22,7 @@ import net.zaharenko424.a_changed.network.packets.ClientboundOpenKeypadPacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundOpenNotePacket;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySyncPacket;
+import net.zaharenko424.a_changed.network.packets.ability.ClientboundRemoveAttachmentPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -49,6 +52,15 @@ public class ClientPacketHandler {
             Entity entity = minecraft.level.getEntity(packet.holderId());
             if(!(entity instanceof LivingEntity living)) return;
             packet.ability().handleData(living, packet.buffer(), context);
+        });
+    }
+
+    public void handleRemoveAttachmentPacket(@NotNull ClientboundRemoveAttachmentPacket packet, @NotNull IPayloadContext context){
+        context.enqueueWork(() -> {
+            Entity entity = minecraft.level.getEntity(packet.holderId());
+            if(entity == null) return;
+            AttachmentType<?> type = NeoForgeRegistries.ATTACHMENT_TYPES.get(packet.attachmentId());
+            if(type != null) entity.removeData(type);
         });
     }
 

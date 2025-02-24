@@ -8,9 +8,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.attachments.DLPupAgingData;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.network.packets.ability.ClientboundRemoveAttachmentPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -72,6 +74,12 @@ public class DLPupAgingAbility implements PassiveAbility {
 
     private @NotNull TransfurType randomType(@NotNull RandomSource random){
         return (random.nextBoolean() ? TransfurRegistry.DARK_LATEX_WOLF_F_TF : TransfurRegistry.DARK_LATEX_WOLF_M_TF).get();
+    }
+
+    @Override
+    public void remove(@NotNull LivingEntity holder) {
+        holder.removeData(AttachmentRegistry.DL_PUP_AGING_DATA);
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, new ClientboundRemoveAttachmentPacket(holder.getId(), AttachmentRegistry.DL_PUP_AGING_DATA.getId()));
     }
 
     @Override
