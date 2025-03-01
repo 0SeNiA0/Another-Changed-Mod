@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.cmrs.properties;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,9 +18,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
+import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
+import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -46,35 +46,35 @@ public final class ItemOnHead implements RenderLayerLike {
         return model.root().getPart(headName);
     }
 
-    public void transformToHead(@NotNull CustomModel<?> model, @NotNull PoseStack stack){
+    public void transformToHead(@NotNull CustomModel<?> model, @NotNull MatrixStack stack){
         ModelPart head = getPart(model);
         if(head != null) head.translateAndRotate(stack);
     }
 
     @Override
-    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull MatrixStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if(getPart(model) == null) return;
 
         ItemStack itemstack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
         if (!itemstack.isEmpty()) {
             Item item = itemstack.getItem();
-            poseStack.pushPose();
+            matrixStack.push();
             boolean villager = livingEntity instanceof Villager || livingEntity instanceof ZombieVillager;
             if (livingEntity.isBaby() && !(livingEntity instanceof Villager)) {
-                poseStack.translate(0.0F, 0.03125F, 0.0F);
-                poseStack.scale(0.7F, 0.7F, 0.7F);
-                poseStack.translate(0.0F, 1.0F, 0.0F);
+                matrixStack.translate(0.0F, 0.03125F, 0.0F);
+                matrixStack.scale(0.7F, 0.7F, 0.7F);
+                matrixStack.translate(0.0F, 1.0F, 0.0F);
             }
 
-            transformToHead(model, poseStack);
+            transformToHead(model, matrixStack);
             if (item instanceof BlockItem && ((BlockItem)item).getBlock() instanceof AbstractSkullBlock) {
-                poseStack.scale(1.1875F, 1.1875F, -1.1875F);
+                matrixStack.scale(1.1875F, 1.1875F, -1.1875F);
                 if (villager) {
-                    poseStack.translate(0.0F, 0.0625F, 0.0F);
+                    matrixStack.translate(0.0F, 0.0625F, 0.0F);
                 }
 
                 ResolvableProfile resolvableprofile = itemstack.get(DataComponents.PROFILE);
-                poseStack.translate(-0.5, 0.0, -0.5);
+                matrixStack.translate(-0.5, 0.0, -0.5);
                 SkullBlock.Type skullblock$type = ((AbstractSkullBlock)((BlockItem)item).getBlock()).getType();
                 SkullModelBase skullmodelbase = skullModels.get(skullblock$type);
                 RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, resolvableprofile);
@@ -86,21 +86,21 @@ public final class ItemOnHead implements RenderLayerLike {
                 }
 
                 float f3 = walkanimationstate.position(partialTicks);
-                SkullBlockRenderer.renderSkull(null, 180.0F, f3, poseStack, buffer, packedLight, skullmodelbase, rendertype);
+                SkullBlockRenderer.renderSkull(null, 180.0F, f3, matrixStack.asVanilla(), buffer, packedLight, skullmodelbase, rendertype);
             } else if (!(item instanceof ArmorItem armoritem) || armoritem.getEquipmentSlot() != EquipmentSlot.HEAD) {
-                translateToHead(poseStack, villager);
-                minecraft.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(livingEntity, itemstack, ItemDisplayContext.HEAD, false, poseStack, buffer, packedLight);
+                translateToHead(matrixStack, villager);
+                minecraft.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(livingEntity, itemstack, ItemDisplayContext.HEAD, false, matrixStack.asVanilla(), buffer, packedLight);
             }
 
-            poseStack.popPose();
+            matrixStack.pop();
         }
     }
 
-    public static void translateToHead(PoseStack poseStack, boolean isVillager) {
-        poseStack.translate(0.0F, 0.25F, 0.0F);
-        poseStack.scale(0.625F, 0.625F, 0.625F);
+    public static void translateToHead(MatrixStack matrixStack, boolean isVillager) {
+        matrixStack.translate(0.0F, 0.25F, 0.0F);
+        matrixStack.scale(0.625F, 0.625F, 0.625F);
         if (isVillager) {
-            poseStack.translate(0.0F, 0.1875F, 0.0F);
+            matrixStack.translate(0.0F, 0.1875F, 0.0F);
         }
     }
 }

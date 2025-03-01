@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.cmrs;
+package net.zaharenko424.a_changed.client.cmrs.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
@@ -16,6 +16,7 @@ import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.Scoreboard;
+import net.zaharenko424.a_changed.client.cmrs.RenderUtil;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.util.CodecUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
@@ -30,6 +31,12 @@ public record PoseTransform(Vector3f translation, Quaternionf rotationRad, Vecto
         this.translation = translation == null ? new Vector3f() : translation;
         this.rotationRad = rotationRad == null ? new Quaternionf() : rotationRad;
         this.scale = scale == null ? new Vector3f(1) : scale;
+    }
+
+    public void apply(MatrixStack stack) {
+        stack.translate(translation.x, translation.y, translation.z);
+        if (rotationRad.x != 0 || rotationRad.y != 0 || rotationRad.z != 0) stack.mulPose(rotationRad);
+        if (!scale.equals(1, 1, 1)) stack.scale(scale.x, scale.y, scale.z);
     }
 
     public void apply(PoseStack stack) {

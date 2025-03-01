@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.client.cmrs.properties;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +10,7 @@ import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.ModelLayer;
 import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
+import net.zaharenko424.a_changed.client.cmrs.renderer.ExtraRenderTypes;
 
 public final class Glow implements ModelLayer {
 
@@ -46,11 +46,11 @@ public final class Glow implements ModelLayer {
         access.cmrs$startSubBatch();
         Textures textures = model.getProperty(ModelPropertyRegistry.TEXTURES.get());//TODO add requiredProperties set?
 
-        renderIdToTexture.forEach((renderId, textureId) -> {//forEach -> fastutil fastForEach
+        renderIdToTexture.forEach((renderId, textureId) -> {
             Texture texture = textures.textureByIndex(textureId);
             if(texture == null) return;
             stack.getOrCreate(renderId).add()
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.eyes(texture.getLocation()), 0), texture);
+                    .setUVRemapped(access.cmrs$getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(texture.getLocation()), 0), texture);
         });
     }
 }

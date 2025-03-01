@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.cmrs.properties;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.Items;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
+import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
 import net.zaharenko424.a_changed.util.CodecUtils;
@@ -65,54 +65,54 @@ public final class ItemInHandLayer implements RenderLayerLike {
         return model.getPart(target);
     }
 
-    public void transformToArm(CustomModel<?> model, HumanoidArm arm, PoseStack poseStack){
+    public void transformToArm(CustomModel<?> model, HumanoidArm arm, MatrixStack matrixStack){
         ModelPart part = getArm(model, arm);
-        if(part != null) part.translateAndRotate(poseStack);
+        if(part != null) part.translateAndRotate(matrixStack);
         if(arm == HumanoidArm.RIGHT){
-            transformR.apply(poseStack);
-        } else transformL.apply(poseStack);
+            transformR.apply(matrixStack);
+        } else transformL.apply(matrixStack);
     }
 
     @Override
-    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull MatrixStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean flag = livingEntity.getMainArm() == HumanoidArm.RIGHT;
         ItemStack itemstack = flag ? livingEntity.getOffhandItem() : livingEntity.getMainHandItem();
         ItemStack itemstack1 = flag ? livingEntity.getMainHandItem() : livingEntity.getOffhandItem();
         if(!itemstack.isEmpty())
-            renderArmWithItem(livingEntity, model, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, poseStack, buffer, packedLight);
+            renderArmWithItem(livingEntity, model, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStack, buffer, packedLight);
 
         if(!itemstack1.isEmpty())
-            renderArmWithItem(livingEntity, model, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, poseStack, buffer, packedLight);
+            renderArmWithItem(livingEntity, model, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStack, buffer, packedLight);
     }
 
-    private <E extends LivingEntity> void renderArmWithItem(E livingEntity, CustomModel<E> model, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    private <E extends LivingEntity> void renderArmWithItem(E livingEntity, CustomModel<E> model, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, MatrixStack matrixStack, MultiBufferSource buffer, int packedLight) {
         if (itemStack.is(Items.SPYGLASS) && livingEntity.getUseItem() == itemStack && livingEntity.swingTime == 0
                 && (headOverride != null || model.hasProperty(ModelPropertyRegistry.HEAD.get()))) {
-            if(renderArmWithSpyglass(livingEntity, model, itemStack, arm, poseStack, buffer, packedLight)) return;
+            if(renderArmWithSpyglass(livingEntity, model, itemStack, arm, matrixStack, buffer, packedLight)) return;
         }
-        poseStack.pushPose();
-        transformToArm(model, arm, poseStack);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        matrixStack.push();
+        transformToArm(model, arm, matrixStack);
+        matrixStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         boolean flag = arm == HumanoidArm.LEFT;
-        poseStack.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);
-        renderer.renderItem(livingEntity, itemStack, displayContext, flag, poseStack, buffer, packedLight);
-        poseStack.popPose();
+        matrixStack.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);
+        renderer.renderItem(livingEntity, itemStack, displayContext, flag, matrixStack.asVanilla(), buffer, packedLight);
+        matrixStack.pop();
     }
 
-    private <E extends LivingEntity> boolean renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int combinedLight) {
-        poseStack.pushPose();
+    private <E extends LivingEntity> boolean renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, MatrixStack matrixStack, MultiBufferSource buffer, int combinedLight) {
+        matrixStack.push();
         ModelPart modelpart = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyRegistry.HEAD.get()));
         if(modelpart == null) return false;
         float f = modelpart.xRot;
         modelpart.xRot = Mth.clamp(modelpart.xRot, (float) (-Math.PI / 6), (float) (Math.PI / 2));
-        modelpart.translateAndRotate(poseStack);
+        modelpart.translateAndRotate(matrixStack);
         modelpart.xRot = f;
-        ItemOnHead.translateToHead(poseStack, false);
+        ItemOnHead.translateToHead(matrixStack, false);
         boolean flag = arm == HumanoidArm.LEFT;
-        poseStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625F, 0.0F);
-        renderer.renderItem(entity, stack, ItemDisplayContext.HEAD, false, poseStack, buffer, combinedLight);
-        poseStack.popPose();
+        matrixStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625F, 0.0F);
+        renderer.renderItem(entity, stack, ItemDisplayContext.HEAD, false, matrixStack.asVanilla(), buffer, combinedLight);
+        matrixStack.pop();
         return true;
     }
 }

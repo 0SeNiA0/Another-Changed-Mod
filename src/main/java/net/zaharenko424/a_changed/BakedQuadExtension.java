@@ -13,6 +13,4 @@ public interface BakedQuadExtension {
     float achanged$getV(int vertId);
 
     void achanged$clear();
-
-    void achanged$initUV(float[] uv);
 }

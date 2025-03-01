@@ -1,12 +1,12 @@
 package net.zaharenko424.a_changed.client.cmrs.model;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.client.cmrs.RemappingVertexConsumer;
+import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.properties.Texture;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.util.Pool;
@@ -74,12 +74,12 @@ public class RenderStack {
         map.clear();
     }
 
-    public void renderMesh(@NotNull ModelPart.Mesh mesh, PoseStack.Pose pose, int light, int overlay, int color){
+    public void renderMesh(@NotNull ModelPart.Mesh mesh, MatrixStack.Matrix matrix, int light, int overlay, int color){
         ParameterList parameters = map.get(mesh.renderId);
         if(parameters == null || parameters.list.isEmpty()) return;
 
         for(RenderParameters param : parameters){
-            mesh.compile(pose, param.consumer, light, param.overlay != 0 ? param.overlay : overlay, param.color != 0 ? param.color : color);
+            mesh.compile(matrix, param.consumer, light, param.overlay != 0 ? param.overlay : overlay, param.color != 0 ? param.color : color);
         }
     }
 

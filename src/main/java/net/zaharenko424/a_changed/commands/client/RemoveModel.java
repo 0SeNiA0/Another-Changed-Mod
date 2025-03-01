@@ -15,11 +15,17 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import org.jetbrains.annotations.NotNull;
 
-public class RemoveModel {
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class RemoveModel {//TODO replace commands with GUI for setting/removing models
 
     private static final SuggestionProvider<CommandSourceStack> suggestions = SuggestionProviders.register(
             AChanged.resourceLoc("model_queue"),
-            (context, builder) -> SharedSuggestionProvider.suggestResource(CustomModelManager.getInstance().getQueuedModels(Minecraft.getInstance().player), builder)
+            (context, builder) -> {
+                Set<CustomModelManager.ModelEntry> set = CustomModelManager.getInstance().getQueuedModels(Minecraft.getInstance().player);
+                return SharedSuggestionProvider.suggestResource(set.stream().map(CustomModelManager.ModelEntry::getModelId).collect(Collectors.toSet()), builder);
+            }
     );
 
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){

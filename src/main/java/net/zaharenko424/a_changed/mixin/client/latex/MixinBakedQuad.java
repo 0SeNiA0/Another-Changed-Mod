@@ -5,7 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.neoforged.neoforge.client.model.IQuadTransformer;
 import net.zaharenko424.a_changed.BakedQuadExtension;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
@@ -14,6 +16,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.WeakHashMap;
 
@@ -30,6 +34,15 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
 
     @Unique
     private final WeakHashMap<Thread, CoveredWith> achanged$map = new WeakHashMap<>();
+
+    @Inject(at = @At("TAIL"), method = "<init>([IILnet/minecraft/core/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZZ)V")
+    private void onInit(int[] vertices, int tintIndex, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean hasAmbientOcclusion, CallbackInfo ci){
+        achanged$uv = new float[8];
+        for(int i = 0; i < 4; i++){
+            achanged$uv[i * 2] = sprite.getUOffset(Float.intBitsToFloat(vertices[IQuadTransformer.STRIDE * i + IQuadTransformer.UV0]));
+            achanged$uv[i * 2 + 1] = sprite.getVOffset(Float.intBitsToFloat(vertices[IQuadTransformer.STRIDE * i + IQuadTransformer.UV0 + 1]));
+        }
+    }
 
     @Override
     public void achanged$prepareLatex(CoveredWith latex){
@@ -78,11 +91,6 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
     @Override
     public void achanged$clear() {
         achanged$map.put(Thread.currentThread(), CoveredWith.NOTHING);
-    }
-
-    @Override
-    public void achanged$initUV(float[] uv) {
-        achanged$uv = uv;
     }
 
     @ModifyReturnValue(at = @At("TAIL"), method = "isTinted")

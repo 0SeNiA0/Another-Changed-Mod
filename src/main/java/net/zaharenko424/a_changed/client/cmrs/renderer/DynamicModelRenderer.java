@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.client.cmrs;
+package net.zaharenko424.a_changed.client.cmrs.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;

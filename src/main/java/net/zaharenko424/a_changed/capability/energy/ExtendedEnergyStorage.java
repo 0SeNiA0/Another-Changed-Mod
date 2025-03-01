@@ -112,7 +112,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
      * @return
     Amount of energy that was (or would have been, if simulated) transferred from this storage to provided one.
      */
-    public int transferEnergyTo(IEnergyStorage receiver, int amount, boolean simulate){
+    public int transferEnergyTo(@NotNull IEnergyStorage receiver, int amount, boolean simulate){
         if(amount < 0 || isEmpty() || !canExtract() || !receiver.canReceive()) return 0;
         int canGive = extractEnergy(amount, true);
         int canReceive = receiver.receiveEnergy(amount, true);

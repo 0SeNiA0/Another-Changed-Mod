@@ -158,6 +158,6 @@ public final class Armor implements ModelLayer {
         if (overlay == null) return;
         list.add()
                 .setUVRemapped(access.cmrs$getBuffer(RenderType.armorCutoutNoCull(overlay), 1), 64, 32)
-                .setOverlay(OverlayTexture.NO_OVERLAY);//wrap
+                .setColor(color).setOverlay(OverlayTexture.NO_OVERLAY);//wrap
     }
 }

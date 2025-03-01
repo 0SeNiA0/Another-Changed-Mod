@@ -19,7 +19,7 @@ public class ClientPacketHandler {
             if(!(entity instanceof AbstractClientPlayer player)) return;
 
             if(!CustomModelManager.getInstance().isBuiltIn(packet.modelId())) return;
-            CustomModelManager.getInstance().setPlayerModel(player, packet.modelId(), null, packet.priority());
+            CustomModelManager.getInstance().setPlayerModel(player, packet.modelId(), packet.priority(), packet.removeOnDeath(), packet.reason());
         });
     }
 
@@ -28,7 +28,7 @@ public class ClientPacketHandler {
             Entity entity = minecraft.level.getEntity(packet.entityId());
             if(!(entity instanceof AbstractClientPlayer player)) return;
 
-            if(packet.priorityOnly()) {
+            if(packet.usePriority()) {
                 CustomModelManager.getInstance().removePlayerModel(player, packet.modelId(), packet.priority());
             } else CustomModelManager.getInstance().removePlayerModel(player, packet.modelId());
         });

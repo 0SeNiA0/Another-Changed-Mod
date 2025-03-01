@@ -101,7 +101,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
         BlockEntity entity;
         BlockPos pos;
-        for(Direction direction : Direction.values()){
+        for(Direction direction : Direction.values()){//TODO potentially sends maxExtract to each direction each tick...
             if(energyStorage.isEmpty()) break;
             pos = worldPosition.relative(direction);
             entity = level.getBlockEntity(pos);
@@ -110,9 +110,10 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
                 wire.tickNetwork();
                 continue;
             }
-            if(energyStorage.transferEnergyTo(
-                    level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()),
-                    energyStorage.getMaxExtract(), false) != 0) {
+
+            IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite());
+
+            if(storage != null && energyStorage.transferEnergyTo(storage, energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
                 changed = true;
             }

@@ -1,9 +1,5 @@
 package net.zaharenko424.a_changed.client.cmrs;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -11,31 +7,35 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.PropertyOverrideMap;
 import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
+import net.zaharenko424.a_changed.client.cmrs.network.ModelSetReason;
+import net.zaharenko424.a_changed.util.SetView;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@ParametersAreNonnullByDefault
 public class CustomModelManager {
 
-    private static CustomModelManager modelManager;//TODO use UUID instead of player object?
-    private final ConcurrentHashMap<AbstractClientPlayer, CustomModelWrapper<?, ?>> render = new ConcurrentHashMap<>();
-    private final Multimap<AbstractClientPlayer, ObjectIntPair<CustomModelWrapper<?, ?>>> modelQueue = Multimaps.synchronizedMultimap(HashMultimap.create());
-    private final ConcurrentHashMap<ResourceLocation, DynamicCustomModel<?, ?>> modelCache = new ConcurrentHashMap<>();
-    //private final ConcurrentHashMap<ResourceLocation, ModelLoadingState> beingLoaded = new ConcurrentHashMap<>();
-    private final Map<ResourceLocation, BuiltInCustomModel<?, ?>> builtInModels;
+    private static CustomModelManager modelManager;
+    private final ConcurrentHashMap<UUID, PlayerProfile> players = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ResourceLocation, DynamicModelWrapper<?, ?>> modelCache = new ConcurrentHashMap<>();
+    private final Map<ResourceLocation, BuiltInModelWrapper<?, ?>> builtInModels;
 
     private <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelManager(Map<ResourceLocation, Supplier<?>> modelSuppliers){
         builtInModels = HashMap.newHashMap(modelSuppliers.size());
         modelSuppliers.forEach((loc, supplier) ->
-                builtInModels.put(loc, new BuiltInCustomModel<>(loc, (Supplier<M>)supplier)));
+                builtInModels.put(loc, new BuiltInModelWrapper<>(loc, (Supplier<M>)supplier)));
     }
 
     public static void init(){
@@ -54,157 +54,135 @@ public class CustomModelManager {
         return modelManager;
     }
 
+
+// ============================== Model methods ===============================
     public boolean isBuiltIn(ResourceLocation modelId){
         return builtInModels.containsKey(modelId);
     }
 
-    public boolean isModelLoaded(ResourceLocation modelId){
+    public boolean modelExists(ResourceLocation modelId){
         return getModelWrapper(modelId) != null;
     }
 
-    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(@NotNull ResourceLocation location){
-        CustomModelWrapper<E, M> wrapper = getModelWrapper(location);
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(ResourceLocation location){
+        ModelWrapper<E, M> wrapper = getModelWrapper(location);
         return wrapper != null ? wrapper.getModel() : null;
     }
 
-    private <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> CustomModelWrapper<E, M> getModelWrapper(@NotNull ResourceLocation location){
-        BuiltInCustomModel<E, M> builtIn = (BuiltInCustomModel<E, M>) builtInModels.get(location);
-
+    private <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable ModelWrapper<E, M> getModelWrapper(ResourceLocation location){
+        BuiltInModelWrapper<E, M> builtIn = (BuiltInModelWrapper<E, M>) builtInModels.get(location);
         if(builtIn != null) return builtIn;
 
-        return (CustomModelWrapper<E, M>) modelCache.get(location);
+        return (ModelWrapper<E, M>) modelCache.get(location);
     }
 
-    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(@NotNull AbstractClientPlayer player){
-        return (M) render.get(player).getModel();
-    }
-
-    public Set<ResourceLocation> getQueuedModels(AbstractClientPlayer player){
-        if(!modelQueue.containsKey(player)) return Set.of();
-
-        List<ResourceLocation> ids = new ArrayList<>();
-        modelQueue.get(player).forEach(pair -> ids.add(pair.key().getModelId()));
-
-        return Set.copyOf(ids);
-    }
-
-    public boolean hasCustomModel(@NotNull AbstractClientPlayer player){
-        return render.containsKey(player);
-    }
-
-    public Set<ResourceLocation> getRegisteredModels(){//Optimize? extend Set & store an unmodifiable view inside? Will have to update the Set each time models are added/removed...
+    public Set<ResourceLocation> getLoadedModels(){//Optimize? extend Set & store an unmodifiable view inside? Will have to update the Set each time models are added/removed...
         return Stream.concat(builtInModels.keySet().stream(), modelCache.keySet().stream()).collect(Collectors.toUnmodifiableSet());
     }
 
-    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setLocalPlayerModel(@NotNull ResourceLocation modelId, @Nullable Supplier<M> model, int priority){
-        AbstractClientPlayer player = Minecraft.getInstance().player;
-        if(player != null) setPlayerModel(player, modelId, model, priority);
-    }
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void loadDynamic(ResourceLocation modelId, Supplier<M> modelSupplier){
+        ModelWrapper<?, ?> wrapper = getModelWrapper(modelId);
+        if(wrapper != null) return;
 
-    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setPlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, @Nullable Supplier<M> modelSupplier, int priority){
-        CustomModelWrapper<E, M> wrapper = getModelWrapper(modelId);
-        if(wrapper == null) {
-            if(modelSupplier == null) throw new IllegalArgumentException("Model is not cached & supplier is null " + modelId);
-            M model = modelSupplier.get();//TODO use Supplier<CustomModelWrapper> instead? or use CompletableFuture<M>  Or add separate method to handle loading the model from bytes
-            if(model == null) throw new IllegalStateException("null model returned by supplier");
-            wrapper = new DynamicCustomModel<>(modelId, model);
-            modelCache.put(modelId, (DynamicCustomModel<E, M>)wrapper);
-        }
-        modelQueue.put(player, ObjectIntPair.of(wrapper, priority));
-        recalculatePlayerModel(player);
-    }
-
-
-    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId){
-        removePlayerModelInternal(player, pair -> pair.key().getModelId().equals(modelId));
-    }
-
-    public void removePlayerModel(@NotNull AbstractClientPlayer player, @NotNull ResourceLocation modelId, int priority){
-        removePlayerModelInternal(player, pair -> pair.key().getModelId().equals(modelId) && pair.valueInt() == priority);
-    }
-
-    private void removePlayerModelInternal(@NotNull AbstractClientPlayer player, @NotNull Predicate<ObjectIntPair<CustomModelWrapper<?, ?>>> predicate){
-        CustomModelWrapper<?, ?> pair = render.get(player);
-        if(pair == null) return;//No models queued for player.
-
-        boolean recalculate;
-        synchronized (modelQueue){
-            recalculate = modelQueue.get(player).removeIf(predicate);
-        }
-        if(recalculate) recalculatePlayerModel(player);
-    }
-
-    public void updatePlayer(@NotNull AbstractClientPlayer player){//Should make sure that only the "live" localPlayer is in the map
-        if(!render.containsKey(player)) return;
-
-        render.put(player, render.remove(player));//TODO use identityMaps ?
-        synchronized (modelQueue) {
-            modelQueue.putAll(player, modelQueue.removeAll(player));
-        }
-    }
-
-    public void unloadPlayer(@NotNull AbstractClientPlayer player){
-        render.remove(player);
-        modelQueue.removeAll(player);
-    }
-
-    public void recalculatePlayerModel(@NotNull AbstractClientPlayer player){
-        if(!modelQueue.containsKey(player)) {
-            render.remove(player);//Remove just in case
-            return;
-        }
-        int priority = Integer.MIN_VALUE;
-        CustomModelWrapper<?, ?> model = null;
-        for(ObjectIntPair<CustomModelWrapper<?, ?>> pair : modelQueue.get(player)){
-            if(pair.valueInt() <= priority) continue;
-            model = pair.key();
-            priority = pair.valueInt();
-        }
-        assert model != null;
-        render.put(player, model);
+        M model = modelSupplier.get();
+        if(model == null) throw new IllegalStateException("Null model returned by model supplier.");
+        modelCache.put(modelId, new DynamicModelWrapper<>(modelId, model));
     }
 
     @ApiStatus.Internal
     public void rebuildBuiltInModel(ResourceLocation modelId){
-        BuiltInCustomModel<?, ?> builtIn = builtInModels.get(modelId);
+        BuiltInModelWrapper<?, ?> builtIn = builtInModels.get(modelId);
         if(builtIn != null) builtIn.rebuild();
     }
 
-    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void registerDynamicModel(@NotNull ResourceLocation modelId, @NotNull M model){
-        if(modelCache.containsKey(modelId)) return;
-        modelCache.put(modelId, new DynamicCustomModel<>(modelId, model));
-    }
-
-    public void unloadModel(@NotNull ResourceLocation modelId){
+    public void unloadDynamicModel(ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
         modelCache.remove(modelId);
 
-        render.values().removeIf(model1 -> model1.getModelId().equals(modelId));
-        synchronized (modelQueue){
-            modelQueue.values().removeIf(pair -> pair.key().getModelId().equals(modelId));
-        }
-
-        modelQueue.keys().forEach(this::recalculatePlayerModel);
+        players.values().forEach(profile ->
+                profile.removeModel(entry -> entry.getModelId().equals(modelId)));
     }
 
-    public void unloadAllModels(){
-        render.clear();
-        modelQueue.clear();
+    public void unloadAllDynamicModels(){
+        players.values().forEach(profile ->
+                profile.removeModel(entry -> entry.model() instanceof DynamicModelWrapper<?,?>));
         modelCache.clear();
     }
 
-    interface CustomModelWrapper <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>>{
+
+// =========================== Player model methods ===========================
+    public boolean hasCustomModel(AbstractClientPlayer player){
+        PlayerProfile profile = players.get(player.getUUID());
+        return profile != null && profile.getModelWrapper() != null;
+    }
+
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(AbstractClientPlayer player){
+        PlayerProfile profile = players.get(player.getUUID());
+        return profile != null ? profile.getModel() : null;
+    }
+
+    public Set<ModelEntry> getQueuedModels(AbstractClientPlayer player){
+        PlayerProfile profile = players.get(player.getUUID());
+        return profile != null ? profile.getQueue() : Set.of();
+    }
+
+    public void setPlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority){
+        setPlayerModel(player, modelId, priority, false, ModelSetReason.SELF);
+    }
+
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setPlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority, boolean removeOnDeath, ModelSetReason reason){
+        ModelWrapper<E, M> wrapper = getModelWrapper(modelId);
+        if(wrapper == null) throw new IllegalArgumentException("Model is not cached: " + modelId);
+
+        players.computeIfAbsent(player.getUUID(), uid -> new PlayerProfile()).setModel(wrapper, priority, removeOnDeath, reason);
+    }
+
+
+    @ApiStatus.Internal
+    public void playerDied(AbstractClientPlayer player){
+        PlayerProfile profile = players.get(player.getUUID());
+        if(profile == null) return;
+
+        profile.removeModel(ModelEntry::removeOnDeath);
+    }
+
+
+    public void removePlayerModel(AbstractClientPlayer player, ModelSetReason reason){
+        removePlayerModelInternal(player.getUUID(), entry -> entry.reason() == reason);
+    }
+
+    public void removePlayerModel(AbstractClientPlayer player, ResourceLocation modelId){
+        removePlayerModelInternal(player.getUUID(), entry -> entry.getModelId().equals(modelId));
+    }
+
+    public void removePlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority){
+        removePlayerModelInternal(player.getUUID(), entry -> entry.getModelId().equals(modelId) && entry.priority() == priority);
+    }
+
+    private void removePlayerModelInternal(UUID uid, Predicate<ModelEntry> predicate){
+        PlayerProfile profile = players.get(uid);
+        if(profile != null) profile.removeModel(predicate);
+    }
+
+    public void unloadPlayer(UUID player){
+        if(Minecraft.getInstance().player != null && player.equals(Minecraft.getInstance().player.getUUID())) return;
+        players.remove(player);
+    }
+
+    interface ModelWrapper<E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>>{
 
         @NotNull ResourceLocation getModelId();
 
         M getModel();
     }
 
-    static class DynamicCustomModel <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements CustomModelWrapper<E, M> {
+    static class DynamicModelWrapper<E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements ModelWrapper<E, M> {
+        //private final Supplier<CompletableFuture<M>> futureSupplier;
+        //private CompletableFuture<M> modelLoader;
         private final ResourceLocation location;
         private final M model;
 
-        public DynamicCustomModel(@NotNull ResourceLocation location, @NotNull M model){
+        public DynamicModelWrapper(@NotNull ResourceLocation location, @NotNull M model){
             this.location = location;
             this.model = model;
         }
@@ -220,12 +198,12 @@ public class CustomModelManager {
         }
     }
 
-    static class BuiltInCustomModel <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements CustomModelWrapper<E, M>{
+    static class BuiltInModelWrapper<E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements ModelWrapper<E, M> {
         private final ResourceLocation location;
         private final Supplier<M> modelSupplier;
         private M model;
 
-        public BuiltInCustomModel(ResourceLocation location, Supplier<M> modelSupplier){
+        public BuiltInModelWrapper(ResourceLocation location, Supplier<M> modelSupplier){
             this.location = location;
             this.modelSupplier = modelSupplier;
         }
@@ -242,6 +220,51 @@ public class CustomModelManager {
 
         public void rebuild(){
             model = null;
+        }
+    }
+
+    static class PlayerProfile {
+
+        private Set<ModelEntry> view;
+        private final ConcurrentSkipListSet<ModelEntry> set = new ConcurrentSkipListSet<>(Comparator.comparingInt(ModelEntry::priority));
+        private PropertyOverrideMap globalOverrides;
+        private Map<ResourceLocation, PropertyOverrideMap> perModelOverrides;
+
+        public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(){
+            ModelWrapper<?, ?> wrapper = getModelWrapper();
+            return wrapper != null ? (M) wrapper.getModel() : null;
+        }
+
+        public ModelWrapper<?, ?> getModelWrapper(){
+            if(set.isEmpty()) return null;
+            return set.getFirst().model();
+        }
+
+        public void setModel(ModelWrapper<?, ?> model, int priority, boolean removeOnDeath, ModelSetReason reason){
+            set.add(new ModelEntry(model, priority, removeOnDeath, reason));
+        }
+
+        public void removeModel(@NotNull Predicate<ModelEntry> predicate){
+            if(set.isEmpty()) return;
+            set.removeIf(predicate);
+        }
+
+        public Set<ModelEntry> getQueue(){
+            if(view != null) return view;
+
+            synchronized (set){
+                if(view != null) return view;
+                view = new SetView<>(set);
+            }
+
+            return view;
+        }
+    }
+
+    public record ModelEntry(ModelWrapper<?, ?> model, int priority, boolean removeOnDeath, ModelSetReason reason){
+
+        public ResourceLocation getModelId(){
+            return model.getModelId();
         }
     }
 }

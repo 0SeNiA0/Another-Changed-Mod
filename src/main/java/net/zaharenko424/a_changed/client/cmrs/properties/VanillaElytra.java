@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.client.cmrs.properties;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.EntityModel;
@@ -21,6 +20,7 @@ import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
+import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
 import net.zaharenko424.a_changed.util.CodecUtils;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,7 @@ public final class VanillaElytra implements RenderLayerLike {
     }
 
     @Override
-    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull MatrixStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack stack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
         if(!(stack.getItem() instanceof ElytraItem)) return;
 
@@ -99,21 +99,21 @@ public final class VanillaElytra implements RenderLayerLike {
             texture = WINGS_LOCATION;
         }
 
-        poseStack.pushPose();
-        poseStack.scale(-1, -1, 1);//flip since vanilla model is intended to be flipped but CustomModel is not
-        poseStack.translate(0, -1.501, 0.125);
+        matrixStack.push();
+        matrixStack.scale(-1, -1, 1);//flip since vanilla model is intended to be flipped but CustomModel is not
+        matrixStack.translate(0, -1.501, 0.125);
 
         boolean b = livingEntity.isBaby() && babyTransform;
         PoseTransform transform = livingEntity.isFallFlying() ? b ? bTransformFlying : transformFlying
                 : livingEntity.isCrouching() ? b ? bTransformCrouching : transformCrouching
                 : b ? bTransform : this.transform;
-        transform.apply(poseStack);
+        transform.apply(matrixStack);
 
         ((EntityModel<LivingEntity>)model).copyPropertiesTo(elytra);
         elytra.setupAnim(livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         elytra.young = false;//Stop vanilla from applying baby transforms
-        elytra.renderToBuffer(poseStack, ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(texture), stack.hasFoil()), packedLight, OverlayTexture.NO_OVERLAY);
+        elytra.renderToBuffer(matrixStack.asVanilla(), ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(texture), stack.hasFoil()), packedLight, OverlayTexture.NO_OVERLAY);
 
-        poseStack.popPose();
+        matrixStack.pop();
     }
 }

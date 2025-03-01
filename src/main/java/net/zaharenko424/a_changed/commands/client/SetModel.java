@@ -22,7 +22,7 @@ public class SetModel {
 
     private static final SuggestionProvider<CommandSourceStack> suggestionsReg = SuggestionProviders.register(
             AChanged.resourceLoc("custom_models"),
-            (context, builder) -> SharedSuggestionProvider.suggestResource(CustomModelManager.getInstance().getRegisteredModels(), builder)
+            (context, builder) -> SharedSuggestionProvider.suggestResource(CustomModelManager.getInstance().getLoadedModels(), builder)
     );
 
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
@@ -64,7 +64,7 @@ public class SetModel {
     }
 
     private static int execute(@NotNull ResourceLocation modelId, @NotNull AbstractClientPlayer player, int priority){
-        CustomModelManager.getInstance().setPlayerModel(player, modelId, null, priority);
+        CustomModelManager.getInstance().setPlayerModel(player, modelId, priority);
         return Command.SINGLE_SUCCESS;
     }
 

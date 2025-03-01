@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.util;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.a_changed.client.cmrs.network.ModelSetReason;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class TransfurUtilsClient {
         if(modelIdO != modelId){
             CustomModelManager manager = CustomModelManager.getInstance();
             if(modelIdO != null) manager.removePlayerModel(player, modelIdO);
-            if(modelId != null) manager.setPlayerModel(player, modelId, null, 1);
+            if(modelId != null) manager.setPlayerModel(player, modelId, 1, true, ModelSetReason.MOD);
         }//Will throw if the model isn't registered ^
         return modelId;
     }

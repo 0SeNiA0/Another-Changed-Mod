@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.zaharenko424.a_changed.block.blocks.BackupGenerator;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -36,9 +37,10 @@ public class BackupGeneratorEntity extends BlockEntity {
                 wire.tickNetwork();
                 continue;
             }
-            if(energyStorage.transferEnergyTo(
-                    level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()),
-                    energyStorage.getMaxExtract(), false) != 0) {
+
+            IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite());
+
+            if(storage != null && energyStorage.transferEnergyTo(storage, energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
             }
         }

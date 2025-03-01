@@ -40,7 +40,6 @@ import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
 import net.zaharenko424.a_changed.capability.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
 import net.zaharenko424.a_changed.commands.client.RemoveModel;
 import net.zaharenko424.a_changed.commands.client.SetModel;
@@ -101,12 +100,6 @@ public class ClientEvent {
             }
         }
         return false;
-    }
-
-    @SubscribeEvent
-    public static void onClientPlayerClone(ClientPlayerNetworkEvent.Clone event){
-        TransfurHandler.nonNullOf(event.getOldPlayer()).setLastTFModelId(TransfurHandler.nonNullOf(event.getNewPlayer()).getLastTFModelId());
-        CustomModelManager.getInstance().updatePlayer(event.getNewPlayer());
     }
 
     @SubscribeEvent

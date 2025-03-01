@@ -281,7 +281,9 @@ public class DarkLatexPup extends TamableAnimal implements LatexBeast, SmartBrai
                                             .orElse(null);
                                     return target == null ? null : (pup.wantsToAttack(target, owner) ? target : null);
                                 }),
-                        new FollowOwner<>().startCondition(pup -> !pup.isOrderedToSit())
+                        new FollowOwner<>()
+                                .startCondition(pup -> !pup.isOrderedToSit())
+                                .stopIf(TamableAnimal::isInSittingPose)
                 ).startCondition(pup -> !pup.isMolten()),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<DarkLatexPup>()

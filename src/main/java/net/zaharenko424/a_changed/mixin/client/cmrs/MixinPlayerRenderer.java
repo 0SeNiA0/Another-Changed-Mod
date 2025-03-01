@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client.renderer;
+package net.zaharenko424.a_changed.mixin.client.cmrs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PlayerModel;
@@ -10,8 +10,8 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelRenderer;
-import net.zaharenko424.a_changed.client.cmrs.DynamicModelRenderer;
+import net.zaharenko424.a_changed.client.cmrs.renderer.CustomModelRenderer;
+import net.zaharenko424.a_changed.client.cmrs.renderer.DynamicModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;

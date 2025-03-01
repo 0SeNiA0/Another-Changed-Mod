@@ -150,4 +150,22 @@ public class ModelPropertyMapImpl implements ModelPropertyMap {
             type.codec.encode(buffer, (P) entry.getValue());
         }
     }
+
+    public static <P> ModelPropertyMap read(@NotNull FriendlyByteBuf buf){
+        int size = buf.readVarInt();
+        if(size == 0) return new ModelPropertyMapImpl();
+
+        Registry<ModelPropertyType<?>> registry = ModelPropertyRegistry.PROPERTY_REGISTRY;
+        Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> map = new Reference2ObjectLinkedOpenHashMap<>();
+        ResourceLocation loc;
+        ModelPropertyType<P> type;
+        for(int i = 0; i < size; i++){
+            loc = buf.readResourceLocation();
+            type = (ModelPropertyType<P>) registry.get(loc);
+            if(type == null) throw new IllegalStateException("No model property type found with location " + loc);
+            map.put(type, type.codec.decode(buf));
+        }
+
+        return new ModelPropertyMapImpl(map);
+    }
 }

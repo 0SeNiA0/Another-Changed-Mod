@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client.renderer;
+package net.zaharenko424.a_changed.mixin.client.cmrs;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
