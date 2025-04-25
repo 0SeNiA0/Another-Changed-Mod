@@ -12,7 +12,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.registry.FluidRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;

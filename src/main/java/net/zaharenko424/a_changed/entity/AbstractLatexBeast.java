@@ -19,7 +19,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTar
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;

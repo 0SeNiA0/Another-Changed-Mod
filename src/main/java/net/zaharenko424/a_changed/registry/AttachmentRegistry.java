@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.attachments.*;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
@@ -16,9 +16,9 @@ public class AttachmentRegistry {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
 
     //DL Pup aging ability data
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DLPupAgingData>> DL_PUP_AGING_DATA = ATTACHMENTS
-            .register("dl_pup_age", () -> AttachmentType.builder(DLPupAgingData::new)
-                    .serialize(DLPupAgingData.SERIALIZER).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LatexPupAgingData>> LATEX_PUP_AGING_DATA = ATTACHMENTS
+            .register("latex_pup_age", () -> AttachmentType.builder(LatexPupAgingData::new)
+                    .serialize(LatexPupAgingData.SERIALIZER).build());
 
     //DL Pup melt ability data
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DLPupMeltData>> DL_PUP_MELT_DATA = ATTACHMENTS

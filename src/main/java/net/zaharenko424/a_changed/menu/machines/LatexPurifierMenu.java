@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.zaharenko424.a_changed.entity.block.machines.LatexPurifierEntity;
+import net.zaharenko424.a_changed.entity.block.machine.LatexPurifierEntity;
 import net.zaharenko424.a_changed.menu.SlotItemHandler;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;

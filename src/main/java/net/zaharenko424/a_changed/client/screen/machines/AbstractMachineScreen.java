@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
+import net.zaharenko424.a_changed.entity.block.machine.AbstractMachineEntity;
 import net.zaharenko424.a_changed.menu.machines.AbstractMachineMenu;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;

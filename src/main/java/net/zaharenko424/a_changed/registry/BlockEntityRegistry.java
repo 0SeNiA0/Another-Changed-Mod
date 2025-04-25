@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
-import net.zaharenko424.a_changed.entity.block.machines.*;
+import net.zaharenko424.a_changed.entity.block.machine.*;
 import net.zaharenko424.a_changed.entity.block.sign.HangingSignEntity;
 import net.zaharenko424.a_changed.entity.block.sign.SignEntity;
 

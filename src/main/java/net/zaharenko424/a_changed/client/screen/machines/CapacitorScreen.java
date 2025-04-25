@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.block.machines.CapacitorEntity;
+import net.zaharenko424.a_changed.entity.block.machine.CapacitorEntity;
 import net.zaharenko424.a_changed.menu.machines.CapacitorMenu;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;

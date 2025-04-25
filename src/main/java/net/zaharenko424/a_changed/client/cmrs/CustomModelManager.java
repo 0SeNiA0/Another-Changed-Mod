@@ -1,8 +1,10 @@
 package net.zaharenko424.a_changed.client.cmrs;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
@@ -10,6 +12,7 @@ import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.PropertyOverrideMap;
 import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
 import net.zaharenko424.a_changed.client.cmrs.network.ModelSetReason;
+import net.zaharenko424.a_changed.client.cmrs.renderer.AnyModelRenderer;
 import net.zaharenko424.a_changed.util.SetView;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -89,12 +91,6 @@ public class CustomModelManager {
         modelCache.put(modelId, new DynamicModelWrapper<>(modelId, model));
     }
 
-    @ApiStatus.Internal
-    public void rebuildBuiltInModel(ResourceLocation modelId){
-        BuiltInModelWrapper<?, ?> builtIn = builtInModels.get(modelId);
-        if(builtIn != null) builtIn.rebuild();
-    }
-
     public void unloadDynamicModel(ResourceLocation modelId){
         if(!modelCache.containsKey(modelId)) return;
         modelCache.remove(modelId);
@@ -107,6 +103,13 @@ public class CustomModelManager {
         players.values().forEach(profile ->
                 profile.removeModel(entry -> entry.model() instanceof DynamicModelWrapper<?,?>));
         modelCache.clear();
+    }
+
+    AnyModelRenderer<?, ?> renderer = new AnyModelRenderer<>(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), null, null, null, null, null, null), 0);
+
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void renderModel(ResourceLocation modelId, E entity, PoseStack stack, int light){
+        M model = getModel(modelId);
+        if(model != null) ((AnyModelRenderer<E, M>)renderer).render(model, entity, 0, 1, stack, Minecraft.getInstance().renderBuffers().bufferSource(), light);
     }
 
 
@@ -127,7 +130,7 @@ public class CustomModelManager {
     }
 
     public void setPlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority){
-        setPlayerModel(player, modelId, priority, false, ModelSetReason.SELF);
+        setPlayerModel(player, modelId, priority, false, ModelSetReason.LOCAL);
     }
 
     public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void setPlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority, boolean removeOnDeath, ModelSetReason reason){
@@ -157,6 +160,10 @@ public class CustomModelManager {
 
     public void removePlayerModel(AbstractClientPlayer player, ResourceLocation modelId, int priority){
         removePlayerModelInternal(player.getUUID(), entry -> entry.getModelId().equals(modelId) && entry.priority() == priority);
+    }
+
+    public void removePlayerModel(AbstractClientPlayer player, ModelEntry entry){
+        removePlayerModelInternal(player.getUUID(), e -> e == entry);
     }
 
     private void removePlayerModelInternal(UUID uid, Predicate<ModelEntry> predicate){
@@ -200,7 +207,7 @@ public class CustomModelManager {
 
     static class BuiltInModelWrapper<E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> implements ModelWrapper<E, M> {
         private final ResourceLocation location;
-        private final Supplier<M> modelSupplier;
+        private Supplier<M> modelSupplier;
         private M model;
 
         public BuiltInModelWrapper(ResourceLocation location, Supplier<M> modelSupplier){
@@ -214,19 +221,20 @@ public class CustomModelManager {
         }
 
         public M getModel(){
-            if(model == null) model = modelSupplier.get();
+            if(model == null) {
+                model = modelSupplier.get();
+                modelSupplier = null;
+            }
             return model;
-        }
-
-        public void rebuild(){
-            model = null;
         }
     }
 
     static class PlayerProfile {
 
+        private static final Comparator<ModelEntry> comp = Comparator.comparingInt(ModelEntry::priority).reversed();
+
         private Set<ModelEntry> view;
-        private final ConcurrentSkipListSet<ModelEntry> set = new ConcurrentSkipListSet<>(Comparator.comparingInt(ModelEntry::priority));
+        private final List<ModelEntry> models = Collections.synchronizedList(new ArrayList<>());
         private PropertyOverrideMap globalOverrides;
         private Map<ResourceLocation, PropertyOverrideMap> perModelOverrides;
 
@@ -236,25 +244,28 @@ public class CustomModelManager {
         }
 
         public ModelWrapper<?, ?> getModelWrapper(){
-            if(set.isEmpty()) return null;
-            return set.getFirst().model();
+            if(models.isEmpty()) return null;
+            return models.getFirst().model();
         }
 
         public void setModel(ModelWrapper<?, ?> model, int priority, boolean removeOnDeath, ModelSetReason reason){
-            set.add(new ModelEntry(model, priority, removeOnDeath, reason));
+            ModelEntry e = new ModelEntry(model, priority, removeOnDeath, reason);
+            if(models.contains(e)) return;
+            models.add(e);
+            models.sort(comp);
         }
 
         public void removeModel(@NotNull Predicate<ModelEntry> predicate){
-            if(set.isEmpty()) return;
-            set.removeIf(predicate);
+            if(models.isEmpty()) return;
+            if(models.removeIf(predicate) && !models.isEmpty()) models.sort(comp);
         }
 
         public Set<ModelEntry> getQueue(){
             if(view != null) return view;
 
-            synchronized (set){
+            synchronized (models){
                 if(view != null) return view;
-                view = new SetView<>(set);
+                view = new SetView<>(models);
             }
 
             return view;

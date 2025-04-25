@@ -23,11 +23,11 @@ public abstract class MixinSlot {
 
     @ModifyReturnValue(at = @At("RETURN"), method = "isActive")
     private boolean onIsActive(boolean original){
-        if(slot == 40 && container instanceof Inventory inventory && AbilityUtils.hasDLPupAbilities(inventory.player)) return false;
+        if(slot == 40 && container instanceof Inventory inventory && AbilityUtils.hasLatexPupAbilities(inventory.player)) return false;
 
         if((Object)this instanceof ArmorSlotAccess armor){
             LivingEntity owner = armor.achanged$owner();
-            if(!(owner instanceof Player) || !AbilityUtils.hasDLPupAbilities(owner)) return original;
+            if(!(owner instanceof Player) || !AbilityUtils.hasLatexPupAbilities(owner)) return original;
 
             return armor.achanged$slot() == EquipmentSlot.FEET;
         }

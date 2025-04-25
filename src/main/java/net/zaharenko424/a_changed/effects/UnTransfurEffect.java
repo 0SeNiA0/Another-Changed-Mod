@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.effects;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;

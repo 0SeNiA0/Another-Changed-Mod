@@ -37,9 +37,9 @@ import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.block.blocks.Note;
-import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.block.Note;
+import net.zaharenko424.a_changed.block.PileOfOranges;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.commands.*;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -59,7 +59,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-        DLPupAging.register(dispatcher);
+        LatexPupAging.register(dispatcher);
         GiveDNASample.register(dispatcher);
         LatexGrabChance.register(dispatcher);
         Transfur.register(dispatcher);
@@ -117,7 +117,7 @@ public class CommonEvent {
 
     @SubscribeEvent
     public static void onSwapItems(LivingSwapItemsEvent.Hands event){
-        if(AbilityUtils.hasDLPupAbilities(event.getEntity())) event.setCanceled(true);
+        if(AbilityUtils.hasLatexPupAbilities(event.getEntity())) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -292,11 +292,10 @@ public class CommonEvent {
     }
 
     /**
-     * Clone capability data on respawn etc.
+     * Sync tf data on respawn etc.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPlayerClone(PlayerEvent.Clone event){
-        if(!event.isWasDeath()) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
         new Timer().schedule(new TimerTask() {
@@ -307,6 +306,28 @@ public class CommonEvent {
 
                 Ability selected = handler.getSelectedAbility();
                 if(selected != null) selected.select(player);
+            }
+        },25);
+    }
+
+    /**
+     * Sync tf data after changing dimension.
+     */
+    @SubscribeEvent
+    public static void onPlayerChangeDim(PlayerEvent.PlayerChangedDimensionEvent event){
+        ServerPlayer player = (ServerPlayer) event.getEntity();//TODO resync ability data
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                TransfurHandler handler = TransfurHandler.nonNullOf(player);
+                handler.syncClient(player);
+
+                Ability selected = handler.getSelectedAbility();
+                if(selected == null) return;
+                selected.select(player);
+                AbilityData data = selected.getAbilityData(player);
+                if(data != null) data.syncClient(player);
             }
         },25);
     }

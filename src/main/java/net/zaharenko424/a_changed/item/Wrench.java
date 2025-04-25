@@ -8,7 +8,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.block.machines.Wrenchable;
+import net.zaharenko424.a_changed.block.machine.Wrenchable;
 import org.jetbrains.annotations.NotNull;
 
 public class Wrench extends TieredItem {

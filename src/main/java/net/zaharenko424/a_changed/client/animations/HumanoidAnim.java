@@ -16,7 +16,7 @@ import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
 
 //Hardcoded animations. Bad but will do for now. Will be split later on.
-public class HumanoidAnim extends AnimationComponent {//TODO test
+public class HumanoidAnim extends AnimationComponent {
 
     private static HumanoidAnim instance;
 
@@ -31,7 +31,7 @@ public class HumanoidAnim extends AnimationComponent {//TODO test
 
         float swimAmount = entity.getSwimAmount(partialTick);
 
-        headYaw *= -1;//TMP fix flipped angles
+        headYaw *= -1;//fix flipped angles
         headPitch *= -1;
 
         boolean flag = entity.getFallFlyingTicks() > 4;

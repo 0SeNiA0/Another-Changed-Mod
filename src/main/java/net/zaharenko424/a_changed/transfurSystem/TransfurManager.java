@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachments.GrabData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.ApiStatus;

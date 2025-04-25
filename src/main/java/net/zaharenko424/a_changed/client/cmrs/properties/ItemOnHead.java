@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.client.cmrs.properties;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,8 +20,8 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
-import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,19 +47,19 @@ public final class ItemOnHead implements RenderLayerLike {
         return model.root().getPart(headName);
     }
 
-    public void transformToHead(@NotNull CustomModel<?> model, @NotNull MatrixStack stack){
+    public void transformToHead(@NotNull CustomModel<?> model, @NotNull PoseStack stack){
         ModelPart head = getPart(model);
         if(head != null) head.translateAndRotate(stack);
     }
 
     @Override
-    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull MatrixStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if(getPart(model) == null) return;
 
         ItemStack itemstack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
         if (!itemstack.isEmpty()) {
             Item item = itemstack.getItem();
-            matrixStack.push();
+            MatrixStack.push(matrixStack);
             boolean villager = livingEntity instanceof Villager || livingEntity instanceof ZombieVillager;
             if (livingEntity.isBaby() && !(livingEntity instanceof Villager)) {
                 matrixStack.translate(0.0F, 0.03125F, 0.0F);
@@ -86,17 +87,17 @@ public final class ItemOnHead implements RenderLayerLike {
                 }
 
                 float f3 = walkanimationstate.position(partialTicks);
-                SkullBlockRenderer.renderSkull(null, 180.0F, f3, matrixStack.asVanilla(), buffer, packedLight, skullmodelbase, rendertype);
+                SkullBlockRenderer.renderSkull(null, 180.0F, f3, matrixStack, buffer, packedLight, skullmodelbase, rendertype);
             } else if (!(item instanceof ArmorItem armoritem) || armoritem.getEquipmentSlot() != EquipmentSlot.HEAD) {
                 translateToHead(matrixStack, villager);
-                minecraft.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(livingEntity, itemstack, ItemDisplayContext.HEAD, false, matrixStack.asVanilla(), buffer, packedLight);
+                minecraft.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(livingEntity, itemstack, ItemDisplayContext.HEAD, false, matrixStack, buffer, packedLight);
             }
 
-            matrixStack.pop();
+            MatrixStack.pop(matrixStack);
         }
     }
 
-    public static void translateToHead(MatrixStack matrixStack, boolean isVillager) {
+    public static void translateToHead(PoseStack matrixStack, boolean isVillager) {
         matrixStack.translate(0.0F, 0.25F, 0.0F);
         matrixStack.scale(0.625F, 0.625F, 0.625F);
         if (isVillager) {

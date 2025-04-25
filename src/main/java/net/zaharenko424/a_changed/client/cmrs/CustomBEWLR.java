@@ -6,7 +6,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -14,10 +13,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
 import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
+import net.zaharenko424.a_changed.client.cmrs.renderer.ExtraRenderTypes;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,10 +51,11 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
     public void onResourceManagerReload(@NotNull ResourceManager pResourceManager) {}
 
     @Override
-    public void renderByItem(@NotNull ItemStack stack, @NotNull ItemDisplayContext displayContext, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
-        if(stack.is(ItemRegistry.ABSOLUTE_SOLVER)){
-            poseStack.pushPose();
-            poseStack.translate(0, 1, .5);
+    public void renderByItem(@NotNull ItemStack itemStack, @NotNull ItemDisplayContext displayContext, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+        if(itemStack.is(ItemRegistry.ABSOLUTE_SOLVER)){
+            MatrixStack.push(stack);
+            stack.translate(0, 1, .5);
+
             int time = (int) (Minecraft.getInstance().level.getGameTime() % 1800);
             float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
             float deg = time / 5f;
@@ -67,11 +69,11 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             RenderSystem.setShader(GameRenderer::getRendertypeEntitySolidShader);
             BufferBuilder builder = Tesselator.getInstance().getBuilder();
             builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
-            absoluteSolver.render(poseStack, builder, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            absoluteSolver.render(stack, builder, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             BufferUploader.drawWithShader(builder.end());*/
 
-            absoluteSolver.render(poseStack, buffer.getBuffer(RenderType.entitySolid(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-            poseStack.popPose();
+            absoluteSolver.render(stack, buffer.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            MatrixStack.pop(stack);
         }
     }
 }

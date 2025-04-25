@@ -20,7 +20,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityLatexScreen;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen;
@@ -130,7 +130,7 @@ public class GrabAbility implements Ability {
             LivingEntity grabbedBy = data.getGrabbedBy();
             if(grabbedBy != null) {
                 if(getAbilityData(grabbedBy).getMode().givesDebuffToTarget) {
-                    if(minecraft.screen == null) minecraft.setScreen(Utils.get(()-> new GrabEscapeScreen(localPlayer.getRandom())));
+                    if(minecraft.screen == null) minecraft.setScreen(Utils.get(()-> new GrabEscapeScreen()));
                 } else {//TODO make grabbed entities follow where you are looking at
                     PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
                             new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(false)));

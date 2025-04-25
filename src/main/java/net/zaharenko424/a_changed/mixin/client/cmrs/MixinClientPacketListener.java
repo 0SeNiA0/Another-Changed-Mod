@@ -34,7 +34,7 @@ public abstract class MixinClientPacketListener extends ClientCommonPacketListen
     @Inject(at = @At("HEAD"), method = "handleRespawn")//Called twice for some reason
     private void onHandleRespawn(ClientboundRespawnPacket packet, CallbackInfo ci){
         LocalPlayer old = minecraft.player;
-        if(old.getRemovalReason() == Entity.RemovalReason.CHANGED_DIMENSION) return;
+        if(old.getRemovalReason() == null || old.getRemovalReason() == Entity.RemovalReason.CHANGED_DIMENSION) return;
         CustomModelManager.getInstance().playerDied(old);
     }
 

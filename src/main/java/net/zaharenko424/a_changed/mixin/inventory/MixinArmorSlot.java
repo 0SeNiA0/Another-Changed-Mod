@@ -31,7 +31,7 @@ public abstract class MixinArmorSlot extends Slot implements ArmorSlotAccess {
 
     @ModifyReturnValue(at = @At("TAIL"), method = "mayPlace")
     private boolean onMayPlace(boolean original, @Local(argsOnly = true) ItemStack stack){
-        if(owner instanceof Player && AbilityUtils.hasDLPupAbilities(owner)){
+        if(owner instanceof Player && AbilityUtils.hasLatexPupAbilities(owner)){
             return slot == EquipmentSlot.FEET && stack.getItem() instanceof AnimalArmorItem armor && armor.getBodyType() == AnimalArmorItem.BodyType.CANINE;
         }
         return original;

@@ -30,13 +30,16 @@
   ],
   "client": [
     "client.MixinBlockModelShaper",
-    "client.cmrs.MixinClientPacketListener",
     "client.MixinContainerScreen",
     "client.MixinDebugScreenOverlay",
     "client.MixinGui",
     "client.MixinLightTexture",
     "client.MixinLocalPlayer",
     "client.MixinMultiPlayerGameMode",
+    "client.cmrs.MixinBufferSource",
+    "client.cmrs.MixinClientPacketListener",
+    "client.cmrs.MixinPlayerRenderer",
+    "client.cmrs.MixinPoseStack",
     "client.latex.AnimationMetadataAccessor",
     "client.latex.MixinBakedQuad",
     "client.latex.MixinBlockRendererDispatcher",
@@ -44,13 +47,11 @@
     "client.latex.MixinQuadLighter",
     "client.latex.MixinSpriteLoader",
     "client.latex.MixinVertexConsumer",
-    "client.cmrs.MixinBufferSource",
     "client.renderer.MixinFallingBlockRenderer",
     "client.renderer.MixinFogRenderer",
     "client.renderer.MixinGameRenderer",
     "client.renderer.MixinItemRenderer",
     "client.renderer.MixinLevelRenderer",
-    "client.renderer.MixinLivingEntityRenderer",
-    "client.cmrs.MixinPlayerRenderer"
+    "client.renderer.MixinLivingEntityRenderer"
   ]
 }

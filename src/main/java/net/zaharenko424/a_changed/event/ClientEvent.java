@@ -2,12 +2,11 @@ package net.zaharenko424.a_changed.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
@@ -23,28 +22,29 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.block.blocks.CryoChamber;
-import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
-import net.zaharenko424.a_changed.block.doors.BigLabDoor;
-import net.zaharenko424.a_changed.block.doors.BigLibraryDoor;
-import net.zaharenko424.a_changed.block.doors.LabDoor;
-import net.zaharenko424.a_changed.block.doors.LibraryDoor;
-import net.zaharenko424.a_changed.block.machines.DNAExtractor;
-import net.zaharenko424.a_changed.block.machines.LatexEncoder;
+import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.block.CryoChamber;
+import net.zaharenko424.a_changed.block.PileOfOranges;
+import net.zaharenko424.a_changed.block.door.BigLabDoor;
+import net.zaharenko424.a_changed.block.door.BigLibraryDoor;
+import net.zaharenko424.a_changed.block.door.LabDoor;
+import net.zaharenko424.a_changed.block.door.LibraryDoor;
+import net.zaharenko424.a_changed.block.machine.DNAExtractor;
+import net.zaharenko424.a_changed.block.machine.LatexEncoder;
 import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.smalldecor.Flask;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.client.cmrs.gui.screen.ModelManagerScreen;
 import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
-import net.zaharenko424.a_changed.commands.client.RemoveModel;
-import net.zaharenko424.a_changed.commands.client.SetModel;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.Utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -61,41 +61,52 @@ public class ClientEvent {
 
         if(player == null) return;
 
-        TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        List<? extends Ability> abilities = handler.getAllowedAbilities();
-        if(quickAbilitySelect(handler, abilities)) return;
-
-        Ability ability = handler.getSelectedAbility();
-        if(ability != null) {// no abilities selected -> tf type has no abilities so no need for screen
-            if(Keybindings.ABILITY_SELECTION.isDown() && TransfurManager.isTransfurred(player)){//TMP allow non tf players if more abilities are added for them
-                if(!abilities.isEmpty()){
-                    minecraft.setScreen(new AbilitySelectionScreen());
-                }
-            } else ability.inputTick(player, minecraft);
-
-            handler.getAllowedAbilities().forEach(abilityUnselected -> {
-                if(abilityUnselected == ability) return;
-                abilityUnselected.inputTickUnselected(player, minecraft);
-            });
+        if(Keybindings.MODEL_MANAGER.isDown()){
+            if(Minecraft.getInstance().screen == null) Minecraft.getInstance().setScreen(new ModelManagerScreen());
+            return;
         }
+
+        handleAbilities(minecraft, player);
     }
 
-    private static boolean quickAbilitySelect(TransfurHandler handler, List<? extends Ability> abilities){
+    private static void handleAbilities(Minecraft minecraft, Player player){
+        AbilityHolder holder = TransfurHandler.nonNullOf(player);
+        List<? extends Ability> abilities = holder.getAllowedAbilities();
+        if(abilities.isEmpty()) return;
+
+        if(quickAbilitySelect(holder, abilities)) return;
+
+        if(Keybindings.ABILITY_SELECTION.isDown()){
+            Screen screen = new AbilitySelectionScreen();// <-- sets screen in init so check before setting
+            if(Minecraft.getInstance().screen == null) minecraft.setScreen(screen);
+            return;
+        }
+
+        Ability ability = holder.getSelectedAbility();
+        if(ability != null){
+            ability.inputTick(player, minecraft);
+            return;
+        }
+
+        abilities.forEach(unselected -> unselected.inputTickUnselected(player, minecraft));
+    }
+
+    private static boolean quickAbilitySelect(AbilityHolder holder, List<? extends Ability> abilities){
         if(Keybindings.QUICK_SELECT_ABILITY_1.consumeClick() && !abilities.isEmpty()){
             if(abilities.get(0).isActive()) {
-                handler.selectAbility(abilities.get(0));
+                holder.selectAbility(abilities.get(0));
                 return true;
             }
         }
         if(Keybindings.QUICK_SELECT_ABILITY_2.consumeClick() && abilities.size() > 1){
             if(abilities.get(1).isActive()) {
-                handler.selectAbility(abilities.get(1));
+                holder.selectAbility(abilities.get(1));
                 return true;
             }
         }
         if(Keybindings.QUICK_SELECT_ABILITY_3.consumeClick() && abilities.size() > 2){
             if(abilities.get(2).isActive()) {
-                handler.selectAbility(abilities.get(2));
+                holder.selectAbility(abilities.get(2));
                 return true;
             }
         }
@@ -118,13 +129,6 @@ public class ClientEvent {
         if(item.is(ItemRegistry.COPPER_WIRE_ITEM.get())){
             event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.wires", 256).withStyle(ChatFormatting.GRAY)));
         }
-    }
-
-    @SubscribeEvent
-    public static void onRegisterClientCommand(RegisterClientCommandsEvent event){
-        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-        SetModel.register(dispatcher);
-        RemoveModel.register(dispatcher);
     }
 
     private static final List<Class<?>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,

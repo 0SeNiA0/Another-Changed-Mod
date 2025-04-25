@@ -92,6 +92,8 @@ public class ClientMod {
         event.register(Keybindings.QUICK_SELECT_ABILITY_1);
         event.register(Keybindings.QUICK_SELECT_ABILITY_2);
         event.register(Keybindings.QUICK_SELECT_ABILITY_3);
+
+        event.register(Keybindings.MODEL_MANAGER);
     }
 
     @SubscribeEvent
@@ -314,6 +316,8 @@ public class ClientMod {
 
         event.registerEntityRenderer(SNOW_LEOPARD_FEMALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_F_TF.get().getDefaultModel(), .5f));
         event.registerEntityRenderer(SNOW_LEOPARD_MALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_M_TF.get().getDefaultModel(), .5f));
+
+        event.registerEntityRenderer(WHITE_LATEX_PUP.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_PUP_TF.get().getDefaultModel(), .5f));
 
         event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getDefaultModel(), .5f));
         event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getDefaultModel(), .5f));

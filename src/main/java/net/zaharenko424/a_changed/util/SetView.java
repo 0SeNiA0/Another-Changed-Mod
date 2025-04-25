@@ -9,9 +9,9 @@ import java.util.function.Predicate;
 
 public class SetView <E> implements Set<E> {
 
-    private final Set<E> set;
+    private final Collection<E> set;
 
-    public SetView(Set<E> set){
+    public SetView(Collection<E> set){
         this.set = set;
     }
 

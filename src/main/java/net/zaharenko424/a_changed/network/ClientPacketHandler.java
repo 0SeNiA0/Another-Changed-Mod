@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.LocalPlayerExtension;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.screen.KeypadScreen;
 import net.zaharenko424.a_changed.client.screen.NoteScreen;
 import net.zaharenko424.a_changed.client.screen.TransfurScreen;

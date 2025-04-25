@@ -14,8 +14,9 @@ public class AbilityRegistry {
     public static final DeferredHolder<Ability, CatAbility> CAT_PASSIVE = ABILITIES
             .register("cat_ability", CatAbility::new);
 
-    public static final DeferredHolder<Ability, DLPupAgingAbility> DL_PUP_AGE = ABILITIES
-            .register("dl_pup_age", DLPupAgingAbility::new);
+    public static final DeferredHolder<Ability, LatexPupAgingAbility> DL_PUP_AGE = ABILITIES
+            .register("dl_pup_age", () -> new LatexPupAgingAbility(pup ->
+                    (pup.getRandom().nextBoolean() ? TransfurRegistry.DARK_LATEX_WOLF_F_TF : TransfurRegistry.DARK_LATEX_WOLF_M_TF).get()));
 
     public static final DeferredHolder<Ability, DLPupMeltAbility> DL_PUP_MELT = ABILITIES
             .register("dl_pup_melt", DLPupMeltAbility::new);
@@ -31,6 +32,10 @@ public class AbilityRegistry {
 
     public static final DeferredHolder<Ability, HypnosisAbility> HYPNOSIS_ABILITY = ABILITIES
             .register("hypnosis_ability", HypnosisAbility::new);
+
+    public static final DeferredHolder<Ability, ? extends LatexPupAgingAbility> WL_PUP_AGE = ABILITIES
+            .register("wl_pup_age", () -> new LatexPupAgingAbility(pup ->
+                    TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get()));
 
     public static final DeferredHolder<Ability, ? extends Ability> WOLF_PASSIVE = ABILITIES
             .register("wolf_ability", WolfAbility::new);

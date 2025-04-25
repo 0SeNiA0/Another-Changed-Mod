@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -38,13 +39,14 @@ public class LatexContainerRenderer implements BlockEntityRenderer<LatexContaine
     }
 
     @Override
-    public void render(LatexContainerEntity entity, float p_112308_, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(LatexContainerEntity entity, float p_112308_, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if(entity.isEmpty()) return;
         latex.resetPose();
-        poseStack.pushPose();
-        poseStack.translate(.5,.125,.5);
+
+        MatrixStack.push(stack);
+        stack.translate(.5,.125,.5);
         latex.yScale = entity.getLatexAmount() * .75f;
-        latex.render(poseStack, buffer.getBuffer(RenderType.entitySolid(entity.getLatexType() == Latex.DARK ? DARK : WHITE)), packedLight, packedOverlay);
-        poseStack.popPose();
+        latex.render(stack, buffer.getBuffer(RenderType.entitySolid(entity.getLatexType() == Latex.DARK ? DARK : WHITE)), packedLight, packedOverlay);
+        MatrixStack.pop(stack);
     }
 }

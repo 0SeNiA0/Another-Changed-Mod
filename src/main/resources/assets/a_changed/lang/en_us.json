@@ -209,7 +209,8 @@
   "key.a_changed.quick_select_ability_1": "Quick select first active ability",
   "key.a_changed.quick_select_ability_2": "Quick select second active ability",
   "key.a_changed.quick_select_ability_3": "Quick select third active ability",
-  "key.a_changed.keyCategory": "Another Changed Mod Keys",
+  "key.a_changed.model_manager": "Model manager",
+  "key.a_changed.keyCategory": "Another Changed Mod",
 
   "item.a_changed.absolute_solver": "Absolute Solver",
   "item.a_changed.bio_waste": "Bio Waste",
@@ -275,6 +276,7 @@
   "item.a_changed.roomba_spawn_egg": "Roomba Spawn Egg",
   "item.a_changed.snow_leopard_female_spawn_egg": "Snow Leopard Female Spawn Egg",
   "item.a_changed.snow_leopard_male_spawn_egg": "Snow Leopard Male Spawn Egg",
+  "item.a_changed.white_latex_pup_spawn_egg": "White Latex Pup Spawn Egg",
   "item.a_changed.white_latex_wolf_female_spawn_egg": "White Latex Wolf Female Spawn Egg",
   "item.a_changed.white_latex_wolf_male_spawn_egg": "White Latex Wolf Male Spawn Egg",
   "item.a_changed.yufeng_dragon_spawn_egg": "Yufeng Dragon Spawn Egg",
@@ -343,6 +345,7 @@
   "transfur.a_changed.snow_leopard_female": "snow leopard female",
   "transfur.a_changed.snow_leopard_male": "snow leopard male",
   "transfur.a_changed.special": "special",
+  "transfur.a_changed.white_latex_pup": "white latex pup",
   "transfur.a_changed.white_latex_wolf_female": "white latex wolf female",
   "transfur.a_changed.white_latex_wolf_male": "white latex wolf male",
   "transfur.a_changed.yufeng_dragon": "yufeng dragon"

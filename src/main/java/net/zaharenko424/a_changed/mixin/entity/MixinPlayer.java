@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.zaharenko424.a_changed.block.blocks.VentDuct;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.block.VentDuct;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -44,20 +44,21 @@ public abstract class MixinPlayer extends LivingEntity {
      * Apply transfur progress to the thing, that is being attacked by the player.
      */
     @Redirect(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/Entity.hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"),method = "attack",allow = 1)
-    public boolean hurtProxy(@NotNull Entity target, DamageSource p_19946_, float damage){
-        if(target.level().isClientSide) return target.hurt(p_19946_, damage);
+    public boolean hurtProxy(@NotNull Entity target, DamageSource damageSource, float damage){
+        if(target.level().isClientSide) return target.hurt(damageSource, damage);
+
         TransfurHandler handler = TransfurHandler.nonNullOf(this);
-        if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(p_19946_, damage);
+        if(!getMainHandItem().isEmpty() || !handler.isTransfurred() || handler.getTransfurType().isOrganic()) return target.hurt(damageSource, damage);
         damage += TransfurManager.LATEX_DAMAGE_BONUS;
-        if(!DamageSources.checkTFTarget(target)) return target.hurt(p_19946_, damage);
-        if(target.hurt(DamageSources.transfur(null, this), damage)){
-            float tfProgress = 5f;
-            if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF)) tfProgress += 5;
-            TransfurHandler.nonNullOf((LivingEntity) target)
-                    .addTransfurProgress(tfProgress, Objects.requireNonNull(handler.getTransfurType()), TransfurContext.DEF);
-            return true;
-        }
-        return false;
+
+        if(!DamageSources.checkTFTarget(target)) return target.hurt(damageSource, damage);
+        if(!target.hurt(DamageSources.transfur(this), damage)) return false;
+
+        float tfProgress = 5f;
+        if(hasEffect(MobEffectRegistry.ASSIMILATION_BUFF)) tfProgress += 5;
+        TransfurHandler.nonNullOf((LivingEntity) target)
+                .addTransfurProgress(tfProgress, Objects.requireNonNull(handler.getTransfurType()), TransfurContext.DEF);
+        return true;
     }
 
 
@@ -66,7 +67,7 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @ModifyReturnValue(at = @At("RETURN"), method = "canUseSlot")
     private boolean onCanUseSlot(boolean original, @Local(argsOnly = true) EquipmentSlot slot){
-        return original || (slot == EquipmentSlot.BODY && AbilityUtils.hasDLPupAbilities(this));
+        return original || (slot == EquipmentSlot.BODY && AbilityUtils.hasLatexPupAbilities(this));
     }
 
     /**
@@ -74,14 +75,14 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @ModifyReturnValue(at = @At("TAIL"), method = "getItemBySlot")
     private ItemStack onGetItemBySlot(ItemStack original, @Local(argsOnly = true) EquipmentSlot slot){
-        if(slot == EquipmentSlot.BODY && AbilityUtils.hasDLPupAbilities(this)) return inventory.armor.getFirst();
+        if(slot == EquipmentSlot.BODY && AbilityUtils.hasLatexPupAbilities(this)) return inventory.armor.getFirst();
 
         return original;
     }
 
     @ModifyReturnValue(at = @At("TAIL"), method = "doesEmitEquipEvent")
     private boolean onDoesEmitEquipEvent(boolean original, @Local(argsOnly = true) EquipmentSlot slot){
-        return original || (slot == EquipmentSlot.BODY && AbilityUtils.hasDLPupAbilities(this));
+        return original || (slot == EquipmentSlot.BODY && AbilityUtils.hasLatexPupAbilities(this));
     }
 
     /**
@@ -90,12 +91,12 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @Inject(at = @At("TAIL"), method = "setItemSlot")
     private void onSetItemSlot(EquipmentSlot slot, ItemStack stack, CallbackInfo ci){
-        if(slot == EquipmentSlot.OFFHAND && AbilityUtils.hasDLPupAbilities(this)){
+        if(slot == EquipmentSlot.OFFHAND && AbilityUtils.hasLatexPupAbilities(this)){
             ItemHandlerHelper.giveItemToPlayer((Player) self(), stack);
             return;
         }
         if(!(stack.getItem() instanceof AnimalArmorItem armor) || armor.getBodyType() != AnimalArmorItem.BodyType.CANINE
-                || !AbilityUtils.hasDLPupAbilities(this)) return;
+                || !AbilityUtils.hasLatexPupAbilities(this)) return;
         onEquipItem(slot, inventory.armor.set(0, stack), stack);
     }
 

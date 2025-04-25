@@ -5,7 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityHolder;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +41,11 @@ public class AbilityUtils {
         return hasAbility(AbilityRegistry.CAT_PASSIVE, entity);
     }
 
-    public static boolean hasDLPupAbilities(LivingEntity entity){
+    public static boolean hasLatexPupAbilities(LivingEntity entity){
         AbilityHolder aHolder = of(entity);
         if(aHolder == null) return false;
 
-        return aHolder.hasAbility(AbilityRegistry.DL_PUP_AGE) && aHolder.hasAbility(AbilityRegistry.DL_PUP_MELT);
+        return aHolder.hasAbility(AbilityRegistry.WL_PUP_AGE) ||(aHolder.hasAbility(AbilityRegistry.DL_PUP_AGE) && aHolder.hasAbility(AbilityRegistry.DL_PUP_MELT));
     }
 
     public static boolean hasFallFlyingAbility(LivingEntity entity){

@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.client.cmrs.properties;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,8 +13,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
-import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.geom.Reusable;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
@@ -40,14 +41,14 @@ public class ItemInMawLayer implements RenderLayerLike {
         this.transform = transform == null ? new PoseTransform() : transform;
     }
 
-    public void transformToMaw(CustomModel<?> model, MatrixStack matrixStack){
+    public void transformToMaw(CustomModel<?> model, PoseStack matrixStack){
         ModelPart part = model.getPart(maw);
         if(part != null) part.translateAndRotate(matrixStack);
         transform.apply(matrixStack);
     }
 
     @Override
-    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull MatrixStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack stack = livingEntity.getMainHandItem();
         if (stack.isEmpty()) return;
 
@@ -57,7 +58,7 @@ public class ItemInMawLayer implements RenderLayerLike {
             return;
         }*/
 
-        matrixStack.push();
+        MatrixStack.push(matrixStack);
 
         if(livingEntity.isBaby()) {
             float scale = livingEntity.getAgeScale();
@@ -71,8 +72,8 @@ public class ItemInMawLayer implements RenderLayerLike {
             matrixStack.translate(-.09, -.1, 0);
         }
 
-        renderer.renderItem(livingEntity, stack, ItemDisplayContext.NONE, livingEntity.getMainArm() == HumanoidArm.LEFT, matrixStack.asVanilla(), buffer, packedLight);
-        matrixStack.pop();
+        renderer.renderItem(livingEntity, stack, ItemDisplayContext.NONE, livingEntity.getMainArm() == HumanoidArm.LEFT, matrixStack, buffer, packedLight);
+        MatrixStack.pop(matrixStack);
     }
 
     /*private <E extends LivingEntity> void renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, MatrixStack matrixStack, MultiBufferSource buffer, int combinedLight) {

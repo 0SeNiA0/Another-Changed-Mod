@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.DLPupMeltData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;

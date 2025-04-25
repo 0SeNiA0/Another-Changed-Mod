@@ -20,8 +20,9 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
@@ -147,17 +148,17 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
      */
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-    private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
+    private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
         if(TransfurHandler.of(pEntity) == null) return;
         float progress = TransfurManager.getTransfurProgress(pEntity);
         if(progress <= 0 || progress >= TransfurManager.TRANSFUR_TOLERANCE) return;
-        pPoseStack.pushPose();
-        pPoseStack.scale(1.02f, 1.02f, 1.02f);
+        MatrixStack.push(stack);
+        stack.scale(1.02f, 1.02f, 1.02f);
         int primaryColor = TransfurManager.getTransfurType(pEntity).getPrimaryColor();
 
-        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(achanged$TEXTURE)),
+        model.renderToBuffer(stack, pBuffer.getBuffer(RenderType.entityTranslucent(achanged$TEXTURE)),
                 pPackedLight, OverlayTexture.NO_OVERLAY,
                 FastColor.ARGB32.color(FastColor.as8BitChannel(progress / TransfurManager.TRANSFUR_TOLERANCE), primaryColor));
-        pPoseStack.popPose();
+        MatrixStack.pop(stack);
     }
 }

@@ -217,6 +217,7 @@ public class CreativeTabs {
 
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);
+                    output.accept(DARK_LATEX_PUP_EGG);
                     output.accept(DARK_LATEX_WOLF_F_EGG);
                     output.accept(DARK_LATEX_WOLF_M_EGG);
                     output.accept(GAS_WOLF_EGG);
@@ -226,6 +227,7 @@ public class CreativeTabs {
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
                     output.accept(SNOW_LEOPARD_F_EGG);
                     output.accept(SNOW_LEOPARD_M_EGG);
+                    output.accept(WHITE_LATEX_PUP_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);
                     output.accept(YUFENG_DRAGON_EGG);

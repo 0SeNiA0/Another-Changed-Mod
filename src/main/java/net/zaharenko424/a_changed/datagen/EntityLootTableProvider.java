@@ -46,7 +46,10 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
 
         add(DARK_LATEX_PUP.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
-                        .add(latex(false))));
+                        .add(latex(false))
+                        .add(LootItem.lootTableItem(ItemRegistry.ORANGE_ITEM)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0,2)))
+                                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 2.0F))))));
         add(DARK_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(false))));
@@ -95,6 +98,9 @@ public class EntityLootTableProvider extends EntityLootSubProvider {
         add(SNOW_LEOPARD_FEMALE.get(), snowLeopard);
         add(SNOW_LEOPARD_MALE.get(), snowLeopard);
 
+        add(WHITE_LATEX_PUP.get(), new LootTable.Builder()
+                .withPool(LootPool.lootPool()
+                        .add(latex(true))));
         add(WHITE_LATEX_WOLF_FEMALE.get(), new LootTable.Builder()
                 .withPool(LootPool.lootPool()
                         .add(latex(true))));

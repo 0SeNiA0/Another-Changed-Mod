@@ -14,6 +14,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -162,13 +163,13 @@ public class ModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, int argb){
-        render(Reusable.MAT_STACK.get().copyPoseStack(poseStack), consumer, light, overlay, argb, new ObjectArrayList<>());
+        render(poseStack, consumer, light, overlay, argb, new ObjectArrayList<>());
     }
 
-    private void render(MatrixStack matrixStack, VertexConsumer consumer, int light, int overlay, int argb, List<Mesh> animated) {
+    private void render(PoseStack matrixStack, VertexConsumer consumer, int light, int overlay, int argb, List<Mesh> animated) {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
-        MatrixStack.Matrix last = matrixStack.last();
-        matrixStack.push();
+        PoseStack.Pose last = matrixStack.last();
+        MatrixStack.push(matrixStack);
         translateAndRotate(matrixStack);
 
         for (Mesh anim : animated) {
@@ -187,7 +188,7 @@ public class ModelPart {
             modelpart.render(matrixStack, consumer, light, overlay, argb, animated);
         }
 
-        MatrixStack.Matrix pose = matrixStack.last();
+        PoseStack.Pose pose = matrixStack.last();
         if(animatedVertices != null) {
             VertexData data;
             Vector3f offset;
@@ -213,17 +214,17 @@ public class ModelPart {
         for(Mesh anim : animated) {
             anim.offset.sub(initialPose.x, initialPose.y, initialPose.z);
         }
-        matrixStack.pop();
+        MatrixStack.pop(matrixStack);
     }
 
     public void render(PoseStack poseStack, RenderStack stack, int light, int overlay, int argb){
-        render(Reusable.MAT_STACK.get().copyPoseStack(poseStack), stack, light, overlay, argb, new ObjectArrayList<>());
+        render(poseStack, stack, light, overlay, argb, new ObjectArrayList<>());
     }
 
-    private void render(MatrixStack matrixStack, RenderStack stack, int light, int overlay, int argb, List<Mesh> animated) {
+    private void render(PoseStack matrixStack, RenderStack stack, int light, int overlay, int argb, List<Mesh> animated) {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
-        MatrixStack.Matrix last = matrixStack.last();
-        matrixStack.push();
+        PoseStack.Pose last = matrixStack.last();
+        MatrixStack.push(matrixStack);
         translateAndRotate(matrixStack);
 
         for (Mesh anim : animated) {
@@ -242,7 +243,7 @@ public class ModelPart {
             modelpart.render(matrixStack, stack, light, overlay, argb, animated);
         }
 
-        MatrixStack.Matrix pose = matrixStack.last();
+        PoseStack.Pose pose = matrixStack.last();
         if(animatedVertices != null) {
             VertexData data;
             Vector3f offset;
@@ -268,10 +269,10 @@ public class ModelPart {
         for(Mesh anim : animated) {
             anim.offset.sub(initialPose.x, initialPose.y, initialPose.z);
         }
-        matrixStack.pop();
+        MatrixStack.pop(matrixStack);
     }
 
-    public void translateAndRotate(MatrixStack poseStack) {
+    public void translateAndRotate(PoseStack poseStack) {
         if(x != 0 || y != 0 || z != 0) poseStack.translate(x / 16, y / 16, z / 16);
 
         if (xRot != 0 || yRot != 0 || zRot != 0) {
@@ -402,7 +403,7 @@ public class ModelPart {
         @VisibleForTesting
         public int renderId;
 
-        protected Mesh(ImmutableList<VertexData> vertexData, Quad[] quads, int renderId){
+        public Mesh(ImmutableList<VertexData> vertexData, Quad[] quads, int renderId){
             this.vertexData = vertexData;
             this.quads = quads;
             this.renderId = renderId;
@@ -479,8 +480,8 @@ public class ModelPart {
             offset.set(0);
         }
 
-        public void compile(MatrixStack.Matrix matrix, VertexConsumer consumer, int light, int overlay, int argb) {
-            Matrix4f poseM = matrix.transform();
+        public void compile(PoseStack.Pose matrix, VertexConsumer consumer, int light, int overlay, int argb) {
+            Matrix4f poseM = matrix.pose();
             Matrix3f normal = matrix.normal();
             for(Quad quad : this.quads) {
                 if(quad.transformedNormal.x == Float.NEGATIVE_INFINITY) quad.transformAndUpdateNormal(poseM);
@@ -639,16 +640,16 @@ public class ModelPart {
             if(normal != null) transformedNormal.set(Float.POSITIVE_INFINITY);
         }
 
-        public void transform(MatrixStack.Matrix transform, MatrixStack.Matrix last, float factor){
+        public void transform(PoseStack.Pose transform, PoseStack.Pose last, float factor){
             boolean changed = false;
             if(!transformedPos.isFinite()) {
                 transformedPos.set(pos.x / 16, pos.y / 16, pos.z / 16);
                 if(factor == 0){
-                    transformedPos.mulPosition(last.transform());
+                    transformedPos.mulPosition(last.pose());
                 } else if(factor == 1){
-                    transformedPos.mulPosition(transform.transform());
+                    transformedPos.mulPosition(transform.pose());
                 } else {
-                    transformedPos.mulPosition(last.transform()).lerp(Reusable.VEC3F.get().set(pos.x / 16, pos.y / 16, pos.z / 16).mulPosition(transform.transform()), factor);
+                    transformedPos.mulPosition(last.pose()).lerp(Reusable.VEC3F.get().set(pos.x / 16, pos.y / 16, pos.z / 16).mulPosition(transform.pose()), factor);
                 }
                 changed = true;
             }

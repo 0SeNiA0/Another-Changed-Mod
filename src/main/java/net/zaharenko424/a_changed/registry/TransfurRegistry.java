@@ -71,6 +71,10 @@ public class TransfurRegistry {
             .register("special", ()-> new Special(TransfurType.Properties
                     .of(resourceLoc("special"), Latex.WHITE)));
 
+    public static final DeferredHolder<TransfurType, WhiteLatexPup> WHITE_LATEX_PUP_TF = TRANSFUR_TYPES
+            .register("white_latex_pup", ()-> new WhiteLatexPup(TransfurType.Properties
+                    .of(resourceLoc("white_latex_pup"), Latex.WHITE)));
+
     public static final DeferredHolder<TransfurType, LatexWolf> WHITE_LATEX_WOLF_F_TF = TRANSFUR_TYPES
             .register("white_latex_wolf_female", ()-> new LatexWolf(TransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_female"), Latex.WHITE).gender(Gender.FEMALE)));

@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
+import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
 import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import org.jetbrains.annotations.NotNull;

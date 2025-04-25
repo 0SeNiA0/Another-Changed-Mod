@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
 import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
@@ -57,24 +58,24 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
     }
 
     @Override
-    public void render(@NotNull SyringeProjectile pEntity, float pEntityYaw, float pPartialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
-        poseStack.translate(0, 2/16f, 0);
-        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.xRotO, pEntity.getXRot())));
+    public void render(@NotNull SyringeProjectile pEntity, float pEntityYaw, float pPartialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight) {
+        MatrixStack.push(stack);
+        stack.translate(0, 2/16f, 0);
+        stack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
+        stack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.xRotO, pEntity.getXRot())));
 
         float f9 = (float)pEntity.shakeTime - pPartialTick;
         if (f9 > 0.0F) {
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-Mth.sin(f9 * 3.0F) * f9));
+            stack.mulPose(Axis.ZP.rotationDegrees(-Mth.sin(f9 * 3.0F) * f9));
         }
 
-        stack.reset();
+        this.stack.reset();
         BufferSourceAccess access = BufferSourceAccess.get();
         access.cmrs$finishBatched();
 
         VertexConsumer solid = access.cmrs$getBuffer(RenderType.entitySolid(TEXTURE), 0);
-        stack.getOrCreate(0).add().set(solid);
-        stack.getOrCreate(1).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 2));
+        this.stack.getOrCreate(0).add().set(solid);
+        this.stack.getOrCreate(1).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 2));
 
         ItemStack syringe = pEntity.getPickupItemStackOrigin();
         AbstractSyringe item = (AbstractSyringe) syringe.getItem();
@@ -82,20 +83,20 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
         piston.resetPose();
         int color = item.getContentsColor(syringe);
         if(FastColor.ARGB32.alpha(color) != 0){//If contents are transparent assume its empty
-            stack.getOrCreate(2).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 1)).setColor(color);
+            this.stack.getOrCreate(2).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 1)).setColor(color);
 
             color = item.getSecondaryColor(syringe);
             if(FastColor.ARGB32.alpha(color) != 0){
-                stack.getOrCreate(3).add().set(solid).setColor(color);
+                this.stack.getOrCreate(3).add().set(solid).setColor(color);
             }
         } else {
             piston.y -= 3;
         }
 
-        root.render(poseStack, stack, packedLight, OverlayTexture.NO_OVERLAY, -1);
+        root.render(stack, this.stack, packedLight, OverlayTexture.NO_OVERLAY, -1);
         access.cmrs$finishBatched();
-        poseStack.popPose();
-        super.render(pEntity, pEntityYaw, pPartialTick, poseStack, buffer, packedLight);
+        MatrixStack.pop(stack);
+        super.render(pEntity, pEntityYaw, pPartialTick, stack, buffer, packedLight);
     }
 
     @Override

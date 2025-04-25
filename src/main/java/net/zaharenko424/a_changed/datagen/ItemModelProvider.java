@@ -83,6 +83,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
 
         spawnEgg(BEI_FENG_EGG);
         spawnEgg(BENIGN_EGG);
+        spawnEgg(DARK_LATEX_PUP_EGG);
         spawnEgg(DARK_LATEX_WOLF_F_EGG);
         spawnEgg(DARK_LATEX_WOLF_M_EGG);
         spawnEgg(GAS_WOLF_EGG);
@@ -94,6 +95,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         spawnEgg(ROOMBA_SPAWN_EGG);
         spawnEgg(SNOW_LEOPARD_F_EGG);
         spawnEgg(SNOW_LEOPARD_M_EGG);
+        spawnEgg(WHITE_LATEX_PUP_EGG);
         spawnEgg(WHITE_LATEX_WOLF_F_EGG);
         spawnEgg(WHITE_LATEX_WOLF_M_EGG);
         spawnEgg(YUFENG_DRAGON_EGG);

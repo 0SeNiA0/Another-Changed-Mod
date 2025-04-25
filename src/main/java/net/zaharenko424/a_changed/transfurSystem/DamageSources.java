@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +27,10 @@ public interface DamageSources {
     @Contract("_ -> new")
     static @NotNull DamageSource assimilation(@NotNull LivingEntity attacker){
         return new DamageSource(holder(attacker.level(), assimilation), null, attacker);
+    }
+
+    static @NotNull DamageSource transfur(@NotNull Entity attacker){
+        return transfur(attacker.level(), attacker, attacker);
     }
 
     @Contract("_, _ -> new")

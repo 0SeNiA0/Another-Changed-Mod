@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.CryoChamberEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -53,17 +54,18 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
     }
 
     @Override
-    public void render(@NotNull CryoChamberEntity chamber, float pPartialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull CryoChamberEntity chamber, float pPartialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
         if(chamber.isOpen() || chamber.getFluidAmount() == 0) return;
         fluid.resetPose();
         float scale = chamber.getFluidAmount() * .03125f;
         fluid.yScale = scale;
         fluid.y -= scale / 2;
         setupFluid(chamber.getDirection());
-        poseStack.pushPose();
-        poseStack.translate(.5,.125,.5);
-        fluid.render(poseStack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), pPackedLight, OverlayTexture.NO_OVERLAY);
-        poseStack.popPose();
+
+        MatrixStack.push(stack);
+        stack.translate(.5,.125,.5);
+        fluid.render(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), pPackedLight, OverlayTexture.NO_OVERLAY);
+        MatrixStack.pop(stack);
     }
 
     private void setupFluid(@NotNull Direction direction){

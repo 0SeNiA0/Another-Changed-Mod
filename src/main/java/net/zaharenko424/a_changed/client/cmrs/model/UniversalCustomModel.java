@@ -12,9 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.client.cmrs.api.*;
-import net.zaharenko424.a_changed.client.cmrs.geom.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.client.cmrs.geom.Reusable;
 import net.zaharenko424.a_changed.client.cmrs.properties.FPArms;
 import net.zaharenko424.a_changed.client.cmrs.properties.Glow;
 import net.zaharenko424.a_changed.client.cmrs.properties.ModelPropertyMapImpl;
@@ -121,8 +119,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     public void renderLayers(@NotNull PoseStack poseStack, int packedLight, @NotNull E entity,
                              float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
         BufferSourceAccess access = BufferSourceAccess.get();
-        MatrixStack matrixStack = Reusable.MAT_STACK.get().copyPoseStack(poseStack);
-        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, matrixStack, access, packedLight, limbSwing,
+        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, poseStack, access, packedLight, limbSwing,
                 limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch));
     }
 

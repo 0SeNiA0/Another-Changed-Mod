@@ -18,6 +18,7 @@ import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.Scoreboard;
 import net.zaharenko424.a_changed.client.cmrs.RenderUtil;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,13 +62,13 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
                 && (entity.shouldShowName() || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
-    protected void renderNameTag(@NotNull E entity, @NotNull Component displayName, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, float partialTick) {
+    protected void renderNameTag(@NotNull E entity, @NotNull Component displayName, @NotNull PoseStack stack, @NotNull MultiBufferSource bufferSource, int packedLight, float partialTick) {
         if(!(entity instanceof AbstractClientPlayer client)){
-            super.renderNameTag(entity, displayName, poseStack, bufferSource, packedLight, partialTick);
+            super.renderNameTag(entity, displayName, stack, bufferSource, packedLight, partialTick);
             return;
         }
         double d0 = this.entityRenderDispatcher.distanceToSqr(client);
-        poseStack.pushPose();
+        MatrixStack.push(stack);
         if (d0 < 100.0) {
             Scoreboard scoreboard = client.getScoreboard();
             Objective objective = scoreboard.getDisplayObjective(DisplaySlot.BELOW_NAME);
@@ -77,17 +78,17 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
                 super.renderNameTag(
                         entity,
                         Component.empty().append(component).append(CommonComponents.SPACE).append(objective.getDisplayName()),
-                        poseStack,
+                        stack,
                         bufferSource,
                         packedLight,
                         partialTick
                 );
-                poseStack.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
+                stack.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
             }
         }
 
-        super.renderNameTag(entity, displayName, poseStack, bufferSource, packedLight, partialTick);
-        poseStack.popPose();
+        super.renderNameTag(entity, displayName, stack, bufferSource, packedLight, partialTick);
+        MatrixStack.pop(stack);
     }
 
     @Override

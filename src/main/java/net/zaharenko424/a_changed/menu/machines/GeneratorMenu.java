@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.zaharenko424.a_changed.entity.block.machines.GeneratorEntity;
+import net.zaharenko424.a_changed.entity.block.machine.GeneratorEntity;
 import net.zaharenko424.a_changed.menu.SlotItemHandler;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.MenuRegistry;

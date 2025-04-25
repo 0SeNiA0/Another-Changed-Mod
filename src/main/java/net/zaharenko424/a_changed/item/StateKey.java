@@ -11,7 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.block.blocks.ConnectedTextureBlockImpl;
+import net.zaharenko424.a_changed.block.ConnectedTextureBlockImpl;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 

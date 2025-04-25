@@ -52,7 +52,7 @@ public class EntityRegistry {
 
     public static final DeferredHolder<EntityType<?>, EntityType<DarkLatexPup>> DARK_LATEX_PUP = registerEntity(
             "dark_latex_pup",
-            EntityType.Builder.of(DarkLatexPup::new, MobCategory.CREATURE)
+            EntityType.Builder.of((a, b) -> new DarkLatexPup(b), MobCategory.CREATURE)
     );
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> DARK_LATEX_WOLF_MALE = registerEntity(
@@ -95,6 +95,11 @@ public class EntityRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> SNOW_LEOPARD_MALE = registerEntity(
             "snow_leopard_male",
             EntityType.Builder.of((a, b) -> new LatexBeast(a, b, SNOW_LEOPARD_M_TF.get()), MobCategory.MONSTER)
+    );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WhiteLatexPup>> WHITE_LATEX_PUP = registerEntity(
+            "white_latex_pup",
+            EntityType.Builder.of((a, b) -> new WhiteLatexPup(b), MobCategory.MONSTER)
     );
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatexBeast>> WHITE_LATEX_WOLF_MALE = registerEntity(

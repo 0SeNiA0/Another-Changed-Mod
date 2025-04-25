@@ -1,7 +1,5 @@
 package net.zaharenko424.a_changed.event;
 
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -20,9 +18,9 @@ import net.neoforged.neoforge.items.ComponentItemHandler;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.item.ItemEnergyCapability;
+import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.*;
-import net.zaharenko424.a_changed.entity.block.machines.AbstractMachineEntity;
+import net.zaharenko424.a_changed.entity.block.machine.AbstractMachineEntity;
 import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
@@ -39,7 +37,6 @@ import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
@@ -115,11 +112,6 @@ public class CommonMod {
                 ServerPacketHandler.INSTANCE::handleTryPasswordPacket);
     }
 
-    private static final List<EntityType<? extends LivingEntity>> transfurrable = List.of(EntityType.PLAYER, EntityType.ZOMBIE,
-            EntityType.SKELETON, EntityType.WITCH, EntityType.WITHER_SKELETON, EntityType.DROWNED, EntityType.PIGLIN_BRUTE,
-            EntityType.PIGLIN, EntityType.PILLAGER, EntityType.EVOKER, EntityType.HUSK, EntityType.VILLAGER, EntityType.VINDICATOR,
-            EntityType.ZOMBIE_VILLAGER, EntityType.STRAY, EntityType.ZOMBIFIED_PIGLIN, EntityType.ILLUSIONER);
-
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event){
         //Item
@@ -181,7 +173,7 @@ public class CommonMod {
 
         event.put(BEI_FENG.get(), LatexBeast.createAttributes().build());
         event.put(BENIGN.get(), LatexBeast.createAttributes().build());
-        event.put(DARK_LATEX_PUP.get(), DarkLatexPup.createAttributes().build());
+        event.put(DARK_LATEX_PUP.get(), AbstractLatexPup.createAttributes().build());
         event.put(DARK_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(DARK_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
         event.put(GAS_WOLF.get(), LatexBeast.createAttributes().build());
@@ -196,6 +188,8 @@ public class CommonMod {
         event.put(SNOW_LEOPARD_FEMALE.get(), LatexBeast.createAttributes().build());
         event.put(SNOW_LEOPARD_MALE.get(), LatexBeast.createAttributes().build());
 
+        event.put(WHITE_LATEX_PUP.get(), AbstractLatexPup.createAttributes().build());
+
         event.put(WHITE_LATEX_WOLF_MALE.get(), LatexBeast.createAttributes().build());
         event.put(WHITE_LATEX_WOLF_FEMALE.get(), LatexBeast.createAttributes().build());
 
@@ -207,6 +201,9 @@ public class CommonMod {
         event.register(MILK_PUDDING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MilkPuddingEntity::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
         event.register(BEI_FENG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+
+        event.register(DARK_LATEX_PUP.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DarkLatexPup::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+
         event.register(DARK_LATEX_WOLF_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(DARK_LATEX_WOLF_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkDarkLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(GAS_WOLF.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
@@ -220,6 +217,8 @@ public class CommonMod {
 
         event.register(SNOW_LEOPARD_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(SNOW_LEOPARD_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractLatexBeast::checkLatexBeastSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+
+        event.register(WHITE_LATEX_PUP.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WhiteLatexPup::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
 
         event.register(WHITE_LATEX_WOLF_FEMALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(WHITE_LATEX_WOLF_MALE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LatexBeast::checkWhiteLatexSpawn, RegisterSpawnPlacementsEvent.Operation.OR);

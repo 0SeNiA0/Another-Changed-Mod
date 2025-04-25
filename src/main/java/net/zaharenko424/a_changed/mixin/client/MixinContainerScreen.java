@@ -18,12 +18,12 @@ public abstract class MixinContainerScreen {
     @WrapWithCondition(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V"),
             method = "checkHotbarMouseClicked")
     private boolean onCheckHotbarMouseClicked(AbstractContainerScreen<?> instance, Slot slot, int slotId, int mouseButton, ClickType type){
-        return !AbilityUtils.hasDLPupAbilities(Minecraft.getInstance().player);
+        return !AbilityUtils.hasLatexPupAbilities(Minecraft.getInstance().player);
     }
 
     @WrapWithCondition(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V"),
             method = "checkHotbarKeyPressed")
     private boolean onCheckHotbarKeyPressed(AbstractContainerScreen<?> instance, Slot slot, int slotId, int mouseButton, ClickType type){
-        return !AbilityUtils.hasDLPupAbilities(Minecraft.getInstance().player);
+        return !AbilityUtils.hasLatexPupAbilities(Minecraft.getInstance().player);
     }
 }

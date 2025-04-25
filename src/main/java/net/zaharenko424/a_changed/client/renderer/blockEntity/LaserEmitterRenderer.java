@@ -13,6 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
+import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.*;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -48,14 +49,17 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     }
 
     @Override
-    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack stack, MultiBufferSource buffer, int light, int overlay) {
         if(!emitter.isActive()) return;
-        poseStack.pushPose();
-        poseStack.translate(.5,0,.5);
+
+        MatrixStack.push(stack);
+        stack.translate(.5,0,.5);
+
         beam.resetPose();
         setupBeam(emitter.getDirection(), emitter.getLaserLength());
-        beam.render(poseStack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), light, OverlayTexture.NO_OVERLAY);
-        poseStack.popPose();
+        beam.render(stack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), light, OverlayTexture.NO_OVERLAY);
+
+        MatrixStack.pop(stack);
     }
 
     protected void setupBeam(Direction direction, int length){
