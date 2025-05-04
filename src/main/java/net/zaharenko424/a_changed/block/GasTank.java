@@ -36,22 +36,22 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
             Shapes.box(0.375, 1.125, 0.3125, 0.625, 1.25, 0.6875));
     private static final VoxelShape SHAPE_1 = SHAPE_0.move(0,-1,0);
 
-    public GasTank(Properties p_54120_) {
-        super(p_54120_);
+    public GasTank(Properties properties) {
+        super(properties);
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return p_153216_.getValue(PART) == 1 ? null : new GasTankEntity(p_153215_, p_153216_);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == 1 ? null : new GasTankEntity(pos, state);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return p_60555_.getValue(PART) == 0 ? SHAPE_0 : SHAPE_1;
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(PART) == 0 ? SHAPE_0 : SHAPE_1;
     }
 
-    public boolean use(BlockState state, Level level, BlockPos pos, Player p_60506_) {
+    public boolean use(BlockState state, Level level, BlockPos pos, Player player) {
         if(!(level.getBlockEntity(getMainPos(state, pos)) instanceof GasTankEntity canister)) return false;
 
         canister.setOpenClose();//TODO make better sound
@@ -71,23 +71,23 @@ public class GasTank extends VerticalTwoBlockMultiBlock implements EntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
-        if(!p_60518_.is(p_60515_.getBlock()) && p_60516_.getBlockEntity(p_60517_) instanceof GasTankEntity canister){
-            popResource(p_60516_, p_60517_, canister.canister());
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if(!newState.is(state.getBlock()) && level.getBlockEntity(pos) instanceof GasTankEntity canister){
+            popResource(level, pos, canister.canister());
         }
-        super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
-    public void setPlacedBy(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
-        if(p_49847_.getBlockEntity(p_49848_) instanceof GasTankEntity canister) canister.setCanister(p_49851_);
-        super.setPlacedBy(p_49847_, p_49848_, p_49849_, p_49850_, p_49851_);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if(level.getBlockEntity(pos) instanceof GasTankEntity canister) canister.setCanister(stack);
+        super.setPlacedBy(level, pos, state, placer, stack);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide || p_153213_.getValue(PART) == 1 ? null : (a, b, c, d) -> {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide || state.getValue(PART) == 1 ? null : (a, b, c, d) -> {
             if(d instanceof GasTankEntity canister) canister.tick();
         };
     }

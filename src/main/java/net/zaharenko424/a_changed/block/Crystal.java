@@ -31,31 +31,31 @@ public class Crystal extends Block {
     private static final AABB aabb = SHAPE.bounds();
     private final Supplier<? extends TransfurType> transfurType;
 
-    public Crystal(Properties p_49795_, Supplier<? extends TransfurType> transfurType) {
-        super(p_49795_.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
+    public Crystal(Properties properties, Supplier<? extends TransfurType> transfurType) {
+        super(properties.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }
 
     @Override
-    public void entityInside(BlockState p_60495_, Level level, BlockPos p_60497_, Entity p_60498_) {
-        if(level.isClientSide || p_60498_.tickCount % 10 != 0) return;
-        if(!p_60498_.getBoundingBox().intersects(aabb.move(p_60497_)) || !DamageSources.checkTFTarget(p_60498_)) return;
-        TransfurHandler handler = TransfurHandler.of((LivingEntity) p_60498_);
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if(level.isClientSide || entity.tickCount % 10 != 0) return;
+        if(!entity.getBoundingBox().intersects(aabb.move(pos)) || !DamageSources.checkTFTarget(entity)) return;
+        TransfurHandler handler = TransfurHandler.of((LivingEntity) entity);
         if(handler != null) handler.addTransfurProgress(5f, transfurType.get(), TransfurContext.CRYSTAL);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return canSurvive(p_60541_, p_60544_, p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
+    public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
     }
 
     @Override
-    public boolean canSurvive(BlockState p_60525_, LevelReader p_60526_, BlockPos p_60527_) {
-        return canSupportCenter(p_60526_, p_60527_.below(), Direction.UP);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return canSupportCenter(level, pos.below(), Direction.UP);
     }
 }

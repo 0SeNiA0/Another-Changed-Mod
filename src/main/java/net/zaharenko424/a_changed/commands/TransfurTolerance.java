@@ -50,7 +50,7 @@ public class TransfurTolerance {
 
     private static int get(@NotNull CommandSourceStack source){
         if(source.isPlayer()) {
-            source.sendSystemMessage(Component.translatable("command.transfur_tolerance.get").append(String.valueOf(TransfurManager.TRANSFUR_TOLERANCE)));
+            source.sendSystemMessage(Component.translatable("command.a_changed.transfur_tolerance.get").append(String.valueOf(TransfurManager.TRANSFUR_TOLERANCE)));
         } else LOGGER.info("Transfur tolerance is {}", TransfurManager.TRANSFUR_TOLERANCE);
         return Command.SINGLE_SUCCESS;
     }
@@ -61,7 +61,7 @@ public class TransfurTolerance {
 
         TransfurToleranceData.setDirty(source.getLevel());
 
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.transfur_tolerance.set").append(String.valueOf(tolerance)));
+        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.a_changed.transfur_tolerance.set").append(String.valueOf(tolerance)));
         LOGGER.info("Transfur tolerance is set to {}", tolerance);
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
             if(DamageSources.checkTFTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);

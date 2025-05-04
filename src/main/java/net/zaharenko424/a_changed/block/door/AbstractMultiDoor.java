@@ -27,8 +27,8 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
 
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 
-    public AbstractMultiDoor(Properties p_54120_) {
-        super(p_54120_);
+    public AbstractMultiDoor(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(OPEN,false));
     }
 
@@ -58,20 +58,20 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState p_60509_, Level p_60510_, BlockPos p_60511_, Block p_60512_, BlockPos p_60513_, boolean p_60514_) {
-        super.neighborChanged(p_60509_, p_60510_, p_60511_, p_60512_, p_60513_, p_60514_);
-        BlockPos mainPos = getMainPos(p_60509_, p_60511_);
-        BlockState mainState = p_60510_.getBlockState(mainPos);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        BlockPos mainPos = getMainPos(state, pos);
+        BlockState mainState = level.getBlockState(mainPos);
         if(mainState.isAir()) return;
-        if(!isPowered(mainPos, p_60510_.getBlockState(mainPos), p_60510_) && p_60509_.getValue(OPEN)){
-            setOpen(mainState, mainPos, p_60510_,false);
-            p_60510_.playSound(null, p_60511_, SoundRegistry.DOOR_CLOSE.get(), SoundSource.BLOCKS);
+        if(!isPowered(mainPos, level.getBlockState(mainPos), level) && state.getValue(OPEN)){
+            setOpen(mainState, mainPos, level,false);
+            level.playSound(null, pos, SoundRegistry.DOOR_CLOSE.get(), SoundSource.BLOCKS);
         }
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(OPEN));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(OPEN));
     }
 
     void setOpen(BlockState mainState, BlockPos mainPos, LevelAccessor level, boolean open){

@@ -885,6 +885,13 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         labBlock(VENT_WALL_ITEM, Items.GRAY_CONCRETE, out);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, WHITEBOARD_ITEM, 1)
+                .pattern("WWW")
+                .pattern("WWW")
+                .define('W', LAB_BLOCK_ITEM)
+                .unlockedBy(getHasName(LAB_BLOCK_ITEM), has(LAB_BLOCK_ITEM))
+                .save(out);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.WHITE_LATEX_PUDDLE_F,3)
                 .pattern("L L")
                 .pattern(" L ")
@@ -903,6 +910,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
         stonecuttingAllToAll(new DeferredItem[]{YELLOW_LAB_BLOCK_ITEM, YELLOW_LAB_SLAB_ITEM, YELLOW_LAB_STAIRS_ITEM},
                 RecipeCategory.BUILDING_BLOCKS, out);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.RED_DYE)
+                .requires(RED_FLOOR_CIRCLE_ITEM)
+                .unlockedBy(getHasName(RED_FLOOR_CIRCLE_ITEM), has(RED_FLOOR_CIRCLE_ITEM))
+                .save(out);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.LIME_DYE)
+                .requires(LIME_FLOOR_CIRCLE_ITEM)
+                .unlockedBy(getHasName(LIME_FLOOR_CIRCLE_ITEM), has(LIME_FLOOR_CIRCLE_ITEM))
+                .save(out);
     }
 
     private void labBlock(DeferredItem<?> result, Item material, RecipeOutput out){

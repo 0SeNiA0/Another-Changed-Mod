@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.block.machine.Capacitor;
 import net.zaharenko424.a_changed.capability.energy.EnergyStorageWrapper;
@@ -25,8 +26,8 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
     private final EnergyStorageWrapper in = new EnergyStorageWrapper(energyStorage, energyStorage.getMaxReceive(), 0);
     private final EnergyStorageWrapper out = new EnergyStorageWrapper(energyStorage, 0, energyStorage.getMaxExtract());
 
-    public CapacitorEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.CAPACITOR_ENTITY.get(), pPos, pBlockState);
+    public CapacitorEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.CAPACITOR_ENTITY.get(), pos, state);
     }
 
     @Override
@@ -66,24 +67,28 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
             changed = true;
         }
 
-        BlockEntity entity;
-        BlockPos pos;
-        for(Direction direction : Direction.values()){
-            if(energyStorage.isEmpty()) break;
-            pos = worldPosition.relative(direction);
-            entity = level.getBlockEntity(pos);
-            if(entity == null) continue;
-            if(entity instanceof AbstractProxyWire wire){
-                wire.tickNetwork();
-                continue;
-            }
+        if(energyStorage.isEmpty()) {
+            if(changed) update();
+            return;
+        }
 
-            if(energyStorage.transferEnergyTo(
-                    level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, direction.getOpposite()),
-                    energyStorage.getMaxExtract(), false) != 0) {
-                if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
-                changed = true;
-            }
+        Direction facing = getBlockState().getValue(Capacitor.FACING);
+        BlockPos pos = getBlockPos().relative(facing);
+        BlockEntity entity = level.getBlockEntity(pos);
+        if(entity == null) {
+            if(changed) update();
+            return;
+        }
+
+        if(entity instanceof AbstractProxyWire wire){
+            wire.tickNetwork();
+            if(changed) update();
+            return;
+        }
+
+        IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, facing.getOpposite());
+        if(storage != null && energyStorage.transferEnergyTo(storage, energyStorage.getMaxExtract(), false) != 0){
+            if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
         }
 
         if(changed) update();
@@ -103,7 +108,7 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return new CapacitorMenu(pContainerId, pPlayerInventory, this);
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player player) {
+        return new CapacitorMenu(containerId, inventory, this);
     }
 }

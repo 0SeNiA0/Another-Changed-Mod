@@ -26,12 +26,12 @@ public class IVRack extends VerticalTwoBlockMultiBlock {
     private static final VoxelShape SHAPE_1N = SHAPE_0N.move(0, -1, 0);
     private static final VoxelShape SHAPE_1E = SHAPE_0E.move(0, -1, 0);
 
-    public IVRack(@NotNull Properties p_54120_) {
-        super(p_54120_.pushReaction(PushReaction.DESTROY));
+    public IVRack(@NotNull Properties properties) {
+        super(properties.pushReaction(PushReaction.DESTROY));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return switch(state.getValue(FACING)){
             case NORTH, SOUTH -> state.getValue(PART) == 0 ? SHAPE_0N : SHAPE_1N;
             default -> state.getValue(PART) == 0 ? SHAPE_0E : SHAPE_1E;
@@ -39,9 +39,9 @@ public class IVRack extends VerticalTwoBlockMultiBlock {
     }
 
     @Override
-    public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        BlockPos pos = p_60527_.below();
-        BlockState state = p_60526_.getBlockState(pos);
-        return p_60525_.getValue(PART) == 0 ? state.isFaceSturdy(p_60526_, pos, Direction.UP) : state.is(this);
+    public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
+        BlockPos below = pos.below();
+        BlockState stateBelow = level.getBlockState(below);
+        return state.getValue(PART) == 0 ? stateBelow.isFaceSturdy(level, below, Direction.UP) : stateBelow.is(this);
     }
 }

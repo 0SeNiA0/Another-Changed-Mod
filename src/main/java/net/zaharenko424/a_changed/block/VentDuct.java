@@ -39,13 +39,13 @@ public class VentDuct extends ConnectedTextureBlock {
     public static final AABB INSIDE;
     public static final IntegerProperty FLAGS = StateProperties.FLAGS3;
 
-    public VentDuct(Properties pProperties) {
-        super(pProperties);
+    public VentDuct(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(FLAGS, 0));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         int i = 0;
         boolean[] ar = new boolean[7];
         for (Direction direction : Direction.values()){

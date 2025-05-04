@@ -29,31 +29,31 @@ public class Table extends Block {
     public static final BooleanProperty LEG_3 = BooleanProperty.create("leg_3");
     public static final BooleanProperty LEG_4 = BooleanProperty.create("leg_4");
 
-    public Table(Properties p_49795_) {
-        super(p_49795_);
+    public Table(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(LEG_1,true).setValue(LEG_2,true)
                 .setValue(LEG_3,true).setValue(LEG_4,true));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         VoxelShape table = TOP;
-        if(p_60555_.getValue(LEG_1)) table = Shapes.or(table, LEG_1_);
-        if(p_60555_.getValue(LEG_2)) table = Shapes.or(table, LEG_2_);
-        if(p_60555_.getValue(LEG_3)) table = Shapes.or(table, LEG_3_);
-        if(p_60555_.getValue(LEG_4)) table = Shapes.or(table, LEG_4_);
+        if(state.getValue(LEG_1)) table = Shapes.or(table, LEG_1_);
+        if(state.getValue(LEG_2)) table = Shapes.or(table, LEG_2_);
+        if(state.getValue(LEG_3)) table = Shapes.or(table, LEG_3_);
+        if(state.getValue(LEG_4)) table = Shapes.or(table, LEG_4_);
         return table;
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor p_60544_, @NotNull BlockPos p_60545_, @NotNull BlockPos p_60546_) {
-        return getConnections(p_60541_, p_60544_, p_60545_);
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+        return getConnections(state, level, pos);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        return getConnections(defaultBlockState(), p_49820_.getLevel(), p_49820_.getClickedPos());
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        return getConnections(defaultBlockState(), context.getLevel(), context.getClickedPos());
     }
 
     public BlockState getConnections(@NotNull BlockState state, @NotNull LevelAccessor level, @NotNull BlockPos pos) {
@@ -73,8 +73,8 @@ public class Table extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(LEG_1, LEG_2, LEG_3, LEG_4);
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        builder.add(LEG_1, LEG_2, LEG_3, LEG_4);
     }
 
     @Override

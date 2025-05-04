@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,8 +24,8 @@ public class BrokenFlask extends SmallDecorBlock {
     private static final VoxelShape SHAPE_S = Utils.rotateShape(Direction.SOUTH, SHAPE_N);
     private static final VoxelShape SHAPE_W = Utils.rotateShape(Direction.WEST, SHAPE_N);
 
-    public BrokenFlask(Properties pProperties) {
-        super(pProperties);
+    public BrokenFlask(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class BrokenFlask extends SmallDecorBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return switch(state.getValue(FACING)){
             case EAST -> SHAPE_E;
             case SOUTH -> SHAPE_S;

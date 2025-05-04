@@ -28,8 +28,8 @@ public abstract class GrowingFruitBlock extends Block implements BonemealableBlo
 
     protected final Supplier<Item> fruitItem;
 
-    public GrowingFruitBlock(Properties p_49795_, Supplier<Item> fruitItem) {
-        super(p_49795_);
+    public GrowingFruitBlock(Properties properties, Supplier<Item> fruitItem) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(ageProperty(), 0));
         this.fruitItem = fruitItem;
     }
@@ -85,8 +85,8 @@ public abstract class GrowingFruitBlock extends Block implements BonemealableBlo
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder.add(ageProperty()));
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(ageProperty()));
     }
 
     @Override
@@ -100,7 +100,7 @@ public abstract class GrowingFruitBlock extends Block implements BonemealableBlo
     }
 
     @Override
-    public boolean isBonemealSuccess(@NotNull Level pLevel, @NotNull RandomSource pRandom, @NotNull BlockPos pPos, @NotNull BlockState pState) {
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
         return true;
     }
 

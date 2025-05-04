@@ -27,30 +27,30 @@ public class RotatingChair extends Block implements ISeatBlock<RotatingChairEnti
             ,Shapes.box(0.125, 0, 0.4375, 0.875, 0.125, 0.5625)
             ,Shapes.box(0.4375, 0, 0.125, 0.5625, 0.125, 0.875));
 
-    public RotatingChair(Properties p_54120_) {
-        super(p_54120_);
+    public RotatingChair(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 
-    public boolean use(@NotNull BlockState p_60503_, @NotNull Level p_60504_, @NotNull BlockPos p_60505_, @NotNull Player p_60506_) {
-        if(!p_60504_.isClientSide){
-            return sit(p_60504_, p_60505_, Shapes.block().bounds().move(p_60505_), p_60506_, true);
+    public boolean use(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        if(!level.isClientSide){
+            return sit(level, pos, Shapes.block().bounds().move(pos), player, true);
         }
         return false;
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+        return use(level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return use(level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -64,14 +64,14 @@ public class RotatingChair extends Block implements ISeatBlock<RotatingChairEnti
     }
 
     @Override
-    public void onPlace(@NotNull BlockState p_60566_, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState p_60569_, boolean p_60570_) {
+    public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
         if(!level.isClientSide) level.addFreshEntity(getSeat(level, pos, true));
-        super.onPlace(p_60566_, level, pos, p_60569_, p_60570_);
+        super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
     @Override
-    public void onRemove(BlockState pState, Level level, BlockPos pos, BlockState pNewState, boolean pMovedByPiston) {
-        super.onRemove(pState, level, pos, pNewState, pMovedByPiston);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
         removeSeat(level, pos);
     }
 }

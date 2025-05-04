@@ -26,8 +26,8 @@ public class DNAExtractor extends AbstractMachine {
 
     private static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 1.125, 1);
 
-    public DNAExtractor(Properties pProperties) {
-        super(pProperties);
+    public DNAExtractor(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -42,11 +42,11 @@ public class DNAExtractor extends AbstractMachine {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 
-    public boolean use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+    public boolean use(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if(player.isCrouching() || !(level.getBlockEntity(pos) instanceof DNAExtractorEntity extractor)) return false;
         if(!level.isClientSide) player.openMenu(extractor, pos);
         return true;
@@ -54,17 +54,17 @@ public class DNAExtractor extends AbstractMachine {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+        return use(level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return use(level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return level.isClientSide ? null : (a, b, c, d) -> {
             if(d instanceof DNAExtractorEntity extractor) extractor.tick();
         };

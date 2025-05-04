@@ -71,7 +71,7 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
         IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
         ItemStack canister = inventory.getStackInSlot(0);
 
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_air",
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.air",
                 canister.isEmpty() || !(canister.getItem() instanceof CompressedAirCanister) ? 0
                         : canister.getMaxDamage() - canister.getDamageValue()).withStyle(ChatFormatting.GRAY));
 
@@ -79,12 +79,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
         for(int i = 1; i < 9; i++){
             if(!inventory.getStackInSlot(i).isEmpty()) count++;
         }
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.shots", count).withStyle(ChatFormatting.GRAY));
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return new PneumaticSyringeRifleMenu(pContainerId, pPlayerInventory, pPlayer.getMainHandItem());
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        return new PneumaticSyringeRifleMenu(containerId, playerInventory, player.getMainHandItem());
     }
 }

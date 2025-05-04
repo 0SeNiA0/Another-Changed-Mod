@@ -20,8 +20,8 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
     protected final float velocity;
     protected final int cooldown;
 
-    public AbstractSyringeRifle(@NotNull Properties pProperties, float velocity, int cooldown) {
-        super(pProperties);
+    public AbstractSyringeRifle(@NotNull Properties properties, float velocity, int cooldown) {
+        super(properties);
         this.velocity = velocity;
         this.cooldown = cooldown;
     }

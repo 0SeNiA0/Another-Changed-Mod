@@ -82,6 +82,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         latexPuddleWithItem(DARK_LATEX_PUDDLE_M, false);
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_ENCODER);
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_PURIFIER);
+        horizontalDirectionalBlock(DISC);
         machineLikeWithItem(DNA_EXTRACTOR, true);
         allDirectionalBlockWithItem(EXPOSED_PIPES);
         simpleBlockWithItemExisting(FLASK);
@@ -112,6 +113,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
         twoByTwoDoor(LIBRARY_DOOR);
         blockWithItem(LIGHT_BLUE_LAB_BLOCK);
+        horizontalDirectionalBlockWithItem(LIME_FLOOR_CIRCLE);
         twoByTwoDoor(MAINTENANCE_DOOR);
         rotatedDoublePartBlock(METAL_BOX,null);
         metalCan(METAL_CAN);
@@ -140,9 +142,11 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
         logWithItem(ORANGE_TREE_LOG, null, null);
         logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG), blockLoc(ORANGE_TREE_LOG));
+        simpleBlock(PAPER_STACK.get(), models().cubeAll(PAPER_STACK.getId().getPath(), blockLoc(PAPER_STACK).withSuffix("/paper")));
         pipe();
         simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
                 ResourceLocation.withDefaultNamespace("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
+        horizontalDirectionalBlockWithItem(RED_FLOOR_CIRCLE);
         blockExisting(ROTATING_CHAIR);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
@@ -159,6 +163,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ventDuct();
         ventHatchWithItem();
         pillarWithItem(VENT_WALL,null);
+        whiteboard();
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID + ":block/white_latex_still"));
         doublePartYBlockWOItem(WHITE_LATEX_PILLAR);
@@ -505,6 +510,13 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         getVariantBuilder(block.get()).forAllStates(state -> horizontalRotatedModelAr(models()
                 .getExistingFile(loc.withSuffix("_" + state.getValue(StateProperties.PART12)
                         + (state.getValue(CryoChamber.OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
+    }
+
+    private void whiteboard(){
+        DeferredBlock<Whiteboard> block = WHITEBOARD;
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART6))), state.getValue(HORIZONTAL_FACING)));
     }
 
     private void backupGenerator(){

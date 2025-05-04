@@ -25,18 +25,18 @@ public class AirConditioner extends HorizontalTwoBlockMultiBlock implements Enti
     private static final VoxelShape SHAPE = Shapes.box(-0.625, 0.03125, 0.4375, 0.875, 1, 1);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public AirConditioner(Properties p_54120_) {
-        super(p_54120_);
+    public AirConditioner(Properties properties) {
+        super(properties);
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return p_153216_.getValue(PART) == 1 ? null : new AirConditionerEntity(p_153215_,p_153216_);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == 1 ? null : new AirConditionerEntity(pos,state);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction direction = state.getValue(FACING);
         int partId = state.getValue(PART);
         return CACHE.getShape(direction, partId, PARTS.get(partId).alignShape(SHAPE));
@@ -44,7 +44,7 @@ public class AirConditioner extends HorizontalTwoBlockMultiBlock implements Enti
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide ? null : (a, b, c, conditioner) -> ((AirConditionerEntity)conditioner).tick();
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? null : (a, b, c, conditioner) -> ((AirConditionerEntity)conditioner).tick();
     }
 }

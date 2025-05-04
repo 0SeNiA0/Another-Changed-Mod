@@ -41,11 +41,11 @@ public class BlockTagProvider extends BlockTagsProvider {
                 LATEX_ENCODER.get(), LATEX_PURIFIER.get(), LIBRARY_DOOR.get(), MAINTENANCE_DOOR.get(), METAL_BOX.get(), METAL_CAN.get(),
                 ORANGE_LAB_BLOCK.get(), ORANGE_LAB_SLAB.get(), ORANGE_LAB_STAIRS.get(), PIPE.get(), ROTATING_CHAIR.get(), SCANNER.get(),
                 SMART_SEWAGE_SYSTEM.get(), STRIPED_LIGHT_BLUE_LAB_BLOCK.get(), STRIPED_ORANGE_LAB_BLOCK.get(), TABLE.get(),
-                TV_SCREEN.get(), VENT_DUCT.get(), VENT_HATCH.get(), VENT_WALL.get(), YELLOW_LAB_BLOCK.get(), YELLOW_LAB_SLAB.get(),
-                YELLOW_LAB_STAIRS.get());
+                TV_SCREEN.get(), VENT_DUCT.get(), VENT_HATCH.get(), VENT_WALL.get(), WHITEBOARD.get(), YELLOW_LAB_BLOCK.get(),
+                YELLOW_LAB_SLAB.get(), YELLOW_LAB_STAIRS.get());
 
-        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(), WHITE_LATEX_PUDDLE_F.get(),
-                WHITE_LATEX_PUDDLE_M.get());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(DARK_LATEX_BLOCK.get(), DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(),
+                WHITE_LATEX_BLOCK.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
 
         tag(AChanged.LATEX_RESISTANT).add(Blocks.BARRIER, Blocks.BEDROCK, Blocks.CHAIN_COMMAND_BLOCK, Blocks.COMMAND_BLOCK,
                 Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.STRUCTURE_VOID, Blocks.LIGHT,
@@ -54,14 +54,13 @@ public class BlockTagProvider extends BlockTagsProvider {
 
                 LATEX_RESISTANT_BLOCK.get(), LATEX_RESISTANT_GLASS.get(), LATEX_RESISTANT_GLASS_PANE.get());
         //TODO add more latex resistant stuff
-
+//TODO replace LASER_TRANSPARENT with voxel shape clipping to check whether the laser can go through
         tag(AChanged.LASER_TRANSPARENT).addTags(BlockTags.REPLACEABLE, Tags.Blocks.GLASS_BLOCKS, Tags.Blocks.GLASS_PANES, BlockTags.BUTTONS)
                 .add(DANGER_SIGN.get(), DARK_LATEX_PUDDLE_F.get(), DARK_LATEX_PUDDLE_M.get(), LATEX_RESISTANT_GLASS.get(),
                 LATEX_RESISTANT_GLASS_PANE.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
 
         tag(BlockTags.LEAVES).add(ORANGE_LEAVES.get());
-        tag(BlockTags.LOGS).add(ORANGE_TREE_LOG.get());
-        tag(BlockTags.LOGS_THAT_BURN).add(ORANGE_WOOD.get(), STRIPPED_ORANGE_LOG.get(), STRIPPED_ORANGE_WOOD.get());
+        tag(BlockTags.LOGS_THAT_BURN).add(ORANGE_TREE_LOG.get(), ORANGE_WOOD.get(), STRIPPED_ORANGE_LOG.get(), STRIPPED_ORANGE_WOOD.get());
         tag(BlockTags.PLANKS).add(ORANGE_PLANKS.get());
         tag(BlockTags.SAPLINGS).add(ORANGE_SAPLING.get());
         tag(BlockTags.SLABS).add(BLUE_LAB_TILE_SLAB.get(), HAZARD_SLAB.get(), LAB_SLAB.get(), LAB_TILE_SLAB.get(),

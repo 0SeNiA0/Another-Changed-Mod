@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Compressor extends AbstractMachine {
 
-    public Compressor(Properties pProperties) {
-        super(pProperties);
+    public Compressor(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Compressor extends AbstractMachine {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return level.isClientSide ? null : (a, b, c, d) -> {
             if(d instanceof CompressorEntity compressor) compressor.tick();
         };

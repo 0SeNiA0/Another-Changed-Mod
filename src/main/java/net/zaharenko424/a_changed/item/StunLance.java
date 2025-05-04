@@ -39,13 +39,13 @@ public class StunLance extends SwordItem {
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack pStack) {
+    public boolean isBarVisible(@NotNull ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getBarColor(@NotNull ItemStack pStack) {
-        if(pStack.has(ComponentRegistry.ENABLED)) return super.getBarColor(pStack);
+    public int getBarColor(@NotNull ItemStack stack) {
+        if(stack.has(ComponentRegistry.ENABLED)) return super.getBarColor(stack);
         return -4795971;
     }
 
@@ -57,9 +57,9 @@ public class StunLance extends SwordItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(pLevel.isClientSide || pUsedHand != InteractionHand.MAIN_HAND) return super.use(pLevel, pPlayer, pUsedHand);
-        ItemStack stunLance = pPlayer.getMainHandItem();
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        if(level.isClientSide || usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand);
+        ItemStack stunLance = player.getMainHandItem();
 
         if(stunLance.has(ComponentRegistry.ENABLED)){
             stunLance.remove(ComponentRegistry.ENABLED);
@@ -73,24 +73,24 @@ public class StunLance extends SwordItem {
     }
 
     @Override
-    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity pTarget, @NotNull LivingEntity pAttacker) {
+    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
         ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(!(pAttacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
+        if(!(attacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
         if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
 
-        pTarget.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
+        target.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
 
-        if(!(pAttacker instanceof Player player)) return true;
+        if(!(attacker instanceof Player player)) return true;
 
         player.getCooldowns().addCooldown(stack.getItem(), 20);
 
         double entityReachSq = Mth.square(player.entityInteractionRange()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
         for(LivingEntity living : player.level()
-                .getEntitiesOfClass(LivingEntity.class, pTarget.getBoundingBox().inflate(.5, 0.25, .5))) {
+                .getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(.5, 0.25, .5))) {
             if (living != player
-                    && living != pTarget
+                    && living != target
                     && !player.isAlliedTo(living)
                     && (!(living instanceof ArmorStand) || !((ArmorStand)living).isMarker())
                     && player.distanceToSqr(living) < entityReachSq) {

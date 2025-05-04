@@ -28,7 +28,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack pStack) {
+    public boolean isBarVisible(@NotNull ItemStack stack) {
         return true;
     }
 
@@ -75,11 +75,11 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
     void playSound(Level level, Player player) {}
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_energy",
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.energy",
                 stack.isEmpty() || stack.getCapability(Capabilities.EnergyStorage.ITEM) == null ? 0
                         : Mth.floorDiv(stack.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored(), 2000)).withStyle(ChatFormatting.GREEN));
 
@@ -87,7 +87,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
         for(int i = 0; i < 4; i++){
             if(!inventory.getStackInSlot(i).isEmpty()) count++;
         }
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.shots", count).withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.empty());
 
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
@@ -96,7 +96,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return new SyringeCoilGunMenu(pContainerId, pPlayerInventory, pPlayer.getMainHandItem());
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        return new SyringeCoilGunMenu(containerId, playerInventory, player.getMainHandItem());
     }
 }

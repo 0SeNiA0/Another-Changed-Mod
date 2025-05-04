@@ -16,8 +16,8 @@ public class FruitTreeLeaves extends LeavesBlock {
 
     private final Supplier<GrowingFruitBlock> fruit;
 
-    public FruitTreeLeaves(Properties p_54422_, Supplier<GrowingFruitBlock> fruit) {
-        super(p_54422_);
+    public FruitTreeLeaves(Properties properties, Supplier<GrowingFruitBlock> fruit) {
+        super(properties);
         this.fruit = fruit;
     }
 
@@ -49,8 +49,8 @@ public class FruitTreeLeaves extends LeavesBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean pMovedByPiston) {
-        super.onRemove(state, level, pos, newState, pMovedByPiston);
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
         if(newState.is(state.getBlock()) || level.isClientSide) return;
         if(level.getBlockState(pos.below()).is(fruit.get())) level.removeBlock(pos.below(), false);
     }

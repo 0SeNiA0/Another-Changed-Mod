@@ -33,8 +33,8 @@ import static net.zaharenko424.a_changed.util.StateProperties.ACTIVE;
 @ParametersAreNonnullByDefault
 public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenchable {
 
-    public LaserEmitter(Properties p_52591_) {
-        super(p_52591_);
+    public LaserEmitter(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE,false));
     }
 
@@ -45,8 +45,8 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenc
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new LaserEmitterEntity(p_153215_, p_153216_);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new LaserEmitterEntity(pos, state);
     }
 
     @Override
@@ -61,33 +61,33 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenc
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        BlockState state = defaultBlockState().setValue(FACING, p_49820_.getNearestLookingDirection().getOpposite());
-        if(p_49820_.getLevel().hasNeighborSignal(p_49820_.getClickedPos())) return state.setValue(ACTIVE, true);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state = defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        if(context.getLevel().hasNeighborSignal(context.getClickedPos())) return state.setValue(ACTIVE, true);
         return state;
     }
 
     @Override
-    public void neighborChanged(BlockState p_60509_, Level p_60510_, BlockPos p_60511_, Block p_60512_, BlockPos p_60513_, boolean p_60514_) {
-        super.neighborChanged(p_60509_, p_60510_, p_60511_, p_60512_, p_60513_, p_60514_);
-        boolean signal = p_60510_.hasNeighborSignal(p_60511_);
-        if(signal == p_60509_.getValue(ACTIVE)) return;
-        if(p_60510_.getBlockEntity(p_60511_) instanceof LaserEmitterEntity emitter){
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        boolean signal = level.hasNeighborSignal(pos);
+        if(signal == state.getValue(ACTIVE)) return;
+        if(level.getBlockEntity(pos) instanceof LaserEmitterEntity emitter){
             emitter.switchActive();
         }
-        p_60510_.setBlockAndUpdate(p_60511_, p_60509_.setValue(ACTIVE, signal));
-        p_60510_.playSound(null,p_60511_, SoundRegistry.LASER.get(), SoundSource.BLOCKS);
+        level.setBlockAndUpdate(pos, state.setValue(ACTIVE, signal));
+        level.playSound(null,pos, SoundRegistry.LASER.get(), SoundSource.BLOCKS);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_);
-        p_49915_.add(FACING, ACTIVE);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(FACING, ACTIVE);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
-        return p_153212_.isClientSide ? null : (a, b, c, emitter) -> ((LaserEmitterEntity)emitter).tick();
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? null : (a, b, c, emitter) -> ((LaserEmitterEntity)emitter).tick();
     }
 }

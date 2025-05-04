@@ -6,11 +6,9 @@ import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
-import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.world.entity.Entity;
 import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,13 +27,6 @@ public abstract class MixinClientPacketListener extends ClientCommonPacketListen
 
     private MixinClientPacketListener(Minecraft minecraft, Connection connection, CommonListenerCookie commonListenerCookie) {
         super(minecraft, connection, commonListenerCookie);
-    }
-
-    @Inject(at = @At("HEAD"), method = "handleRespawn")//Called twice for some reason
-    private void onHandleRespawn(ClientboundRespawnPacket packet, CallbackInfo ci){
-        LocalPlayer old = minecraft.player;
-        if(old.getRemovalReason() == null || old.getRemovalReason() == Entity.RemovalReason.CHANGED_DIMENSION) return;
-        CustomModelManager.getInstance().playerDied(old);
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;removeEntity(ILnet/minecraft/world/entity/Entity$RemovalReason;)V"),

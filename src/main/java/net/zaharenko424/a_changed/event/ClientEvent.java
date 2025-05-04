@@ -25,10 +25,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.common.Tags;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.block.CryoChamber;
+import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.PileOfOranges;
 import net.zaharenko424.a_changed.block.door.BigLabDoor;
 import net.zaharenko424.a_changed.block.door.BigLibraryDoor;
@@ -40,7 +43,6 @@ import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.smalldecor.Flask;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.gui.screen.ModelManagerScreen;
 import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
@@ -55,7 +57,7 @@ import java.util.List;
 public class ClientEvent {
 
     @SubscribeEvent
-    public static void onKeyPress(InputEvent.Key event){//TODO potentially add shortcuts for abilities 1-6 and ability menu shortcut?
+    public static void onKeyPress(InputEvent.Key event){
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
 
@@ -116,6 +118,21 @@ public class ClientEvent {
     @SubscribeEvent
     public static void onRenderTooltip(RenderTooltipEvent.GatherComponents event){
         ItemStack item = event.getItemStack();
+        if(item.is(Tags.Items.DYES_LIME) || item.is(Tags.Items.DYES_RED)){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.floor_circle").withStyle(ChatFormatting.GRAY)));
+            return;
+        }
+
+        if(item.is(Tags.Items.DYES_BLACK)){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.paper_stack.write").withStyle(ChatFormatting.GRAY)));
+            return;
+        }
+
+        if(item.is(Tags.Items.DYES_WHITE)){
+            event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.paper_stack.erase").withStyle(ChatFormatting.GRAY)));
+            return;
+        }
+
         if(item.is(Items.PAPER)){
             event.getTooltipElements().add(Either.left(Component.translatable("tooltip.a_changed.notes").withStyle(ChatFormatting.GRAY)));
             return;
@@ -132,7 +149,7 @@ public class ClientEvent {
     }
 
     private static final List<Class<?>> blocksNoOutline = List.of(BrokenFlask.class, CryoChamber.class,
-            Flask.class, LatexEncoder.class, MetalCan.class, PileOfOranges.class, TestTubes.class);
+            Flask.class, FloorCircle.class, LatexEncoder.class, MetalCan.class, PileOfOranges.class, TestTubes.class);
     private static final List<Class<?>> blocksSolidOutline = List.of(BigLabDoor.class, BigLibraryDoor.class,
             DNAExtractor.class, LabDoor.class, LibraryDoor.class);
 

@@ -15,13 +15,13 @@ public class UnTransfurEffect extends UnRemovableEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int p_295329_, int p_295167_) {
-        return p_295329_==1;
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        return duration == 1;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity p_19467_, int p_19468_) {
-        if(p_19467_ instanceof ServerPlayer player)
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        if(entity instanceof ServerPlayer player)
             TransfurHandler.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
         return true;
     }

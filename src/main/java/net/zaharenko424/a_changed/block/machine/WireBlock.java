@@ -26,18 +26,18 @@ public class WireBlock extends ConnectedTextureBlock implements EntityBlock {
     private static final VoxelShape SHAPE_D = Shapes.box(0.4062f, 0f, 0.4062f, 0.5938f, 0.4062f, 0.5938f);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public WireBlock(Properties pProperties) {
-        super(pProperties);
+    public WireBlock(Properties properties) {
+        super(properties);
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new CopperWireEntity(pPos, pState);
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new CopperWireEntity(pos, state);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         boolean u = state.getValue(UP);
         boolean d = state.getValue(DOWN);
         boolean n = state.getValue(NORTH);

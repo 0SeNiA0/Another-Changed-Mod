@@ -38,8 +38,8 @@ public class LatexEncoder extends AbstractMachine {
     private static final VoxelShape SHAPE_S = Utils.rotateShape(Direction.SOUTH, SHAPE_N);
     private static final VoxelShape SHAPE_W = Utils.rotateShape(Direction.WEST, SHAPE_N);
 
-    public LatexEncoder(Properties pProperties) {
-        super(pProperties);
+    public LatexEncoder(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class LatexEncoder extends AbstractMachine {
         };
     }
 
-    public boolean use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+    public boolean use(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if(player.isCrouching() || !(level.getBlockEntity(pos) instanceof LatexEncoderEntity encoder)) return false;
         if(!level.isClientSide) player.openMenu(encoder, pos);
         return true;
@@ -71,17 +71,17 @@ public class LatexEncoder extends AbstractMachine {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+        return use(level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return use(level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return level.isClientSide ? null : (a, b, c, d) -> {
             if(d instanceof LatexEncoderEntity encoder) encoder.tick();
         };

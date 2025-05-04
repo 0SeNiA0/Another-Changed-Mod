@@ -12,8 +12,8 @@ public abstract class Abstract3By3Door extends AbstractMultiDoor {
     public static final ImmutableMap<Integer, Part> PARTS;
     public static final IntegerProperty PART = StateProperties.PART9;
 
-    public Abstract3By3Door(Properties p_54120_) {
-        super(p_54120_);
+    public Abstract3By3Door(Properties properties) {
+        super(properties);
     }
 
     @Override

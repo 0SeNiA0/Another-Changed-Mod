@@ -10,8 +10,8 @@ import java.util.Set;
 
 public class UnRemovableEffect extends MobEffect {
 
-    public UnRemovableEffect(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public UnRemovableEffect(MobEffectCategory category, int color) {
+        super(category, color);
     }
 
     @Override

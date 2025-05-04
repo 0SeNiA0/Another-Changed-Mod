@@ -38,7 +38,7 @@ public class DerelictLatexEncoder extends AbstractDerelictMachine {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return switch(state.getValue(FACING)){
             case EAST -> SHAPE_E;
             case SOUTH -> SHAPE_S;

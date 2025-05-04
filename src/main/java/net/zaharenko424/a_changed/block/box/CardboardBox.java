@@ -18,7 +18,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.block.SmallDecorBlock;
+import net.zaharenko424.a_changed.block.smalldecor.SmallDecorBlock;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,12 +29,12 @@ public class CardboardBox extends SmallDecorBlock {
 
     private static final VoxelShape SHAPE = Block.box(1,0,1,15,14,15);
 
-    public CardboardBox(Properties p_54120_) {
-        super(p_54120_);
+    public CardboardBox(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 

@@ -14,12 +14,12 @@ import java.util.List;
 
 public class PowerCell extends Item {
 
-    public PowerCell(@NotNull Properties pProperties) {
-        super(pProperties.durability(100).setNoRepair());
+    public PowerCell(@NotNull Properties properties) {
+        super(properties.durability(100).setNoRepair());
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack pStack) {
+    public boolean isBarVisible(@NotNull ItemStack stack) {
         return true;
     }
 

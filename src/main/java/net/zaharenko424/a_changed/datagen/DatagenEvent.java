@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.datagen.advancement.AdvancementSubProvider;
+import net.zaharenko424.a_changed.datagen.lang.ENLanguageProvider;
 import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.loot_table.LabLoot;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +24,9 @@ import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = AChanged.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class DatagenEvent {
+
     @SubscribeEvent
-    public static void onDataGather(@NotNull GatherDataEvent event){
+    public static void onGatherData(@NotNull GatherDataEvent event){
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
@@ -55,5 +57,7 @@ public final class DatagenEvent {
         )));
 
         generator.addProvider(event.includeClient(), new HeartConverter(new File("..\\..\\heart_templates"), out, AChanged.MODID));
+
+        generator.addProvider(event.includeClient(), new ENLanguageProvider(out));
     }
 }

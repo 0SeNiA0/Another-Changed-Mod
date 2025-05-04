@@ -31,8 +31,8 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock<Seat
 
     private static final VoxelShape SHAPE_NORTH, SHAPE_EAST, SHAPE_SOUTH, SHAPE_WEST;
 
-    public Chair(Properties p_54120_) {
-        super(p_54120_);
+    public Chair(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -42,8 +42,8 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock<Seat
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState p_60555_, @NotNull BlockGetter p_60556_, @NotNull BlockPos p_60557_, @NotNull CollisionContext p_60558_) {
-        return switch (p_60555_.getValue(FACING)) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return switch (state.getValue(FACING)) {
             case EAST -> SHAPE_EAST;
             case SOUTH -> SHAPE_SOUTH;
             case WEST -> SHAPE_WEST;
@@ -51,36 +51,36 @@ public class Chair extends HorizontalDirectionalBlock implements ISeatBlock<Seat
         };
     }
 
-    public boolean use(@NotNull BlockState p_60503_, @NotNull Level p_60504_, @NotNull BlockPos p_60505_, @NotNull Player p_60506_) {
-        if (p_60504_.isClientSide) return false;
-        return sit(p_60504_, p_60505_, Shapes.block().bounds().move(p_60505_), p_60506_, true);
+    public boolean use(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        if (level.isClientSide) return false;
+        return sit(level, pos, Shapes.block().bounds().move(pos), player, true);
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+        return use(level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return use(level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        return defaultBlockState().setValue(FACING, p_49820_.getHorizontalDirection().getOpposite());
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public void onRemove(BlockState pState, Level level, BlockPos pos, BlockState pNewState, boolean pMovedByPiston) {
-        super.onRemove(pState, level, pos, pNewState, pMovedByPiston);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
         removeSeat(level, pos);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder.add(FACING));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(FACING));
     }
 
     static {

@@ -6,27 +6,27 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnRemovableRegen extends UnRemovableEffect {
 
-    public UnRemovableRegen(MobEffectCategory pCategory, float healAmount, int pColor) {
-        super(pCategory, pColor);
+    public UnRemovableRegen(MobEffectCategory category, float healAmount, int color) {
+        super(category, color);
         this.healAmount = healAmount;
     }
 
     private final float healAmount;
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity p_295924_, int p_296417_) {
-        super.applyEffectTick(p_295924_, p_296417_);
-        if (p_295924_.getHealth() < p_295924_.getMaxHealth()) {
-            p_295924_.heal(healAmount);
+    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
+        super.applyEffectTick(entity, amplifier);
+        if (entity.getHealth() < entity.getMaxHealth()) {
+            entity.heal(healAmount);
         }
         return true;
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int p_295946_, int p_295536_) {
-        int i = 50 >> p_295536_;
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        int i = 50 >> amplifier;
         if (i > 0) {
-            return p_295946_ % i == 0;
+            return duration % i == 0;
         } else {
             return true;
         }

@@ -18,15 +18,15 @@ public class LibraryDoor extends Abstract2By2Door {
     private static final VoxelShape SHAPE_OPEN;
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public LibraryDoor(Properties p_54120_) {
-        super(p_54120_);
+    public LibraryDoor(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        boolean open = p_60555_.getValue(OPEN);
-        int partId = p_60555_.getValue(PART);
-        return CACHE.getShape(p_60555_.getValue(FACING), partId + (open ? 10 : 0),
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        boolean open = state.getValue(OPEN);
+        int partId = state.getValue(PART);
+        return CACHE.getShape(state.getValue(FACING), partId + (open ? 10 : 0),
                 PARTS.get(partId).alignShape(open ? SHAPE_OPEN : SHAPE));
     }
 

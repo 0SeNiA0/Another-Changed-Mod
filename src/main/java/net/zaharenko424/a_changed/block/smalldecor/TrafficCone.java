@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,8 +19,8 @@ public class TrafficCone extends SmallDecorBlock {
             Shapes.box(0.3125, 0.0625, 0.3125, 0.6875, 0.5, 0.6875),
             Shapes.box(0.375, 0.5, 0.375, 0.625, 0.875, 0.625));
 
-    public TrafficCone(Properties p_49795_) {
-        super(p_49795_);
+    public TrafficCone(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -30,7 +29,7 @@ public class TrafficCone extends SmallDecorBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 }

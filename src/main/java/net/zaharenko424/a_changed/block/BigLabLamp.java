@@ -25,13 +25,13 @@ public class BigLabLamp extends HorizontalTwoBlockMultiBlock {
             Shapes.box(-0.9375f, 0.875f, 0.0625f, 0.9375f, 0.9375f, 0.9375f));
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public BigLabLamp(Properties p_54120_) {
-        super(p_54120_);
+    public BigLabLamp(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(LIT, false));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         Direction direction = state.getValue(FACING);
         int partId = state.getValue(PART);
         return CACHE.getShape(direction, partId, PARTS.get(partId).alignShape(SHAPE));
@@ -45,15 +45,15 @@ public class BigLabLamp extends HorizontalTwoBlockMultiBlock {
     }
 
     @Override
-    public void neighborChanged(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Block pBlock, @NotNull BlockPos pFromPos, boolean pIsMoving) {
-        if (!pLevel.isClientSide) {
-            if (pState.getValue(LIT) != pLevel.hasNeighborSignal(pPos)) {
-                pLevel.setBlock(pPos, pState.cycle(LIT), 2);
-                BlockPos pos = getMainPos(pState, pPos);
-                if(pos == pPos){
-                    pos = PARTS.get(1).toSecondaryPos(pos, pState.getValue(FACING));
+    public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighborPos, boolean movedByPiston) {
+        if (!level.isClientSide) {
+            if (state.getValue(LIT) != level.hasNeighborSignal(pos)) {
+                level.setBlock(pos, state.cycle(LIT), 2);
+                BlockPos mainPos = getMainPos(state, pos);
+                if(mainPos == pos){
+                    mainPos = PARTS.get(1).toSecondaryPos(mainPos, state.getValue(FACING));
                 }
-                pLevel.setBlock(pos, pLevel.getBlockState(pos).cycle(LIT), 2);
+                level.setBlock(mainPos, level.getBlockState(mainPos).cycle(LIT), 2);
             }
         }
     }

@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -37,6 +38,7 @@ import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.Note;
 import net.zaharenko424.a_changed.block.PileOfOranges;
 import net.zaharenko424.a_changed.attachments.TransfurHandler;
@@ -48,6 +50,7 @@ import net.zaharenko424.a_changed.transfurSystem.*;
 import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -141,6 +144,18 @@ public class CommonEvent {
             return;
         }
 
+        if(item.is(Tags.Items.DYES_LIME)){
+            drawCircle(level, player, item, pos, direction, true);
+            denyEvent(event);
+            return;
+        }
+
+        if(item.is(Tags.Items.DYES_RED)){
+            drawCircle(level, player, item, pos, direction, false);
+            denyEvent(event);
+            return;
+        }
+
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
             handleBookRMB(level, player, item, pos);
             denyEvent(event);
@@ -154,9 +169,20 @@ public class CommonEvent {
         }
 
         if(item.is(Items.PAPER)){
-            handlePaperRMB(level, player, item, pos, direction);
+            handlePaperRMB(level, player, item, pos, direction, event.getFace());
             denyEvent(event);
         }
+    }
+
+    static void drawCircle(Level level, Player player, ItemStack item, BlockPos pos, Direction direction, boolean lime){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+
+        if(!BlockRegistry.LIME_FLOOR_CIRCLE.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlockAndUpdate(pos, (lime ? BlockRegistry.LIME_FLOOR_CIRCLE : BlockRegistry.RED_FLOOR_CIRCLE).get().defaultBlockState().setValue(FloorCircle.FACING, direction))) return;
+        if(!player.isCreative()) item.shrink(1);
     }
 
     static void handleBookRMB(Level level, Player player, ItemStack item, BlockPos pos){
@@ -164,9 +190,11 @@ public class CommonEvent {
             pos = pos.above();
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
+
+        if(!BlockRegistry.BOOK_STACK.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlockAndUpdate(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState())) return;
         level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
-                entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+                entity.addItem(item, (int) player.yHeadRot, !player.isCreative())));
     }
 
     static void handleOrangeRMB(Level level, Player player, Vec3 hitVec, ItemStack item, BlockPos pos){
@@ -174,19 +202,37 @@ public class CommonEvent {
             pos = pos.above();
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
+
+        if(!BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
         level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
             entity.addOrange(hitVec, (int) player.yHeadRot);
             if(!player.isCreative()) item.shrink(1);
         }));
     }
 
-    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction){
+    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction, @Nullable Direction clickedFace){
+        if(clickedFace == Direction.UP){
+            if(!level.getBlockState(pos).canBeReplaced()) {
+                pos = pos.above();
+                if(!level.getBlockState(pos).canBeReplaced()) return;
+            }
+
+            if(!BlockRegistry.PAPER_STACK.get().defaultBlockState().canSurvive(level, pos)
+                    || !level.setBlockAndUpdate(pos, BlockRegistry.PAPER_STACK.get().defaultBlockState())) return;
+            level.getBlockEntity(pos, BlockEntityRegistry.PAPER_STACK_ENTITY.get()).ifPresent((entity ->
+                    entity.addItem(item, player.yHeadRot, !player.isCreative())));
+            if(!player.isCreative()) item.shrink(1);
+            return;
+        }
+
         if(!level.getBlockState(pos).canBeReplaced()) {
             pos = pos.relative(direction);
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
+
+        BlockState state = BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction);
+        if(!state.canSurvive(level, pos) || !level.setBlockAndUpdate(pos, state)) return;
         if(!player.isCreative()) item.shrink(1);
     }
 

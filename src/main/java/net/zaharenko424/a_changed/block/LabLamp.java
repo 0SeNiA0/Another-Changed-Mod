@@ -33,8 +33,8 @@ public class LabLamp extends RedstoneLampBlock {
             Shapes.box(0.0625f, 0.875f, 0.0625f, 0.9375f, 0.9375f, 0.9375f));
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public LabLamp(Properties p_55657_) {
-        super(p_55657_);
+    public LabLamp(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.DOWN));
     }
 
@@ -44,8 +44,8 @@ public class LabLamp extends RedstoneLampBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        Direction direction = state.getValue(FACING);
         if(direction.getAxis() == Direction.Axis.Y)
             return CACHE.getShape(Direction.NORTH, direction.ordinal(), ()-> direction == Direction.UP ? SHAPE_UP : SHAPE_DOWN);
         return CACHE.getShape(direction, 2, ()-> SHAPE);
@@ -53,8 +53,8 @@ public class LabLamp extends RedstoneLampBlock {
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
-        return super.getStateForPlacement(pContext).setValue(FACING, pContext.getClickedFace());
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        return super.getStateForPlacement(context).setValue(FACING, context.getClickedFace());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class LabLamp extends RedstoneLampBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder.add(FACING));
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(FACING));
     }
 }

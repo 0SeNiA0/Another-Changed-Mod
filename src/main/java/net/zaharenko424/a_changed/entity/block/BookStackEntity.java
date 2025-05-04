@@ -2,140 +2,54 @@ package net.zaharenko424.a_changed.entity.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class BookStackEntity extends BlockEntity {
-    private final NonNullList<ItemStack> books = NonNullList.create();
-    private final NonNullList<BookData> books1 = NonNullList.create();
+public class BookStackEntity extends AbstractStackEntity {
 
-    public BookStackEntity(BlockPos p_155229_, BlockState p_155230_) {
-        super(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), p_155229_, p_155230_);
+    public BookStackEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.BOOK_STACK_ENTITY.get(), pos, state);
     }
 
     public boolean hasSpace(){
-        return books.size() < 8;
-    }
-
-    public boolean isEmpty(){
-        return books.isEmpty();
-    }
-
-    public int bookAmount(){
-        return books1.size();
-    }
-
-    public NonNullList<BookData> getBooks(){
-        return books1;
-    }
-
-    public void addBook(@NotNull ItemStack book, int headRot, boolean shrink){
-        books.add(book.copyWithCount(1));
-        books1.add(new BookData(Mth.DEG_TO_RAD * (-headRot + 180), level.random.nextInt(0,4)));
-        if(shrink) book.shrink(1);
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        setChanged();
-    }
-
-    public ItemStack removeBook(){
-        int i = books.size() - 1;
-        books1.remove(i);
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        setChanged();
-        return books.remove(i);
-    }
-
-    public void dropBooks(){
-        books.forEach(book -> Block.popResource(level, getBlockPos(), book));
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        return size() < 8;
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
-        CompoundTag tag = new CompoundTag();
-        if(books1.isEmpty()) return tag;
-        tag.putInt("Size", books1.size());
-        BookData book;
-        for(int i = 0; i < books1.size(); i++){
-            book = books1.get(i);
-            tag.putFloat("rotation" + i, book.rotation);
-            tag.putInt("modelId" + i, book.modelId);
+    protected boolean isItemValid(ItemStack stack) {
+        return stack.is(ItemTags.BOOKSHELF_BOOKS);
+    }
+
+    @Override
+    protected Entry makeEntry(@NotNull ItemStack stack, float headRotDeg) {
+        return new Entry(Mth.DEG_TO_RAD * (-headRotDeg), level.random.nextInt(0,4));
+    }
+
+    @Override
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        if(tag.contains(NBTUtils.KEY)) dataFix(tag);
+        super.loadAdditional(tag, lookup);
+    }
+//keep for a few updates so that all old book stacks will be updated
+    void dataFix(CompoundTag tag){
+        CompoundTag modTag = NBTUtils.modTag(tag);
+        int size = modTag.getInt("Size");
+        tag.putInt("size", size);
+
+        for (int i = 0; i < size; i++) {
+            tag.put("item" + i, modTag.getCompound("book" + i));
+            tag.putFloat("rotation" + i, modTag.getFloat("rotation" + i) - Mth.PI);
+            tag.putInt("modelId" + i, modTag.getInt("modelId" + i));
         }
-        return tag;
+        tag.remove(NBTUtils.KEY);
     }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookup) {
-        handleUpdateTag(pkt.getTag(), lookup);
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
-        books1.clear();
-        if(!tag.contains("Size")) return;
-        int size = tag.getInt("Size");
-        float rotation;
-        int modelId;
-        for(int i = 0; i < size; i++){
-            rotation = tag.getFloat("rotation" + i);
-            modelId = tag.getInt("modelId" + i);
-            books1.add(new BookData(rotation, modelId));
-        }
-        super.handleUpdateTag(tag, lookup);
-    }
-
-    @Override
-    public void loadAdditional(@NotNull CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
-        super.loadAdditional(p_155245_, lookup);
-        CompoundTag tag = NBTUtils.modTag(p_155245_);
-        int size = tag.getInt("Size");
-        ItemStack book;
-        float rotation;
-        int modelId;
-        for(int i = 0; i < size; i++){
-            book=ItemStack.parseOptional(lookup, tag.getCompound("book" + i));
-            rotation = tag.getFloat("rotation" + i);
-            modelId = tag.getInt("modelId" + i);
-            books.add(book);
-            books1.add(new BookData(rotation, modelId));
-        }
-    }
-
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
-        super.saveAdditional(p_187471_, lookup);
-        CompoundTag tag = NBTUtils.modTag(p_187471_);
-        tag.putInt("Size", books1.size());
-        BookData book;
-        for(int i = 0; i < books1.size(); i++){
-            book = books1.get(i);
-            if(level == null || !level.isClientSide) tag.put("book" + i, books.get(i).save(lookup));
-            tag.putFloat("rotation" + i, book.rotation);
-            tag.putInt("modelId" + i, book.modelId);
-        }
-    }
-    @ApiStatus.Internal
-    public record BookData(float rotation, int modelId) {}
 }

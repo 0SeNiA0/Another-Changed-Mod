@@ -33,8 +33,8 @@ import java.util.Set;
 
 public class BuildersWand extends Item {
 
-    public BuildersWand(Properties pProperties) {
-        super(pProperties.stacksTo(1));
+    public BuildersWand(Properties properties) {
+        super(properties.stacksTo(1));
     }
 
     @Override
@@ -156,7 +156,7 @@ public class BuildersWand extends Item {
 
     public record Data(Mode mode, Optional<BlockPos> from){
 
-        public static final Data DEF = new Data(Mode.BUILD, null);
+        public static final Data DEF = new Data(Mode.BUILD, Optional.empty());
         
         public static Codec<Data> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 Codec.BYTE.xmap(b -> Mode.values()[b], mode -> (byte) mode.ordinal()).fieldOf("mode").forGetter(Data::mode),

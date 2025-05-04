@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block;
+package net.zaharenko424.a_changed.block.smalldecor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,13 +27,13 @@ public abstract class SmallDecorBlock extends HorizontalDirectionalBlock impleme
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public SmallDecorBlock(Properties pProperties) {
-        super(pProperties);
+    public SmallDecorBlock(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction pDirection, @NotNull BlockState pNeighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos pNeighborPos) {
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
         return canSurvive(state, level, pos) ? state : level.getFluidState(pos).createLegacyBlock();
     }
 

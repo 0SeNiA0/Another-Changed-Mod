@@ -16,6 +16,7 @@ public abstract class HorizontalDirectionalBlock extends net.minecraft.world.lev
 
     protected HorizontalDirectionalBlock(Properties properties) {
         super(properties);
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     @Override

@@ -33,12 +33,12 @@ public class SyringeItem extends AbstractSyringe {
     }
 
     @Override
-    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player player, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
         if(player.level().isClientSide || hand != InteractionHand.MAIN_HAND || !player.isCrouching()
-                || TransfurManager.isTransfurred(target) || target instanceof AbstractFish) return super.interactLivingEntity(pStack, player, target, hand);
+                || TransfurManager.isTransfurred(target) || target instanceof AbstractFish) return super.interactLivingEntity(stack, player, target, hand);
 
         target.hurt(DamageSources.syringe(player.level(), player), 2);
-        onUse(pStack, applyUseEffects(pStack, player.level(), target), player);
+        onUse(stack, applyUseEffects(stack, player.level(), target), player);
         return InteractionResult.SUCCESS;
     }
 

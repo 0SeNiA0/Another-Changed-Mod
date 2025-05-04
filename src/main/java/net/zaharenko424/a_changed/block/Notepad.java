@@ -27,8 +27,8 @@ public class Notepad extends AbstractNote {
     private static final VoxelShape SHAPE_SOUTH = Utils.rotateShape(Direction.SOUTH, SHAPE_NORTH);
     private static final VoxelShape SHAPE_WEST = Utils.rotateShape(Direction.WEST, SHAPE_NORTH);
 
-    public Notepad(Properties p_49795_) {
-        super(p_49795_);
+    public Notepad(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -44,13 +44,13 @@ public class Notepad extends AbstractNote {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return new NoteEntity(p_153215_, p_153216_);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new NoteEntity(pos, state);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return switch (p_60555_.getValue(FACING)){
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(FACING)){
             case EAST -> SHAPE_EAST;
             case SOUTH -> SHAPE_SOUTH;
             case WEST -> SHAPE_WEST;
@@ -64,8 +64,8 @@ public class Notepad extends AbstractNote {
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader level, BlockPos p_60527_) {
-        BlockPos pos = p_60527_.below();
-        return level.getBlockState(pos).isFaceSturdy(level, pos, Direction.UP);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockPos below = pos.below();
+        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 }

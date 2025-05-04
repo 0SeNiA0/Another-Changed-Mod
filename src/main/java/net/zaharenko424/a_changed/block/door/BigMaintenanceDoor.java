@@ -15,12 +15,12 @@ public class BigMaintenanceDoor extends Abstract3By3Door {
     private static final VoxelShape SHAPE_OPEN;
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public BigMaintenanceDoor(Properties p_54120_) {
-        super(p_54120_);
+    public BigMaintenanceDoor(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         boolean open = state.getValue(OPEN);
         int partId = state.getValue(PART);
         return CACHE.getShape(state.getValue(FACING), partId + (open ? 10 : 0),

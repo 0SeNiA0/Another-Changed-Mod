@@ -59,6 +59,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> DARK_LATEX_ICE_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_CRYSTAL_ICE);
     public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_F);
     public static final DeferredItem<BlockItem> DARK_LATEX_PUDDLE_M_ITEM = ITEMS.registerSimpleBlockItem(DARK_LATEX_PUDDLE_M);
+    public static final DeferredItem<BlockItem> DISC_ITEM = ITEMS.registerSimpleBlockItem(DISC);
     public static final DeferredItem<BlockItem> EXPOSED_PIPES_ITEM = ITEMS.registerSimpleBlockItem(EXPOSED_PIPES);
     public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
     public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(), new Item.Properties()));
@@ -84,6 +85,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> LATEX_RESISTANT_GLASS_PANE_ITEM = ITEMS.registerSimpleBlockItem(LATEX_RESISTANT_GLASS_PANE);
     public static final DeferredItem<BlockItem> LIBRARY_DOOR_ITEM = ITEMS.registerSimpleBlockItem(LIBRARY_DOOR);
     public static final DeferredItem<BlockItem> LIGHT_BLUE_LAB_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(LIGHT_BLUE_LAB_BLOCK);
+    public static final DeferredItem<BlockItem> LIME_FLOOR_CIRCLE_ITEM = ITEMS.registerSimpleBlockItem(LIME_FLOOR_CIRCLE);
     public static final DeferredItem<BlockItem> MAINTENANCE_DOOR_ITEM = ITEMS.registerSimpleBlockItem(MAINTENANCE_DOOR);
     public static final DeferredItem<BlockItem> METAL_BOX_ITEM = ITEMS.registerSimpleBlockItem(METAL_BOX);
     public static final DeferredItem<BlockItem> METAL_CAN_ITEM = ITEMS.registerSimpleBlockItem(METAL_CAN);
@@ -95,6 +97,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> ORANGE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_LEAVES);
     public static final DeferredItem<BlockItem> ORANGE_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(ORANGE_SAPLING);
     public static final DeferredItem<BlockItem> PIPE_ITEM = ITEMS.registerSimpleBlockItem(PIPE);
+    public static final DeferredItem<BlockItem> RED_FLOOR_CIRCLE_ITEM = ITEMS.registerSimpleBlockItem(RED_FLOOR_CIRCLE);
     public static final DeferredItem<BlockItem> ROTATING_CHAIR_ITEM = ITEMS.registerSimpleBlockItem(ROTATING_CHAIR);
     public static final DeferredItem<BlockItem> SCANNER_ITEM = ITEMS.registerSimpleBlockItem(SCANNER);
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.registerSimpleBlockItem(SMALL_CARDBOARD_BOX);
@@ -121,6 +124,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> VENT_DUCT_ITEM = ITEMS.registerSimpleBlockItem(VENT_DUCT);
     public static final DeferredItem<BlockItem> VENT_HATCH_ITEM = ITEMS.registerSimpleBlockItem(VENT_HATCH);
     public static final DeferredItem<BlockItem> VENT_WALL_ITEM = ITEMS.registerSimpleBlockItem(VENT_WALL);
+    public static final DeferredItem<BlockItem> WHITEBOARD_ITEM = ITEMS.registerSimpleBlockItem(WHITEBOARD);
     public static final DeferredItem<BlockItem> WHITE_LATEX_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_BLOCK);
     public static final DeferredItem<BlockItem> WHITE_LATEX_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PILLAR);
     public static final DeferredItem<BlockItem> WHITE_LATEX_PUDDLE_F_ITEM = ITEMS.registerSimpleBlockItem(WHITE_LATEX_PUDDLE_F);

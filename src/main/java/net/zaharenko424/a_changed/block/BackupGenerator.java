@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.block;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.block.door.Abstract3By3Door;
 import net.zaharenko424.a_changed.entity.block.machine.BackupGeneratorEntity;
+import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
@@ -79,6 +81,7 @@ public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterlo
         BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
         setActive(mainState, mainPos, level, !mainState.getValue(ACTIVE));
+        level.playSound(null, pos, SoundRegistry.SWITCH.get(), SoundSource.BLOCKS);
         return ItemInteractionResult.SUCCESS;
     }
 
@@ -88,6 +91,7 @@ public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterlo
         BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
         setActive(mainState, mainPos, level, !mainState.getValue(ACTIVE));
+        level.playSound(null, pos, SoundRegistry.SWITCH.get(), SoundSource.BLOCKS);
         return InteractionResult.SUCCESS;
     }
 
@@ -108,13 +112,13 @@ public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterlo
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
             if(id == 0) return;
             BlockPos pos1 = part.toSecondaryPos(pos, direction);
             BlockState state1 = state.setValue(part(), id);
-            if(level.getFluidState(pos1).getType() == Fluids.WATER) state1 = state1.setValue(WATERLOGGED, true);
+            state1 = state1.setValue(WATERLOGGED, level.getFluidState(pos1).getType() == Fluids.WATER);
             level.setBlockAndUpdate(pos1, state1);
         });
     }
@@ -125,8 +129,8 @@ public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterlo
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState pNewState, boolean pMovedByPiston) {
-        super.onRemove(state, level, pos, pNewState, pMovedByPiston);
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
         level.invalidateCapabilities(pos);
     }
 

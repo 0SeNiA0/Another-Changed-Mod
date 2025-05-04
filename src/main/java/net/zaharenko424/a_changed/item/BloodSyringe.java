@@ -27,7 +27,7 @@ public class BloodSyringe extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack syringe, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack syringe, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(syringe, context, tooltipComponents, tooltipFlag);
         if(syringe.has(ComponentRegistry.BLOOD_TYPE)){
             MutableComponent component = Component.translatable("tooltip.a_changed.blood_syringe", syringe.get(ComponentRegistry.BLOOD_TYPE).toString()).withStyle(ChatFormatting.DARK_RED);

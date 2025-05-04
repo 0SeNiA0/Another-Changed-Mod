@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class CannedOranges extends MetalCan implements EntityBlock {
 
-    public CannedOranges(Properties pProperties) {
-        super(pProperties);
+    public CannedOranges(Properties properties) {
+        super(properties);
     }
 
     @Nullable
@@ -80,8 +80,8 @@ public class CannedOranges extends MetalCan implements EntityBlock {
     }
 
     @Override
-    public boolean placeLiquid(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull FluidState pFluidState) {
-        if(super.placeLiquid(level, pos, state, pFluidState)){
+    public boolean placeLiquid(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull FluidState fluidState) {
+        if(super.placeLiquid(level, pos, state, fluidState)){
             if(state.getValue(OPEN) && level.getBlockEntity(pos) instanceof CannedOrangesEntity oranges && oranges.hasFoodLeft()){
                 oranges.setFood(0);
                 level.playSound(null, pos, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS);
@@ -92,9 +92,9 @@ public class CannedOranges extends MetalCan implements EntityBlock {
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState pState, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         if(!(level.getBlockEntity(pos) instanceof CannedOrangesEntity can)) return;
-        can.setFood(pStack.getMaxDamage() - pStack.getDamageValue());
+        can.setFood(stack.getMaxDamage() - stack.getDamageValue());
     }
 
     @Override

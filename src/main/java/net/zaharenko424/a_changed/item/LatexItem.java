@@ -68,14 +68,14 @@ public class LatexItem extends Item {
     }
 
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
-        Player player= (Player) p_41411_;
-        if(!p_41410_.isClientSide){
-            if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        Player player= (Player) entity;
+        if(!level.isClientSide){
+            if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(stack,level,entity);
             TransfurHandler.nonNullOf(player).addTransfurProgress(10f, transfurType.get(), TransfurContext.DEF_NO_CHECK);
         }
-        if(!player.isCreative()) p_41409_.shrink(1);
-        return p_41409_;
+        if(!player.isCreative()) stack.shrink(1);
+        return stack;
     }
 
     @Override

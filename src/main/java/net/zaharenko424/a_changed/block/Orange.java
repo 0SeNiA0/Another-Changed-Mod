@@ -18,12 +18,12 @@ public class Orange extends GrowingFruitBlock {
     public static final IntegerProperty AGE_5 = BlockStateProperties.AGE_5;
     private static final VoxelShape[] SHAPE_BY_AGE;
 
-    public Orange(Properties p_49795_, Supplier<Item> fruitItem) {
-        super(p_49795_, fruitItem);
+    public Orange(Properties properties, Supplier<Item> fruitItem) {
+        super(properties, fruitItem);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE_BY_AGE[getAge(state)];
     }
 

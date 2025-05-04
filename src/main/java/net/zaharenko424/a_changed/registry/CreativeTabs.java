@@ -66,15 +66,20 @@ public class CreativeTabs {
                     output.accept(YELLOW_LAB_STAIRS_ITEM);
                     output.accept(YELLOW_LAB_SLAB_ITEM);
 
+                    output.accept(LIME_FLOOR_CIRCLE_ITEM);
+                    output.accept(RED_FLOOR_CIRCLE_ITEM);
+
                     output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(LAB_LAMP_ITEM);
                     output.accept(BIG_LAB_LAMP_ITEM);
                     output.accept(TV_SCREEN_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
+                    output.accept(WHITEBOARD_ITEM);
 
                     output.accept(CUP_ITEM);
                     output.accept(BROKEN_CUP_ITEM);
+                    output.accept(DISC_ITEM);
                     output.accept(FLASK_ITEM);
                     output.accept(BROKEN_FLASK_ITEM);
                     output.accept(TEST_TUBES_ITEM);

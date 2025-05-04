@@ -42,8 +42,8 @@ public abstract class AbstractMultiBlock extends Block {
     protected abstract ImmutableMap<Integer, Part> parts();
 
     @Override
-    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return canSurvive(p_60541_,p_60544_,p_60545_) ? p_60541_ : Blocks.AIR.defaultBlockState();
+    public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return canSurvive(state,level,pos) ? state : Blocks.AIR.defaultBlockState();
     }
 
     @Nullable
@@ -77,9 +77,9 @@ public abstract class AbstractMultiBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState pNewState, boolean pMovedByPiston) {
-        if(state.is(pNewState.getBlock())) return;
-        super.onRemove(state, level, pos, pNewState, pMovedByPiston);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if(state.is(newState.getBlock())) return;
+        super.onRemove(state, level, pos, newState, movedByPiston);
         BlockPos mainPos = getMainPos(state, pos);
         if(state.getValue(part()) != 0){
             if(level.getBlockState(mainPos).is(this)) level.setBlockAndUpdate(mainPos, Blocks.AIR.defaultBlockState());
@@ -93,7 +93,7 @@ public abstract class AbstractMultiBlock extends Block {
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
             if(id == 0) return;
@@ -102,8 +102,8 @@ public abstract class AbstractMultiBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        p_49915_.add(FACING, part());
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, part());
     }
 
     protected BlockPos getMainPos(BlockState state, BlockPos pos){

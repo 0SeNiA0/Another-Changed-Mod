@@ -29,26 +29,26 @@ import org.jetbrains.annotations.Nullable;
 
 public class PileOfOranges extends Block implements EntityBlock {
 
-    public PileOfOranges(Properties p_49795_) {
-        super(p_49795_);
+    public PileOfOranges(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        if(!(pLevel.getBlockEntity(pPos) instanceof PileOfOrangesEntity oranges)) return Shapes.empty();
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if(!(level.getBlockEntity(pos) instanceof PileOfOrangesEntity oranges)) return Shapes.empty();
         return oranges.getFinalShape();
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction pDirection, @NotNull BlockState pNeighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos pNeighborPos) {
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
         return canSurvive(state, level, pos) ? state : level.getFluidState(pos).createLegacyBlock();
     }
 
     @Override
-    protected void spawnDestroyParticles(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull BlockPos pPos, @NotNull BlockState pState) {}
+    protected void spawnDestroyParticles(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state) {}
 
     @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
@@ -92,15 +92,15 @@ public class PileOfOranges extends Block implements EntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new PileOfOrangesEntity(pPos, pState);
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new PileOfOrangesEntity(pos, state);
     }
 
     @Override
-    public void onRemove(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState pNewState, boolean pMovedByPiston) {
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
         if(!level.isClientSide && level.getBlockEntity(pos) instanceof PileOfOrangesEntity oranges){
             oranges.onRemove();
         }
-        super.onRemove(pState, level, pos, pNewState, pMovedByPiston);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

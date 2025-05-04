@@ -47,6 +47,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
                 .with(sound(AChanged.resourceLoc("water1"))));
         addSimpleSound(SPACE_DOOR_CLOSE);
         addSimpleSound(SPACE_DOOR_OPEN);
+        addSimpleSound(SWITCH);
         addSimpleSound(TRANSFUR);
         addSimpleSound(TRANSFUR_1);
     }

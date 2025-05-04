@@ -12,6 +12,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -113,6 +114,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(LATEX_RESISTANT_GLASS_PANE.get());
         fourPartMultiBlockDrops(LIBRARY_DOOR.get());
         dropSelf(LIGHT_BLUE_LAB_BLOCK.get());
+        dropWhenSilkTouch(LIME_FLOOR_CIRCLE.get());
         fourPartMultiBlockDrops(MAINTENANCE_DOOR.get());
         doublePartBlockDrops(METAL_BOX.get());
         dropSelf(METAL_CAN.get());
@@ -140,8 +142,10 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ORANGE_TREE_LOG.get());
         dropOther(ORANGE_WALL_SIGN.get(), ORANGE_SIGN);
         dropSelf(ORANGE_WOOD.get());
+        dropOther(PAPER_STACK.get(), Items.PAPER);
         dropSelf(PIPE.get());
         add(POTTED_ORANGE_SAPLING.get(), createPotFlowerItemTable(ORANGE_SAPLING));
+        dropWhenSilkTouch(RED_FLOOR_CIRCLE.get());
         dropSelf(ROTATING_CHAIR.get());
         dropSelf(SCANNER.get());
         dropSelf(SMART_SEWAGE_SYSTEM.get());
@@ -157,6 +161,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(VENT_DUCT.get());
         dropSelf(VENT_HATCH.get());
         dropSelf(VENT_WALL.get());
+        sixPartMultiBlockDrops(WHITEBOARD.get());
         dropSelf(WHITE_LATEX_BLOCK.get());
         doublePartBlockDrops(WHITE_LATEX_PILLAR.get());
         dropSelf(WHITE_LATEX_PUDDLE_F.get());
@@ -230,22 +235,29 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                 ));
     }
 
-    private void twelvePartMultiBlockDrops(AbstractMultiBlock block){
+    private void xPartMultiBlockDrops(AbstractMultiBlock block, IntegerProperty parts){
         add(block, LootTable.lootTable().withPool(LootPool.lootPool()
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART12, 0)))
+                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(parts,0)))
                 .add(
                         applyExplosionCondition(block, LootItem.lootTableItem(block))
                 )));
     }
 
+    private void twelvePartMultiBlockDrops(AbstractMultiBlock block){
+        xPartMultiBlockDrops(block, StateProperties.PART12);
+    }
+
     private void ninePartMultiBlockDrops(AbstractMultiBlock block){
-        add(block, LootTable.lootTable().withPool(LootPool.lootPool()
-                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART9,0)))
-                .add(
-                        applyExplosionCondition(block, LootItem.lootTableItem(block))
-                )));
+        xPartMultiBlockDrops(block, StateProperties.PART9);
+    }
+
+    private void sixPartMultiBlockDrops(AbstractMultiBlock block){
+        xPartMultiBlockDrops(block, StateProperties.PART6);
+    }
+
+    private void fourPartMultiBlockDrops(AbstractMultiBlock block){
+        xPartMultiBlockDrops(block, StateProperties.PART4);
     }
 
     private void fruitDrops(GrowingFruitBlock fruitBlock){
@@ -254,15 +266,6 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(fruitBlock.ageProperty(), fruitBlock.maxAge())))
                 .add(
                         applyExplosionCondition(fruitBlock, LootItem.lootTableItem(fruitBlock.getFruitItem()))
-                )));
-    }
-
-    private void fourPartMultiBlockDrops(AbstractMultiBlock block){
-        add(block, LootTable.lootTable().withPool(LootPool.lootPool()
-                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(StateProperties.PART4,0)))
-                .add(
-                        applyExplosionCondition(block, LootItem.lootTableItem(block))
                 )));
     }
 

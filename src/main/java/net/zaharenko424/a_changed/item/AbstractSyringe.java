@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSyringe extends Item {
 
-    public AbstractSyringe(@NotNull Properties pProperties) {
-        super(pProperties);
+    public AbstractSyringe(@NotNull Properties properties) {
+        super(properties);
     }
 
     public abstract int getContentsColor(ItemStack stack);
@@ -29,17 +29,17 @@ public abstract class AbstractSyringe extends Item {
     public abstract int getSecondaryColor(ItemStack stack);
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        return ItemUtils.startUsingInstantly(pLevel, pPlayer, pUsedHand);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        return ItemUtils.startUsingInstantly(level, player, usedHand);
     }
 
     @Override
-    public int getUseDuration(@NotNull ItemStack pStack, @NotNull LivingEntity entity) {
+    public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
         return 32;
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack pStack) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
         return UseAnim.DRINK;
     }
 

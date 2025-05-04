@@ -68,9 +68,9 @@ public class Pipe extends Block {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState p_60541_, @NotNull Direction p_60542_, @NotNull BlockState p_60543_, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos p_60546_) {
-        BlockState state = getConnections(level, pos);
-        return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+        BlockState wConnections = getConnections(level, pos);
+        return canSurvive(wConnections, level, pos) ? wConnections : Blocks.AIR.defaultBlockState();
     }
 
     @Nullable

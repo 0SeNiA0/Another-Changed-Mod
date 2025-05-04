@@ -39,8 +39,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -112,12 +114,12 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
         File convertedDir = new File(Minecraft.getInstance().gameDirectory, "converted_textures");
         if(!convertedDir.exists()) {
-            achanged$generateTextures(convertedDir, achanged$sprites);
+            achanged$generateTextures(convertedDir);
             return;
         }
         File[] subDirectories = convertedDir.listFiles(File::isDirectory);
         if(subDirectories == null) {
-            achanged$generateTextures(convertedDir, achanged$sprites);
+            achanged$generateTextures(convertedDir);
             return;
         }
 
@@ -150,7 +152,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         }
 
         achanged$sprites.keySet().removeAll(achanged$convertedTextures.keySet());
-        achanged$generateTextures(convertedDir, achanged$sprites);
+        achanged$generateTextures(convertedDir);
         if(!achanged$isForceReload()) achanged$convertedTextures.clear();
         achanged$sprites.clear();
     }
@@ -202,23 +204,25 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     }
 
     @Unique
-    private static void achanged$generateTextures(File root, HashMap<ResourceLocation, TextureAtlasSprite> map){
-        if(map.isEmpty()) return;
+    private static void achanged$generateTextures(File root){
+        if(achanged$sprites.isEmpty()) return;
         achanged$forceReload();
 
         final float[] hsb = new float[3];
         final float[] hsb1 = new float[3];
         Color.RGBtoHSB(41, 39, 39, hsb1);
-        achanged$generateTextures(root, map, hsb, hsb1, "_darkltx");
+        achanged$generateTextures(root, hsb, hsb1, "_darkltx");
         Color.RGBtoHSB(255, 255, 255, hsb1);
-        achanged$generateTextures(root, map, hsb, hsb1, "_whiteltx");
+        achanged$generateTextures(root, hsb, hsb1, "_whiteltx");
 
-        map.clear();
+        achanged$sprites.clear();
     }
 
     @Unique
-    private static void achanged$generateTextures(File root, HashMap<ResourceLocation, TextureAtlasSprite> map, float[] hsb, float[] latexHSB, String suffix){
-        map.forEach((loc, sprite) -> {
+    private static void achanged$generateTextures(File root, float[] hsb, float[] latexHSB, String suffix){
+        float twoLatexB = latexHSB[2] * 2;
+        float threeLatexB = latexHSB[2] * 3;
+        achanged$sprites.forEach((loc, sprite) -> {
             SpriteContents contents = sprite.contents();
             String file = loc.getNamespace() + "\\" + loc.getPath().replace("block/", "").replace('/', File.separatorChar) + suffix;
             File texture = new File(root, file + ".png");
@@ -226,14 +230,16 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
             NativeImage image;
             try {
-                contents.getUniqueFrames().findFirst();
                 image = contents.getOriginalImage().mappedCopy(originalColor -> {
                     if(FastColor.ARGB32.alpha(originalColor) == 0) return originalColor;
                     Color.RGBtoHSB(FastColor.ARGB32.red(originalColor), FastColor.ARGB32.green(originalColor), FastColor.ARGB32.blue(originalColor), hsb);
                     hsb[1] *= .25f;
 
-                    hsb[2] *= Math.min(latexHSB[2] * 2f, 1.7f);
-                    hsb[2] = Math.min(1, hsb[2]);
+                    if(latexHSB[2] > .5f) {
+                        hsb[2] *= Math.min(twoLatexB, 1.7f);
+                    } else hsb[2] = (hsb[2] + threeLatexB) / 4;
+
+                    if(hsb[2] > 1) hsb[2] = 1;
                     return FastColor.ARGB32.color(FastColor.ARGB32.alpha(originalColor), Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
                 });
                 image.writeToFile(texture);

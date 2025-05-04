@@ -30,9 +30,9 @@ public class LatexManipulator extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand pUsedHand) {
-        if(level.isClientSide || pUsedHand != InteractionHand.MAIN_HAND) return super.use(level, player, pUsedHand);
-        ItemStack manipulator = player.getItemInHand(pUsedHand);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        if(level.isClientSide || usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand);
+        ItemStack manipulator = player.getItemInHand(usedHand);
         DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> transfurType = ComponentRegistry.TRANSFUR_TYPE;
 
         if(player.isCrouching()){

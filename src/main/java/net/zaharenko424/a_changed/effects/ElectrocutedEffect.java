@@ -17,13 +17,13 @@ public class ElectrocutedEffect extends UnRemovableEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity pLivingEntity, int pAmplifier) {
-        pLivingEntity.hurt(DamageSources.electricity(pLivingEntity.level(), null), .2f + (pLivingEntity.isInWaterOrRain() ? .2f : 0));
+    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
+        entity.hurt(DamageSources.electricity(entity.level(), null), .2f + (entity.isInWaterOrRain() ? .2f : 0));
         return true;
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
-        return pDuration % 5 == 0;
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        return duration % 5 == 0;
     }
 }

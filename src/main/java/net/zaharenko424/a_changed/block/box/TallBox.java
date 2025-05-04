@@ -21,13 +21,13 @@ public class TallBox extends VerticalTwoBlockMultiBlock {
     private static final VoxelShape SHAPE_1 = SHAPE_0.move(0,-1,0);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public TallBox(Properties p_49795_) {
-        super(p_49795_);
+    public TallBox(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60479_, BlockGetter p_60480_, BlockPos p_60481_, CollisionContext p_60482_) {
-        Direction direction = p_60479_.getValue(FACING);
-        return p_60479_.getValue(PART) == 0 ? CACHE.getShape(direction,0, SHAPE_0) : CACHE.getShape(direction,1, SHAPE_1);
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        Direction direction = state.getValue(FACING);
+        return state.getValue(PART) == 0 ? CACHE.getShape(direction,0, SHAPE_0) : CACHE.getShape(direction,1, SHAPE_1);
     }
 }

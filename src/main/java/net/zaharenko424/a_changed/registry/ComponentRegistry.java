@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.registry;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
 
 public class ComponentRegistry {
 
-    public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.createDataComponents(AChanged.MODID);
+    public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, AChanged.MODID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Component>> BLOOD_OWNER_NAME = COMPONENTS
             .register("blood_owner_name", () -> DataComponentType.<Component>builder()

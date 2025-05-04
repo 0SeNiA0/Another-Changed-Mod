@@ -12,19 +12,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class OrangeJuiceItem extends Item {
 
-    public OrangeJuiceItem(@NotNull Item.Properties p_42979_) {
-        super(p_42979_.food(new FoodProperties.Builder().nutrition(6).saturationModifier(.5f).build()).stacksTo(16));
+    public OrangeJuiceItem(@NotNull Item.Properties properties) {
+        super(properties.food(new FoodProperties.Builder().nutrition(6).saturationModifier(.5f).build()).stacksTo(16));
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack p_41452_) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
         return UseAnim.DRINK;
     }
 
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_42984_, @NotNull Level p_42985_, @NotNull LivingEntity p_42986_) {
-        Player player = (Player) p_42986_;
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        Player player = (Player) entity;
         if(!player.getAbilities().instabuild) player.addItem(new ItemStack(Items.GLASS_BOTTLE));
-        return p_42986_.eat(p_42985_, p_42984_);
+        return entity.eat(level, stack);
     }
 }

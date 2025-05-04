@@ -23,13 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class AbstractNote extends HorizontalDirectionalBlock implements EntityBlock {
-    public AbstractNote(Properties p_49795_) {
-        super(p_49795_);
+
+    public AbstractNote(Properties properties) {
+        super(properties);
     }
 
     public abstract int guiId();
 
-    public boolean use(BlockState p_60503_, Level level, BlockPos pos, Player player) {
+    public boolean use(Level level, BlockPos pos, Player player) {
         if(level.isClientSide) return false;
         BlockEntity entity = level.getBlockEntity(pos);
         if(entity instanceof NoteEntity note){
@@ -41,17 +42,17 @@ public abstract class AbstractNote extends HorizontalDirectionalBlock implements
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
+        return use(level, pos, player) ? InteractionResult.SUCCESS_NO_ITEM_USED : super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return use(state, level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return use(level, pos, player) ? ItemInteractionResult.SUCCESS : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState p_60541_, Direction p_60542_, BlockState p_60543_, LevelAccessor p_60544_, BlockPos p_60545_, BlockPos p_60546_) {
-        return !canSurvive(p_60541_, p_60544_, p_60545_) ? Blocks.AIR.defaultBlockState()
-                : super.updateShape(p_60541_, p_60542_, p_60543_, p_60544_, p_60545_, p_60546_);
+    public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return !canSurvive(state, level, pos) ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 }

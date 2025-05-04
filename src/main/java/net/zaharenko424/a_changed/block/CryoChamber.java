@@ -49,8 +49,8 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final IntegerProperty PART = StateProperties.PART12;
 
-    public CryoChamber(Properties pProperties) {
-        super(pProperties);
+    public CryoChamber(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(OPEN, false));
     }
 
@@ -126,8 +126,8 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block pNeighborBlock, BlockPos pNeighborPos, boolean pMovedByPiston) {
-        super.neighborChanged(state, level, pos, pNeighborBlock, pNeighborPos, pMovedByPiston);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
         BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
         if(!(level.getBlockEntity(mainPos) instanceof CryoChamberEntity chamber)) return;
@@ -137,8 +137,8 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(OPEN));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(OPEN));
     }
 
     void setOpen(@NotNull BlockState mainState, BlockPos mainPos, LevelAccessor level, boolean open){
@@ -151,7 +151,7 @@ public class CryoChamber extends AbstractMultiBlock implements EntityBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide ? null : (a, b, c, d) -> {
             if(d instanceof CryoChamberEntity chamber) chamber.tick();
         };

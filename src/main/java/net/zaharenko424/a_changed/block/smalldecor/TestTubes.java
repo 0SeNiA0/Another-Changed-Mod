@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,8 +16,8 @@ public class TestTubes extends SmallDecorBlock {
 
     private static final VoxelShape SHAPE_N, SHAPE_E;
 
-    public TestTubes(Properties pProperties) {
-        super(pProperties);
+    public TestTubes(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -27,7 +26,7 @@ public class TestTubes extends SmallDecorBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return switch(state.getValue(FACING)){
             case EAST, WEST -> SHAPE_E;
             default -> SHAPE_N;

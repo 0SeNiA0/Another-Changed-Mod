@@ -30,8 +30,8 @@ public abstract class VerticalTwoBlockMultiBlock extends AbstractMultiBlock impl
             0, new Part(0, 0, 0), 1, new Part(0, 1, 0));
     public static final IntegerProperty PART = StateProperties.PART2;
 
-    public VerticalTwoBlockMultiBlock(Properties p_54120_) {
-        super(p_54120_);
+    public VerticalTwoBlockMultiBlock(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false));
     }
 
@@ -46,17 +46,17 @@ public abstract class VerticalTwoBlockMultiBlock extends AbstractMultiBlock impl
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState state, Direction p_60542_, BlockState p_60543_, LevelAccessor level, BlockPos pos, BlockPos p_60546_) {
+    public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         if (state.getValue(WATERLOGGED)) level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-        return super.updateShape(state, p_60542_, p_60543_, level, pos, p_60546_);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        BlockState state = super.getStateForPlacement(p_49820_);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
         if(state == null) return null;
-        if(p_49820_.getLevel().getFluidState(p_49820_.getClickedPos()).getType() == Fluids.WATER)
+        if(context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER)
             return state.setValue(WATERLOGGED, true);
         return state;
     }
@@ -77,13 +77,13 @@ public abstract class VerticalTwoBlockMultiBlock extends AbstractMultiBlock impl
     }
 
     @Override
-    public void setPlacedBy(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
-        BlockPos above = p_49848_.above();
-        p_49847_.setBlockAndUpdate(above, p_49849_.setValue(PART,1).setValue(WATERLOGGED, p_49847_.getFluidState(above).getType() == Fluids.WATER));
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        BlockPos above = pos.above();
+        level.setBlockAndUpdate(above, state.setValue(PART,1).setValue(WATERLOGGED, level.getFluidState(above).getType() == Fluids.WATER));
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(WATERLOGGED));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(WATERLOGGED));
     }
 }

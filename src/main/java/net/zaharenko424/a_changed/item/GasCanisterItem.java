@@ -10,12 +10,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GasCanisterItem extends BlockItem {
 
-    public GasCanisterItem(Block p_40565_, Properties p_40566_) {
-        super(p_40565_, p_40566_.durability(256).rarity(Rarity.UNCOMMON));
+    public GasCanisterItem(Block block, Properties properties) {
+        super(block, properties.durability(256).rarity(Rarity.UNCOMMON));
     }
 
     @Override
-    public boolean isBarVisible(ItemStack p_150899_) {
+    public boolean isBarVisible(ItemStack stack) {
         return true;
     }
 }

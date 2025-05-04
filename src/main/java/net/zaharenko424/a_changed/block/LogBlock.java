@@ -15,8 +15,8 @@ public class LogBlock extends RotatedPillarBlock {
 
     private final Supplier<? extends Block> strippedBlock;
 
-    public LogBlock(Properties pProperties, Supplier<? extends Block> strippedBlock) {
-        super(pProperties);
+    public LogBlock(Properties properties, Supplier<? extends Block> strippedBlock) {
+        super(properties);
         this.strippedBlock = strippedBlock;
     }
 

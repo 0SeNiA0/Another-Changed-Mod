@@ -23,38 +23,39 @@ import org.jetbrains.annotations.NotNull;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
 public class TallCardboardBox extends TallBox implements ISeatBlock<SeatEntity>, Fallable {
-    public TallCardboardBox(Properties p_49795_) {
-        super(p_49795_);
+
+    public TallCardboardBox(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void onPlace(@NotNull BlockState p_60566_, @NotNull Level p_60567_, @NotNull BlockPos p_60568_, @NotNull BlockState p_60569_, boolean p_60570_) {
-        super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
-        if(p_60567_.isClientSide) return;
-        if(p_60566_.getValue(PART) == 0) p_60567_.addFreshEntity(new SeatEntity(p_60567_, p_60568_, false));
+    public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if(level.isClientSide) return;
+        if(state.getValue(PART) == 0) level.addFreshEntity(new SeatEntity(level, pos, false));
     }
 
-    public boolean use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos p_60505_, @NotNull Player player) {
+    public boolean use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if(level.isClientSide) return false;
 
         if(!player.isCrouching()){
-            BlockPos pos = state.getValue(PART) == 0 ? p_60505_ : p_60505_.below();
-            return sit(level, pos, SHAPE_0.bounds().move(pos), player, false);
+            BlockPos mainPos = state.getValue(PART) == 0 ? pos : pos.below();
+            return sit(level, mainPos, SHAPE_0.bounds().move(mainPos), player, false);
         }
 
-        BlockPos mainPos = getMainPos(state, p_60505_);
+        BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
-        BlockPos pos = mainPos.relative(player.getDirection());
-        if(level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos.above()).canBeReplaced()){
+        BlockPos moveTo = mainPos.relative(player.getDirection());
+        if(level.getBlockState(moveTo).canBeReplaced() && level.getBlockState(moveTo.above()).canBeReplaced()){
             level.setBlockAndUpdate(mainPos, getFluidState(mainState).createLegacyBlock());
             level.playSound(null, mainPos, SoundRegistry.PUSH.get(), SoundSource.BLOCKS);
-            BlockState below = level.getBlockState(pos.below());
+            BlockState below = level.getBlockState(moveTo.below());
             if(below.isAir() || below.canBeReplaced()) {
-                FallingBlockEntity.fall(level, pos, mainState);
+                FallingBlockEntity.fall(level, moveTo, mainState);
                 return true;
             }
-            level.setBlockAndUpdate(pos, mainState.setValue(WATERLOGGED, level.getFluidState(pos).isSourceOfType(Fluids.WATER)));
-            setPlacedBy(level, pos, state, null, ItemStack.EMPTY);
+            level.setBlockAndUpdate(moveTo, mainState.setValue(WATERLOGGED, level.getFluidState(moveTo).isSourceOfType(Fluids.WATER)));
+            setPlacedBy(level, moveTo, state, null, ItemStack.EMPTY);
             return true;
         }
         return false;
@@ -71,14 +72,14 @@ public class TallCardboardBox extends TallBox implements ISeatBlock<SeatEntity>,
     }
 
     @Override
-    public void onLand(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull BlockState pReplaceableState, @NotNull FallingBlockEntity pFallingBlock) {
+    public void onLand(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull BlockState replaceableState, @NotNull FallingBlockEntity fallingBlock) {
         setPlacedBy(level, pos, state, null, ItemStack.EMPTY);
     }
 
     @Override
-    public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        BlockPos pos = p_60527_.below();
-        BlockState state = p_60526_.getBlockState(pos);
-        return p_60525_.getValue(PART) == 0 ? state.isFaceSturdy(p_60526_, pos, Direction.UP) : state.is(this);
+    public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
+        BlockPos below = pos.below();
+        BlockState stateBelow = level.getBlockState(below);
+        return state.getValue(PART) == 0 ? stateBelow.isFaceSturdy(level, below, Direction.UP) : stateBelow.is(this);
     }
 }

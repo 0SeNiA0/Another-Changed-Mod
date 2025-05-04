@@ -38,8 +38,8 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
             0, new Part(0, 0, 0), 1, new Part(0, 1, 0));
     public static final IntegerProperty PART = StateProperties.PART2;
 
-    public LatexContainer(Properties p_49795_) {
-        super(p_49795_);
+    public LatexContainer(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(PART, 0));
     }
 
@@ -55,13 +55,13 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return p_153216_.getValue(PART) == 1 ? null : new LatexContainerEntity(p_153215_, p_153216_);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == 1 ? null : new LatexContainerEntity(pos, state);
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return p_60555_.getValue(PART) == 0 ? SHAPE : SHAPE_UPPER;
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(PART) == 0 ? SHAPE : SHAPE_UPPER;
     }
 
     @Override
@@ -90,25 +90,25 @@ public class LatexContainer extends NotRotatedMultiBlock implements EntityBlock 
     }
 
     @Override
-    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
-        pLevel.invalidateCapabilities(pPos);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        level.invalidateCapabilities(pos);
     }
 
     @Override
-    public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
-        if(!p_60516_.isClientSide && !p_60515_.is(p_60518_.getBlock()) && p_60515_.getValue(PART) == 0){
-            if(p_60516_.getBlockEntity(p_60517_) instanceof LatexContainerEntity container) container.onRemove();
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if(!level.isClientSide && !state.is(newState.getBlock()) && state.getValue(PART) == 0){
+            if(level.getBlockEntity(pos) instanceof LatexContainerEntity container) container.onRemove();
         }
-        super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
-        p_60516_.invalidateCapabilities(p_60517_);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+        level.invalidateCapabilities(pos);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext p_49820_) {
-        BlockPos blockpos = p_49820_.getClickedPos();
-        Level level = p_49820_.getLevel();
-        if (blockpos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(blockpos.above()).canBeReplaced(p_49820_)) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos blockpos = context.getClickedPos();
+        Level level = context.getLevel();
+        if (blockpos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(blockpos.above()).canBeReplaced(context)) {
             return defaultBlockState();
         } else return null;
     }

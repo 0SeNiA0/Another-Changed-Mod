@@ -32,8 +32,8 @@ public class WhiteLatexPillar extends NotRotatedMultiBlock {
     private static final AABB aabb0 = SHAPE0.bounds();
     private static final AABB aabb1 = SHAPE1.bounds();
 
-    public WhiteLatexPillar(Properties pProperties) {
-        super(pProperties.friction(.5f).speedFactor(.2f).jumpFactor(.2f).noCollission());
+    public WhiteLatexPillar(Properties properties) {
+        super(properties.friction(.5f).speedFactor(.2f).jumpFactor(.2f).noCollission());
     }
 
     @Override
