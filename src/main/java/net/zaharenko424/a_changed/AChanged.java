@@ -27,6 +27,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.criterion.TransfurTrigger;
+import org.apache.logging.log4j.util.InternalApi;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -93,7 +94,7 @@ public class AChanged {
     public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
 
     //Item tier
-    public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 2, 128, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));
+    public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 128, 4, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));
 
     //Game rules
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
@@ -144,4 +145,7 @@ public class AChanged {
 
         if(FMLEnvironment.dist.isClient()) ModelPropertyRegistry.PROPERTIES.register(modEventBus);//Server doesn't crash
     }
+
+    @InternalApi
+    public static boolean isSafeToAddBiomes = true;
 }

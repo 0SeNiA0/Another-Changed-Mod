@@ -48,7 +48,7 @@ public class BlockTagProvider extends BlockTagsProvider {
                 WHITE_LATEX_BLOCK.get(), WHITE_LATEX_PUDDLE_F.get(), WHITE_LATEX_PUDDLE_M.get());
 
         tag(AChanged.LATEX_RESISTANT).add(Blocks.BARRIER, Blocks.BEDROCK, Blocks.CHAIN_COMMAND_BLOCK, Blocks.COMMAND_BLOCK,
-                Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.STRUCTURE_VOID, Blocks.LIGHT,
+                Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.STRUCTURE_VOID, Blocks.LIGHT, Blocks.JIGSAW,
                 DARK_LATEX_CRYSTAL.get(), DARK_LATEX_CRYSTAL_ICE.get(), GREEN_CRYSTAL.get(), WHITE_LATEX_PILLAR.get(),
 
 

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -12,14 +12,14 @@ import org.joml.Vector3f;
 public record PoseTransform(Vector3f translation, Quaternionf rotationRad, Vector3f scale) {
 
     public static final StreamCodec<FriendlyByteBuf, PoseTransform> CODEC = StreamCodec.of((buffer, transform) -> {
-                CodecUtils.writeOptionally(transform.translation, !transform.translation.equals(0, 0, 0), buffer, ByteBufCodecs.VECTOR3F);
+                StreamCodecUtils.writeOptionally(transform.translation, !transform.translation.equals(0, 0, 0), buffer, ByteBufCodecs.VECTOR3F);
                 Quaternionf rotationRad = transform.rotationRad;
-                CodecUtils.writeOptionally(rotationRad, rotationRad.x == 0 && rotationRad.y == 0 && rotationRad.z == 0, buffer, ByteBufCodecs.QUATERNIONF);
-                CodecUtils.writeOptionally(transform.scale, !transform.scale.equals(1, 1, 1), buffer, ByteBufCodecs.VECTOR3F);
+                StreamCodecUtils.writeOptionally(rotationRad, rotationRad.x == 0 && rotationRad.y == 0 && rotationRad.z == 0, buffer, ByteBufCodecs.QUATERNIONF);
+                StreamCodecUtils.writeOptionally(transform.scale, !transform.scale.equals(1, 1, 1), buffer, ByteBufCodecs.VECTOR3F);
             }, buffer -> new PoseTransform(
-                    CodecUtils.readOptionally(buffer, ByteBufCodecs.VECTOR3F),
-                    CodecUtils.readOptionally(buffer, ByteBufCodecs.QUATERNIONF),
-                    CodecUtils.readOptionally(buffer, ByteBufCodecs.VECTOR3F))
+                    StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.VECTOR3F),
+                    StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.QUATERNIONF),
+                    StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.VECTOR3F))
     );
 
     public PoseTransform(){

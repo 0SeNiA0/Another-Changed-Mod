@@ -185,6 +185,7 @@ public class ENLanguageProvider extends LanguageProvider {
         addDNA(DNATypeRegistry.WOLF_DNA, "Wolf DNA");
 
         //Effects
+        addEffect(MobEffectRegistry.ADRENALINE, "Adrenaline");
         addEffect(MobEffectRegistry.ASSIMILATION_BUFF, "Assimilation Buff");
         addEffect(MobEffectRegistry.FRIENDLY_GRAB, "You are friendly grabbed");
         addEffect(MobEffectRegistry.GRABBED_DEBUFF, "You are grabbed");
@@ -228,6 +229,7 @@ public class ENLanguageProvider extends LanguageProvider {
 
         //Items
         addItemFromId(ABSOLUTE_SOLVER);
+        addItemFromId(ADRENALINE_SYRINGE);
         addItemFromId(BIO_WASTE);
         addItemFromId(BLACK_LATEX_SHORTS);
         addItemFromId(BLOOD_SYRINGE);
@@ -301,13 +303,13 @@ public class ENLanguageProvider extends LanguageProvider {
 
         //Message
         addMessage("grab_cooldown", "Grab ability is on cooldown for %1$s s");
-        addMessage("grabbed", "You are already grabbed by someone!");
-        addMessage("grabbed_wrong_entity", "Cannot grab this entity!");
-        addMessage("grabbed_entity_died", "Grabbed entity died");
-        addMessage("grabbed_player_left", "Grabbed player left");
-        addMessage("only_friendly_grab_players", "You can only friendly grab players!");
-        addMessage("player_already_grabbed", "Player, that you are trying to grab, is already grabbed!");
-        addMessage("player_doesnt_want_to_be_grabbed", "This player doesn't want to be grabbed!");
+        addMessage("self_held_already", "%1$s is holding you already!");
+        addMessage("target_held_already", "%1$s is holding %2$s already!");
+        addMessage("cannot_grab_with_selected_mode", "Cannot grab %1$s with selected mode!");
+        addMessage("grabbed_entity_changed_dim", "%1$s changed dimension");
+        addMessage("grabbed_entity_died", "%1$s died");
+        addMessage("grabbed_player_left", "%1$s left the game");
+        addMessage("player_doesnt_want_to_be_grabbed", "%1$s doesn't want to be grabbed!");
         addMessage("try_escape_tip", "Press %1$s to try to escape");
 
         //Misc

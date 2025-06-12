@@ -143,17 +143,38 @@ public class WidgetContainer extends Widget implements ContainerEventHandler {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return ContainerEventHandler.super.mouseClicked(scaleX(mouseX), scaleY(mouseY), button);
+        mouseX = scaleX(mouseX);
+        mouseY = scaleY(mouseY);
+        for (GuiEventListener listener : children()) {
+            if(!listener.mouseClicked(mouseX, mouseY, button)) continue;
+
+            setFocused(listener);
+            setDragging(true);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return ContainerEventHandler.super.mouseReleased(scaleX(mouseX), scaleY(mouseY), button);
+        mouseX = scaleX(mouseX);
+        mouseY = scaleY(mouseY);
+        if(isDragging()) {
+            setDragging(false);
+            if(getFocused() != null) {
+                return getFocused().mouseReleased(mouseX, mouseY, button);
+            }
+        }
+
+        double finalMouseX = mouseX;
+        double finalMouseY = mouseY;
+        return getChildAt(mouseX, mouseY).filter(p_94708_ -> p_94708_.mouseReleased(finalMouseX, finalMouseY, button)).isPresent();
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return ContainerEventHandler.super.mouseDragged(scaleX(mouseX), scaleY(mouseY), button, dragX, dragY);
+        return getFocused() != null && isDragging() && getFocused().mouseDragged(scaleX(mouseX), scaleY(mouseY), button, dragX, dragY);
     }
 
     @Override

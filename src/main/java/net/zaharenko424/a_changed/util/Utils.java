@@ -33,12 +33,6 @@ public class Utils {
         return ResourceKey.create(registry, ResourceLocation.fromNamespaceAndPath(AChanged.MODID, str));
     }
 
-    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
-    public static <T> @NotNull T nonNullOrThrow(@Nullable T obj, RuntimeException exc) {
-        if(obj == null) throw exc;
-        return obj;
-    }
-
     public static void sendVanillaToClient(ServerPlayer player, Packet<?> packet){
         player.connection.send(packet);
     }

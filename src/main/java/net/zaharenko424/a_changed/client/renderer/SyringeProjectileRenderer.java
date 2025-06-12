@@ -33,8 +33,8 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
     private final ModelPart piston;
     private final RenderStack stack = new RenderStack();
 
-    public SyringeProjectileRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
+    public SyringeProjectileRenderer(EntityRendererProvider.Context context) {
+        super(context);
         root = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
         piston = root.getDirectChild("piston");
     }
@@ -58,13 +58,13 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
     }
 
     @Override
-    public void render(@NotNull SyringeProjectile pEntity, float pEntityYaw, float pPartialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight) {
+    public void render(@NotNull SyringeProjectile entity, float entityYaw, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight) {
         MatrixStack.push(stack);
         stack.translate(0, 2/16f, 0);
-        stack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
-        stack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.xRotO, pEntity.getXRot())));
+        stack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
+        stack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot())));
 
-        float f9 = (float)pEntity.shakeTime - pPartialTick;
+        float f9 = (float)entity.shakeTime - partialTick;
         if (f9 > 0.0F) {
             stack.mulPose(Axis.ZP.rotationDegrees(-Mth.sin(f9 * 3.0F) * f9));
         }
@@ -77,30 +77,35 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
         this.stack.getOrCreate(0).add().set(solid);
         this.stack.getOrCreate(1).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 2));
 
-        ItemStack syringe = pEntity.getPickupItemStackOrigin();
+        ItemStack syringe = entity.getPickupItemStackOrigin();
         AbstractSyringe item = (AbstractSyringe) syringe.getItem();
 
         piston.resetPose();
+        boolean empty = true;
         int color = item.getContentsColor(syringe);
-        if(FastColor.ARGB32.alpha(color) != 0){//If contents are transparent assume its empty
+        if(FastColor.ARGB32.alpha(color) != 0){
             this.stack.getOrCreate(2).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 1)).setColor(color);
+            empty = false;
+        }
 
-            color = item.getSecondaryColor(syringe);
-            if(FastColor.ARGB32.alpha(color) != 0){
-                this.stack.getOrCreate(3).add().set(solid).setColor(color);
-            }
-        } else {
+        color = item.getSecondaryColor(syringe);
+        if(FastColor.ARGB32.alpha(color) != 0){
+            this.stack.getOrCreate(3).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 0)).setColor(color);
+            empty = false;
+        }
+
+        if(empty){
             piston.y -= 3;
         }
 
         root.render(stack, this.stack, packedLight, OverlayTexture.NO_OVERLAY, -1);
         access.cmrs$finishBatched();
         MatrixStack.pop(stack);
-        super.render(pEntity, pEntityYaw, pPartialTick, stack, buffer, packedLight);
+        super.render(entity, entityYaw, partialTick, stack, buffer, packedLight);
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull SyringeProjectile pEntity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull SyringeProjectile entity) {
         return TEXTURE;
     }
 }

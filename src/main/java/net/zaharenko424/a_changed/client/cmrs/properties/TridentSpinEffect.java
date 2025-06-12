@@ -17,16 +17,16 @@ import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class TridentSpinEffect implements RenderLayerLike {
 
     public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.of((buffer, value) -> {
-            CodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC);
     }, buffer ->
-            new TridentSpinEffect(CodecUtils.readOptionally(buffer, PoseTransform.CODEC))
+            new TridentSpinEffect(StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC))
     );
 
     private final ModelPart box;

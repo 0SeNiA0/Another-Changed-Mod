@@ -271,7 +271,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy(getHasName(IRON_PLATE), hasIronPlates)
                 .save(out);
 
-        //TODO computer, make better?
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, COMPUTER_ITEM, 2)
                 .pattern("PPP")
                 .pattern("ILI")

@@ -8,7 +8,7 @@ import net.zaharenko424.a_changed.entity.SeatEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-//TODO remove this?
+
 public interface ISeatBlock <S extends SeatEntity> {
 
     default boolean sit(@NotNull Level level, @NotNull BlockPos pos, @NotNull AABB ab, @NotNull Player player, boolean renderPlayer){

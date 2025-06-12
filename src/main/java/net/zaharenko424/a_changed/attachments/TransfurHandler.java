@@ -42,15 +42,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
 
 public class TransfurHandler implements AbilityHolder {
-
-    public static final Supplier<RuntimeException> NO_ATTACHMENT_EXC = ()-> new RuntimeException("Transfur attachment was expected but not found!");
 
     public static final Serializer SERIALIZER = new Serializer();
     public static final IAttachmentCopyHandler<TransfurHandler> COPY_HANDLER = (attachment, holder, lookup) -> {
@@ -67,7 +63,9 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     public static @NotNull TransfurHandler nonNullOf(@NotNull LivingEntity entity){
-        return Utils.nonNullOrThrow(of(entity), NO_ATTACHMENT_EXC.get());
+        TransfurHandler handler = of(entity);
+        if(handler == null) throw new RuntimeException("Transfur attachment was expected but not found!");
+        return handler;
     }
 
 
@@ -140,7 +138,7 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     public void addTransfurProgress(float amount, @NotNull TransfurType transfurType, @NotNull TransfurContext context) {
-        if(holder.level().isClientSide) return;
+        if(holder.level().isClientSide || amount <= 0) return;
         if(isBeingTransfurred() || isTransfurred()) return;
 
         AddTransfurProgressEvent event = new AddTransfurProgressEvent(holder, transfurType, amount, context);
@@ -160,7 +158,7 @@ public class TransfurHandler implements AbilityHolder {
         }
 
         i0 = ticksUntilTFProgressDecrease;
-        transfurProgress = progress;
+        transfurProgress = Math.max(0, progress);
         this.transfurType = transfurType;
 
         syncClients();
@@ -186,10 +184,19 @@ public class TransfurHandler implements AbilityHolder {
         float covered = armorSlots > 0 && armorPieces > 0 ? (armorSlots == armorPieces ? 1 : (float)armorPieces / (float)armorSlots) : 0;
         if(covered == 0) return 0;
 
-        float armorRes = Math.min(armorPoints, 20) / 20f * .2f;//Balanced for vanilla (diamond/netherite full set 20 armor)
+        float armorRes = Math.min(armorPoints, 20) / 20f * .2f;//Balanced for vanilla (diamond/netherite full set 20 armor) TODO add max armor to config?
         float attributeRes = (float) (holder.getAttributeValue(LATEX_RESISTANCE) * .6f);
 
         return (armorRes + attributeRes) * covered;//Max .8
+    }
+
+    public void subTransfurProgress(float amount){
+        if(holder.level().isClientSide || isTransfurred() || transfurProgress == 0 || amount <= 0) return;
+
+        transfurProgress = Math.max(0, transfurProgress - amount);
+        if(transfurProgress == 0) transfurType = null;
+
+        syncClients();
     }
 
     public @Nullable TransfurType getTransfurType() {
@@ -201,7 +208,7 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     public boolean isTransfurred() {
-            return isTransfurred && transfurType != null;
+        return isTransfurred && transfurType != null;
     }
 
     public void transfur(@NotNull TransfurType transfurType, @NotNull TransfurContext context) {
@@ -236,8 +243,7 @@ public class TransfurHandler implements AbilityHolder {
             case DEATH -> {
                 LatexBeast latexBeast = TransfurUtils.spawnLatex(transfurType, (ServerLevel) level, player.blockPosition());
                 latexBeast.copyEquipment(holder);
-                player.setInvulnerable(false);
-                player.hurt(DamageSources.transfur(null, Objects.requireNonNullElse(player.getLastHurtByMob(), player)), Float.MAX_VALUE);
+                player.hurt(DamageSources.transfurKill(player.level(), player.getLastHurtByMob()), Float.MAX_VALUE);
 
                 NeoForge.EVENT_BUS.post(new TransfurredEvent(player, latexBeast, transfurType, context));
             }
@@ -267,6 +273,7 @@ public class TransfurHandler implements AbilityHolder {
         transfurType.onTransfur(holder);
 
         syncClients();
+        AbilityUtils.syncAbilities(holder);
 
         NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType, context));
     }
@@ -327,9 +334,7 @@ public class TransfurHandler implements AbilityHolder {
             return;
         }
         if(holder.tickCount % ticksBetweenTFProgressDecrease != 0) return;
-        transfurProgress = Math.max(0, transfurProgress - 1);
-
-        syncClients();
+        subTransfurProgress(1);
     }
 
     public void syncClient(ServerPlayer packetReceiver) {
@@ -356,6 +361,11 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     public static class Serializer implements IAttachmentSerializer<CompoundTag, TransfurHandler> {
+
+        static final String TRANSFURRED_KEY = "transfurred";
+        static final String BEING_TRANSFURRED_KEY = "isBeingTransfurred";
+        static final String TRANSFUR_PROGRESS_KEY = "transfur_progress";
+        static final String TRANSFUR_TYPE_KEY = "transfur_type";
 
         private Serializer(){}
 

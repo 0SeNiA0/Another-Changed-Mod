@@ -87,7 +87,7 @@ public class SyringeProjectile extends Projectile {
         setOwner(shooter);
         if(!level.isClientSide) {
             syringe.setCount(1);
-            entityData.set(SYRINGE_STACK, syringe);
+            setPickupItemStack(syringe);
         }
 
         setCustomName(syringe.get(DataComponents.CUSTOM_NAME));
@@ -529,7 +529,7 @@ public class SyringeProjectile extends Projectile {
         compound.putByte("shake", (byte)shakeTime);
         compound.putBoolean("inGround", inGround);
         compound.putByte("pickup", (byte)pickup.ordinal());
-        compound.put("item", entityData.get(SYRINGE_STACK).save(registryAccess()));
+        compound.put("item", getPickupItemStackOrigin().save(registryAccess()));
 
         if (rifle != null) {
             compound.put("weapon", rifle.save(registryAccess(), new CompoundTag()));

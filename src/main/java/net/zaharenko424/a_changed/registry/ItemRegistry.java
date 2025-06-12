@@ -166,6 +166,7 @@ public class ItemRegistry {
     public static final DeferredItem<Item> DARK_LATEX_BASE = ITEMS.registerSimpleItem("dark_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationModifier(1).build()).rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> WHITE_LATEX_BASE = ITEMS.registerSimpleItem("white_latex_base", new Item.Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationModifier(1).build()).rarity(Rarity.UNCOMMON));
 
+    public static final DeferredItem<AdrenalineSyringe> ADRENALINE_SYRINGE = ITEMS.register("adrenaline_syringe", ()-> new AdrenalineSyringe());
     public static final DeferredItem<Item> BIO_WASTE = ITEMS.registerSimpleItem("bio_waste", new Item.Properties().stacksTo(16));
     public static final DeferredItem<ArmorItem> BLACK_LATEX_SHORTS = ITEMS.register("black_latex_shorts", ()-> new ArmorItem(ArmorMaterialRegistry.LATEX, ArmorItem.Type.LEGGINGS, new Item.Properties().durability(90).setNoRepair()));
     public static final DeferredItem<BloodSyringe> BLOOD_SYRINGE = ITEMS.register("blood_syringe", BloodSyringe::new);

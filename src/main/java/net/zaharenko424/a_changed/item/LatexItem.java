@@ -14,11 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
 import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.registry.FluidRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.*;
 import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
-import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
-import net.zaharenko424.a_changed.transfurSystem.Latex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -69,13 +66,15 @@ public class LatexItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        Player player= (Player) entity;
         if(!level.isClientSide){
-            if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(stack,level,entity);
-            TransfurHandler.nonNullOf(player).addTransfurProgress(10f, transfurType.get(), TransfurContext.DEF_NO_CHECK);
+            if(TransfurManager.isTransfurred(entity)) return super.finishUsingItem(stack, level, entity);
+
+            if(DamageSources.checkTFTarget(entity)) {
+                TransfurHandler.nonNullOf(entity).addTransfurProgress(10f, transfurType.get(), TransfurContext.DEF_NO_CHECK);
+            } else entity.hurt(entity.damageSources().inWall(), 2);
         }
-        if(!player.isCreative()) stack.shrink(1);
-        return stack;
+
+        return super.finishUsingItem(stack, level, entity);
     }
 
     @Override

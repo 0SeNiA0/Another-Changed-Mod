@@ -31,9 +31,11 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.cmrs.CustomBEWLR;
+import net.zaharenko424.a_changed.client.cmrs.event.RegisterModelDefinitionsEvent;
 import net.zaharenko424.a_changed.client.cmrs.renderer.CustomModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.renderer.DynamicModelRenderer;
 import net.zaharenko424.a_changed.client.cmrs.event.RegisterBuiltInModelsEvent;
+import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
 import net.zaharenko424.a_changed.client.renderer.MilkPuddingRenderer;
@@ -156,7 +158,7 @@ public class ClientMod {
     public static void collectAllTextures(HashMap<String, Pair<File, File>> textures, File dir, String relativePath){
         IOUtils.visitAllFiles((path, file, filename) -> {
             if(filename.endsWith(".png")){
-                textures.compute(relativePath + filename.replace(".png", ""), (k, v) -> {
+                textures.compute(relativePath + path + filename.replace(".png", ""), (k, v) -> {
                     if(v == null) return ObjectObjectMutablePair.of(file, null);
                     return v.left(file);
                 });
@@ -164,7 +166,7 @@ public class ClientMod {
             }
 
             if(filename.endsWith(".mcmeta")){
-                textures.compute(relativePath + filename.replace(".png.mcmeta", ""), (k, v) -> {
+                textures.compute(relativePath + path + filename.replace(".png.mcmeta", ""), (k, v) -> {
                     if(v == null) return ObjectObjectMutablePair.of(null, file);
                     return v.right(file);
                 });
@@ -274,6 +276,42 @@ public class ClientMod {
     @SubscribeEvent
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event){
         event.registerSpriteSet(BLUE_GAS_PARTICLE.get(), BlueGasParticle.Provider::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterModelDefinitions(RegisterModelDefinitionsEvent event){
+        event.registerModelDefinition(CannedOrangesRenderer.LAYER, CannedOrangesRenderer.bodyLayer());
+        event.registerModelDefinition(CryoChamberRenderer.LAYER, CryoChamberRenderer.bodyLayer());
+        event.registerModelDefinition(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
+        event.registerModelDefinition(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
+        event.registerModelDefinition(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
+        event.registerModelDefinition(PileOfOrangesRenderer.LAYER, PileOfOrangesRenderer.bodyLayer());
+
+        event.registerModelDefinition(ChairRenderer.LAYER, ChairRenderer.bodyLayer());
+
+        event.registerModelDefinition(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
+
+
+        event.registerModelDefinition(MilkPuddingModel.bodyLayer, MilkPuddingModel.bodyLayer());
+        event.registerModelDefinition(RoombaModel.bodyLayer, RoombaModel.bodyLayer());
+
+        event.registerModelDefinition(BeiFengModel.bodyLayer, BeiFengModel.model());
+
+        event.registerModelDefinition(DarkLatexPupModel.bodyLayer, DarkLatexPupModel.model());
+        event.registerModelDefinition(DLPupMoltenModel.bodyLayer, DLPupMoltenModel.model());
+
+        event.registerModelDefinition(HypnoCatModel.bodyLayer, HypnoCatModel.model());
+
+        event.registerModelDefinition(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.model());
+        event.registerModelDefinition(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.model());
+
+        event.registerModelDefinition(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.model());
+        event.registerModelDefinition(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.model());
+
+        event.registerModelDefinition(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.model());
+        event.registerModelDefinition(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.model());
+
+        event.registerModelDefinition(YufengDragonModel.bodyLayer, YufengDragonModel.model());
     }
 
     @SubscribeEvent

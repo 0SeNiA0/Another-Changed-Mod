@@ -1,7 +1,7 @@
 package net.zaharenko424.a_changed.client.cmrs;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.zaharenko424.a_changed.util.Pool;
+import net.zaharenko424.a_changed.client.cmrs.util.Pool;
 import org.jetbrains.annotations.NotNull;
 
 /**

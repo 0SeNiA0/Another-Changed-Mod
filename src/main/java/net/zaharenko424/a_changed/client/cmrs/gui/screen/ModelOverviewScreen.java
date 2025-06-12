@@ -26,7 +26,7 @@ public class ModelOverviewScreen extends Screen implements MouseMoveListener {
         this.previous = previous;
         model.setModelId(modelId)
                 .setRotation(Mth.DEG_TO_RAD * -10, Mth.DEG_TO_RAD * -10)
-                .setZoom(100);
+                .setZoom(100).setTranslation(0, 0, 0);
         return this;
     }
 

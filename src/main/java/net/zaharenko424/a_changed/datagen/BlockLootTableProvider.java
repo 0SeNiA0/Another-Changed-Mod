@@ -86,6 +86,7 @@ public class BlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(DARK_LATEX_PUDDLE_M.get());
         derelictMachineDrops(DERELICT_LATEX_ENCODER.get(), 1.5f);
         derelictMachineDrops(DERELICT_LATEX_PURIFIER.get(), 1);
+        dropSelf(DISC.get());
         dropSelf(DNA_EXTRACTOR.get());
         dropSelf(EXPOSED_PIPES.get());
         dropOther(FLASK.get(), BROKEN_FLASK);

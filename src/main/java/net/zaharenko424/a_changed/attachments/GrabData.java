@@ -14,71 +14,42 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.ability.GrabMode;
-import net.zaharenko424.a_changed.entity.LatexBeast;
 import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySyncPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Whoever modifies the data is responsible for its synchronisation!
- */
 public class GrabData implements AbilityData {
 
     public static final Serializer SERIALIZER = new Serializer();
 
     public final LivingEntity holder;
+    private boolean activated;
     private LivingEntity grabbedEntity;
     private LivingEntity grabbedBy;
     private GrabMode mode = GrabMode.ASSIMILATE;
     private boolean wantsToBeGrabbed;
-    private boolean activated;
 
     public GrabData(IAttachmentHolder holder){
         if(!(holder instanceof LivingEntity entity)) throw new IllegalArgumentException();
         this.holder = entity;
+        if(!(holder instanceof Player)) wantsToBeGrabbed = true;
     }
 
     public static GrabData dataOf(LivingEntity holder){//TODO potentially return null for inappropriate holders instead of throwing in <init>
         return holder.getData(AttachmentRegistry.GRAB_DATA);
     }
 
+    public boolean isActivated() {
+        return activated;
+    }
+
     public LivingEntity getGrabbedEntity() {
         return grabbedEntity;
-    }
-
-    public LivingEntity getGrabbedBy() {
-        return grabbedBy;
-    }
-
-    public void setGrabbedBy(LivingEntity grabbedBy) {
-        if(holder.level().isClientSide) return;
-
-        this.grabbedBy = grabbedBy;
-        if(grabbedEntity != null) drop();
-        else syncClients();
-    }
-
-    public GrabMode getMode() {
-        return mode;
-    }
-
-    public void setMode(GrabMode mode) {
-        if(holder.level().isClientSide) return;
-        if(this.mode == mode) return;
-
-        if(((this.mode == GrabMode.FRIENDLY || mode == GrabMode.FRIENDLY) && this.mode != mode)
-                || (grabbedEntity instanceof Player player1 && !TransfurManager.wantsToBeGrabbed(player1) && !mode.givesDebuffToTarget)) drop();
-        this.mode = mode;
-        if(grabbedEntity != null) {
-            grab(grabbedEntity, true);
-        } else syncClients();
     }
 
     public boolean wantsToBeGrabbed() {
@@ -99,23 +70,75 @@ public class GrabData implements AbilityData {
 
         GrabData data = dataOf(grabbedBy);
         GrabMode mode = data.getMode();
-        if(!mode.givesDebuffToTarget || force) {
-            if(mode.givesDebuffToTarget) data.holder.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
+        if(force || !mode.isOffensive()) {
+            if(mode.isOffensive()) data.holder.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
             data.drop();
         }
     }
 
-    public boolean isActivated() {
-        return activated;
+    public LivingEntity getGrabbedBy() {
+        return grabbedBy;
+    }
+
+    public void setGrabbedBy(LivingEntity grabbedBy) {
+        if(holder.level().isClientSide) return;
+
+        this.grabbedBy = grabbedBy;
+        if(grabbedEntity != null) drop();
+        else syncClients();
+    }
+
+    public GrabMode getMode() {
+        return mode;
+    }
+
+    public void setMode(@NotNull GrabMode mode) {
+        if(holder.level().isClientSide || this.mode == mode) return;
+
+        if(grabbedEntity == null){
+            this.mode = mode;
+            syncClients();
+            return;
+        }
+
+        if((!this.mode.isOffensive() && mode.isOffensive()) || !mode.checkTarget(grabbedEntity)) {
+            drop();
+            this.mode = mode;
+            syncClients();
+            return;
+        }
+
+        if(grabbedEntity instanceof ServerPlayer player){
+            if(this.mode == GrabMode.FRIENDLY){
+                player.setCamera(null);
+                player.setGameMode(GameType.SURVIVAL);
+                player.removeEffect(MobEffectRegistry.FRIENDLY_GRAB);
+            }
+
+            if(mode == GrabMode.FRIENDLY){
+                player.setGameMode(GameType.SPECTATOR);
+                player.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB, -1, 0, false, false));
+            }
+        }
+
+        if(mode.isOffensive()) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF, grabDuration, 0, false, false));
+        if(this.mode.isOffensive() && !mode.isOffensive()) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF);
+
+        if(this.mode.givesDebuffToSelf){
+            if(!mode.givesDebuffToSelf) holder.removeEffect(MobEffectRegistry.HOLDING_DEBUFF);
+        } else if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF, -1, 0, false, false));
+
+        this.mode = mode;
+        syncClients();
     }
 
     public static final int grabCooldown = 160;
     public static final int grabDuration = 160;
 
-    public boolean canGrab(LivingEntity potentialTarget) {//TODO limit grabbable entities to transfurrable & latexes(?)
+    public boolean canGrab(LivingEntity potentialTarget) {
         return potentialTarget != null && getGrabbedBy() == null && getGrabbedEntity() == null
                 && !holder.hasEffect(MobEffectRegistry.GRAB_COOLDOWN)
-                && (potentialTarget.getType().is(AChanged.TRANSFURRABLE_TAG) || potentialTarget instanceof LatexBeast)
+                && (mode.isOffensive() || dataOf(potentialTarget).wantsToBeGrabbed())
                 && mode.checkTarget(potentialTarget);
     }
 
@@ -124,13 +147,8 @@ public class GrabData implements AbilityData {
         return data.canGrab(potentialTarget);
     }
 
-    public void grab(@NotNull LivingEntity target) {
-        if(holder.level().isClientSide) return;
-        grab(target, false);
-    }
-
-    private void grab(@NotNull LivingEntity target, boolean force){
-        if(!force && !canGrab(target)) return;
+    public void grab(@NotNull LivingEntity target){
+        if(holder.level().isClientSide || !canGrab(target)) return;
 
         grabbedEntity = target;
         dataOf(grabbedEntity).setGrabbedBy(holder);
@@ -139,23 +157,22 @@ public class GrabData implements AbilityData {
             player1.addEffect(new MobEffectInstance(MobEffectRegistry.FRIENDLY_GRAB, -1, 0, false, false));
         }
 
-        if(mode.givesDebuffToTarget) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF, grabDuration, 0, false, false));
+        if(mode.isOffensive()) grabbedEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GRABBED_DEBUFF, grabDuration, 0, false, false));
         if(mode.givesDebuffToSelf) holder.addEffect(new MobEffectInstance(MobEffectRegistry.HOLDING_DEBUFF, -1, 0, false, false));
         activated = true;
         syncClients();
     }
 
     public void drop() {
-        if(holder.level().isClientSide) return;
-        if(grabbedEntity == null) return;
+        if(holder.level().isClientSide || grabbedEntity == null) return;
 
         if(grabbedEntity.isAlive()){
-            if(grabbedEntity instanceof ServerPlayer player1 && mode == GrabMode.FRIENDLY) {
-                player1.setCamera(null);
-                player1.setGameMode(GameType.SURVIVAL);
-                player1.removeEffect(MobEffectRegistry.FRIENDLY_GRAB);
+            if(grabbedEntity instanceof ServerPlayer player && mode == GrabMode.FRIENDLY) {
+                player.setCamera(null);
+                player.setGameMode(GameType.SURVIVAL);
+                player.removeEffect(MobEffectRegistry.FRIENDLY_GRAB);
             }
-            if(mode.givesDebuffToTarget) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF);
+            if(mode.isOffensive()) grabbedEntity.removeEffect(MobEffectRegistry.GRABBED_DEBUFF);
             dataOf(grabbedEntity).setGrabbedBy(null);
         }
 

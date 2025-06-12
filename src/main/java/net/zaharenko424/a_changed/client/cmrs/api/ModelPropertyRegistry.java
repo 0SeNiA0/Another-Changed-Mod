@@ -11,7 +11,7 @@ import net.zaharenko424.a_changed.client.cmrs.properties.*;
 
 public class ModelPropertyRegistry {
 
-    public static final DeferredRegister<ModelPropertyType<?>> PROPERTIES = DeferredRegister.create(CMRS.resourceLoc("model_properties"), CMRS.MOD_ID);
+    public static final DeferredRegister<ModelPropertyType<?>> PROPERTIES = DeferredRegister.create(CMRS.resourceLoc("model_properties"), CMRS.MODID);
     public static final Registry<ModelPropertyType<?>> PROPERTY_REGISTRY = PROPERTIES.makeRegistry(builder ->{});
 
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Textures>> TEXTURES = PROPERTIES.register("textures", () -> new ModelPropertyType<>(Textures.CODEC));

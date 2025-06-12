@@ -65,7 +65,10 @@ public class RotatingChair extends Block implements ISeatBlock<RotatingChairEnti
 
     @Override
     public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
-        if(!level.isClientSide) level.addFreshEntity(getSeat(level, pos, true));
+        if(!level.isClientSide) {
+            if(level.getEntitiesOfClass(seatClass(), Shapes.block().bounds().move(pos)).isEmpty())
+                level.addFreshEntity(getSeat(level, pos, true));
+        }
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 

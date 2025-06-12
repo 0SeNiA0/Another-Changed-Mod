@@ -29,7 +29,10 @@ public abstract class MixinSlot {
             LivingEntity owner = armor.achanged$owner();
             if(!(owner instanceof Player) || !AbilityUtils.hasLatexPupAbilities(owner)) return original;
 
-            return armor.achanged$slot() == EquipmentSlot.FEET;
+            return switch (armor.achanged$slot()){
+                case EquipmentSlot.CHEST, EquipmentSlot.FEET -> true;
+                default -> false;
+            };
         }
         return original;
     }

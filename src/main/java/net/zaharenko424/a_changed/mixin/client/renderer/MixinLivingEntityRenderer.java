@@ -148,13 +148,16 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
      */
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.BEFORE),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-    private void latexOverlay(@NotNull T pEntity, float pEntityYaw, float pPartialTicks, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
-        if(TransfurHandler.of(pEntity) == null) return;
-        float progress = TransfurManager.getTransfurProgress(pEntity);
-        if(progress <= 0 || progress >= TransfurManager.TRANSFUR_TOLERANCE) return;
+    private void latexOverlay(@NotNull T entity, float pEntityYaw, float pPartialTicks, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
+        TransfurHandler handler = TransfurHandler.of(entity);
+        if(handler == null || handler.isTransfurred() || handler.getTransfurType() == null) return;
+
+        float progress = handler.getTransfurProgress();
+        if(progress <= 0) return;
+
         MatrixStack.push(stack);
         stack.scale(1.02f, 1.02f, 1.02f);
-        int primaryColor = TransfurManager.getTransfurType(pEntity).getPrimaryColor();
+        int primaryColor = handler.getTransfurType().getPrimaryColor();
 
         model.renderToBuffer(stack, pBuffer.getBuffer(RenderType.entityTranslucent(achanged$TEXTURE)),
                 pPackedLight, OverlayTexture.NO_OVERLAY,

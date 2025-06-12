@@ -45,8 +45,7 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
 
         if(TransfurManager.isTransfurred(entity)){
             if(entity instanceof LatexBeast){
-                entity.setInvulnerable(false);
-                entity.hurt(DamageSources.untransfur(level, entity), Float.MAX_VALUE);
+                entity.hurt(DamageSources.untransfurKill(level, entity), Float.MAX_VALUE);
                 return ItemRegistry.SYRINGE_ITEM.toStack();
             }
 
@@ -72,7 +71,7 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
             }
 
             if(entity instanceof LatexBeast){
-                entity.hurt(DamageSources.untransfur(level, syringe, shooter), Float.MAX_VALUE);
+                entity.hurt(DamageSources.untransfurKill(level, syringe, shooter), Float.MAX_VALUE);
             } else {
                 entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
                 untransfur(stack, entity);

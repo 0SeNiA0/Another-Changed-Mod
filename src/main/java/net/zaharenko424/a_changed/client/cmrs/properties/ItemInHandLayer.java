@@ -20,24 +20,24 @@ import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ItemInHandLayer implements RenderLayerLike {
 //absolute translate, rotate, scale for now(not additive)
     public static final StreamCodec<FriendlyByteBuf, ItemInHandLayer> CODEC = StreamCodec.of((buffer, itemInHand) -> {
-            CodecUtils.writeOptionally(itemInHand.armR, itemInHand.armR != null, buffer, ByteBufCodecs.STRING_UTF8);
-            CodecUtils.writeOptionally(itemInHand.transformR, !itemInHand.transformR.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(itemInHand.armL, itemInHand.armL != null, buffer, ByteBufCodecs.STRING_UTF8);
-            CodecUtils.writeOptionally(itemInHand.transformL, !itemInHand.transformL.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(itemInHand.headOverride, itemInHand.headOverride != null, buffer, ByteBufCodecs.STRING_UTF8);
+            StreamCodecUtils.writeOptionally(itemInHand.armR, itemInHand.armR != null, buffer, ByteBufCodecs.STRING_UTF8);
+            StreamCodecUtils.writeOptionally(itemInHand.transformR, !itemInHand.transformR.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(itemInHand.armL, itemInHand.armL != null, buffer, ByteBufCodecs.STRING_UTF8);
+            StreamCodecUtils.writeOptionally(itemInHand.transformL, !itemInHand.transformL.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(itemInHand.headOverride, itemInHand.headOverride != null, buffer, ByteBufCodecs.STRING_UTF8);
         }, buffer -> {
-            String armR = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
-            PoseTransform transformR = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
-            String armL = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
-            PoseTransform transformL = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
-            return new ItemInHandLayer(armR, transformR, armL, transformL, CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8));
+            String armR = StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+            PoseTransform transformR = StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            String armL = StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+            PoseTransform transformL = StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            return new ItemInHandLayer(armR, transformR, armL, transformL, StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8));
     });
 
     private String armR;

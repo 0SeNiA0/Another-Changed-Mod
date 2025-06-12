@@ -478,7 +478,7 @@ public abstract class AbstractLatexPup extends TamableAnimal implements LatexBea
 
     @Override
     public boolean wantsToAttack(@NotNull LivingEntity target, @Nullable LivingEntity owner) {
-        if(target == this) return false;
+        if(target == this || target == owner) return false;
         if (target instanceof Creeper || target instanceof Ghast || target instanceof ArmorStand) {
             return false;
         } else {

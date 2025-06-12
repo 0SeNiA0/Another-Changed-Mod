@@ -13,7 +13,7 @@ import it.unimi.dsi.fastutil.objects.ObjectObjectMutablePair;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
-import net.zaharenko424.a_changed.util.NonPoolablePool;
+import net.zaharenko424.a_changed.client.cmrs.util.NonPoolablePool;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,6 +28,7 @@ public abstract class MixinBufferSource implements BufferSourceAccess {
     final NonPoolablePool<ByteBufferBuilder> cmrs$byteBufPool = new NonPoolablePool<>() {
         @Override
         protected ByteBufferBuilder newObject() {
+            if(size() > 64) throw new IllegalStateException("Too many buffers allocated (leak?)");
             return new ByteBufferBuilder(77824);//76KB
         }
 

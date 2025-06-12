@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.util;
+package net.zaharenko424.a_changed.client.cmrs.util;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamEncoder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CodecUtils {
+public class StreamCodecUtils {
 
     public static final StreamCodec<FriendlyByteBuf, float[]> FLOAT_ARR = StreamCodec.of(
             (buffer , arr) -> {

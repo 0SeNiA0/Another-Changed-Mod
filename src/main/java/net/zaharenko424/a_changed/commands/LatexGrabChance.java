@@ -16,29 +16,20 @@ public class LatexGrabChance {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
                 Commands.literal("latex_grab_chance")
-                        .then(
-                                Commands.literal("get")
-                                        .executes(
-                                                context->get(context.getSource())
-                                        )
-                        )
+                        .executes(context -> get(context.getSource()))
                         .requires(UnTransfur::check)
                         .then(
-                                Commands.literal("set")
-                                        .then(
-                                                Commands.argument("chance", FloatArgumentType.floatArg(0, 1))
-                                                        .executes(
-                                                                context->set(context.getSource(), FloatArgumentType.getFloat(context,"chance"))
-                                                        )
-                                        )
-                                        .then(
-                                                Commands.literal("DEFAULT")
-                                                        .executes(
-                                                                context->set(context.getSource(), GrabChanceData.DEF_CHANCE)
-                                                        )
+                                Commands.argument("chance", FloatArgumentType.floatArg(0, 1))
+                                        .executes(
+                                                context->set(context.getSource(), FloatArgumentType.getFloat(context,"chance"))
                                         )
                         )
-
+                        .then(
+                                Commands.literal("DEFAULT")
+                                        .executes(
+                                                context->set(context.getSource(), GrabChanceData.DEF_CHANCE)
+                                        )
+                        )
         );
     }
 

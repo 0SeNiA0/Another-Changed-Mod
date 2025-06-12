@@ -101,7 +101,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
         BlockEntity entity;
         BlockPos pos;
-        for(Direction direction : Direction.values()){//TODO potentially sends maxExtract to each direction each tick...
+        for(Direction direction : Direction.values()){
             if(energyStorage.isEmpty()) break;
             pos = worldPosition.relative(direction);
             entity = level.getBlockEntity(pos);

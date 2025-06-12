@@ -29,10 +29,10 @@ public abstract class AbstractLatexPup extends TransfurType {
         NonNullList<ItemStack> armor = player.getInventory().armor;
         for(int i = 0; i < armor.size(); i++){
             stack = armor.get(i);
-            if(!stack.is(Items.WOLF_ARMOR)){
-                ItemHandlerHelper.giveItemToPlayer(player, stack);
-                armor.set(i, ItemStack.EMPTY);
-            }
+            if(stack.is(Items.WOLF_ARMOR) || stack.is(Items.ELYTRA)) continue;
+
+            ItemHandlerHelper.giveItemToPlayer(player, stack);
+            armor.set(i, ItemStack.EMPTY);
         }
     }
 

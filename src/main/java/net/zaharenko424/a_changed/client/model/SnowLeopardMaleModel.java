@@ -27,7 +27,7 @@ import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
 import net.zaharenko424.a_changed.client.cmrs.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.client.cmrs.properties.*;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.a_changed.util.Int2ObjArrayMap;
+import net.zaharenko424.a_changed.client.cmrs.util.Int2ObjArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 

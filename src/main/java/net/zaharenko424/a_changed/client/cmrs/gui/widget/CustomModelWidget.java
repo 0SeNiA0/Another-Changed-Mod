@@ -35,6 +35,11 @@ public class CustomModelWidget extends ModelWidget {
         return this;
     }
 
+    public ModelWidget setTranslation(float x, float y, float z){
+        super.setTranslation(x, y, z);
+        return this;
+    }
+
     @Override
     public CustomModelWidget setZoom(float zoom) {
         super.setZoom(zoom);

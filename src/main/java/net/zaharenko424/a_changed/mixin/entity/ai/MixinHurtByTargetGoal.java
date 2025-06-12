@@ -28,7 +28,8 @@ public abstract class MixinHurtByTargetGoal extends TargetGoal {
 
     @Override
     public boolean canContinueToUse() {
-        if(!achanged$wasTransfurred && targetMob instanceof Player player && (TransfurManager.isTransfurred(player) || TransfurManager.isBeingTransfurred(player))) return false;
+        if(targetMob != null && !achanged$wasTransfurred
+                && (TransfurManager.isTransfurred(targetMob) || TransfurManager.isBeingTransfurred(targetMob))) return false;
         return super.canContinueToUse();
     }
 }

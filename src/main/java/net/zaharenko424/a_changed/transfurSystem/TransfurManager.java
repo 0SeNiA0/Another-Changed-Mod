@@ -18,10 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class TransfurManager {
 
-    public static final String TRANSFUR_TYPE_KEY = "transfur_type";
-    public static final String TRANSFUR_PROGRESS_KEY = "transfur_progress";
-    public static final String BEING_TRANSFURRED_KEY = "isBeingTransfurred";
-    public static final String TRANSFURRED_KEY = "transfurred";
     public static final int LATEX_DAMAGE_BONUS = 1;//TODO move to attribute modifier?
     public static final float DEF_TRANSFUR_TOLERANCE = 20;
     @ApiStatus.Internal
@@ -34,8 +30,9 @@ public class TransfurManager {
         return handler != null && handler.isTransfurred();
     }
 
-    public static boolean isBeingTransfurred(@NotNull Player player){
-        return TransfurHandler.nonNullOf(player).isBeingTransfurred();
+    public static boolean isBeingTransfurred(@NotNull LivingEntity entity){
+        TransfurHandler handler = TransfurHandler.of(entity);
+        return handler != null && handler.isBeingTransfurred();
     }
 
     public static float getTransfurProgress(@NotNull LivingEntity entity){

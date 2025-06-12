@@ -24,8 +24,8 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
     @Unique
     float achanged$targetYRot, achanged$targetXRot, achanged$speed;
 
-    public MixinLocalPlayer(Level pLevel, BlockPos pPos, float pYRot, GameProfile pGameProfile) {
-        super(pLevel, pPos, pYRot, pGameProfile);
+    public MixinLocalPlayer(Level level, BlockPos pos, float yRot, GameProfile gameProfile) {
+        super(level, pos, yRot, gameProfile);
     }
 
     /**
@@ -35,7 +35,7 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
             method = "aiStep")
     private boolean onFlyElytraCheck(boolean original) {
         if(AbilityUtils.hasFallFlyingAbility(this)) return true;
-        return  original;
+        return original;
     }
 
     /**

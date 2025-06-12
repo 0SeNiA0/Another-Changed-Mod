@@ -35,13 +35,12 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityData;
 import net.zaharenko424.a_changed.attachments.GrabChanceData;
 import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.Note;
 import net.zaharenko424.a_changed.block.PileOfOranges;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.commands.*;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
@@ -94,8 +93,7 @@ public class CommonEvent {
         handler.syncClients();
         if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
 
-        Ability selected = handler.getSelectedAbility();
-        if(selected != null) selected.select(player);
+        AbilityUtils.syncAbilities(player);
 
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
@@ -107,9 +105,7 @@ public class CommonEvent {
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
         Ability selected = handler.getSelectedAbility();
-        if(selected == null) return;
-        selected.deactivate(player);
-        selected.unselect(player);
+        if(selected != null) selected.deactivate(player);
     }
 
     @SubscribeEvent
@@ -267,20 +263,21 @@ public class CommonEvent {
             tfHandler.tick();
             if(DamageSources.checkTFTarget(entity)){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
+                    if(entity.hurt(DamageSources.transfur(entity.level(),null),0.1f))
                         tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.DEF);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
+                    if(entity.hurt(DamageSources.transfur(entity.level(),null),0.1f))
                         tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.DEF);
                     return;
                 }
             }
-        }
 
-        if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get()) || !TransfurManager.isTransfurred(entity)) return;
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT,200));
+            if(entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())){
+                entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT, 200));
+            }
+        }
     }
 
     /**
@@ -313,17 +310,14 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof LivingEntity target)) return;
+        if(!(event.getTarget() instanceof ServerPlayer target)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
 
         TransfurHandler handler = TransfurHandler.of(target);
         if(handler != null) {
             handler.syncClient(player);
 
-            Ability selected = handler.getSelectedAbility();
-            if(selected == null) return;
-            AbilityData data = selected.getAbilityData(target);
-            if(data != null) data.syncClient(player);
+            AbilityUtils.syncSelectedAbility(target, player);
         }
     }
 
@@ -350,8 +344,7 @@ public class CommonEvent {
                 TransfurHandler handler = TransfurHandler.nonNullOf(player);
                 handler.syncClients();
 
-                Ability selected = handler.getSelectedAbility();
-                if(selected != null) selected.select(player);
+                AbilityUtils.syncAbilities(player);
             }
         },25);
     }
@@ -361,7 +354,7 @@ public class CommonEvent {
      */
     @SubscribeEvent
     public static void onPlayerChangeDim(PlayerEvent.PlayerChangedDimensionEvent event){
-        ServerPlayer player = (ServerPlayer) event.getEntity();//TODO resync ability data
+        ServerPlayer player = (ServerPlayer) event.getEntity();
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -369,11 +362,7 @@ public class CommonEvent {
                 TransfurHandler handler = TransfurHandler.nonNullOf(player);
                 handler.syncClient(player);
 
-                Ability selected = handler.getSelectedAbility();
-                if(selected == null) return;
-                selected.select(player);
-                AbilityData data = selected.getAbilityData(player);
-                if(data != null) data.syncClient(player);
+                AbilityUtils.syncAbilities(player);
             }
         },25);
     }

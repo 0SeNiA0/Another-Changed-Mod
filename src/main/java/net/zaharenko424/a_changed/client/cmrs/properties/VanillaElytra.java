@@ -23,32 +23,32 @@ import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class VanillaElytra implements RenderLayerLike {
 
     public static final StreamCodec<FriendlyByteBuf, VanillaElytra> CODEC = StreamCodec.of((buffer, vanillaElytra) -> {
-            CodecUtils.writeOptionally(vanillaElytra.transform, !vanillaElytra.transform.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(vanillaElytra.transformFlying, !vanillaElytra.transformFlying.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(vanillaElytra.transformCrouching, !vanillaElytra.transformCrouching.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.transform, !vanillaElytra.transform.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.transformFlying, !vanillaElytra.transformFlying.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.transformCrouching, !vanillaElytra.transformCrouching.isEmpty(), buffer, PoseTransform.CODEC);
             boolean babyTransform = vanillaElytra.babyTransform;
             buffer.writeBoolean(babyTransform);
             if(!babyTransform) return;
-            CodecUtils.writeOptionally(vanillaElytra.bTransform, !vanillaElytra.bTransform.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(vanillaElytra.bTransformFlying, !vanillaElytra.bTransformFlying.isEmpty(), buffer, PoseTransform.CODEC);
-            CodecUtils.writeOptionally(vanillaElytra.bTransformCrouching, !vanillaElytra.bTransformCrouching.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.bTransform, !vanillaElytra.bTransform.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.bTransformFlying, !vanillaElytra.bTransformFlying.isEmpty(), buffer, PoseTransform.CODEC);
+            StreamCodecUtils.writeOptionally(vanillaElytra.bTransformCrouching, !vanillaElytra.bTransformCrouching.isEmpty(), buffer, PoseTransform.CODEC);
     }, buffer -> {
-            PoseTransform transform = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
-            PoseTransform transformFlying = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
-            PoseTransform transformCrouching = CodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            PoseTransform transform = StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            PoseTransform transformFlying = StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC);
+            PoseTransform transformCrouching = StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC);
 
             return !buffer.readBoolean() ? new VanillaElytra(transform, transformFlying, transformCrouching)
                     : new VanillaElytra(transform, transformFlying, transformCrouching, true,
-                        CodecUtils.readOptionally(buffer, PoseTransform.CODEC),
-                        CodecUtils.readOptionally(buffer, PoseTransform.CODEC),
-                        CodecUtils.readOptionally(buffer, PoseTransform.CODEC));
+                        StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC),
+                        StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC),
+                        StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC));
             }
     );
 

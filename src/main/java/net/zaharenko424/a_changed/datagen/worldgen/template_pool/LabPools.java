@@ -35,6 +35,67 @@ public class LabPools {
         Holder<StructureTemplatePool> empty = poolGetter.getOrThrow(Pools.EMPTY);
         Holder<StructureProcessorList> fossilRot = processorGetter.getOrThrow(ProcessorLists.FOSSIL_ROT);
 
+        List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> chair = List.of(
+                Pair.of(StructurePoolElement.empty(), 3),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair1")), 3),//regular
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair2")), 3),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair3")), 3),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair4")), 2),//rotated
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair5")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair6")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair7")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair8")), 2)
+        );
+
+        Holder<StructureTemplatePool> chairFallback = context.register(key("lab/generic/chair_fallback"), new StructureTemplatePool(
+                empty, chair, StructureTemplatePool.Projection.RIGID
+        ));
+
+        context.register(key("lab/generic/chair"), new StructureTemplatePool(
+                chairFallback, chair, StructureTemplatePool.Projection.RIGID
+        ));
+
+
+        List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> chairFwd = List.of(
+                Pair.of(StructurePoolElement.empty(), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair1")), 6),//regular
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair4")), 2),//rotated
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair5")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/chair6")), 2)
+        );
+
+        Holder<StructureTemplatePool> chairFwdFallback = context.register(key("lab/generic/chair_fwd_fallback"), new StructureTemplatePool(
+                empty, chairFwd, StructureTemplatePool.Projection.RIGID
+        ));
+
+        context.register(key("lab/generic/chair_fwd"), new StructureTemplatePool(
+                chairFwdFallback, chairFwd, StructureTemplatePool.Projection.RIGID
+        ));
+
+
+        List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> workplaceMisc = List.of(
+                Pair.of(StructurePoolElement.empty(), 10),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc0")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc1")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc2")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc3")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc4")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc5")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc6")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc7")), 2),
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc8")), 1),//canned oranges
+                Pair.of(StructurePoolElement.single(loc("lab/generic/workplace_misc9")), 2)
+        );
+
+        Holder<StructureTemplatePool> workplaceMiscFallback = context.register(key("lab/generic/workplace_misc_fallback"), new StructureTemplatePool(
+                empty, workplaceMisc, StructureTemplatePool.Projection.RIGID
+        ));
+
+        context.register(key("lab/generic/workplace_misc"), new StructureTemplatePool(
+                workplaceMiscFallback, workplaceMisc, StructureTemplatePool.Projection.RIGID
+        ));
+
+
         context.register(START, new StructureTemplatePool(
                 empty,
                 List.of(Pair.of(StructurePoolElement.single(loc("lab/entrance")), 1)),
@@ -47,7 +108,10 @@ public class LabPools {
                         Pair.of(StructurePoolElement.single(loc("lab/entrance/books0")), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/entrance/books1")), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/entrance/books2")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/entrance/books3")), 1)
+                        Pair.of(StructurePoolElement.single(loc("lab/entrance/books3")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/entrance/books4")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/entrance/books5")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/entrance/books6")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -75,7 +139,7 @@ public class LabPools {
         context.register(STAIRCASE, new StructureTemplatePool(
                 empty, List.of(
                         Pair.of(StructurePoolElement.single(loc("lab/staircase/up")), 3),
-                        Pair.of(StructurePoolElement.single(loc("lab/staircase/up_unfinished_up")), 2),
+                        //Pair.of(StructurePoolElement.single(loc("lab/staircase/up_unfinished_up")), 2),//TODO remove?
                         Pair.of(StructurePoolElement.single(loc("lab/staircase/updown")), 3)
                 ),
                 StructureTemplatePool.Projection.RIGID
@@ -98,16 +162,21 @@ public class LabPools {
 
         Holder<StructureTemplatePool> fallbackRoom = context.register(key("lab/staircase_fallback_room"), new StructureTemplatePool(
                 empty,
-                List.of(Pair.of(StructurePoolElement.single(loc("lab/rooms/roof")), 1)),
+                List.of(
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof")), 3),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof_alt0")), 2),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof_alt1")), 2)
+                ),
                 StructureTemplatePool.Projection.RIGID
         ));
 
         //pool for room after stairs up(corridor with windows? / some other room; Make sure that upper rooms don't hang in the air!)
         context.register(ROOMS, new StructureTemplatePool(
                 fallbackRoom, List.of(
-                        Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/rooms/office")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/rooms/cabinets")), 1)
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room")), 2),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/office")), 2),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/cabinets")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/cabinets_alt")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -117,7 +186,9 @@ public class LabPools {
                         Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room")), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/rooms/office")), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/rooms/cabinets")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof")), 3)
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof_alt0")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/rooms/roof_alt1")), 1)
         ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -127,7 +198,9 @@ public class LabPools {
                 Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds0")), 1),
                 Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds1")), 1),
                 Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds2")), 1),
-                Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds3")), 1)
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds3")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds4")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/patient_room/beds5")), 1)
         );
 
         Holder<StructureTemplatePool> patientRoomFallback = context.register(key("lab/rooms/patient_room/fallback"), new StructureTemplatePool(
@@ -150,18 +223,21 @@ public class LabPools {
                 chestFallback, officeChest, StructureTemplatePool.Projection.RIGID
         ));
 
-        List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> workplaces = List.of(
-                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace0")), 2),
-                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace1")), 1),
-                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace2")), 1),
-                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace3")), 1)
+
+        List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> workplaceChair = List.of(
+                Pair.of(StructurePoolElement.empty(), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace/chair0")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace/chair1")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace/chair2")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace/chair3")), 1),
+                Pair.of(StructurePoolElement.single(loc("lab/rooms/office/workplace/chair4")), 1)
         );
 
-        Holder<StructureTemplatePool> workplaceFallback = context.register(key("lab/rooms/office/workplace_fallback"), new StructureTemplatePool(
-                empty, workplaces, StructureTemplatePool.Projection.RIGID
+        Holder<StructureTemplatePool> workplaceChairFallback = context.register(key("lab/rooms/office/workplace/chair_fallback"), new StructureTemplatePool(
+                empty, workplaceChair, StructureTemplatePool.Projection.RIGID
         ));
-        context.register(key("lab/rooms/office/workplaces"), new StructureTemplatePool(
-                workplaceFallback, workplaces, StructureTemplatePool.Projection.RIGID
+        context.register(key("lab/rooms/office/workplace/maybe_chair"), new StructureTemplatePool(
+                workplaceChairFallback, workplaceChair, StructureTemplatePool.Projection.RIGID
         ));
 
         //Cabinets
@@ -184,8 +260,8 @@ public class LabPools {
         //pool for room below stairs(more stairs / end stairs)
         context.register(STAIRCASE_DOWN, new StructureTemplatePool(
                 empty, List.of(
-                        Pair.of(StructurePoolElement.single(loc("lab/staircase/up")), 3),
-                        Pair.of(StructurePoolElement.single(loc("lab/staircase/up_unfinished"), fossilRot), 1)
+                        Pair.of(StructurePoolElement.single(loc("lab/staircase/up")), 3)
+                        //Pair.of(StructurePoolElement.single(loc("lab/staircase/up_unfinished"), fossilRot), 1)//TODO remove?
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -202,7 +278,11 @@ public class LabPools {
                 empty, List.of(
                         Pair.of(StructurePoolElement.empty(), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes0")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes1")), 1)
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes1")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes2")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes3")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes4")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/boxes5")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -218,9 +298,11 @@ public class LabPools {
 
         context.register(key("lab/underground/storage/maybe_misc"), new StructureTemplatePool(
                 empty, List.of(
-                        Pair.of(StructurePoolElement.empty(), 2),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc0")), 3),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc1")), 3)
+                        Pair.of(StructurePoolElement.empty(), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc0")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc1")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc2")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/storage/misc3")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
@@ -229,16 +311,22 @@ public class LabPools {
                 empty, List.of(
                         Pair.of(StructurePoolElement.empty(), 1),
                         Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/boxes0")), 1),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/boxes1")), 1)
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/boxes1")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/boxes2")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/boxes3")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));
 
         context.register(key("lab/underground/generator_room/maybe_misc"), new StructureTemplatePool(
                 empty, List.of(
-                        Pair.of(StructurePoolElement.empty(), 2),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc0")), 3),
-                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc1")), 3)
+                        Pair.of(StructurePoolElement.empty(), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc0")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc1")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc2")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc3")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc4")), 1),
+                        Pair.of(StructurePoolElement.single(loc("lab/underground/generator_room/misc5")), 1)
                 ),
                 StructureTemplatePool.Projection.RIGID
         ));

@@ -7,7 +7,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.attachments.TransfurHandler;
 import net.zaharenko424.a_changed.util.Utils;
@@ -22,24 +21,26 @@ public interface DamageSources {
     ResourceKey<DamageType> solvent = create("latex_solvent");
     ResourceKey<DamageType> syringe = create("syringe");
     ResourceKey<DamageType> transfur = create("transfur");
+    ResourceKey<DamageType> transfurKill = create("transfur_kill");
     ResourceKey<DamageType> untransfur = create("untransfur");
+    ResourceKey<DamageType> untransfurKill = create("untransfur_kill");
 
     @Contract("_ -> new")
     static @NotNull DamageSource assimilation(@NotNull LivingEntity attacker){
         return new DamageSource(holder(attacker.level(), assimilation), null, attacker);
     }
 
-    static @NotNull DamageSource transfur(@NotNull Entity attacker){
-        return transfur(attacker.level(), attacker, attacker);
+    static @NotNull DamageSource transfur(@NotNull LivingEntity attacker){
+        return transfur(attacker.level(), attacker);
     }
 
     @Contract("_, _ -> new")
-    static @NotNull DamageSource transfur(@Nullable Entity attackerProjectile, @NotNull Entity attacker){
-        return transfur(attacker.level(), attackerProjectile, attacker);
+    static @NotNull DamageSource transfur(@NotNull Level level, @Nullable LivingEntity attacker){
+        return new DamageSource(holder(level, transfur), attacker, attacker);
     }
 
-    static @NotNull DamageSource transfur(@NotNull Level level, @Nullable Entity attackerProjectile, @Nullable Entity attacker){
-        return new DamageSource(holder(level, transfur), attackerProjectile != null ? attackerProjectile : attacker, attacker);
+    static @NotNull DamageSource transfurKill(@NotNull Level level, @Nullable LivingEntity attacker){
+        return new DamageSource(holder(level, transfurKill), attacker, attacker);
     }
 
     static @NotNull DamageSource latexSolvent(@NotNull Level level, @Nullable Entity attacker){
@@ -63,11 +64,15 @@ public interface DamageSources {
     }
 
     static @NotNull DamageSource untransfur(@NotNull Level level, Entity attacker){
-        return untransfur(level, attacker, attacker);
+        return new DamageSource(holder(level, untransfur), attacker, attacker);
     }
 
-    static @NotNull DamageSource untransfur(@NotNull Level level, Entity projectile, Entity attacker){
-        return new DamageSource(holder(level, untransfur), projectile, attacker);
+    static @NotNull DamageSource untransfurKill(@NotNull Level level, @Nullable LivingEntity attacker){
+        return untransfurKill(level, attacker, attacker);
+    }
+
+    static @NotNull DamageSource untransfurKill(@NotNull Level level, Entity projectile, Entity attacker){
+        return new DamageSource(holder(level, untransfurKill), projectile, attacker);
     }
 
     private static @NotNull Holder<DamageType> holder(@NotNull Level level, ResourceKey<DamageType> key){
@@ -78,8 +83,12 @@ public interface DamageSources {
         return Utils.resourceKey(Registries.DAMAGE_TYPE, str);
     }
 
-    static boolean checkTFTarget(Entity target){
-        return target instanceof LivingEntity entity && TransfurHandler.of(entity) != null
-                && (!(target instanceof Player player) || (!TransfurManager.isTransfurred(player) && !TransfurManager.isBeingTransfurred(player)));
+    static boolean checkTFTarget(@Nullable Entity target){
+        if(!(target instanceof LivingEntity entity)) return false;
+
+        TransfurHandler handler = TransfurHandler.of(entity);
+        if(handler == null) return false;
+
+        return !handler.isTransfurred() && !handler.isBeingTransfurred();
     }
 }

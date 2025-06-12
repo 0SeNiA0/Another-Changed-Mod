@@ -191,6 +191,7 @@ public class CreativeTabs {
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
+                    output.accept(ADRENALINE_SYRINGE);
                     output.accept(LATEX_SOLVENT_SYRINGE);
                     output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE);
                     output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE);

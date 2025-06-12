@@ -24,6 +24,7 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
     protected void registerModels() {
         basicItem(BUILDERS_WAND.getId());
 
+        basicItem(ADRENALINE_SYRINGE.getId());
         basicItem(BIO_WASTE.getId());
         basicItem(BLACK_LATEX_SHORTS.getId());
         basicItem(BLOOD_SYRINGE.getId());

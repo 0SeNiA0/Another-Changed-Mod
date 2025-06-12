@@ -57,7 +57,7 @@ public abstract class AbstractSyringe extends Item {
         if(level.isClientSide || !context.isSecondaryUseActive()) return super.useOn(context);
 
         ItemStack stack = context.getItemInHand();
-        SyringeProjectile syringe = new SyringeProjectile(level, player, stack, null);
+        SyringeProjectile syringe = new SyringeProjectile(level, player, stack.copyWithCount(1), null);
         syringe.place(context.getClickLocation());
         level.addFreshEntity(syringe);
         syringe.setYRot(-player.getYRot() + 45);
@@ -79,7 +79,7 @@ public abstract class AbstractSyringe extends Item {
         }
 
         if(entity instanceof Player player) {
-            ItemHandlerHelper.giveItemToPlayer(player, result);
+            if(!player.isCreative()) ItemHandlerHelper.giveItemToPlayer(player, result);
         } else Block.popResource(entity.level(), entity.blockPosition(), result);
         return inUse;
     }

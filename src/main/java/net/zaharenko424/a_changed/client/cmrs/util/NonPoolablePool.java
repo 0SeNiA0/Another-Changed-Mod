@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.util;
+package net.zaharenko424.a_changed.client.cmrs.util;
 
 import java.util.ArrayList;
 import java.util.List;

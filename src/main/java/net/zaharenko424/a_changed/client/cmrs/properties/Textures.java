@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.util.Int2ObjArrayMap;
+import net.zaharenko424.a_changed.client.cmrs.util.Int2ObjArrayMap;
 import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
 import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;

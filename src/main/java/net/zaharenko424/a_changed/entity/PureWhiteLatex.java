@@ -1,11 +1,11 @@
 package net.zaharenko424.a_changed.entity;
 
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
@@ -26,7 +26,6 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachments.GrabData;
@@ -46,8 +45,8 @@ import java.util.Map;
 
 public class PureWhiteLatex extends LatexBeast {
 
-    public PureWhiteLatex(@NotNull EntityType<? extends Monster> p_21368_, @NotNull Level p_21369_, @NotNull TransfurType transfurType) {
-        super(p_21368_, p_21369_, transfurType);
+    public PureWhiteLatex(@NotNull EntityType<? extends Monster> type, @NotNull Level level, @NotNull TransfurType transfurType) {
+        super(type, level, transfurType);
     }
 
     @Override
@@ -56,7 +55,8 @@ public class PureWhiteLatex extends LatexBeast {
                 new HurtBySensor<>(),
                 new NearbyLivingEntitySensor<>(),
                 new UnreachableTargetSensor<>(),
-                new NearbyBlocksSensor<PureWhiteLatex>().setRadius(16).setPredicate((state, latex) -> state.is(BlockRegistry.WHITE_LATEX_PILLAR))
+                new NearbyBlocksSensor<PureWhiteLatex>().setRadius(16).setPredicate((state, latex) ->
+                        state.is(BlockRegistry.WHITE_LATEX_PILLAR) && state.getValue(StateProperties.PART2) == 1)
         );
     }
 
@@ -75,18 +75,46 @@ public class PureWhiteLatex extends LatexBeast {
                             BrainUtils.setMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get(), true);
                             latex.setPersistenceRequired();
                             latex.moveTo(latex.blockPosition(), latex.getYRot(), latex.getXRot());
-                            double angle = Mth.TWO_PI * latex.getRandom().nextDouble();
-                            latex.lookAt(EntityAnchorArgument.Anchor.EYES, latex.getEyePosition().add(Math.cos(angle), 0, Math.sin(angle)));
                             BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
+                            BrainUtils.clearMemory(latex, MemoryModuleType.WALK_TARGET);
                         }).startCondition(latex -> {
                             boolean inPillar = latex.getInBlockState().is(BlockRegistry.WHITE_LATEX_PILLAR)
                                     && latex.level().getEntities(latex, latex.getInBlockState().getShape(latex.level(), latex.blockPosition()).bounds().move(latex.blockPosition()), entity -> entity instanceof PureWhiteLatex).isEmpty();
-                            if(!inPillar) BrainUtils.clearMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get());
+                            if(!inPillar && BrainUtils.hasMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get())) {
+                                BrainUtils.clearMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get());
+                                BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
+                            }
                             return inPillar;
                         }),
-                        new SetWalkTargetToBlock<>().predicate((latex, pair) -> pair.getSecond().getValue(StateProperties.PART2) == 1
-                                        && latex.level().getEntities((Entity) null, pair.getSecond().getShape(latex.level(), pair.getFirst()).bounds().move(pair.getFirst()), entity -> entity instanceof PureWhiteLatex).isEmpty())
-                                .closeEnoughWhen((latex, pos) -> 0),
+                        new SetWalkTargetToBlock<>().predicate((latex, pair) -> {
+                            Level level = latex.level();
+                            BlockPos pos = pair.getFirst();
+
+                            if(!level.getBlockState(pos).is(BlockRegistry.WHITE_LATEX_PILLAR)) {
+                                WalkTarget target = BrainUtils.getMemory(latex, MemoryModuleType.WALK_TARGET);
+                                if(target != null && target.getTarget().currentBlockPosition().equals(pos)){
+                                    BrainUtils.clearMemory(latex, MemoryModuleType.WALK_TARGET);
+                                    BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
+                                }
+
+                                return false;
+                            }
+
+                            List<LivingEntity> entities = BrainUtils.getMemory(latex, MemoryModuleType.NEAREST_LIVING_ENTITIES);
+                            if(entities != null){
+                                WalkTarget targetOfOther;
+                                for(LivingEntity entity : entities){
+                                    if(!(entity instanceof PureWhiteLatex other)) continue;
+
+                                    targetOfOther = BrainUtils.getMemory(other, MemoryModuleType.WALK_TARGET);
+                                    if(targetOfOther == null) continue;
+
+                                    if(targetOfOther.getTarget().currentBlockPosition().equals(pos)) return false;
+                                }
+                            }
+
+                            return level.getEntities(latex, pair.getSecond().getShape(level, pos).bounds().move(pos), entity -> entity instanceof PureWhiteLatex).isEmpty();
+                        }).closeEnoughWhen((latex, pos) -> 0),
                         new OneRandomBehaviour<>(
                             new SetRandomWalkTarget<>().speedModifier(.8f).setRadius(16),// non swimming
                             new Idle<>().runFor(entity -> random.nextInt(60, 90)) // Don't walk anywhere
@@ -99,38 +127,36 @@ public class PureWhiteLatex extends LatexBeast {
     public Map<Activity, BrainActivityGroup<? extends LatexBeast>> getAdditionalTasks() {//  TargetTransfurrable goes here
         return Map.of(
                 AChanged.TRANSFUR_ATTACK.get(), new BrainActivityGroup<LatexBeast>(AChanged.TRANSFUR_ATTACK.get()).behaviours(
-                                new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
-                                new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),
-                                new SetWalkTargetToAttackTarget<>(),
-                                new CustomHeldBehaviour<AbstractLatexBeast>(latex -> AbilityRegistry.HYPNOSIS_ABILITY.get().serverTick(latex))
-                                        .startCondition(latex -> latex.hasAbility(AbilityRegistry.HYPNOSIS_ABILITY))
-                                        .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get())),
-                                new FirstApplicableBehaviour<>(
-                                        new TryGrab<>(),
-                                        new AnimatableMeleeAttack<>(0)
-                                )
-                        ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
-                        .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRYING_TO_TRANSFUR.get()),
+                        new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
+                        new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),
+                        new SetWalkTargetToAttackTarget<>(),
+                        new CustomHeldBehaviour<AbstractLatexBeast>(latex -> AbilityRegistry.HYPNOSIS_ABILITY.get().serverTick(latex))
+                                .startCondition(latex -> latex.hasAbility(AbilityRegistry.HYPNOSIS_ABILITY))
+                                .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRYING_TO_TRANSFUR.get())),
+                        new FirstApplicableBehaviour<>(
+                                new TryGrab<>(),
+                                new AnimatableMeleeAttack<>(0)
+                        )
+                ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
+                .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRYING_TO_TRANSFUR.get()),
 
                 AChanged.TRANSFUR_HOLD.get(), new BrainActivityGroup<LatexBeast>(AChanged.TRANSFUR_HOLD.get()).behaviours(
-                                new InvalidateWithCallback<>()
-                                        .onInvalidate((latex, entity) -> {
-                                            BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
-                                            AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
-                                            BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
-                                        }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
-                                new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
-                                        .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))
-                        ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
-                        .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_HOLDING.get()),
+                        new InvalidateWithCallback<>()
+                                .onInvalidate((latex, entity) -> {
+                                    BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
+                                    AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
+                                    BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
+                                }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
+                        new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
+                                .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))
+                ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
+                .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_HOLDING.get()),
 
                 Activity.HIDE, new BrainActivityGroup<LatexBeast>(Activity.HIDE).behaviours(
                         new FirstApplicableBehaviour<>(
-                            new CustomBehaviour<>(latex -> {
-                                BrainUtils.clearMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get());
-                                BrainUtils.clearMemory(latex, SBLMemoryTypes.NEARBY_BLOCKS.get());
-                                BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
-                            }).startCondition(latex -> !latex.getInBlockState().is(BlockRegistry.WHITE_LATEX_PILLAR)),
+                            new CustomBehaviour<>(latex ->
+                                    BrainUtils.clearMemory(latex, MemoryTypeRegistry.INSIDE_PILLAR.get()))
+                            .startCondition(latex -> !latex.getInBlockState().is(BlockRegistry.WHITE_LATEX_PILLAR)),
                             new TargetTransfurrable<>(),
                             new RetaliateOrTransfur<>())
                 ).requireAndWipeMemoriesOnUse(MemoryTypeRegistry.INSIDE_PILLAR.get())

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.client.cmrs.RemappingVertexConsumer;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.properties.Texture;
-import net.zaharenko424.a_changed.util.Pool;
+import net.zaharenko424.a_changed.client.cmrs.util.Pool;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

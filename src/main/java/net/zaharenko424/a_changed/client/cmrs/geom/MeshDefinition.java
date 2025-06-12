@@ -3,14 +3,14 @@ package net.zaharenko424.a_changed.client.cmrs.geom;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 
 public class MeshDefinition {
 
     public static final StreamCodec<FriendlyByteBuf, MeshDefinition> CODEC = StreamCodec.of(
             (buffer, mesh) -> {
-                CodecUtils.FLOAT_ARR.encode(buffer, mesh.vertices);
-                CodecUtils.FLOAT_ARR.encode(buffer, mesh.quads);
+                StreamCodecUtils.FLOAT_ARR.encode(buffer, mesh.vertices);
+                StreamCodecUtils.FLOAT_ARR.encode(buffer, mesh.quads);
                 buffer.writeVarInt(mesh.renderId);
                 buffer.writeBoolean(mesh.smooth);
 
@@ -21,15 +21,15 @@ public class MeshDefinition {
                 buffer.writeByte(1);
 
                 buffer.writeArray(mesh.groups, ByteBufCodecs.STRING_UTF8);
-                CodecUtils.FLOAT_ARR2.encode(buffer, mesh.vertexInfluence);
+                StreamCodecUtils.FLOAT_ARR2.encode(buffer, mesh.vertexInfluence);
             }, buffer -> {
-                float[] arr0 = CodecUtils.FLOAT_ARR.decode(buffer);
-                float[] arr1 = CodecUtils.FLOAT_ARR.decode(buffer);
+                float[] arr0 = StreamCodecUtils.FLOAT_ARR.decode(buffer);
+                float[] arr1 = StreamCodecUtils.FLOAT_ARR.decode(buffer);
                 boolean smooth = buffer.readBoolean();
 
                 if(buffer.readByte() == 0) return new MeshDefinition(arr0, arr1, buffer.readVarInt(), smooth);
                 String[] arr2 = buffer.readArray(String[]::new, ByteBufCodecs.STRING_UTF8);
-                return new MeshDefinition(arr0, arr1, arr2, CodecUtils.FLOAT_ARR2.decode(buffer), buffer.readVarInt(), smooth);}
+                return new MeshDefinition(arr0, arr1, arr2, StreamCodecUtils.FLOAT_ARR2.decode(buffer), buffer.readVarInt(), smooth);}
     );
 
     private final float[] vertices;

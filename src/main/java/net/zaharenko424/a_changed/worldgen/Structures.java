@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class Structures {
 
     public static final ResourceKey<Structure> LAB = key("lab");
+    public static final ResourceKey<Structure> RUINED_LAB = key("ruined_lab");
     public static final ResourceKey<StructureSet> LAB_SET = setKey("lab");
 
     private static @NotNull ResourceKey<Structure> key(String str){

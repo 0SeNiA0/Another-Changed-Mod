@@ -9,9 +9,12 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,6 +41,8 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     @Shadow public abstract double getAttributeValue(Holder<Attribute> p_251296_);
 
     @Shadow public abstract boolean hasEffect(Holder<MobEffect> effect);
+
+    @Shadow public abstract void remove(RemovalReason reason);
 
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
@@ -92,5 +97,17 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
         if(!AbilityUtils.hasFallFlyingAbility(self())) return par2;
         gameEvent(GameEvent.ELYTRA_GLIDE);
         return true;
+    }
+
+    /**
+     *  Only allow putting on wolf armor or elytra.
+     */
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getEquipmentSlot()Lnet/minecraft/world/entity/EquipmentSlot;"),
+            method = "getEquipmentSlotForItem")
+    private EquipmentSlot onGetEquipmentSlotForItem(EquipmentSlot original, @Local(argsOnly = true) ItemStack stack){
+        if(!AbilityUtils.hasLatexPupAbilities(self())) return original;
+
+        if(stack.is(Items.ELYTRA) || stack.is(Items.WOLF_ARMOR)) return original;
+        return EquipmentSlot.MAINHAND;
     }
 }

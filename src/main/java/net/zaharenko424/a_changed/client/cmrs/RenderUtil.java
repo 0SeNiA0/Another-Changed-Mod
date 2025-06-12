@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
@@ -23,7 +22,7 @@ public class RenderUtil {
             new ModelPart.Vertex(new ModelPart.VertexData(new Vector3f(-8, -8, 0), new ModelPart.Quad[0]), 0, 0),
             new ModelPart.Vertex(new ModelPart.VertexData(new Vector3f(8, -8, 0), new ModelPart.Quad[0]), 1, 0)});
     private static final Quaternionf rot = new Quaternionf();
-    private static final ResourceLocation tex = AChanged.textureLoc("misc/loading");
+    private static final ResourceLocation tex = CMRS.textureLoc("misc/loading");
 
     public static void renderLoadingAnim(@NotNull LivingEntity entity, @NotNull PoseStack stack, float partialTicks, int packedLight){
         MatrixStack.push(stack);

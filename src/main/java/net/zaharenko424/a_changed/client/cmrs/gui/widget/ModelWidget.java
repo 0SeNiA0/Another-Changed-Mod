@@ -1,5 +1,7 @@
 package net.zaharenko424.a_changed.client.cmrs.gui.widget;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
@@ -16,6 +18,7 @@ public abstract class ModelWidget extends Widget {
 
     protected Vector2f rotation = new Vector2f();
     protected Vector2f accumulatedRotation = new Vector2f();
+    protected Vector3f translation = new Vector3f();
     protected float zoom = 50;
 
     public ModelWidget(){
@@ -52,6 +55,11 @@ public abstract class ModelWidget extends Widget {
         return this;
     }
 
+    public ModelWidget setTranslation(float x, float y, float z){
+        translation.set(x, y, z);
+        return this;
+    }
+
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(!isVisible()) return;
@@ -64,20 +72,33 @@ public abstract class ModelWidget extends Widget {
         MatrixStack.translate(stack, origin);
         MatrixStack.scale(stack, scale);
 
-        //transform rect to screen coordinates to apply scissors
-        Vector3f v = new Vector3f(- width / 2f, - height / 2f, 0).mulPosition(stack.last().pose());
-        Vector3f v1 = new Vector3f(+ width / 2f, + height / 2f, 0).mulPosition(stack.last().pose());
-        guiGraphics.enableScissor((int) v.x, (int) v.y, (int) v1.x, (int) v1.y);
+        //Flush before scissors
+        guiGraphics.bufferSource().endLastBatch();
 
-        Matrix4f mat1 = Reusable.MAT4F.get().identity();
-        mat1.rotateX(rotation.x);
-        mat1.rotateY(rotation.y);
-        stack.mulPose(mat1);
+        //Transform rect to screen coordinates to apply scissors
+        Vector3f vec = Reusable.VEC3F.get();
+        guiGraphics.enableScissor((int) vec.set(- width / 2f, - height / 2f, 0).mulPosition(stack.last().pose()).x, (int) vec.y,
+                (int) vec.set(width / 2f, height / 2f, 0).mulPosition(stack.last().pose()).x, (int) vec.y);
 
-        stack.translate(0, zoom, 0);
+        Matrix4f viewportMat = Reusable.MAT4F.get().identity();
+        viewportMat.rotateX(rotation.x);
+        viewportMat.rotateY(rotation.y);
+        viewportMat.translate(translation);
+        viewportMat.translate(0, zoom, 0);
+        stack.mulPose(viewportMat);
+
         stack.scale(zoom, -zoom, zoom);
 
+        Lighting.setupForEntityInInventory();
         renderModel(guiGraphics.pose());
+        Lighting.setupFor3DItems();
+
+        //first transform mouse to local than apply inverse of viewport matrix & mul by 16 as model unit is 16 times smaller
+        //v.set(mouseX- origin.x, mouseY - origin.y, 0).mulPosition(viewportMat.identity().rotateX(rotation.x).rotateY(rotation.y).translate(translation).translate(0, zoom, 0).scale(zoom, -zoom, zoom).invert()).mul(16)
+        //now just need to find the closest model part to camera (while also applying animations to model...)
+
+        //Flush scissors
+        guiGraphics.bufferSource().endLastBatch();
 
         guiGraphics.disableScissor();
         MatrixStack.pop(stack);
@@ -88,7 +109,21 @@ public abstract class ModelWidget extends Widget {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if(!isInteractable()) return false;
-        accumulatedRotation.add((float) -dragY * Mth.DEG_TO_RAD, (float) dragX * Mth.DEG_TO_RAD);
+
+        if(button == InputConstants.MOUSE_BUTTON_RIGHT){
+            Matrix4f m = Reusable.MAT4F.get().identity();
+            m.rotateX(rotation.x);
+            m.rotateY(rotation.y);
+            Vector3f v = Reusable.VEC3F.get().set(dragX, dragY, 0);
+            v.mulPosition(m);
+
+            translation.add(v.x, v.y, -v.z);
+        }
+
+        if(button == InputConstants.MOUSE_BUTTON_LEFT){
+            accumulatedRotation.add((float) -dragY * Mth.DEG_TO_RAD, (float) dragX * Mth.DEG_TO_RAD);
+        }
+
         return true;
     }
 

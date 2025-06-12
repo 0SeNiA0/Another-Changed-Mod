@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class LatexSolventSyringe extends AbstractSyringe {
 
     public LatexSolventSyringe(@NotNull Properties properties) {
-        super(properties.stacksTo(1).rarity(Rarity.RARE));
+        super(properties.stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
     @Override

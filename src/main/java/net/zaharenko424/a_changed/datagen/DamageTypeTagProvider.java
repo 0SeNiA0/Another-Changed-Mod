@@ -14,14 +14,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTypeTagProvider extends DamageTypeTagsProvider {
-    public DamageTypeTagProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_, @Nullable ExistingFileHelper existingFileHelper) {
-        super(p_270719_, p_270256_, AChanged.MODID, existingFileHelper);
+    public DamageTypeTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, lookup, AChanged.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(HolderLookup.@NotNull Provider p_270108_) {
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.assimilation, DamageSources.electricity, DamageSources.syringe);
-        tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.assimilation, DamageSources.electricity, DamageSources.solvent, DamageSources.syringe, DamageSources.transfur, DamageSources.untransfur);
-        tag(Tags.DamageTypes.NO_FLINCH).add(DamageSources.transfur, DamageSources.untransfur);
+    protected void addTags(HolderLookup.@NotNull Provider lookup) {
+        tag(DamageTypeTags.NO_KNOCKBACK).add(DamageSources.assimilation, DamageSources.electricity, DamageSources.solvent,
+                DamageSources.syringe, DamageSources.transfur, DamageSources.transfurKill, DamageSources.untransfur,
+                DamageSources.untransfurKill);
+        tag(Tags.DamageTypes.NO_FLINCH).add(DamageSources.transfur, DamageSources.transfurKill, DamageSources.untransfur,
+                DamageSources.untransfurKill);
+
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.assimilation, DamageSources.electricity, DamageSources.syringe,
+                DamageSources.transfurKill, DamageSources.untransfurKill);
+        tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);
+        tag(DamageTypeTags.BYPASSES_RESISTANCE).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);
+        tag(Tags.DamageTypes.IS_TECHNICAL).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);
     }
 }

@@ -26,7 +26,9 @@ public class LatexPupAging {
                         .then(
                                 Commands.argument("target", EntityArgument.entity())
                                         .then(
-                                                Commands.literal("set_age")
+                                                Commands.literal("age")
+                                                        .executes(context ->
+                                                                getAge(context, EntityArgument.getEntity(context, "target")))
                                                         .then(
                                                                 Commands.argument("age", IntegerArgumentType.integer(0, LatexPupAgingData.turnAfter))
                                                                         .executes(context ->
@@ -34,14 +36,11 @@ public class LatexPupAging {
                                                         )
                                         ).then(
                                                 Commands.literal("freeze")
+                                                        .executes(context -> isFrozen(context, EntityArgument.getEntity(context, "target")))
                                                         .then(
                                                                 Commands.argument("freeze", BoolArgumentType.bool())
                                                                         .executes(context -> freeze(context, EntityArgument.getEntity(context, "target"), BoolArgumentType.getBool(context, "freeze")))
                                                         )
-                                        ).then(
-                                                Commands.literal("get_age")
-                                                        .executes(context ->
-                                                                getAge(context, EntityArgument.getEntity(context, "target")))
                                         )
                         )
         );
@@ -76,6 +75,22 @@ public class LatexPupAging {
         }
 
         ability.getAbilityData(entity).freezeAging(freeze);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int isFrozen(CommandContext<CommandSourceStack> context, Entity target){
+        if(!(target instanceof LivingEntity entity)) {
+            context.getSource().sendFailure(Component.literal("Invalid target"));
+            return -1;
+        }
+
+        LatexPupAgingAbility ability = getAbility(entity);
+        if(ability == null) {
+            context.getSource().sendFailure(Component.literal("Invalid target"));
+            return -1;
+        }
+
+        context.getSource().sendSuccess(() -> Component.literal("Aging is " + (ability.getAbilityData(entity).isAgingFrozen() ? "frozen" : "not frozen")), false);
         return Command.SINGLE_SUCCESS;
     }
 

@@ -3,12 +3,14 @@ package net.zaharenko424.a_changed.registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.effects.*;
+import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 import static net.zaharenko424.a_changed.AChanged.resourceLoc;
@@ -16,6 +18,18 @@ import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 public class MobEffectRegistry {
 
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, MODID);
+
+    public static final DeferredHolder<MobEffect, UnRemovableEffect> ADRENALINE = EFFECTS
+            .register("adrenaline", ()-> (UnRemovableEffect) new UnRemovableEffect(MobEffectCategory.BENEFICIAL, 1692853990){
+                @Override
+                public void onEffectStarted(@NotNull LivingEntity entity, int amplifier) {
+                    super.onEffectStarted(entity, amplifier);
+                    entity.setAbsorptionAmount(Math.max(entity.getAbsorptionAmount(), (float)(10 * (1 + amplifier))));
+                }
+            }
+                .addAttributeModifier(Attributes.ATTACK_DAMAGE, resourceLoc("adrenaline_damage"), 3, AttributeModifier.Operation.ADD_VALUE)
+                .addAttributeModifier(Attributes.MOVEMENT_SPEED, resourceLoc("adrenaline_speed"), .2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                .addAttributeModifier(Attributes.MAX_ABSORPTION, resourceLoc("adrenaline_absorption"), 10, AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<MobEffect, UnRemovableRegen> ASSIMILATION_BUFF = EFFECTS
             .register("assimilation_buff", ()-> (UnRemovableRegen) new UnRemovableRegen(MobEffectCategory.BENEFICIAL, 2, 0)

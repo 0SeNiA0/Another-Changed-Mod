@@ -107,8 +107,8 @@ public class StunLance extends SwordItem {
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
         tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
         if(stack.has(ComponentRegistry.ENABLED)){
-            tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton_on").withStyle(ChatFormatting.DARK_GREEN));
-        } else tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton_off").withStyle(ChatFormatting.GOLD));
+            tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.on").withStyle(ChatFormatting.DARK_GREEN));
+        } else tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.off").withStyle(ChatFormatting.GOLD));
     }
 
     @Override

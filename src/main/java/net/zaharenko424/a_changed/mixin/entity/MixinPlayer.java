@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.zaharenko424.a_changed.block.VentDuct;
 import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.block.VentDuct;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
@@ -67,7 +67,12 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @ModifyReturnValue(at = @At("RETURN"), method = "canUseSlot")
     private boolean onCanUseSlot(boolean original, @Local(argsOnly = true) EquipmentSlot slot){
-        return original || (slot == EquipmentSlot.BODY && AbilityUtils.hasLatexPupAbilities(this));
+        if(!AbilityUtils.hasLatexPupAbilities(this)) return original;
+
+        return switch(slot){
+            case CHEST, BODY -> true;
+            default -> false;
+        };
     }
 
     /**

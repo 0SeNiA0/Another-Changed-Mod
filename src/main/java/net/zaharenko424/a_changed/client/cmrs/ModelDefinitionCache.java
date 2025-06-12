@@ -2,13 +2,9 @@ package net.zaharenko424.a_changed.client.cmrs;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.fml.ModLoader;
+import net.zaharenko424.a_changed.client.cmrs.event.RegisterModelDefinitionsEvent;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
-import net.zaharenko424.a_changed.client.model.*;
-import net.zaharenko424.a_changed.client.renderer.SyringeProjectileRenderer;
-import net.zaharenko424.a_changed.client.renderer.blockEntity.*;
-import net.zaharenko424.a_changed.client.renderer.misc.ChairRenderer;
-import net.zaharenko424.a_changed.client.cmrs.event.RegisterModelDefinitionsEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -31,39 +27,6 @@ public final class ModelDefinitionCache {
     }
 
     private ModelDefinitionCache(){
-        modelCache.put(CannedOrangesRenderer.LAYER, CannedOrangesRenderer.bodyLayer());
-        modelCache.put(CryoChamberRenderer.LAYER, CryoChamberRenderer.bodyLayer());
-        modelCache.put(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
-        modelCache.put(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
-        modelCache.put(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
-        modelCache.put(PileOfOrangesRenderer.LAYER, PileOfOrangesRenderer.bodyLayer());
-
-        modelCache.put(ChairRenderer.LAYER, ChairRenderer.bodyLayer());
-
-        modelCache.put(SyringeProjectileRenderer.LAYER, SyringeProjectileRenderer.bodyLayer());
-
-
-        modelCache.put(MilkPuddingModel.bodyLayer, MilkPuddingModel.bodyLayer());
-        modelCache.put(RoombaModel.bodyLayer, RoombaModel.bodyLayer());
-
-        modelCache.put(BeiFengModel.bodyLayer, BeiFengModel.model());
-
-        modelCache.put(DarkLatexPupModel.bodyLayer, DarkLatexPupModel.model());
-        modelCache.put(DLPupMoltenModel.bodyLayer, DLPupMoltenModel.model());
-
-        modelCache.put(HypnoCatModel.bodyLayer, HypnoCatModel.model());
-
-        modelCache.put(SnowLeopardFemaleModel.bodyLayer, SnowLeopardFemaleModel.model());
-        modelCache.put(SnowLeopardMaleModel.bodyLayer, SnowLeopardMaleModel.model());
-
-        modelCache.put(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.model());
-        modelCache.put(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.model());
-
-        modelCache.put(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.model());
-        modelCache.put(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.model());
-
-        modelCache.put(YufengDragonModel.bodyLayer, YufengDragonModel.model());
-
         ModLoader.postEvent(new RegisterModelDefinitionsEvent(modelCache));
     }
 

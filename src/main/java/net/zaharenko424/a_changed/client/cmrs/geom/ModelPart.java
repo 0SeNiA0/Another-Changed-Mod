@@ -13,13 +13,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.client.cmrs.CMRS;
 import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.client.cmrs.model.RenderStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -400,7 +400,7 @@ public class ModelPart {
         protected final Quad[] quads;
         protected final Vector3f offset = new Vector3f();
         protected boolean animated;
-        @VisibleForTesting
+        @ApiStatus.Internal
         public int renderId;
 
         public Mesh(ImmutableList<VertexData> vertexData, Quad[] quads, int renderId){
@@ -431,7 +431,7 @@ public class ModelPart {
                 int a = vrt * 3;
 
                 if(qIds == null) {
-                    AChanged.LOGGER.warn("Unused vertex found!");
+                    CMRS.LOGGER.warn("Unused vertex found!");
                     builder.add(createData(readVec(vertices, a), new Quad[0]));
                     continue;
                 }

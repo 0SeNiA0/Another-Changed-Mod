@@ -15,7 +15,7 @@ public class CommonMod {
 
     @SubscribeEvent
     public static void onRegisterPayload(@NotNull RegisterPayloadHandlersEvent event){
-        PayloadRegistrar registrar = event.registrar(CMRS.MOD_ID);
+        PayloadRegistrar registrar = event.registrar(CMRS.MODID);
 
         //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 

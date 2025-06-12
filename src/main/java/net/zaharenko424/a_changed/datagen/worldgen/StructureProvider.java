@@ -40,7 +40,7 @@ public class StructureProvider {
                 )).terrainAdapation(TerrainAdjustment.BEARD_THIN).build(),
                 poolGetter.getOrThrow(LabPools.START),
                 Optional.of(AChanged.resourceLoc("start")),
-                5,
+                4,
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
                 false,
                 Optional.of(Heightmap.Types.WORLD_SURFACE),
@@ -54,6 +54,6 @@ public class StructureProvider {
     public static void structureSet(BootstrapContext<StructureSet> context){
         HolderGetter<Structure> structureGetter = context.lookup(Registries.STRUCTURE);
 
-        context.register(Structures.LAB_SET, new StructureSet(structureGetter.getOrThrow(Structures.LAB), new RandomSpreadStructurePlacement(16, 12, RandomSpreadType.LINEAR, 1212121)));
+        context.register(Structures.LAB_SET, new StructureSet(structureGetter.getOrThrow(Structures.LAB), new RandomSpreadStructurePlacement(20, 12, RandomSpreadType.LINEAR, 1212121)));
     }
 }

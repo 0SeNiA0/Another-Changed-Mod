@@ -49,7 +49,9 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
         context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0, DamageEffects.BURNING));
         context.register(DamageSources.syringe, new DamageType("syringe", DamageScaling.ALWAYS, 0, DamageEffects.POKING));
         context.register(DamageSources.transfur, new DamageType("transfur", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
+        context.register(DamageSources.transfurKill, new DamageType("transfur_kill", DamageScaling.NEVER, 0));
         context.register(DamageSources.untransfur, new DamageType("untransfur", DamageScaling.NEVER, 0));
+        context.register(DamageSources.untransfurKill, new DamageType("untransfur_kill", DamageScaling.NEVER, 0));
     }
 
     private static void biome(BootstrapContext<Biome> context){

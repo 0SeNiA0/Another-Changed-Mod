@@ -18,7 +18,7 @@ import net.zaharenko424.a_changed.client.cmrs.api.RenderLayerLike;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.geom.Reusable;
 import net.zaharenko424.a_changed.client.cmrs.model.PoseTransform;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +26,10 @@ public class ItemInMawLayer implements RenderLayerLike {
 
     public static final StreamCodec<FriendlyByteBuf, ItemInMawLayer> CODEC = StreamCodec.of((buffer, itemInMaw) -> {
         buffer.writeUtf(itemInMaw.maw);
-        CodecUtils.writeOptionally(itemInMaw.transform, !itemInMaw.transform.isEmpty(), buffer, PoseTransform.CODEC);
+        StreamCodecUtils.writeOptionally(itemInMaw.transform, !itemInMaw.transform.isEmpty(), buffer, PoseTransform.CODEC);
     }, buffer -> {
         String maw = buffer.readUtf();
-        return new ItemInMawLayer(maw, CodecUtils.readOptionally(buffer, PoseTransform.CODEC));
+        return new ItemInMawLayer(maw, StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC));
     });
 
     private String maw;

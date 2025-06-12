@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.zaharenko424.a_changed.ModelManagerAccess;
@@ -208,20 +209,15 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         if(achanged$sprites.isEmpty()) return;
         achanged$forceReload();
 
-        final float[] hsb = new float[3];
-        final float[] hsb1 = new float[3];
-        Color.RGBtoHSB(41, 39, 39, hsb1);
-        achanged$generateTextures(root, hsb, hsb1, "_darkltx");
-        Color.RGBtoHSB(255, 255, 255, hsb1);
-        achanged$generateTextures(root, hsb, hsb1, "_whiteltx");
+        final float[] hsb = new float[4];
+        achanged$generateTextures(root, hsb, FastColor.ARGB32.color(41, 39, 39), "_darkltx");
+        achanged$generateTextures(root, hsb, FastColor.ARGB32.color(255, 255, 255), "_whiteltx");
 
         achanged$sprites.clear();
     }
 
     @Unique
-    private static void achanged$generateTextures(File root, float[] hsb, float[] latexHSB, String suffix){
-        float twoLatexB = latexHSB[2] * 2;
-        float threeLatexB = latexHSB[2] * 3;
+    private static void achanged$generateTextures(File root, float[] hsb, int latex, String suffix){
         achanged$sprites.forEach((loc, sprite) -> {
             SpriteContents contents = sprite.contents();
             String file = loc.getNamespace() + "\\" + loc.getPath().replace("block/", "").replace('/', File.separatorChar) + suffix;
@@ -232,22 +228,21 @@ public abstract class MixinModelManager implements ModelManagerAccess {
             try {
                 image = contents.getOriginalImage().mappedCopy(originalColor -> {
                     if(FastColor.ARGB32.alpha(originalColor) == 0) return originalColor;
+
                     Color.RGBtoHSB(FastColor.ARGB32.red(originalColor), FastColor.ARGB32.green(originalColor), FastColor.ARGB32.blue(originalColor), hsb);
-                    hsb[1] *= .25f;
+                    int desaturated = Color.HSBtoRGB(hsb[0], hsb[1] * .3f, hsb[2] * .9f);
 
-                    if(latexHSB[2] > .5f) {
-                        hsb[2] *= Math.min(twoLatexB, 1.7f);
-                    } else hsb[2] = (hsb[2] + threeLatexB) / 4;
-
-                    if(hsb[2] > 1) hsb[2] = 1;
-                    return FastColor.ARGB32.color(FastColor.ARGB32.alpha(originalColor), Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
+                    return a_changed$combineARGB(desaturated, latex, .75f, hsb);
                 });
+
                 image.writeToFile(texture);
                 image.close();
+
                 if(contents.metadata() == ResourceMetadata.EMPTY) return;
                 JsonObject json = new JsonObject();
                 achanged$writeTextureMeta(json, contents.metadata().getSection(TextureMetadataSection.SERIALIZER));
                 achanged$writeAnimationMeta(json, contents.metadata().getSection(AnimationMetadataSection.SERIALIZER));
+
                 if(json.isEmpty()) return;
                 FileWriter writer = new FileWriter(new File(root, file + ".png.mcmeta"));
                 writer.write(json.toString());
@@ -256,6 +251,49 @@ public abstract class MixinModelManager implements ModelManagerAccess {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Unique
+    private static final float[] a_changed$baseRGBA = new float[4];
+    @Unique
+    private static final float[] a_changed$addedRGBA = new float[4];
+
+    @Unique
+    private static int a_changed$combineARGB(int base, int added, float opacity, float[] mix){
+        a_changed$baseRGBA[0] = FastColor.ARGB32.red(base);
+        a_changed$baseRGBA[1] = FastColor.ARGB32.green(base);
+        a_changed$baseRGBA[2] = FastColor.ARGB32.blue(base);
+        a_changed$baseRGBA[3] = FastColor.ARGB32.alpha(base) / 255f;
+
+        a_changed$addedRGBA[0] = FastColor.ARGB32.red(added);
+        a_changed$addedRGBA[1] = FastColor.ARGB32.green(added);
+        a_changed$addedRGBA[2] = FastColor.ARGB32.blue(added);
+        a_changed$addedRGBA[3] = FastColor.ARGB32.alpha(added) / 255f;
+
+        a_changed$combineColors(opacity, mix);
+
+        return FastColor.ARGB32.color((int) (mix[3] * 255), (int) mix[0], (int) mix[1], (int) mix[2]);
+    }
+
+    //rgb in 0 - 255, a in 0 - 1
+    @Unique
+    private static void a_changed$combineColors(float opacity, float[] mix){
+        if(a_changed$addedRGBA[3] * opacity == 1) {
+            System.arraycopy(a_changed$addedRGBA, 0, mix, 0, 4);
+            return;
+        }
+
+        float originalA = a_changed$addedRGBA[3];
+        a_changed$addedRGBA[3] *= opacity;
+
+        mix[3] = Mth.clamp(1 - (1 - a_changed$addedRGBA[3]) * (1 - a_changed$baseRGBA[3]), 0, 1); // alpha
+        float aMix = a_changed$addedRGBA[3] / mix[3];
+        float baseInvAMix = a_changed$baseRGBA[3] * (1 - a_changed$addedRGBA[3]) / mix[3];
+        mix[0] = Math.round(a_changed$addedRGBA[0] * aMix + a_changed$baseRGBA[0] * baseInvAMix); // red
+        mix[1] = Math.round(a_changed$addedRGBA[1] * aMix + a_changed$baseRGBA[1] * baseInvAMix); // green
+        mix[2] = Math.round(a_changed$addedRGBA[2] * aMix + a_changed$baseRGBA[2] * baseInvAMix); // blue
+
+        a_changed$addedRGBA[3] = originalA;
     }
 
     @Unique

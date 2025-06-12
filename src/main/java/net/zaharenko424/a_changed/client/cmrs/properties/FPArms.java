@@ -7,23 +7,23 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
 import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
 import net.zaharenko424.a_changed.client.cmrs.model.PartTransform;
-import net.zaharenko424.a_changed.util.CodecUtils;
+import net.zaharenko424.a_changed.client.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.Nullable;
 
 public final class FPArms {
 
     public static final StreamCodec<FriendlyByteBuf, FPArms> CODEC = StreamCodec.of((buffer, fparms) -> {
         boolean write = fparms.armR != null;
-        CodecUtils.writeOptionally(fparms.armR, write, buffer, ByteBufCodecs.STRING_UTF8);
+        StreamCodecUtils.writeOptionally(fparms.armR, write, buffer, ByteBufCodecs.STRING_UTF8);
         if(write) PartTransform.CODEC.encode(buffer, fparms.transformR);
 
         write = fparms.armL != null;
-        CodecUtils.writeOptionally(fparms.armL, write, buffer, ByteBufCodecs.STRING_UTF8);
+        StreamCodecUtils.writeOptionally(fparms.armL, write, buffer, ByteBufCodecs.STRING_UTF8);
         if(write) PartTransform.CODEC.encode(buffer, fparms.transformL);
     }, buffer -> {
-        String armR = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+        String armR = StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
         PartTransform transformR = armR != null ? PartTransform.CODEC.decode(buffer) : null;
-        String armL = CodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
+        String armL = StreamCodecUtils.readOptionally(buffer, ByteBufCodecs.STRING_UTF8);
         return new FPArms(armR, transformR, armL, armL != null ? PartTransform.CODEC.decode(buffer) : null);
     });
 
