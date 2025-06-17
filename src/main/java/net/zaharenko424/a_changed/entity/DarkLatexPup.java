@@ -41,15 +41,15 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.DLPupMeltAbility;
-import net.zaharenko424.a_changed.attachments.DLPupMeltData;
-import net.zaharenko424.a_changed.attachments.LatexPupAgingData;
+import net.zaharenko424.a_changed.attachment.DLPupMeltData;
+import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetAttackTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -181,7 +181,7 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
                         }).startCondition(pup -> pup.isMolten() || BrainUtils.getTargetOfEntity(pup) != null),
                 new AllApplicableBehaviours<>(
                         new FloatToSurfaceOfFluid<>(),
-                        new LookAtTarget<>().runFor(entity -> entity.getRandom().nextIntBetweenInclusive(40, 100)),
+                        new LookAtTarget<>().runFor(entity -> entity.getRandom().nextIntBetweenInclusive(60, 100)),
                         new MoveToWalkTarget<DarkLatexPup>()
                                 .startCondition(pup -> !pup.isInSittingPose())
                                 .stopIf(TamableAnimal::isInSittingPose)
@@ -228,10 +228,11 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
                         new SetRandomWalkTarget<DarkLatexPup>()
                                 .setRadius(16, 8)
                                 .startCondition(pup -> !pup.isOrderedToSit()),
-                        new SetRandomLookTarget<>(),
+                        new SetRandomLookTarget<>()
+                                .lookChance(ConstantFloat.of(.1f)),
                         new SetPlayerLookTarget<DarkLatexPup>()
-                                .predicate(player -> player.isAlive() && distanceToSqr(player) < 48)
-                                .lookChance(ConstantFloat.of(.1f))
+                                .predicate(player -> player.isAlive() && distanceToSqr(player) <= 64)
+                                .lookChance(ConstantFloat.of(.2f))
                                 .lookTime(pup -> pup.random.nextInt(60, 90)),
                         new Idle<>().runFor(entity -> random.nextInt(60, 90))
                 ).startCondition(pup -> !pup.isMolten())

@@ -11,7 +11,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.DNAType;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -51,11 +52,11 @@ public abstract class LanguageProvider extends net.neoforged.neoforge.common.dat
         add("container." + modid + "." + key, value);
     }
 
-    protected void addDeathMessage(ResourceKey<DamageType> resourceKey, String generic, String item, String player){
+    protected void addDeathMessage(ResourceKey<DamageType> resourceKey, String generic, @Nullable String item, @Nullable String player){
         String key = "death.attack." + resourceKey.location().getPath();
         add(key, generic);
-        add(key + ".item", item);
-        add(key + ".player", player);
+        if(item != null) add(key + ".item", item);
+        if(player != null) add(key + ".player", player);
     }
 
     protected void addDNA(DeferredHolder<DNAType, DNAType> type, String value){

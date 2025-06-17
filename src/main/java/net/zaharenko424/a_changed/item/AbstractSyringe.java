@@ -4,6 +4,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +47,10 @@ public abstract class AbstractSyringe extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        if(!level.isClientSide){
+            entity.hurt(DamageSources.syringe(level, entity), 1);
+            if(entity.isDeadOrDying()) return stack;
+        }
         return onUse(stack, applyUseEffects(stack, level, entity), entity);
     }
 
@@ -60,7 +66,7 @@ public abstract class AbstractSyringe extends Item {
         SyringeProjectile syringe = new SyringeProjectile(level, player, stack.copyWithCount(1), null);
         syringe.place(context.getClickLocation());
         level.addFreshEntity(syringe);
-        syringe.setYRot(-player.getYRot() + 45);
+        syringe.setYRot(-player.getYRot() + (player.getMainArm() == HumanoidArm.RIGHT ? 45 : -45));
         player.setItemInHand(InteractionHand.MAIN_HAND, onUse(stack, ItemStack.EMPTY, player));
         return InteractionResult.SUCCESS;
     }

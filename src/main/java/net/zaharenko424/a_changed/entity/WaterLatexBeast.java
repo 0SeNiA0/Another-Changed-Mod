@@ -51,7 +51,7 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.GrabData;
+import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
@@ -59,7 +59,7 @@ import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

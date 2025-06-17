@@ -41,6 +41,7 @@
     "client.MixinMultiPlayerGameMode",
     "client.cmrs.MixinBufferSource",
     "client.cmrs.MixinClientPacketListener",
+    "client.cmrs.MixinEntityRenderDispatcher",
     "client.cmrs.MixinPlayerRenderer",
     "client.cmrs.MixinPoseStack",
     "client.latex.AnimationMetadataAccessor",

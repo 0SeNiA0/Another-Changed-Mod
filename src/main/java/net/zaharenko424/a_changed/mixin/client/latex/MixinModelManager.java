@@ -25,7 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.zaharenko424.a_changed.ModelManagerAccess;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.util.IOUtils;
 import net.zaharenko424.a_changed.util.Thing;
 import org.spongepowered.asm.mixin.Final;

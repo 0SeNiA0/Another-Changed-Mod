@@ -4,10 +4,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.registry.CriterionTriggerRegistry;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,20 +24,24 @@ public class TransfurredEvent extends Event {
 
     @ApiStatus.Internal
     public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType, TransfurContext context){
+        this(entity, latex, transfurType, context, entity.getLastDamageSource());
+    }
+
+    @ApiStatus.Internal
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType, TransfurContext context, DamageSource source){
         this.entity = entity;
         this.latex = latex;
         this.transfurType = transfurType;
         this.context = context;
-        this.source = entity.getLastDamageSource();
+        this.source = source;
 
         if(entity instanceof ServerPlayer player) {
-            AChanged.PLAYER_TRANSFURRED.get().trigger(player, source, transfurType);
+            CriterionTriggerRegistry.PLAYER_TRANSFURRED.get().trigger(player, source, transfurType);
         } else {
             if(source != null && source.getEntity() instanceof ServerPlayer player){
-                AChanged.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
+                CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
             }
         }
-
     }
 
     public LivingEntity getEntity(){

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.machines.GeneratorMenu;
+import net.zaharenko424.a_changed.menu.machine.GeneratorMenu;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

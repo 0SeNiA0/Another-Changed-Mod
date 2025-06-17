@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.block.GasTank;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;

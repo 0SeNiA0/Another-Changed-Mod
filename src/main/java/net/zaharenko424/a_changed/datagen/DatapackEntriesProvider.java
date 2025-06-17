@@ -45,9 +45,10 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
 
     private static void damageType(BootstrapContext<DamageType> context){
         context.register(DamageSources.assimilation, new DamageType("assimilation", DamageScaling.NEVER, 0));
-        context.register(DamageSources.electricity, new DamageType("electricity", DamageScaling.NEVER, 0));
-        context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,0, DamageEffects.BURNING));
-        context.register(DamageSources.syringe, new DamageType("syringe", DamageScaling.ALWAYS, 0, DamageEffects.POKING));
+        context.register(DamageSources.electricity, new DamageType("electricity", DamageScaling.NEVER, .1f));
+        context.register(DamageSources.solvent, new DamageType("solvent", DamageScaling.ALWAYS,.1f, DamageEffects.BURNING));
+        context.register(DamageSources.syringe, new DamageType("syringe", DamageScaling.ALWAYS, .1f, DamageEffects.POKING));
+        context.register(DamageSources.placedSyringe, new DamageType("placed_syringe", DamageScaling.NEVER, .1f, DamageEffects.POKING));
         context.register(DamageSources.transfur, new DamageType("transfur", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,0.1f));
         context.register(DamageSources.transfurKill, new DamageType("transfur_kill", DamageScaling.NEVER, 0));
         context.register(DamageSources.untransfur, new DamageType("untransfur", DamageScaling.NEVER, 0));

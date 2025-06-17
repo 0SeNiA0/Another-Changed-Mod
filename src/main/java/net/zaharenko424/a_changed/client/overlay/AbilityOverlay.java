@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 
 public class AbilityOverlay {
 

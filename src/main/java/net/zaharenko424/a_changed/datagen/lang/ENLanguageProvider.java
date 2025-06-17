@@ -24,13 +24,19 @@ public class ENLanguageProvider extends LanguageProvider {
         addAdvancement("orange_juice", "A liquid orange?", "Obtain orange juice");
         addAdvancement("canned_oranges", "A can of oranges", "Obtain canned oranges");
 
+        addAdvancement("step_on_syringe", "Who placed this here?", "Step on a syringe");
+        addAdvancement("step_on_all_syringes", "The area is now clear", "Step on all syringe types");
+
         addAdvancement("get_transfurred", "SomeInterestingName", "Get transfurred");
         addAdvancement("cat_transfur", "Hmm, that's actually useful", "Get transfurred into cat latex");
         addAdvancement("swimming_transfur", "Drowned fear them", "Get transfurred into water latex");
         addAdvancement("flying_transfur", "Who needs elytra?", "Get transfurred into flying latex");
+        addAdvancement("all_transfurs", "Gotta transfur into them all!", "Transfur into all latexes");
 
         addAdvancement("ranged_transfur", "Ranged transfurring", "Shoot with your syringe rifle");
         addAdvancement("ranged_transfur1", "Even deadlier technology", "Hit a transfurrable target from at least 64 blocks away");
+
+        addAdvancement("armor_or_luck", "Was that armor or pure luck?", "Have a syringe bounce off you");
 
         //Attributes
         addAttribute(AChanged.AIR_DECREASE_SPEED, "Air Decrease Speed");
@@ -170,12 +176,15 @@ public class ENLanguageProvider extends LanguageProvider {
         addContainer("latex_purifier", "Latex Purifier");
 
         //Death Messages
-        addDeathMessage(DamageSources.assimilation, "%1$s was assimilated by %2$s", "%1$s was assimilated by %2$s", "%1$s was assimilated by %2$s");
+        addDeathMessage(DamageSources.assimilation, "%1$s was assimilated by %2$s", null, "%1$s was assimilated by %2$s");
         addDeathMessage(DamageSources.electricity, "%1$s was electrocuted to death", "%1$s was electrocuted to death by %2$s using %3$s", "%1$s was electrocuted to death by %2$s");
         addDeathMessage(DamageSources.solvent, "%1$s was dissolved", "%1$s was dissolved by %2$s using %3$s", "%1$s was dissolved by %2$s");
-        addDeathMessage(DamageSources.syringe, "%1$s was pricked with a syringe a bit too hard by %2$s", "%1$s was pricked with a syringe a bit too hard by %2$s", "%1$s was pricked with a syringe a bit too hard by %2$s");
+        addDeathMessage(DamageSources.syringe, "%1$s was pricked with a syringe a bit too hard", "%1$s was pricked with a syringe a bit too hard by %2$s using %3$s", "%1$s was pricked with a syringe a bit too hard by %2$s");
+        addDeathMessage(DamageSources.placedSyringe, "%1$s was pricked a bit too hard by a placed syringe", null, "%1$s was pricked a bit too hard by a placed syringe of %2$s");
         addDeathMessage(DamageSources.transfur, "%1$s was transfurred", "%1$s was transfurred by %2$s using %3$s", "%1$s was transfurred by %2$s");
+        addDeathMessage(DamageSources.transfurKill, "%1$s was transfurred", "%1$s was transfurred by %2$s using %3$s", "%1$s was transfurred by %2$s");
         addDeathMessage(DamageSources.untransfur, "%1$s was lethally untransfurred", "%1$s was lethally untransfurred by %2$s using %3$s", "%1$s was lethally untransfurred by %2$s");
+        addDeathMessage(DamageSources.untransfurKill, "%1$s was lethally untransfurred", "%1$s was lethally untransfurred by %2$s using %3$s", "%1$s was lethally untransfurred by %2$s");
 
         //DNA Types
         addDNA(DNATypeRegistry.APPLE_DNA, "Apple DNA");

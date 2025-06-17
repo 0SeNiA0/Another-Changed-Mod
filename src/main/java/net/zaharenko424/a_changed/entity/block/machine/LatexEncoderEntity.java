@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.item.DNASample;
 import net.zaharenko424.a_changed.item.LatexSyringeItem;
 import net.zaharenko424.a_changed.item.SyringeItem;
-import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
+import net.zaharenko424.a_changed.menu.machine.LatexEncoderMenu;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;

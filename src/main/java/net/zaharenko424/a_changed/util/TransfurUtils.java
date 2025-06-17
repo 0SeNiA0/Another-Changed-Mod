@@ -7,23 +7,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -45,53 +39,20 @@ public class TransfurUtils {
     };
 
     public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
-        AttributeMap map = holder.getAttributes();
-        AttributeInstance[] instance = new AttributeInstance[1];
-        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
-            if(!map.hasAttribute(attribute)){
-                AChanged.LOGGER.error("Attempted to add transfur modifier to not existing attribute {} {}", attribute, transfurType);
-                return;
-            }
-
-            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
-                float maxHealthO = holder.getMaxHealth();
-                instance[0] = map.getInstance(attribute);
-                for(AttributeModifier modifier : modifiers){
-                    instance[0].addTransientModifier(modifier);
-                }
-                float diff = holder.getMaxHealth() - maxHealthO;
-                if(diff > 0) holder.setHealth(holder.getHealth() + diff);
-                return;
-            }
-
-            instance[0] = map.getInstance(attribute);
-            for(AttributeModifier modifier : modifiers){
-                instance[0].addTransientModifier(modifier);
-            }
-        });
+        float maxHealthO = holder.getMaxHealth();
+        holder.getAttributes().addTransientAttributeModifiers(transfurType.modifiers);
+        float maxHealth = holder.getMaxHealth();
+        float diff = maxHealth - maxHealthO;
+        if(diff > 0) {
+            holder.setHealth(holder.getHealth() + diff);
+            return;
+        }
+        if(holder.getHealth() > maxHealth) holder.setHealth(maxHealth);
     }
 
-    public static void removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
-        AttributeMap map = holder.getAttributes();
-        AttributeInstance[] instance = new AttributeInstance[1];
-        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
-            if(!map.hasAttribute(attribute)) return;
-
-            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
-                float maxHealthO = holder.getMaxHealth();
-                instance[0] = map.getInstance(attribute);
-                for(AttributeModifier modifier : modifiers){
-                    instance[0].removeModifier(modifier);
-                }
-                if(holder.getMaxHealth() - maxHealthO < 0) holder.setHealth(holder.getMaxHealth());
-                return;
-            }
-
-            instance[0] = map.getInstance(attribute);
-            for(AttributeModifier modifier : modifiers){
-                instance[0].removeModifier(modifier);
-            }
-        });
+    public static void  removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
+        holder.getAttributes().removeAttributeModifiers(transfurType.modifiers);
+        if(holder.getHealth() > holder.getMaxHealth()) holder.setHealth(holder.getMaxHealth());
     }
 
     /**

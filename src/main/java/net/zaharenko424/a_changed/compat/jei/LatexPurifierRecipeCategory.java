@@ -12,7 +12,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.client.screen.machines.LatexPurifierScreen;
+import net.zaharenko424.a_changed.client.screen.machine.LatexPurifierScreen;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;

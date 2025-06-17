@@ -9,9 +9,8 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.registry.CriterionTriggerRegistry;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -24,7 +23,7 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
     }
 
     public void trigger(ServerPlayer player, DamageSource damageSource, TransfurType transfurType){
-        trigger(player, instance -> instance.matches(player, EntityPredicate.createContext(player, player), damageSource, transfurType));
+        trigger(player, instance -> instance.matches(player, damageSource, transfurType));
     }
 
     public record TriggerInstance(
@@ -39,22 +38,22 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
                 ).apply(builder, TriggerInstance::new));
 
         public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurred(){
-            return AChanged.PLAYER_TRANSFURRED.get()
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.empty()));
         }
 
         public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurred(TransfurTypePredicate transfurType){
-            return AChanged.PLAYER_TRANSFURRED.get()
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.of(transfurType)));
         }
 
         public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurredEntity(){
-            return AChanged.PLAYER_TRANSFURRED_ENTITY.get()
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.empty()));
         }
 
         public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurredEntity(TransfurTypePredicate transfurType){
-            return AChanged.PLAYER_TRANSFURRED_ENTITY.get()
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.of(transfurType)));
         }
 
@@ -78,14 +77,9 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.empty()));
         }*/
 
-        public boolean matches(ServerPlayer player, LootContext context, DamageSource source, TransfurType transfurType){
-            if(this.player.isPresent() && !this.player.get().matches(context)) return false;
-            if(damagePredicate.isPresent()) {//TODO do something with this ?
-                if(source == null){
-                    AChanged.LOGGER.warn("Expected nonNull DamageSource for TransfurTrigger!");
-                    return false;
-                }
-                if(!damagePredicate.get().matches(player, source)) return false;
+        public boolean matches(ServerPlayer player, DamageSource source, TransfurType transfurType){
+            if(damagePredicate.isPresent()) {
+                if(source == null || !damagePredicate.get().matches(player, source)) return false;
             }
 
             return this.transfurType.isEmpty() || this.transfurType.get().matches(transfurType);

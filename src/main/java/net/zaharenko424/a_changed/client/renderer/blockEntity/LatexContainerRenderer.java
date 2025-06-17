@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
@@ -27,8 +27,8 @@ public class LatexContainerRenderer implements BlockEntityRenderer<LatexContaine
     static final ResourceLocation WHITE = BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("textures/block/").withSuffix(".png");
     private final ModelPart latex;
 
-    public LatexContainerRenderer(BlockEntityRendererProvider.Context p_173521_){
-        latex = p_173521_.bakeLayer(LAYER).getChild("latex");
+    public LatexContainerRenderer(BlockEntityRendererProvider.Context context){
+        latex = context.bakeLayer(LAYER).getChild("latex");
     }
 
     public static @NotNull LayerDefinition bodyLayer(){
@@ -39,7 +39,7 @@ public class LatexContainerRenderer implements BlockEntityRenderer<LatexContaine
     }
 
     @Override
-    public void render(LatexContainerEntity entity, float p_112308_, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(LatexContainerEntity entity, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if(entity.isEmpty()) return;
         latex.resetPose();
 

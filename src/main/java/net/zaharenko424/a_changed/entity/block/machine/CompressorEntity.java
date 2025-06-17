@@ -17,7 +17,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.machines.CompressorMenu;
+import net.zaharenko424.a_changed.menu.machine.CompressorMenu;
 import net.zaharenko424.a_changed.recipe.CompressorRecipe;
 import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;

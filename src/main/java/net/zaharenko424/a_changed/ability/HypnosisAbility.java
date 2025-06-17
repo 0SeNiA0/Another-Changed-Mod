@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.HypnosisData;
+import net.zaharenko424.a_changed.attachment.HypnosisData;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;

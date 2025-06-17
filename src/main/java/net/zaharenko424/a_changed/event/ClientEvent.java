@@ -29,7 +29,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityHolder;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.block.CryoChamber;
 import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.PileOfOranges;
@@ -44,7 +44,7 @@ import net.zaharenko424.a_changed.block.smalldecor.Flask;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.cmrs.gui.screen.ModelManagerScreen;
+import net.zaharenko424.cmrs.client.gui.screen.ModelManagerScreen;
 import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.Utils;
@@ -64,7 +64,7 @@ public class ClientEvent {
         if(player == null) return;
 
         if(Keybindings.MODEL_MANAGER.isDown()){
-            if(Minecraft.getInstance().screen == null) Minecraft.getInstance().setScreen(new ModelManagerScreen());
+            if(minecraft.screen == null) minecraft.setScreen(new ModelManagerScreen());
             return;
         }
 

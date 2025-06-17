@@ -10,9 +10,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.CryoChamberEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
     }
 
     @Override
-    public void render(@NotNull CryoChamberEntity chamber, float pPartialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull CryoChamberEntity chamber, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if(chamber.isOpen() || chamber.getFluidAmount() == 0) return;
         fluid.resetPose();
         float scale = chamber.getFluidAmount() * .03125f;
@@ -64,7 +64,7 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
 
         MatrixStack.push(stack);
         stack.translate(.5,.125,.5);
-        fluid.render(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), pPackedLight, OverlayTexture.NO_OVERLAY);
+        fluid.render(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
         MatrixStack.pop(stack);
     }
 

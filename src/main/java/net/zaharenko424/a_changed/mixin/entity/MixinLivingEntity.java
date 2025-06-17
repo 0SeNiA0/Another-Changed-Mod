@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
@@ -42,16 +42,15 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
 
     @Shadow public abstract boolean hasEffect(Holder<MobEffect> effect);
 
-    @Shadow public abstract void remove(RemovalReason reason);
-
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }
 
     @ModifyReturnValue(at = @At("RETURN"), method = "isBaby")
     private boolean onIsBaby(boolean original){
-        if(self() instanceof Player player && AbilityUtils.hasAbility(AbilityRegistry.DL_PUP_AGE, player)){
-            return AbilityRegistry.DL_PUP_AGE.get().getAbilityData(player).isBaby();
+        if(self() instanceof Player player){
+            if(AbilityUtils.hasAbility(AbilityRegistry.DL_PUP_AGE, player)) return AbilityRegistry.DL_PUP_AGE.get().getAbilityData(player).isBaby();
+            if(AbilityUtils.hasAbility(AbilityRegistry.WL_PUP_AGE, player)) return AbilityRegistry.WL_PUP_AGE.get().getAbilityData(player).isBaby();
         }
         return original;
     }

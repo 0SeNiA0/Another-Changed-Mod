@@ -27,7 +27,8 @@ public class DamageTypeTagProvider extends DamageTypeTagsProvider {
                 DamageSources.untransfurKill);
 
         tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSources.assimilation, DamageSources.electricity, DamageSources.syringe,
-                DamageSources.transfurKill, DamageSources.untransfurKill);
+                DamageSources.placedSyringe, DamageSources.transfurKill, DamageSources.untransfurKill);
+        tag(DamageTypeTags.BYPASSES_SHIELD).add(DamageSources.placedSyringe);
         tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);
         tag(DamageTypeTags.BYPASSES_RESISTANCE).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);
         tag(Tags.DamageTypes.IS_TECHNICAL).add(DamageSources.assimilation, DamageSources.transfurKill, DamageSources.untransfurKill);

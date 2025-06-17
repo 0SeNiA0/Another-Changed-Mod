@@ -37,15 +37,18 @@ public class SyringeItem extends AbstractSyringe {
         if(player.level().isClientSide || hand != InteractionHand.MAIN_HAND || !player.isCrouching()
                 || TransfurManager.isTransfurred(target) || target instanceof AbstractFish) return super.interactLivingEntity(stack, player, target, hand);
 
-        target.hurt(DamageSources.syringe(player.level(), player), 2);
+        target.hurt(DamageSources.syringe(player.level(), player), 4);
         onUse(stack, applyUseEffects(stack, player.level(), target), player);
         return InteractionResult.SUCCESS;
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if(!level.isClientSide) entity.hurt(DamageSources.syringe(level, entity), 2);
-        return super.finishUsingItem(stack, level, entity);
+        if(!level.isClientSide){
+            entity.hurt(DamageSources.syringe(level, entity), 4);
+            if(entity.isDeadOrDying()) return stack;
+        }
+        return onUse(stack, applyUseEffects(stack, level, entity), entity);
     }
 
     @Override
@@ -56,7 +59,6 @@ public class SyringeItem extends AbstractSyringe {
 
     @Override
     public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile syringe, Entity shooter) {
-        if(!level.isClientSide) entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
         return stack;
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +20,7 @@ public interface DamageSources {
     ResourceKey<DamageType> electricity = create("electricity");
     ResourceKey<DamageType> solvent = create("latex_solvent");
     ResourceKey<DamageType> syringe = create("syringe");
+    ResourceKey<DamageType> placedSyringe = create("placed_syringe");
     ResourceKey<DamageType> transfur = create("transfur");
     ResourceKey<DamageType> transfurKill = create("transfur_kill");
     ResourceKey<DamageType> untransfur = create("untransfur");
@@ -57,6 +58,10 @@ public interface DamageSources {
 
     static @NotNull DamageSource syringe(@NotNull Level level, Entity projectile, @Nullable Entity attacker){
         return new DamageSource(holder(level, syringe), projectile, attacker);
+    }
+
+    static @NotNull DamageSource placedSyringe(@NotNull Entity projectile, @Nullable Entity attacker){
+        return new DamageSource(holder(projectile.level(), placedSyringe), projectile, attacker);
     }
 
     static @NotNull DamageSource electricity(@NotNull Level level, @Nullable Entity attacker){

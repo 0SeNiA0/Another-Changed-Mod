@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.*;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.*;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
 
 import static net.zaharenko424.a_changed.AChanged.*;

@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.event.custom;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 
 /**
  * Fired after player is untransfurred. <p>Do not transfur/untransfur player here or delay it by 1 tick.</p>

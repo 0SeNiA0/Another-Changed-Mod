@@ -9,7 +9,7 @@ import mezz.jei.common.network.IConnectionToServer;
 import mezz.jei.library.transfer.BasicRecipeTransferHandler;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.menu.machines.LatexEncoderMenu;
+import net.zaharenko424.a_changed.menu.machine.LatexEncoderMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import net.zaharenko424.a_changed.recipe.LatexEncoderRecipe;
 import org.jetbrains.annotations.NotNull;

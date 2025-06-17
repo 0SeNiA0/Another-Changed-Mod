@@ -11,14 +11,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,10 +58,8 @@ public class LatexSyringeItem extends AbstractSyringe {
 
     @Override
     protected ItemStack applyUseEffects(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if(!level.isClientSide) {
-            entity.hurt(DamageSources.syringe(level, entity), .5f);
-            transfur(stack, entity);
-        }
+        if(!level.isClientSide) transfur(stack, entity);
+
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
@@ -73,7 +71,6 @@ public class LatexSyringeItem extends AbstractSyringe {
     @Override
     public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile syringe, @Nullable Entity shooter) {
         if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
-        entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
 
         if(DamageSources.checkTFTarget(entity)) {
             TransfurType transfurType = decodeTransfur(stack);

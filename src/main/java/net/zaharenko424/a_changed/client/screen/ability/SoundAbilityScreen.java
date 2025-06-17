@@ -15,12 +15,12 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.gui.screen.MouseMoveListener;
-import net.zaharenko424.a_changed.client.cmrs.gui.widget.RadialButton;
-import net.zaharenko424.a_changed.client.cmrs.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 
 import java.awt.*;

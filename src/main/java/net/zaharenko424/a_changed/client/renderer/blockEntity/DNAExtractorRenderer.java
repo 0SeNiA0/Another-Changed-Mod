@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     }
 
     @Override
-    public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource pBuffer, int packedLight, int pPackedOverlay) {
+    public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource source, int packedLight, int packedOverlay) {
         prepareTubes();
 
         if(extractor.hasRecipe()) {
@@ -74,7 +74,7 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
 
         MatrixStack.push(stack);
         stack.translate(.5,0,.5);
-        root.render(stack, pBuffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
+        root.render(stack, source.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
         MatrixStack.pop(stack);
     }
 

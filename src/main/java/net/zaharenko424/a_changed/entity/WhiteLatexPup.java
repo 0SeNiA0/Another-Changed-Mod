@@ -39,8 +39,8 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.attachments.LatexPupAgingData;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetAttackTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
@@ -49,7 +49,7 @@ import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -127,7 +127,7 @@ public class WhiteLatexPup extends AbstractLatexPup implements SmartBrainOwner<W
     public BrainActivityGroup<? extends WhiteLatexPup> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new FloatToSurfaceOfFluid<>(),
-                new LookAtTarget<>().runFor(entity -> entity.getRandom().nextIntBetweenInclusive(40, 100)),
+                new LookAtTarget<>().runFor(entity -> entity.getRandom().nextIntBetweenInclusive(60, 100)),
                 new MoveToWalkTarget<WhiteLatexPup>()
                         .startCondition(pup -> !pup.isInSittingPose())
                         .stopIf(TamableAnimal::isInSittingPose)
@@ -173,10 +173,11 @@ public class WhiteLatexPup extends AbstractLatexPup implements SmartBrainOwner<W
                         new SetRandomWalkTarget<WhiteLatexPup>()
                                 .setRadius(16, 8)
                                 .startCondition(pup -> !pup.isOrderedToSit()),
-                        new SetRandomLookTarget<>(),
+                        new SetRandomLookTarget<>()
+                                .lookChance(ConstantFloat.of(.1f)),
                         new SetPlayerLookTarget<WhiteLatexPup>()
-                                .predicate(player -> player.isAlive() && distanceToSqr(player) < 48)
-                                .lookChance(ConstantFloat.of(.1f))
+                                .predicate(player -> player.isAlive() && distanceToSqr(player) <= 64)
+                                .lookChance(ConstantFloat.of(.2f))
                                 .lookTime(pup -> pup.random.nextInt(60, 90)),
                         new Idle<>().runFor(entity -> random.nextInt(60, 90))
                 )

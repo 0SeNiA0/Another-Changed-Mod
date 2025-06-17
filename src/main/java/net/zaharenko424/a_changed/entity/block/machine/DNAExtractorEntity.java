@@ -18,7 +18,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.item.BloodSyringe;
-import net.zaharenko424.a_changed.menu.machines.DNAExtractorMenu;
+import net.zaharenko424.a_changed.menu.machine.DNAExtractorMenu;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;

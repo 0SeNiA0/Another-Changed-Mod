@@ -25,6 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,7 +36,10 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
@@ -46,8 +50,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.registry.ArmorMaterialRegistry;
+import net.zaharenko424.a_changed.registry.CriterionTriggerRegistry;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
@@ -203,16 +210,7 @@ public class SyringeProjectile extends Projectile {
                 tickDespawn();
             }
             inGroundTime++;
-
-            if(level().isClientSide || !placed) return;
-
-            List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
-            LivingEntity entity = list.isEmpty() ? null : list.getFirst();
-            if(entity == null) return;
-
-            ItemStack syringe = getPickupItemStackOrigin();
-            Block.popResource(level(), blockPosition().above(), ((AbstractSyringe)syringe.getItem()).applyEffectsAsProjectile(syringe, level(), entity, this, null));
-            discard();
+            maybeStepOnSyringe();
             return;
         }
 
@@ -304,6 +302,28 @@ public class SyringeProjectile extends Projectile {
         life = 0;
     }
 
+    protected void maybeStepOnSyringe(){
+        if(level().isClientSide || !placed) return;
+
+        ItemStack syringe = getPickupItemStackOrigin();
+        if(syringe.isEmpty()){
+            discard();
+            return;
+        }
+
+        List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
+        LivingEntity entity = list.isEmpty() ? null : list.getFirst();
+        Entity owner = getOwner();
+        if(entity == null || !entity.hurt(DamageSources.placedSyringe(this, getOwner()), 1)) return;
+
+        if(entity instanceof ServerPlayer pl) CriterionTriggerRegistry.PLAYER_STEPPED_ON_SYRINGE.get().trigger(pl, syringe, owner);
+        if(owner instanceof ServerPlayer pl) CriterionTriggerRegistry.ENTITY_STEPPED_ON_SYRINGE.get().trigger(pl, syringe, entity);
+
+        if(entity.isDeadOrDying()) return;
+        Block.popResource(level(), blockPosition().above(), ((AbstractSyringe)syringe.getItem()).applyEffectsAsProjectile(syringe, level(), entity, this, null));
+        discard();
+    }
+
     protected float getWaterInertia() {
         return 0.6F;
     }
@@ -319,8 +339,8 @@ public class SyringeProjectile extends Projectile {
     }
 
     protected void onHit(HitResult result) {
-        HitResult.Type hitresult$type = result.getType();
-        if (hitresult$type == HitResult.Type.ENTITY) {
+        HitResult.Type type = result.getType();
+        if (type == HitResult.Type.ENTITY) {
             EntityHitResult entityhitresult = (EntityHitResult)result;
             Entity entity = entityhitresult.getEntity();
 
@@ -328,14 +348,9 @@ public class SyringeProjectile extends Projectile {
                 projectile.deflect(ProjectileDeflection.AIM_DEFLECT, getOwner(), getOwner(), true);
             }
 
-            if(entity.isInvulnerable() || (entity instanceof Player player && player.isCreative())){
-                deflect(entity);
-                return;
-            }
-
             onHitEntity(entityhitresult);
             level().gameEvent(GameEvent.PROJECTILE_LAND, result.getLocation(), GameEvent.Context.of(this, null));
-        } else if (hitresult$type == HitResult.Type.BLOCK) {
+        } else if (type == HitResult.Type.BLOCK) {
             BlockHitResult blockhitresult = (BlockHitResult)result;
             onHitBlock(blockhitresult);
             BlockPos blockpos = blockhitresult.getBlockPos();
@@ -353,25 +368,48 @@ public class SyringeProjectile extends Projectile {
         }
 
         Entity owner = getOwner();
+        DamageSource source = DamageSources.syringe(level(), this, owner);
         if(!(entity instanceof LivingEntity living) || entity.getType() == EntityType.ENDERMAN){
-            entity.hurt(DamageSources.syringe(level(), this, owner), .5f);
+            entity.hurt(source, 1);
             deflect(entity);
             return;
         }
 
+        if((entity instanceof Player player && player.isCreative()) || entity.isInvulnerableTo(source)
+                || CommonHooks.onDamageBlock(living, new DamageContainer(source, 1), living.isDamageSourceBlocked(source)).getBlocked()){
+            deflect(entity);
+            return;
+        }
+
+        ItemStack syringe = getPickupItemStackOrigin();
         if(bounce(living)){
+            if(entity instanceof ServerPlayer pl) CriterionTriggerRegistry.SYRINGE_BOUNCED_OFF_PLAYER.get().trigger(pl, syringe, owner);
+            if(owner instanceof ServerPlayer pl) CriterionTriggerRegistry.SHOT_SYRINGE_BOUNCED.get().trigger(pl, syringe, entity);
+            return;
+        }
+
+        if(!living.hurt(source, 1)){
             deflect(entity);
             return;
         }
 
         if(owner instanceof LivingEntity ownerL) ownerL.setLastHurtMob(entity);
 
-        if(!isSilent() && owner != living && living instanceof ServerPlayer ownerPl){
-            ownerPl.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0));
-        }
         playSound(getDefaultHitGroundSoundEvent(), 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
         doKnockback(living);
-        ItemStack syringe = getPickupItemStackOrigin();
+
+        if(entity instanceof ServerPlayer pl) CriterionTriggerRegistry.PLAYER_SHOT_WITH_SYRINGE.get().trigger(pl, syringe, owner);
+        if(owner instanceof ServerPlayer pl) {
+            if(!isSilent() && owner != living && living instanceof Player){
+                pl.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0));
+            }
+            CriterionTriggerRegistry.ENTITY_SHOT_WITH_SYRINGE.get().trigger(pl, syringe, entity);
+        }
+
+        if(living.isDeadOrDying()) {
+            deflect(living);
+            return;
+        }
         Block.popResource(level(), blockPosition(),
                 ((AbstractSyringe)syringe.getItem()).applyEffectsAsProjectile(syringe, level(), living, this, owner));
         discard();
@@ -482,7 +520,11 @@ public class SyringeProjectile extends Projectile {
 
         if(!player.isCrouching()){
             ItemStack syringe = getPickupItemStackOrigin();
+            player.hurt(DamageSources.syringe(player.level(), player), 1);
+
+            if(player.isDeadOrDying()) return InteractionResult.SUCCESS;
             setPickupItemStack(((AbstractSyringe)syringe.getItem()).applyEffectsAsProjectile(syringe, level(), player, this, null));
+            return InteractionResult.SUCCESS;
         }
 
         if(tryPickup(player)){

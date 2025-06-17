@@ -16,7 +16,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.machines.LatexPurifierMenu;
+import net.zaharenko424.a_changed.menu.machine.LatexPurifierMenu;
 import net.zaharenko424.a_changed.recipe.LatexPurifierRecipe;
 import net.zaharenko424.a_changed.recipe.SingleInputRecipeWrapper;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;

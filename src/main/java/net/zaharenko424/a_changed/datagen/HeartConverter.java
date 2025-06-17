@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.util.FastColor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 

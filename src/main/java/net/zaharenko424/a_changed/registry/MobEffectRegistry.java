@@ -9,7 +9,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.effects.*;
+import net.zaharenko424.a_changed.effect.*;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;

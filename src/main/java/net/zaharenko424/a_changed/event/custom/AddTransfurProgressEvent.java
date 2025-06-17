@@ -4,7 +4,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 
 /**
  * Fired before calculating amount of transfur progress to add. Can be cancelled, which will result in no TF progress being added.

@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.client.cmrs.gui.widget.RadialButton;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 
 import java.awt.*;

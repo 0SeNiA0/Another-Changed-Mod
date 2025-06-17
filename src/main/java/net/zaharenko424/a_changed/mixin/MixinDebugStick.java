@@ -18,7 +18,7 @@ import net.minecraft.world.item.component.DebugStickState;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import net.zaharenko424.a_changed.util.StateProperties;

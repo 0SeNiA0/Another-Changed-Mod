@@ -7,7 +7,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.api.BufferSourceAccess;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.AbstractStackEntity;
 import net.zaharenko424.a_changed.entity.block.BookStackEntity;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,7 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
         NonNullList<AbstractStackEntity.Entry> list = entity.entries();
         if(list.isEmpty()) return;
         stack.translate(.5,0,.5);
+        BufferSourceAccess access = BufferSourceAccess.get();
         AbstractStackEntity.Entry entry;
         int id;
         for(int i = 0; i < list.size(); i++){
@@ -58,7 +60,8 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
 
             id = entry.modelId();
             if(id > TEXTURES.length - 1) id = TEXTURES.length - 1;
-            book.render(stack, bufferSource.getBuffer(RenderType.entitySolid(TEXTURES[id])), packedLight, packedOverlay);
+            book.render(stack, access.cmrs$getBuffer(RenderType.entitySolid(TEXTURES[id]), 0), packedLight, packedOverlay);
         }
+        access.cmrs$finishBatched();
     }
 }

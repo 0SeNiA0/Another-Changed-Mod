@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.attachments.GrabChanceData;
+import net.zaharenko424.a_changed.attachment.GrabChanceData;
 import org.jetbrains.annotations.NotNull;
 
 import static net.zaharenko424.a_changed.AChanged.LOGGER;

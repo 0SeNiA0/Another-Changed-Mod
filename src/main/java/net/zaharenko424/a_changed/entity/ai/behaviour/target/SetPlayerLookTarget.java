@@ -77,7 +77,7 @@ public class SetPlayerLookTarget<E extends LivingEntity> extends ExtendedBehavio
 
     @Override
     protected void start(E entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleType.LOOK_TARGET, new EntityTracker(entity, true), lookTime.apply(entity));
+        BrainUtils.setForgettableMemory(entity, MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true), lookTime.apply(entity));
     }
 
     @Override

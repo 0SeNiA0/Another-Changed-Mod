@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
@@ -43,13 +43,12 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
     protected ItemStack applyUseEffects(@NotNull ItemStack item, @NotNull Level level, @NotNull LivingEntity entity){
         if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
 
-        if(TransfurManager.isTransfurred(entity)){
-            if(entity instanceof LatexBeast){
-                entity.hurt(DamageSources.untransfurKill(level, entity), Float.MAX_VALUE);
-                return ItemRegistry.SYRINGE_ITEM.toStack();
-            }
+        if(entity instanceof LatexBeast){
+            entity.hurt(DamageSources.untransfurKill(level, entity), Float.MAX_VALUE);
+            return ItemRegistry.SYRINGE_ITEM.toStack();
+        }
 
-            entity.hurt(DamageSources.syringe(level, entity), .5f);
+        if(TransfurManager.isTransfurred(entity)){
             untransfur(item, entity);
         } else {
             giveDebuffs(entity, 2);
@@ -64,18 +63,13 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
 
         if(TransfurManager.isTransfurred(entity)){
             if(!entity.hasEffect(MobEffectRegistry.UNTRANSFUR_STACK)){
-                entity.setInvulnerable(false);
-                entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
                 entity.addEffect(new MobEffectInstance(MobEffectRegistry.UNTRANSFUR_STACK, 600));//stack for 30s
                 return ItemRegistry.SYRINGE_ITEM.toStack();
             }
 
-            if(entity instanceof LatexBeast){
+            if(entity instanceof LatexBeast) {
                 entity.hurt(DamageSources.untransfurKill(level, syringe, shooter), Float.MAX_VALUE);
-            } else {
-                entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
-                untransfur(stack, entity);
-            }
+            } else untransfur(stack, entity);
         } else {
             giveDebuffs(entity, 2);
             giveWither(entity, .5f, 1);

@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,8 +24,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.client.cmrs.api.ModelPropertyRegistry;
-import net.zaharenko424.a_changed.criterion.TransfurTrigger;
+import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
 import org.apache.logging.log4j.util.InternalApi;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +39,7 @@ import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTI
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.a_changed.registry.ComponentRegistry.COMPONENTS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
+import static net.zaharenko424.a_changed.registry.CriterionTriggerRegistry.TRIGGER_TYPES;
 import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPES;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUIDS;
@@ -65,7 +64,6 @@ public class AChanged {
     public static final DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(BuiltInRegistries.ACTIVITY, MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
-    public static final DeferredRegister<CriterionTrigger<?>> TRIGGER_TYPES = DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES, MODID);
 
     //Activities
     public static final DeferredHolder<Activity, Activity> TRANSFUR_ATTACK = ACTIVITIES.register("transfur_attack", () -> new Activity("transfur_attack"));
@@ -82,10 +80,6 @@ public class AChanged {
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
-
-    //Trigger types
-    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED = TRIGGER_TYPES.register("player_transfurred", TransfurTrigger::new);
-    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED_ENTITY = TRIGGER_TYPES.register("player_transfurred_entity", TransfurTrigger::new);
 
     //Tags
     public static final TagKey<Block> LATEX_RESISTANT = TagKey.create(Registries.BLOCK, resourceLoc("latex_resistant"));

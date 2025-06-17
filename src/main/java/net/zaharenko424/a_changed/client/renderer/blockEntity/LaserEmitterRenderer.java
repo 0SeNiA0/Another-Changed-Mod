@@ -12,9 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     }
 
     @Override
-    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack stack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if(!emitter.isActive()) return;
 
         MatrixStack.push(stack);
@@ -57,7 +57,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
 
         beam.resetPose();
         setupBeam(emitter.getDirection(), emitter.getLaserLength());
-        beam.render(stack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), light, OverlayTexture.NO_OVERLAY);
+        beam.render(stack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), packedLight, OverlayTexture.NO_OVERLAY);
 
         MatrixStack.pop(stack);
     }

@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
-import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,23 +29,18 @@ public class LatexSolventSyringe extends AbstractSyringe {
     }
 
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if(!level.isClientSide) entity.hurt(DamageSources.syringe(level, entity), .5f);
-        return super.finishUsingItem(stack, level, entity);
-    }
-
-    @Override
     protected ItemStack applyUseEffects(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if(!level.isClientSide) entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT, 200));
+        if(!level.isClientSide)
+            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT, 200));
+
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
     @Override
     public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile syringe, @Nullable Entity shooter) {
-        if(!level.isClientSide) {
-            entity.hurt(DamageSources.syringe(level, syringe, shooter), .5f);
-            return applyUseEffects(stack, level, entity);
-        }
+        if(!level.isClientSide)
+            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT, 200));
+
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 }

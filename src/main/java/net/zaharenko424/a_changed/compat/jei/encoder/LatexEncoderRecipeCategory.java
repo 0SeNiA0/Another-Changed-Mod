@@ -14,7 +14,7 @@ import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
+import net.zaharenko424.a_changed.client.screen.machine.LatexEncoderScreen;
 import net.zaharenko424.a_changed.compat.jei.GenderIngredient;
 import net.zaharenko424.a_changed.compat.jei.JeiPlugin;
 import net.zaharenko424.a_changed.compat.jei.ProcessingArrowRecipeWidget;

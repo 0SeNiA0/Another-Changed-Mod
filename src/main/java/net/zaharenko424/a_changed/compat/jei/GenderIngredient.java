@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.TooltipFlag;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.screen.machines.LatexEncoderScreen;
+import net.zaharenko424.a_changed.client.screen.machine.LatexEncoderScreen;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -20,10 +20,10 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
-import net.zaharenko424.a_changed.client.cmrs.api.CustomModel;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.api.NoYFlip;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.cmrs.api.CustomModel;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.api.NoYFlip;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,7 +56,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Shadow protected abstract boolean isBodyVisible(T livingEntity);
 
     @Unique
-    protected final List<RenderLayer<T, M>> a_changed$noFlipLayers = new ArrayList<>();
+    protected final List<RenderLayer<T, M>> cmrs$noFlipLayers = new ArrayList<>();
 
     protected MixinLivingEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -65,7 +65,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @WrapOperation(at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), method = "addLayer")
     private <E> boolean addNoYFlipLayer(List<E> instance, E e, Operation<Boolean> original) {
         if (!(e instanceof NoYFlip)) return original.call(instance, e);//false error highlight
-        a_changed$noFlipLayers.add((RenderLayer<T, M>) e);
+        cmrs$noFlipLayers.add((RenderLayer<T, M>) e);
         return true;
     }
 
@@ -82,16 +82,20 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     }
 
     @Unique
-    private final float[] a_changed$tmp = new float[5];
-
+    private final float[] cmrs$tmp = new float[5];
+// limbSwing == entity.walkAnim.position;
+// limbSwingAmount == entity.walkAnim.speed;
+// ageInTicks == entity.tickCount + partialTick;
+// netHeadYaw == lerp(yHeadRotO, yHeadRot) - lerp(yBodyRotO, yBodyRot);
+// headPitch == lerp(partial, entity.xRotO, entity.getXRot)
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/EntityModel;prepareMobModel(Lnet/minecraft/world/entity/Entity;FFF)V"),
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
     private void captureFloats(T entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci, @Local(name = "f5") float limbSwing, @Local(name = "f4") float limbSwingAmount, @Local(name = "f9") float ageInTicks, @Local(name = "f2") float netHeadYaw, @Local(name = "f6") float headPitch){
-        a_changed$tmp[0] = limbSwing;
-        a_changed$tmp[1] = limbSwingAmount;
-        a_changed$tmp[2] = ageInTicks;
-        a_changed$tmp[3] = netHeadYaw;
-        a_changed$tmp[4] = headPitch;
+        cmrs$tmp[0] = limbSwing;
+        cmrs$tmp[1] = limbSwingAmount;
+        cmrs$tmp[2] = ageInTicks;
+        cmrs$tmp[3] = netHeadYaw;
+        cmrs$tmp[4] = headPitch;
     }
 
     @WrapWithCondition(at = @At(value = "INVOKE", target = "net/minecraft/client/model/EntityModel.setupAnim(Lnet/minecraft/world/entity/Entity;FFFFF)V"),
@@ -127,15 +131,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private boolean renderLayers(boolean original, @Local(argsOnly = true) PoseStack poseStack, @Local(argsOnly = true) MultiBufferSource bufferSource, @Local(argsOnly = true) int light, @Local(argsOnly = true) T entity, @Local(ordinal = 1, argsOnly = true) float partialTicks) {
         if (original) return true;
         boolean noFlipModel = model instanceof NoYFlip;
-        boolean noFlipLayers = !a_changed$noFlipLayers.isEmpty();
+        boolean noFlipLayers = !cmrs$noFlipLayers.isEmpty();
 
         if (noFlipLayers || model instanceof CustomModel<?>) {
             if (!noFlipModel) {
                 poseStack.scale(-1, -1, 1);
                 poseStack.translate(0, 1.501, 0);
             }
-            if(model instanceof CustomModel<?> m) ((CustomModel<LivingEntity>)m).renderLayers(poseStack, light, entity, a_changed$tmp[0], a_changed$tmp[1], partialTicks, a_changed$tmp[2], a_changed$tmp[3], a_changed$tmp[4]);
-            if(noFlipLayers) a_changed$noFlipLayers.forEach(layer -> layer.render(poseStack, bufferSource, light, entity, a_changed$tmp[0], a_changed$tmp[1], partialTicks, a_changed$tmp[2], a_changed$tmp[3], a_changed$tmp[4]));
+            if(model instanceof CustomModel<?> m) ((CustomModel<LivingEntity>)m).renderLayers(poseStack, light, entity, cmrs$tmp[0], cmrs$tmp[1], partialTicks, cmrs$tmp[2], cmrs$tmp[3], cmrs$tmp[4]);
+            if(noFlipLayers) cmrs$noFlipLayers.forEach(layer -> layer.render(poseStack, bufferSource, light, entity, cmrs$tmp[0], cmrs$tmp[1], partialTicks, cmrs$tmp[2], cmrs$tmp[3], cmrs$tmp[4]));
         } else if (!noFlipModel) return false;
 
         poseStack.scale(-1, -1, 1);

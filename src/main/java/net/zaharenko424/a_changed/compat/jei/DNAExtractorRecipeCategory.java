@@ -13,7 +13,7 @@ import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
-import net.zaharenko424.a_changed.client.screen.machines.DNAExtractorScreen;
+import net.zaharenko424.a_changed.client.screen.machine.DNAExtractorScreen;
 import net.zaharenko424.a_changed.item.BloodSyringe;
 import net.zaharenko424.a_changed.recipe.DNAExtractorRecipe;
 import net.zaharenko424.a_changed.registry.ItemRegistry;

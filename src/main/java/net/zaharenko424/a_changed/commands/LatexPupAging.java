@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.ability.LatexPupAgingAbility;
-import net.zaharenko424.a_changed.attachments.LatexPupAgingData;
+import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.jetbrains.annotations.NotNull;

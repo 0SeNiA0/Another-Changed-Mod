@@ -16,7 +16,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.block.machine.Capacitor;
 import net.zaharenko424.a_changed.capability.energy.EnergyStorageWrapper;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
-import net.zaharenko424.a_changed.menu.machines.CapacitorMenu;
+import net.zaharenko424.a_changed.menu.machine.CapacitorMenu;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

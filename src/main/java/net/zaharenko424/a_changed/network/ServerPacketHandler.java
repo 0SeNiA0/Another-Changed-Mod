@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.attachments.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.entity.block.KeypadEntity;
 import net.zaharenko424.a_changed.entity.block.NoteEntity;
 import net.zaharenko424.a_changed.entity.block.machine.ProcessingMachine;
@@ -19,7 +19,7 @@ import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateA
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbilityPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;

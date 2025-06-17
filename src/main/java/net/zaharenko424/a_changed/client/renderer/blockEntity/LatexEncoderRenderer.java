@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.api.MatrixStack;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.machine.LatexEncoderEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
@@ -61,7 +61,7 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
     }
 
     @Override
-    public void render(@NotNull LatexEncoderEntity encoder, float pPartialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull LatexEncoderEntity encoder, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         root.resetPose();
         Direction direction = encoder.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         root.yRot = (direction.getAxis() == Direction.Axis.X ? direction.toYRot() : direction.getOpposite().toYRot()) * Mth.DEG_TO_RAD;
@@ -76,7 +76,7 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
             dnaRoot.visible = false;
             root.render(stack, buffer.getBuffer(
                     RenderType.entitySolid(item.is(ItemRegistry.DARK_LATEX_BASE.get()) ? LatexContainerRenderer.DARK : LatexContainerRenderer.WHITE)),
-                    pPackedLight, OverlayTexture.NO_OVERLAY);
+                    packedLight, OverlayTexture.NO_OVERLAY);
         }
 
         boolean render = false;
@@ -90,7 +90,7 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
         if(render){
             latexBase.visible = false;
             dnaRoot.visible = true;
-            root.render(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), pPackedLight, OverlayTexture.NO_OVERLAY);
+            root.render(stack, buffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
         }
 
         MatrixStack.pop(stack);

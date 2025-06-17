@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
-import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,19 +35,13 @@ public class AdrenalineSyringe extends AbstractSyringe {
 
     @Override
     protected ItemStack applyUseEffects(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if(level.isClientSide()) return ItemRegistry.SYRINGE_ITEM.toStack();
-
-        entity.hurt(DamageSources.syringe(level, entity), .5f);
-        apply(entity);
+        if(!level.isClientSide()) apply(entity);
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
     @Override
     public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile projectile, @Nullable Entity shooter) {
-        if(level.isClientSide()) return ItemRegistry.SYRINGE_ITEM.toStack();
-
-        entity.hurt(DamageSources.syringe(level, projectile, shooter), .5f);
-        apply(entity);
+        if(!level.isClientSide()) apply(entity);
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 

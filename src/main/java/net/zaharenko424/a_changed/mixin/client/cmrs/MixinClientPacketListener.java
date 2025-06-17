@@ -10,7 +10,7 @@ import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.world.entity.Entity;
-import net.zaharenko424.a_changed.client.cmrs.CustomModelManager;
+import net.zaharenko424.cmrs.client.CustomModelManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
