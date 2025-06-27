@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public interface RenderLayerLike {
+public interface RenderLayer {
 
     <E extends LivingEntity> void render(@NotNull E livingEntity, @NotNull CustomModel<E> model, @NotNull PoseStack matrixStack,
                                          @NotNull MultiBufferSource buffer, int packedLight, float limbSwing, float limbSwingAmount,

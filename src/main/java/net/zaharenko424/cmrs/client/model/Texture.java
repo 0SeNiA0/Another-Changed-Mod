@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.property;
+package net.zaharenko424.cmrs.client.model;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
@@ -42,9 +42,9 @@ public final class Texture {
         return fromAsset(loc, buffer.readFloat());
     });
 
-    private boolean embedded;
-    private ResourceLocation location;
-    private NativeImage image;//TODO do not save the bitmap if not embedded/dynamic ?
+    private final boolean embedded;
+    private final ResourceLocation location;
+    private NativeImage image;
     private int width;
     private int height;
     private float scale;
@@ -64,12 +64,13 @@ public final class Texture {
         texture.refresh();
         return texture;
     }
-//TODO register DynamicTexture here?
+
     public static Texture dynamic(@NotNull ResourceLocation location, @NotNull NativeImage image, float scale){
+        Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(image));
         return new Texture(true, location, image, image.getWidth(), image.getHeight(), scale);
     }
 
-    public void refresh(){//TODO test whether minecraft actually loads the texture before every draw call
+    public void refresh(){
         if(embedded) return;
         Minecraft minecraft = Minecraft.getInstance();
         ResourceManager manager = minecraft.getResourceManager();
@@ -93,11 +94,9 @@ public final class Texture {
     /**
      * New location must be unique. Use custom namespace or add "_embedded" at the end.
      */
-    public void embedWithLocation(ResourceLocation location){//Don't release old texture as it might be used by other models.
-        this.location = location;
+    public Texture embedWithLocation(ResourceLocation location){//Don't release old texture as it might be used by other models.
         refresh();
-        Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(image));
-        embedded = true;
+        return dynamic(location, image.mappedCopy(i -> i), scale);
     }
 
     public ResourceLocation getLocation(){

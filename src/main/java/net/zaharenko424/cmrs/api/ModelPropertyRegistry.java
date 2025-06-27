@@ -14,13 +14,13 @@ public class ModelPropertyRegistry {
     public static final DeferredRegister<ModelPropertyType<?>> PROPERTIES = DeferredRegister.create(CMRS.resourceLoc("model_properties"), CMRS.MODID);
     public static final Registry<ModelPropertyType<?>> PROPERTY_REGISTRY = PROPERTIES.makeRegistry(builder ->{});
 
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Textures>> TEXTURES = PROPERTIES.register("textures", () -> new ModelPropertyType<>(Textures.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<CutOut>> CUT_OUT = PROPERTIES.register("cut_out", () -> new ModelPropertyType<>(CutOut.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Glow>> GLOW = PROPERTIES.register("glow", () -> new ModelPropertyType<>(Glow.CODEC));
     /**
      * Remaps absolute uv to uv relative to the size of the texture. //TODO create UV container for each vertex to easier differentiate absolute & relative?
      */
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Unit>> REMAP_UV = PROPERTIES.register("remap_uv", () -> new ModelPropertyType<>(StreamCodec.unit(Unit.INSTANCE)));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Armor>> ARMOR = PROPERTIES.register("armor", () -> new ModelPropertyType<>(Armor.CODEC));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Glow>> GLOW = PROPERTIES.register("glow", () -> new ModelPropertyType<>(Glow.CODEC));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<String>> HEAD = PROPERTIES.register("head", () -> new ModelPropertyType<>(ByteBufCodecs.STRING_UTF8.mapStream(friendly -> friendly)));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<ItemOnHead>> ITEM_ON_HEAD = PROPERTIES.register("item_on_head", () -> new ModelPropertyType<>(ItemOnHead.CODEC));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<ItemInHandLayer>> ITEM_IN_HAND = PROPERTIES.register("item_in_hand", () -> new ModelPropertyType<>(ItemInHandLayer.CODEC));

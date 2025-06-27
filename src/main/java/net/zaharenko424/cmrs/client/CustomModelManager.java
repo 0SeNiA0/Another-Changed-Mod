@@ -105,11 +105,13 @@ public class CustomModelManager {
         modelCache.clear();
     }
 
-    AnyModelRenderer<?, ?> renderer = new AnyModelRenderer<>(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), null, null, null, null, null, null), 0);
+    AnyModelRenderer<?, ?> renderer;
 
     public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void renderModel(ResourceLocation modelId, E entity, PoseStack stack, int light){
         M model = getModel(modelId);
-        if(model != null) ((AnyModelRenderer<E, M>)renderer).render(model, entity, 0, 1, stack, Minecraft.getInstance().renderBuffers().bufferSource(), light);
+        if(model == null) return;
+        if(renderer == null) renderer = new AnyModelRenderer<>(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), null, null, null, null, null, null));
+        ((AnyModelRenderer<E, M>)renderer).render(model, entity, 0, 1, stack, Minecraft.getInstance().renderBuffers().bufferSource(), light);
     }
 
 

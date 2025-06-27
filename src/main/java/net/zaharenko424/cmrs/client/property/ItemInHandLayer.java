@@ -17,14 +17,14 @@ import net.minecraft.world.item.Items;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
-import net.zaharenko424.cmrs.api.RenderLayerLike;
+import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ItemInHandLayer implements RenderLayerLike {
+public final class ItemInHandLayer implements RenderLayer {
 //absolute translate, rotate, scale for now(not additive)
     public static final StreamCodec<FriendlyByteBuf, ItemInHandLayer> CODEC = StreamCodec.of((buffer, itemInHand) -> {
             StreamCodecUtils.writeOptionally(itemInHand.armR, itemInHand.armR != null, buffer, ByteBufCodecs.STRING_UTF8);

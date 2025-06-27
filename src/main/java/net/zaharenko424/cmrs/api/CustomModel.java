@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.model.Texture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,7 @@ public interface CustomModel <E extends LivingEntity> {
 
     ResourceLocation getTexture();
 
-    void setDrawAll(boolean draw);
+    Texture getTexture(int index);
 
-    void setAllVisible(boolean visible);
+    float getShadowRadius(@NotNull E entity);
 }

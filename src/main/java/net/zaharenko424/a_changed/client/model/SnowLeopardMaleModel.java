@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.client.model;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -15,23 +16,24 @@ import net.zaharenko424.a_changed.client.animation.Animations;
 import net.zaharenko424.a_changed.client.animation.FallFlyingAnim;
 import net.zaharenko424.a_changed.client.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.animation.SwimAnim;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
+import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.animation.KeyframeAnimator;
-import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.client.geom.CubeUV;
 import net.zaharenko424.cmrs.client.geom.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.ModelDefinition;
 import net.zaharenko424.cmrs.client.model.PartTransform;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
+import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
 import net.zaharenko424.cmrs.client.property.*;
-import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.cmrs.util.Int2ObjArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SnowLeopardMaleModel<E extends LivingEntity>  extends UniversalCustomModel<E> {
 
@@ -39,10 +41,11 @@ public class SnowLeopardMaleModel<E extends LivingEntity>  extends UniversalCust
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/snow_leopard_male");
 
     public SnowLeopardMaleModel() {
-        super(ModelDefinitionCache.getInstance().bake(bodyLayer), Util.make(new ModelPropertyMapImpl(), map -> {
+        super(ModelDefinitionCache.getInstance().bake(bodyLayer), List.of(Texture.fromAsset(TEXTURE, 2)),
+                Util.make(new ModelPropertyMapImpl(), map -> {
             map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-            map.addLast(ModelPropertyRegistry.TEXTURES.get(), new Textures(Util.make(new Int2ObjArrayMap<>(2), m -> {
-                m.put(0, Texture.fromAsset(TEXTURE, 2));
+            map.addLast(ModelPropertyRegistry.CUT_OUT.get(), new CutOut(Util.make(new Int2IntArrayMap(2), m -> {
+                m.put(0, 0);
             })));
             map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
             map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
@@ -66,7 +69,7 @@ public class SnowLeopardMaleModel<E extends LivingEntity>  extends UniversalCust
             l.add(HumanoidAnim.getInstance());
             l.add(FallFlyingAnim.getInstance());
             l.add(SwimAnim.getInstance());
-        }));
+        }), .5f);
     }
 
     AnimationState ears = new AnimationState();

@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.cmrs.client.RemappingVertexConsumer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
-import net.zaharenko424.cmrs.client.property.Texture;
 import net.zaharenko424.cmrs.util.Pool;
 import org.jetbrains.annotations.NotNull;
 

@@ -21,13 +21,13 @@ import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.api.RenderLayerLike;
+import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class VanillaElytra implements RenderLayerLike {
+public final class VanillaElytra implements RenderLayer {
 
     public static final StreamCodec<FriendlyByteBuf, VanillaElytra> CODEC = StreamCodec.of((buffer, vanillaElytra) -> {
             StreamCodecUtils.writeOptionally(vanillaElytra.transform, !vanillaElytra.transform.isEmpty(), buffer, PoseTransform.CODEC);

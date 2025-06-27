@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class AnyModelRenderer <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> extends CustomModelRenderer<E, M> {
 
-    public AnyModelRenderer(@NotNull EntityRendererProvider.Context context, float shadowRadius) {
-        super(context, null, shadowRadius);
+    public AnyModelRenderer(@NotNull EntityRendererProvider.Context context) {
+        super(context, null);
     }
 
     public void setModel(M model){

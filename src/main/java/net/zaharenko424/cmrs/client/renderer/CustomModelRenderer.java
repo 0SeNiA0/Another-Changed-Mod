@@ -26,8 +26,8 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
 
     protected final EntityRendererProvider.Context context;//Kinda useless. Mostly everything can be statically obtained from Minecraft
 
-    public CustomModelRenderer(@NotNull EntityRendererProvider.Context context, @Nullable M model, float shadowRadius) {
-        super(context, model, shadowRadius);
+    public CustomModelRenderer(@NotNull EntityRendererProvider.Context context, @Nullable M model) {
+        super(context, model, 0);
         this.context = context;
     }
 
@@ -98,6 +98,6 @@ public class CustomModelRenderer<E extends LivingEntity, M extends EntityModel<E
 
     @Override
     protected float getShadowRadius(@NotNull E entity) {
-        return super.getShadowRadius(entity) * entity.getAgeScale();
+        return model != null ? model.getShadowRadius(entity) : 0;
     }
 }

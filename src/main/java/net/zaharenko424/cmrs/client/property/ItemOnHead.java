@@ -21,13 +21,13 @@ import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.api.RenderLayerLike;
+import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class ItemOnHead implements RenderLayerLike {
+public final class ItemOnHead implements RenderLayer {
 
     public static final StreamCodec<FriendlyByteBuf, ItemOnHead> CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,

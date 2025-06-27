@@ -31,8 +31,10 @@ import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelLayer;
+import net.zaharenko424.cmrs.client.model.Texture;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Function;
 
 public final class Armor implements ModelLayer {
@@ -60,6 +62,14 @@ public final class Armor implements ModelLayer {
     @Override
     public IntSet renderIds() {
         return renderIds;
+    }
+
+    @Override
+    public void verifyTextures(List<Texture> textures) {}
+
+    @Override
+    public boolean shouldRenderInFirstPerson() {
+        return false;
     }
 
     @Override

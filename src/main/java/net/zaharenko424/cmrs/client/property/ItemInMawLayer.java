@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.api.RenderLayerLike;
+import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.geom.Reusable;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
@@ -22,7 +22,7 @@ import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemInMawLayer implements RenderLayerLike {
+public class ItemInMawLayer implements RenderLayer {
 
     public static final StreamCodec<FriendlyByteBuf, ItemInMawLayer> CODEC = StreamCodec.of((buffer, itemInMaw) -> {
         buffer.writeUtf(itemInMaw.maw);

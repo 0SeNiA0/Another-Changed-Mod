@@ -33,7 +33,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 
     @Inject(at = @At("RETURN"),method = "<init>")
     private void onInit(EntityRendererProvider.Context context, boolean p_174558_, CallbackInfo ci){
-        cmrs$renderer = new DynamicModelRenderer<>(context, player -> CustomModelManager.getInstance().getModel((AbstractClientPlayer) player), .5f);
+        cmrs$renderer = new DynamicModelRenderer<>(context, player -> CustomModelManager.getInstance().getModel((AbstractClientPlayer) player));
     }
 
     @Inject(at = @At("HEAD"),

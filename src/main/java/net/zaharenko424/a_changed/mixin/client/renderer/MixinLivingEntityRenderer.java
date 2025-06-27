@@ -21,10 +21,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.NoYFlip;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -154,7 +154,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
     private void latexOverlay(@NotNull T entity, float pEntityYaw, float pPartialTicks, PoseStack stack, MultiBufferSource pBuffer, int pPackedLight, CallbackInfo ci){
         TransfurHandler handler = TransfurHandler.of(entity);
-        if(handler == null || handler.isTransfurred() || handler.getTransfurType() == null) return;
+        if(handler == null || handler.isTransfurred() || handler.getTransfurType() == null) return;//TODO move before layers -> villager hat is sett to visible in a layer
 
         float progress = handler.getTransfurProgress();
         if(progress <= 0) return;

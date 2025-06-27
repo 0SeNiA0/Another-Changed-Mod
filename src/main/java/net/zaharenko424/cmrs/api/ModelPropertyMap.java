@@ -46,7 +46,7 @@ public interface ModelPropertyMap {
 
     void forEachModelLayer(@NotNull Consumer<ModelLayer> op);
 
-    void forEachRenderLayer(@NotNull Consumer<RenderLayerLike> op);
+    void forEachRenderLayer(@NotNull Consumer<RenderLayer> op);
 
     boolean isEmpty();
 

@@ -16,8 +16,8 @@ public class DynamicModelRenderer <E extends LivingEntity, M extends EntityModel
 
     protected final Function<E, M> func;
 
-    public DynamicModelRenderer(@NotNull EntityRendererProvider.Context context, @NotNull Function<@NotNull E, @Nullable M> modelFunction, float shadowRadius) {
-        super(context, null, shadowRadius);
+    public DynamicModelRenderer(@NotNull EntityRendererProvider.Context context, @NotNull Function<@NotNull E, @Nullable M> modelFunction) {
+        super(context, null);
         func = modelFunction;
     }
 

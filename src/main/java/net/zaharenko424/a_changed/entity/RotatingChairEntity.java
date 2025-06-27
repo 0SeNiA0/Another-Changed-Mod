@@ -23,7 +23,7 @@ public class RotatingChairEntity extends SeatEntity {
     }
 
     @Override
-    public boolean shouldRender(double p_20296_, double p_20297_, double p_20298_) {
+    public boolean shouldRender(double x, double y, double z) {
         return true;
     }
 
@@ -62,7 +62,7 @@ public class RotatingChairEntity extends SeatEntity {
     }
 
     @Override
-    public void setYRot(float pYRot) {
-        super.setYRot(Mth.wrapDegrees(pYRot));
+    public void setYRot(float yRot) {
+        super.setYRot(Mth.wrapDegrees(yRot));
     }
 }

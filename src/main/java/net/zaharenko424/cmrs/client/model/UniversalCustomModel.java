@@ -11,10 +11,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.cmrs.api.*;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.Glow;
 import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,35 +26,38 @@ import java.util.function.Function;
 public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E> implements NoYFlip, CustomModel<E> {
 
     protected final ModelPart root;
+    protected final List<Texture> textures;
     protected final ModelPropertyMap propertyMap;
     protected final List<AnimationComponent> animations;
+    protected final float shadowRadius;
     protected RenderStack stack;
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties){
-        this(root, properties, new ArrayList<>(1));
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, float shadowRadius){
+        this(root, textures, properties, new ArrayList<>(1), shadowRadius);
     }
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, @NotNull List<AnimationComponent> animations){
-        this(root, new ModelPropertyMapImpl(properties), animations);
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
+        this(root, textures, new ModelPropertyMapImpl(properties), animations, shadowRadius);
     }
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations){
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
         super(RenderType::entityCutoutNoCull);
         this.root = root.getPart("root");
+        this.textures = List.copyOf(textures);
         verifyProperties(properties);
         this.propertyMap = properties;
         this.animations = animations;
+        this.shadowRadius = shadowRadius;
     }
 
     protected void verifyProperties(@NotNull ModelPropertyMap properties){
-        if(!properties.hasProperty(ModelPropertyRegistry.TEXTURES.get())) throw new IllegalStateException("Model has to have a texture property");
-
         IntOpenHashSet set = new IntOpenHashSet();
-        properties.forEachModelLayer(layer ->
+        properties.forEachModelLayer(layer -> {
             layer.renderIds().forEach(id -> {
-                if(!set.add(id)) throw new IllegalStateException("Repeated renderId: " + id);
-            })
-        );
+                if (!set.add(id)) throw new IllegalStateException("Repeated renderId: " + id);
+            });
+            layer.verifyTextures(textures);
+        });
     }
 
     public ModelPart root(){
@@ -148,11 +151,11 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         access.cmrs$finishBatched();
 
         getStack().reset();
-        stack.setRenderTypeFunc(RenderType.ENTITY_CUTOUT);
-        //Hardcoded Textures + Glow for first person rendering
-        getProperty(ModelPropertyRegistry.TEXTURES.get()).setupRenderStack(this, entity, stack, access);
-        Glow glow = getProperty(ModelPropertyRegistry.GLOW.get());
-        if(glow != null) glow.setupRenderStack(this, entity, stack, access);
+
+        propertyMap.forEachModelLayer(layer -> {
+            if(layer.shouldRenderInFirstPerson()) layer.setupRenderStack(this, entity, stack, access);
+        });
+
         setAllVisible(true, part);
         setDrawAll(true, part);
         part.render(poseStack, stack, light, OverlayTexture.NO_OVERLAY, -1);
@@ -178,7 +181,17 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
 
     @Override
     public ResourceLocation getTexture() {
-        return getProperty(ModelPropertyRegistry.TEXTURES.get()).firstTexture();
+        return textures.isEmpty() ? Utils.NULL_LOC : textures.getFirst().getLocation();
+    }
+
+    @Override
+    public Texture getTexture(int index) {
+        return textures.get(index);
+    }
+
+    @Override
+    public float getShadowRadius(@NotNull E entity) {
+        return shadowRadius * entity.getScale() * entity.getAgeScale();
     }
 
     /**

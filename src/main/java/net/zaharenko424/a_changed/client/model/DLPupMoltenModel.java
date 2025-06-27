@@ -1,6 +1,7 @@
 package net.zaharenko424.a_changed.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
@@ -8,19 +9,23 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.cmrs.api.AnimationComponent;
 import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
+import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
-import net.zaharenko424.cmrs.client.property.*;
-import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.cmrs.util.Int2ObjArrayMap;
+import net.zaharenko424.cmrs.client.property.CutOut;
+import net.zaharenko424.cmrs.client.property.ItemInMawLayer;
+import net.zaharenko424.cmrs.client.property.ItemOnHead;
+import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomModel<E> {
 
@@ -29,11 +34,13 @@ public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomMo
     private static final ResourceLocation TEXTURE1 = AChanged.textureLoc("block/dark_latex_block");
 
     public DLPupMoltenModel() {
-        super(ModelDefinitionCache.getInstance().bake(bodyLayer), Util.make(new ModelPropertyMapImpl(), map -> {
+        super(ModelDefinitionCache.getInstance().bake(bodyLayer),
+                List.of(Texture.fromAsset(TEXTURE0, 1), Texture.fromAsset(TEXTURE1, 1)),
+                Util.make(new ModelPropertyMapImpl(), map -> {
             map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-            map.addLast(ModelPropertyRegistry.TEXTURES.get(), new Textures(Util.make(new Int2ObjArrayMap<>(2), m -> {
-                m.put(0, Texture.fromAsset(TEXTURE0, 1));
-                m.put(1, Texture.fromAsset(TEXTURE1, 1));
+            map.addLast(ModelPropertyRegistry.CUT_OUT.get(), new CutOut(Util.make(new Int2IntArrayMap(2), m -> {
+                m.put(0, 0);
+                m.put(1, 1);
             })));
             map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
             map.addLast(ModelPropertyRegistry.ITEM_IN_MAW.get(), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, .1f, -.4f), null, new Vector3f(.4f))));
@@ -48,8 +55,7 @@ public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomMo
                         poseStack.scale(1.5f, 1.5f, 1.5f);
                         poseStack.translate(0, -1/16f, 0);
                     }
-                }))
-        );
+                })), .5f);
     }
 
     public static @NotNull ModelDefinition model(){

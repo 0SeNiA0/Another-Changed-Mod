@@ -335,33 +335,33 @@ public class ClientMod {
         event.registerEntityRenderer(MILK_PUDDING.get(), MilkPuddingRenderer::new);
         event.registerEntityRenderer(ROOMBA_ENTITY.get(), RoombaRenderer::new);
 
-        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomModelRenderer<>(a, BEI_FENG_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(BEI_FENG.get(), a -> new CustomModelRenderer<>(a, BEI_FENG_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(BENIGN.get(), a -> new CustomModelRenderer<>(a, BENIGN_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(BENIGN.get(), a -> new CustomModelRenderer<>(a, BENIGN_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(DARK_LATEX_PUP.get(), a -> new DynamicModelRenderer<>(a, DARK_LATEX_PUP_TF.get()::getModelFor, .5f));
+        event.registerEntityRenderer(DARK_LATEX_PUP.get(), a -> new DynamicModelRenderer<>(a, DARK_LATEX_PUP_TF.get()::getModelFor));
 
-        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getDefaultModel(), .5f));
-        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_F_TF.get().getDefaultModel()));
+        event.registerEntityRenderer(DARK_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, DARK_LATEX_WOLF_M_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomModelRenderer<>(a, GAS_WOLF_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(GAS_WOLF.get(), a -> new CustomModelRenderer<>(a, GAS_WOLF_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomModelRenderer<>(a, HYPNO_CAT_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(HYPNO_CAT.get(), a -> new CustomModelRenderer<>(a, HYPNO_CAT_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_F_TF.get().getDefaultModel(), .5f));
-        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_M_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(LATEX_SHARK_FEMALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_F_TF.get().getDefaultModel()));
+        event.registerEntityRenderer(LATEX_SHARK_MALE.get(), a -> new CustomModelRenderer<>(a, LATEX_SHARK_M_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomModelRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(PURE_WHITE_LATEX_WOLF.get(), a -> new CustomModelRenderer<>(a, PURE_WHITE_LATEX_WOLF_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(SNOW_LEOPARD_FEMALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_F_TF.get().getDefaultModel(), .5f));
-        event.registerEntityRenderer(SNOW_LEOPARD_MALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_M_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(SNOW_LEOPARD_FEMALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_F_TF.get().getDefaultModel()));
+        event.registerEntityRenderer(SNOW_LEOPARD_MALE.get(), a -> new CustomModelRenderer<>(a, SNOW_LEOPARD_M_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(WHITE_LATEX_PUP.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_PUP_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(WHITE_LATEX_PUP.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_PUP_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getDefaultModel(), .5f));
-        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_FEMALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_F_TF.get().getDefaultModel()));
+        event.registerEntityRenderer(WHITE_LATEX_WOLF_MALE.get(), a -> new CustomModelRenderer<>(a, WHITE_LATEX_WOLF_M_TF.get().getDefaultModel()));
 
-        event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomModelRenderer<>(a, YUFENG_DRAGON_TF.get().getDefaultModel(), .5f));
+        event.registerEntityRenderer(YUFENG_DRAGON.get(), a -> new CustomModelRenderer<>(a, YUFENG_DRAGON_TF.get().getDefaultModel()));
     }
 
     @SubscribeEvent

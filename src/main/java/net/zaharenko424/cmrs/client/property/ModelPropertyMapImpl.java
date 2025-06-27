@@ -123,9 +123,9 @@ public class ModelPropertyMapImpl implements ModelPropertyMap {
     }
 
     @Override
-    public void forEachRenderLayer(@NotNull Consumer<RenderLayerLike> op) {
+    public void forEachRenderLayer(@NotNull Consumer<RenderLayer> op) {
         for(Object obj : properties.values()){
-            if(obj instanceof RenderLayerLike layerLike) op.accept(layerLike);
+            if(obj instanceof RenderLayer layerLike) op.accept(layerLike);
         }
     }
 

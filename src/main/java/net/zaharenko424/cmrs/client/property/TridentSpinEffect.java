@@ -15,13 +15,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.api.RenderLayerLike;
+import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TridentSpinEffect implements RenderLayerLike {
+public final class TridentSpinEffect implements RenderLayer {
 
     public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.of((buffer, value) -> {
             StreamCodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC);
