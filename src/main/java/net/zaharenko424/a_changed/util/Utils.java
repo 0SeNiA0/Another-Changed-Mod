@@ -7,21 +7,19 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.AChanged;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+
+import static net.zaharenko424.cmrs.util.Utils.FORMAT;
 
 @ParametersAreNonnullByDefault
 public class Utils {
@@ -54,8 +52,6 @@ public class Utils {
                 booleans[i] = true;
         return booleans;
     }
-
-    private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
 
     @Contract(pure = true)
     public static @NotNull String formatEnergy(int energy){
@@ -125,16 +121,6 @@ public class Utils {
 
     public static float quadraticArmUpdate(float limbSwing) {
         return -65.0F * limbSwing + limbSwing * limbSwing;
-    }
-
-    public static boolean test(@Nullable ItemStack stack, Ingredient ingredient){
-        if(stack == null) return false;
-        for(ItemStack itemstack : ingredient.getItems()) {
-            if(ItemStack.isSameItemSameComponents(stack, itemstack) && stack.getCount() >= itemstack.getCount()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean containsClass(Class<?> clazz, List<Class<?>> list){

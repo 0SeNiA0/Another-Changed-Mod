@@ -1,10 +1,13 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.zaharenko424.cmrs.client.geom.Cube;
+import net.zaharenko424.cmrs.client.geom.Mesh;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -76,9 +79,9 @@ public class GroupDefinition {
 
         allParts.putAll(children);
 
-        List<ModelPart.Cube> cubes1 = cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
-        List<ModelPart.Mesh> meshes1 = meshes.stream().map(meshDef -> {
-            ModelPart.Mesh mesh = meshDef.bake(textureWidth, textureHeight);
+        List<Cube> cubes1 = cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
+        List<Mesh> meshes1 = meshes.stream().map(meshDef -> {
+            Mesh mesh = meshDef.bake(textureWidth, textureHeight);
             return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allParts) : mesh;
         }).toList();
 

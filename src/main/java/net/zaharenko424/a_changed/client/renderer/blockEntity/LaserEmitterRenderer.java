@@ -17,6 +17,10 @@ import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;

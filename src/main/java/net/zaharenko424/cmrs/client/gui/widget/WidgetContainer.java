@@ -101,11 +101,11 @@ public class WidgetContainer extends Widget implements ContainerEventHandler {
     }
 
     protected float scaleWidth(){
-        return width * scale.x;
+        return width / scale.x;
     }
 
     protected float scaleHeight(){
-        return height * scale.y;
+        return height / scale.y;
     }
 
     @Override

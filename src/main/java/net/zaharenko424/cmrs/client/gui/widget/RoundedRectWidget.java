@@ -2,16 +2,12 @@ package net.zaharenko424.cmrs.client.gui.widget;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
-import net.zaharenko424.cmrs.client.geom.Reusable;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.cmrs.client.gui.GuiMeshGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +21,8 @@ import java.util.function.ToIntFunction;
 
 public class RoundedRectWidget extends Widget {
 
-    protected ModelPart.Mesh outline;
-    protected ModelPart.Mesh inside;
+    protected Mesh outline;
+    protected Mesh inside;
     protected float width = 100, height = 20;
     protected float roundingRadius = 5, outlineThickness = 2;
 
@@ -101,8 +97,8 @@ public class RoundedRectWidget extends Widget {
     }
 
     public void rebuildMesh(){
-        ImmutableList.Builder<ModelPart.VertexData> builder = new ImmutableList.Builder<>();
-        List<ModelPart.Quad> quads = new ArrayList<>();
+        ImmutableList.Builder<VertexData> builder = new ImmutableList.Builder<>();
+        List<Quad> quads = new ArrayList<>();
 
         float innerRadius = roundingRadius - outlineThickness;
         float doubleRadius = roundingRadius * 2;
@@ -148,7 +144,7 @@ public class RoundedRectWidget extends Widget {
                         new Vector3f(halfWidth, actualHalfHeight, 0), new Vector3f(halfWidth - outlineThickness, actualHalfHeight, 0));
             }
 
-            outline = new ModelPart.Mesh(builder.build(), quads.toArray(new ModelPart.Quad[0]), 0);
+            outline = new Mesh(builder.build(), quads.toArray(new Quad[0]), 0);
 
             builder = new ImmutableList.Builder<>();
             quads = new ArrayList<>();
@@ -185,7 +181,7 @@ public class RoundedRectWidget extends Widget {
                     new Vector3f(halfWidth - outlineThickness, actualHalfHeight, 0), new Vector3f(-halfWidth + outlineThickness, actualHalfHeight, 0));
         }
 
-        inside = new ModelPart.Mesh(builder.build(), quads.toArray(new ModelPart.Quad[0]), 0);
+        inside = new Mesh(builder.build(), quads.toArray(new Quad[0]), 0);
     }
 
     public boolean shouldRender(){
@@ -208,17 +204,19 @@ public class RoundedRectWidget extends Widget {
     protected void render(@NotNull PoseStack stack, @NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick){
         if(inside == null && outline == null) return;
         PoseStack.Pose matrix = stack.last();
-        VertexConsumer consumer = graphics.bufferSource().getBuffer(RenderType.gui());
+        SimpleVertexConsumer consumer = Reusable.SIMPLE_CONSUMER.get().wrap(graphics.bufferSource().getBuffer(RenderType.gui()));
 
         if(inside != null){
             inside.resetTransform();
-            inside.compile(matrix, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, insideColor != null ? insideColor.applyAsInt(this) : defInsideColor);
+            inside.compile(matrix, consumer.color(insideColor != null ? insideColor.applyAsInt(this) : defInsideColor));
         }
 
         if(outline != null){
             outline.resetTransform();
-            outline.compile(matrix, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, outlineColor != null ? outlineColor.applyAsInt(this) : defOutlineColor);
+            outline.compile(matrix, consumer.color(outlineColor != null ? outlineColor.applyAsInt(this) : defOutlineColor));
         }
+
+        consumer.reset();
     }
 
     @Override

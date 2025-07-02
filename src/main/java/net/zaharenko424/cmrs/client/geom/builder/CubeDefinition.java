@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.Direction;
@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.zaharenko424.cmrs.client.geom.Cube;
 import org.joml.Vector3f;
 
 public class CubeDefinition {
@@ -19,7 +20,7 @@ public class CubeDefinition {
             cube -> cube.inflate,
             ByteBufCodecs.map(Object2ObjectArrayMap::new, NeoForgeStreamCodecs.enumCodec(Direction.class), StreamCodec.<FriendlyByteBuf, UVData>of(
                     (buffer, uv) -> buffer.writeFloat(uv.u1()).writeFloat(uv.v1()).writeFloat(uv.u2()).writeFloat(uv.v2()),
-                    buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, uv -> uv.uv),
+                    buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, uv -> uv.faces()),
             cube -> cube.uv,
             ByteBufCodecs.VAR_INT,
             cube -> cube.renderId,
@@ -48,7 +49,7 @@ public class CubeDefinition {
         this.renderId = renderId;
     }
 
-    public ModelPart.Cube bake(float textureWidth, float textureHeight){
-        return new ModelPart.Cube(origin.x, origin.y, origin.z, size.x, size.y, size.z, inflate.x, inflate.y, inflate.z, uv, textureWidth, textureHeight, renderId);
+    public Cube bake(float textureWidth, float textureHeight){
+        return new Cube(origin.x, origin.y, origin.z, size.x, size.y, size.z, inflate.x, inflate.y, inflate.z, uv, textureWidth, textureHeight, renderId);
     }
 }

@@ -20,7 +20,7 @@ public class LatexSolventSyringe extends AbstractSyringe {
 
     @Override
     public int getContentsColor(ItemStack stack) {
-        return 0;
+        return 168430090;
     }
 
     @Override

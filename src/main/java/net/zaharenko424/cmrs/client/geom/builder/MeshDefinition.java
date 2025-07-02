@@ -1,8 +1,10 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.zaharenko424.cmrs.client.geom.Mesh;
+import net.zaharenko424.cmrs.client.geom.SmoothMesh;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 
 public class MeshDefinition {
@@ -57,8 +59,8 @@ public class MeshDefinition {
         this.vertexInfluence = vertexInfluence;
     }
 
-    public ModelPart.Mesh bake(float textureWidth, float textureHeight){
-        return smooth ? new ModelPart.SmoothMesh(vertices, quads, textureWidth, textureHeight, renderId)
-                : new ModelPart.Mesh(vertices, quads, textureWidth, textureHeight, renderId);
+    public Mesh bake(float textureWidth, float textureHeight){
+        return smooth ? new SmoothMesh(vertices, quads, textureWidth, textureHeight, renderId)
+                : new Mesh(vertices, quads, textureWidth, textureHeight, renderId);
     }
 }

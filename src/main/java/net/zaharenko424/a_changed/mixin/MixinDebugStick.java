@@ -9,12 +9,10 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DebugStickItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DebugStickState;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -44,10 +42,11 @@ public abstract class MixinDebugStick {
      */
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/StateDefinition;getProperties()Ljava/util/Collection;"),
             method = "handleInteraction")
-    private Collection<Property<?>> addLTCProperty(Collection<Property<?>> original, @Local(argsOnly = true) Player player, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) BlockPos pos){
+    private Collection<Property<?>> addLTCProperty(Collection<Property<?>> original, @Local(argsOnly = true) Player player, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) ItemStack debugStick){
         if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) {
             achanged$data = null;
             achanged$pos = null;
+            debugStick.remove(ComponentRegistry.DEBUG_STICK_LATEX);
             return original;
         }
 
@@ -77,7 +76,7 @@ public abstract class MixinDebugStick {
     private <T> T wrapSetData(ItemStack debugStick, DataComponentType<? super T> component, T value, Operation<T> original, @Local Property<?> property, @Local Holder<Block> holder){
         if(property != StateProperties.COVERED_WITH) {
             debugStick.remove(ComponentRegistry.DEBUG_STICK_LATEX);
-            return (T) debugStick.set(DataComponents.DEBUG_STICK_STATE, ((DebugStickState) value).withProperty(holder, property));
+            return original.call(debugStick, component, value);
         }
         debugStick.set(ComponentRegistry.DEBUG_STICK_LATEX, Unit.INSTANCE);
         return null;

@@ -2,16 +2,12 @@ package net.zaharenko424.cmrs.client.gui.widget;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
-import net.zaharenko424.cmrs.client.geom.Reusable;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.cmrs.client.gui.GuiMeshGenerator;
 import net.zaharenko424.cmrs.util.Consumer4;
 import org.apache.commons.lang3.function.ToBooleanBiFunction;
@@ -27,8 +23,8 @@ import java.util.function.ToIntFunction;
 
 public class RadialButton extends Widget {
 
-    protected ModelPart.Mesh outline;
-    protected ModelPart.Mesh inside;
+    protected Mesh outline;
+    protected Mesh inside;
     protected float radOffset;
     protected float radSize, radStep;
     protected float radius, thickness, outlineThickness;
@@ -151,8 +147,8 @@ public class RadialButton extends Widget {
     }
 
     public void rebuildMesh(){
-        ImmutableList.Builder<ModelPart.VertexData> builder = new ImmutableList.Builder<>();
-        List<ModelPart.Quad> quads = new ArrayList<>();
+        ImmutableList.Builder<VertexData> builder = new ImmutableList.Builder<>();
+        List<Quad> quads = new ArrayList<>();
 
         GuiMeshGenerator.genArcMesh(builder, quads, radius - outlineThickness, outlineThickness, radSize, radStep);
         GuiMeshGenerator.genArcMesh(builder, quads, radius - thickness, outlineThickness, radSize, radStep);
@@ -162,14 +158,14 @@ public class RadialButton extends Widget {
             GuiMeshGenerator.genRay(builder, quads, radSize, radius - thickness, radius, outlineThickness, true);
         }
 
-        outline = new ModelPart.Mesh(builder.build(), quads.toArray(new ModelPart.Quad[0]), 0);
+        outline = new Mesh(builder.build(), quads.toArray(new Quad[0]), 0);
 
         builder = new ImmutableList.Builder<>();
         quads = new ArrayList<>();
 
         GuiMeshGenerator.genArcMesh(builder, quads, radius - thickness + outlineThickness, thickness - outlineThickness, radSize, radStep);
 
-        inside = new ModelPart.Mesh(builder.build(), quads.toArray(new ModelPart.Quad[0]), 0);
+        inside = new Mesh(builder.build(), quads.toArray(new Quad[0]), 0);
     }
 
     @Override
@@ -185,17 +181,18 @@ public class RadialButton extends Widget {
         MatrixStack.push(stack);
         stack.mulPose(Reusable.QUATERNION.get().identity().rotateZ(radOffset));
         PoseStack.Pose matrix = stack.last();
-        VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
+        SimpleVertexConsumer consumer = Reusable.SIMPLE_CONSUMER.get().wrap(guiGraphics.bufferSource().getBuffer(RenderType.gui()));
 
         if(inside != null){//Draw inside first so that it doesn't overlap the outline
             inside.resetTransform();
-            inside.compile(matrix, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, insideColor != null ? insideColor.applyAsInt(this) : defInsideColor);
+            inside.compile(matrix, consumer.color(insideColor != null ? insideColor.applyAsInt(this) : defInsideColor));
         }
 
         if(outline != null){
             outline.resetTransform();
-            outline.compile(matrix, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, outlineColor != null ? outlineColor.applyAsInt(this) : defOutlineColor);
+            outline.compile(matrix, consumer.color(outlineColor != null ? outlineColor.applyAsInt(this) : defOutlineColor));
         }
+        consumer.reset();
         MatrixStack.pop(stack);
 
         if(renderIcon != null) {

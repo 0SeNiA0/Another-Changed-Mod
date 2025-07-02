@@ -6,11 +6,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelLayer;
 import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
+import net.zaharenko424.cmrs.util.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -57,13 +58,12 @@ public final class CutOut implements ModelLayer {
     }
 
     @Override
-    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access) {
-        access.cmrs$startSubBatch();
-
+    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, MultiBufferSource source) {
         renderIdToTexture.forEach((renderId, textureId) -> {
             Texture texture = model.getTexture(textureId);
-            if(renderId != Integer.MIN_VALUE) stack.getOrCreate(renderId).add()
-                    .setUVRemapped(access.cmrs$getBuffer(stack.defRenderType(texture.getLocation(), RenderType.ENTITY_CUTOUT), 0), texture);
+            if(renderId != Integer.MIN_VALUE) stack.getOrCreate(renderId)
+                    .add(source.getBuffer(stack.defRenderType(texture.getLocation(), RenderType.ENTITY_CUTOUT), TransparencyType.OPAQUE))
+                    .texture(texture);
         });
     }
 }

@@ -7,10 +7,14 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.cmrs.api.BufferSourceAccess;
-import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.AbstractStackEntity;
 import net.zaharenko424.a_changed.entity.block.PaperStackEntity;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.util.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -44,7 +48,8 @@ public class PaperStackRenderer implements BlockEntityRenderer<PaperStackEntity>
         NonNullList<AbstractStackEntity.Entry> list = entity.entries();
         if(list.isEmpty()) return;
         stack.translate(.5,0,.5);
-        BufferSourceAccess access = BufferSourceAccess.get();
+
+        net.zaharenko424.cmrs.client.renderer.MultiBufferSource source = net.zaharenko424.cmrs.client.renderer.MultiBufferSource.getInstance();
         AbstractStackEntity.Entry entry;
         int id;
         for(int i = 0; i < list.size(); i++){
@@ -56,8 +61,7 @@ public class PaperStackRenderer implements BlockEntityRenderer<PaperStackEntity>
 
             id = entry.modelId();
             if(id > TEXTURES.length - 1) id = TEXTURES.length - 1;
-            paper.render(stack, access.cmrs$getBuffer(RenderType.entitySolid(TEXTURES[id]), 0), packedLight, packedOverlay);
+            paper.render(stack, source.getBuffer(RenderType.entitySolid(TEXTURES[id]), TransparencyType.OPAQUE), packedLight, packedOverlay);
         }
-        access.cmrs$finishBatched();
     }
 }

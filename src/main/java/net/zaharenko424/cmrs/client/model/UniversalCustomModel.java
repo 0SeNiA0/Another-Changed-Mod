@@ -16,6 +16,7 @@ import net.zaharenko424.cmrs.api.*;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.property.FPArms;
 import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +92,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     public void refreshModel(boolean properties){
         if(properties) {
             getStack().setRemap(hasProperty(ModelPropertyRegistry.REMAP_UV.get()));
-            stack.clear();
+            stack.reset();
         }
     }
 
@@ -104,25 +105,20 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     public void renderToBuffer(@NotNull E entity, @NotNull PoseStack poseStack, @Nullable Function<ResourceLocation, RenderType> suggestedRenderType, int packedLight, int packedOverlay, int color) {
         if(suggestedRenderType == null) return;
 
-        BufferSourceAccess access = BufferSourceAccess.get();
-        access.cmrs$finishBatched();
-        prepareRenderStack(entity, suggestedRenderType, access);
+        MultiBufferSource source = MultiBufferSource.getInstance();
+
+        getStack().setRenderTypeFunc(suggestedRenderType);
+        propertyMap.forEachModelLayer(layer -> layer.setupRenderStack(this, entity, stack, source));
 
         root().render(poseStack, stack, packedLight, packedOverlay, color);
 
-        access.cmrs$finishBatched();
-    }
-
-    protected void prepareRenderStack(E entity, Function<ResourceLocation, RenderType> suggestedRenderType, BufferSourceAccess access){
-        getStack().reset();
-        stack.setRenderTypeFunc(suggestedRenderType);
-        propertyMap.forEachModelLayer(layer -> layer.setupRenderStack(this, entity, stack, access));
+        stack.reset();
     }
 
     public void renderLayers(@NotNull PoseStack poseStack, int packedLight, @NotNull E entity,
                              float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-        BufferSourceAccess access = BufferSourceAccess.get();
-        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, poseStack, access, packedLight, limbSwing,
+        net.minecraft.client.renderer.MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, poseStack, buffer, packedLight, limbSwing,
                 limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch));
     }
 
@@ -147,19 +143,18 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         ModelPart part = fpArms.getTransformed(this, arm);
         if(part == null) return;
 
-        BufferSourceAccess access = BufferSourceAccess.get();
-        access.cmrs$finishBatched();
-
-        getStack().reset();
+        MultiBufferSource source = MultiBufferSource.getInstance();
+        getStack();
 
         propertyMap.forEachModelLayer(layer -> {
-            if(layer.shouldRenderInFirstPerson()) layer.setupRenderStack(this, entity, stack, access);
+            if(layer.shouldRenderInFirstPerson()) layer.setupRenderStack(this, entity, stack, source);
         });
 
         setAllVisible(true, part);
         setDrawAll(true, part);
-        part.render(poseStack, stack, light, OverlayTexture.NO_OVERLAY, -1);
-        access.cmrs$finishBatched();
+        part.render(poseStack, getStack(), light, OverlayTexture.NO_OVERLAY, -1);
+
+        stack.reset();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client.cmrs;
+package net.zaharenko424.a_changed.mixin.cmrs;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;

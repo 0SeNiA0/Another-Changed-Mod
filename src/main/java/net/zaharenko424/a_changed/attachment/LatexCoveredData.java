@@ -30,9 +30,9 @@ import java.util.Map;
 
 public class LatexCoveredData {
 
-    public static final byte CLEAR_SYNC = -1;
-    public static final byte FULL_SYNC = 0;
-    public static final byte DIFF_SYNC = 1;
+    private static final byte CLEAR_SYNC = -1;
+    private static final byte FULL_SYNC = 0;
+    private static final byte DIFF_SYNC = 1;
 
     public static @NotNull LatexCoveredData of(@NotNull LevelChunk chunk){
         return chunk.getData(AttachmentRegistry.LATEX_COVERED);
@@ -63,7 +63,7 @@ public class LatexCoveredData {
     }
 
     /**
-     * Latex blocks return CoveredWith.NOTHING !
+     * Latex blocks return CoveredWith.NOTHING
      * @return CoveredWith.NOTHING if no data is present.
      */
     public CoveredWith getCoveredWith(@NotNull BlockPos pos){

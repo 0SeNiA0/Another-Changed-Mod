@@ -562,6 +562,11 @@ public class SyringeProjectile extends Projectile {
     }
 
     @Override
+    public @Nullable ItemStack getPickResult() {
+        return getPickupItem();
+    }
+
+    @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putShort("life", (short)life);

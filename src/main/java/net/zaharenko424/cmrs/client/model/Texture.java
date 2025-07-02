@@ -112,8 +112,16 @@ public final class Texture {
         return getImage() != null ? image.getWidth() : width;
     }
 
+    public int getScaledWidth(){
+        return (int) (getWidth() / scale);
+    }
+
     public int getHeight(){
         return getImage() != null ? image.getHeight() : height;
+    }
+
+    public int getScaledHeight(){
+        return (int) (getHeight() / scale);
     }
 
     public float getScale(){

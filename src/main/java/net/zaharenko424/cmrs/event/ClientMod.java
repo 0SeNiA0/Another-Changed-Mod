@@ -7,7 +7,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.zaharenko424.cmrs.client.CustomModelManager;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ClientMod {
 
     @SubscribeEvent

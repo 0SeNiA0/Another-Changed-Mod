@@ -9,9 +9,9 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.zaharenko424.cmrs.api.ModelSetReason;
 import net.zaharenko424.cmrs.client.CustomModelManager;
 import net.zaharenko424.cmrs.client.gui.widget.*;
-import net.zaharenko424.cmrs.api.ModelSetReason;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -173,7 +173,9 @@ public class ModelManagerScreen extends Screen implements MouseMoveListener {
         super.init();
         refresh();
 
+        float scale = minecraft.getWindow().getWidth() / 1920f;
         WidgetContainer window = cache.getMainWindow();
+        window.setScale(scale, scale, scale);
         window.setOrigin(width / 2f, height / 2f, -1000);
 
         window.addWidget(searchBar);

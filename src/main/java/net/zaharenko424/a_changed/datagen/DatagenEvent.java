@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = AChanged.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AChanged.MODID)
 public final class DatagenEvent {
 
     @SubscribeEvent

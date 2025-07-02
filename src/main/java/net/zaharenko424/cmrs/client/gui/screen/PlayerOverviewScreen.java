@@ -181,7 +181,9 @@ public class PlayerOverviewScreen extends Screen implements MouseMoveListener {
         super.init();
         refresh();
 
+        float scale = minecraft.getWindow().getWidth() / 1920f;
         WidgetContainer window = cache.getMainWindow();
+        window.setScale(scale, scale, scale);
         window.setOrigin(width / 2f, height / 2f, -1000);
 
         window.addWidget(searchBar);

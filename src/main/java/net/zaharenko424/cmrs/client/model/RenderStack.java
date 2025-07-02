@@ -1,48 +1,39 @@
 package net.zaharenko424.cmrs.client.model;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.cmrs.client.RemappingVertexConsumer;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Mesh;
+import net.zaharenko424.cmrs.client.geom.SimpleVertexMultiConsumer;
 import net.zaharenko424.cmrs.util.Pool;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Function;
 
+@ParametersAreNonnullByDefault
 public class RenderStack {
 
     protected final Int2ObjectOpenHashMap<ParameterList> map = new Int2ObjectOpenHashMap<>(4);
-    protected static final Pool<RenderParameters> paramPool = new Pool<>() {
+    protected static final Pool<ParameterList> paramListPool = new Pool<>() {
         @Override
-        protected RenderParameters newObject() {
-            return new RenderParameters();
+        protected ParameterList newObject() {
+            return new ParameterList();
         }
     };
-    protected static final Pool<RemappingVertexConsumer> remapperPool = new Pool<>() {
+    protected static final Pool<Parameters> paramPool = new Pool<>() {
         @Override
-        protected RemappingVertexConsumer newObject() {
-            return new RemappingVertexConsumer(null, 0, 0);
+        protected Parameters newObject() {
+            return new Parameters();
         }
     };
     protected boolean remap;
     protected Function<ResourceLocation, RenderType> func;
 
     public ParameterList getOrCreate(int renderId){
-        return map.computeIfAbsent(renderId, k -> new ParameterList());
-    }
-
-    /**
-     * Resets parameters for rendering.
-     */
-    public void reset(){
-        map.values().forEach(ParameterList::clear);
+        return map.computeIfAbsent(renderId, k -> paramListPool.obtain().init(remap));
     }
 
     /**
@@ -62,96 +53,98 @@ public class RenderStack {
     /**
      * Applies the default Texture to RenderType function if present or fallback.
      */
-    public RenderType defRenderType(ResourceLocation texture, @NotNull Function<ResourceLocation, RenderType> fallback){
+    public RenderType defRenderType(ResourceLocation texture, Function<ResourceLocation, RenderType> fallback){
         return func != null ? func.apply(texture) : fallback.apply(texture);
     }
 
     /**
-     * Clears the ParameterList map.
+     * Resets parameters for rendering.
      */
-    public void clear(){
+    public void reset(){
+        map.values().forEach(paramListPool::free);
         map.clear();
     }
 
-    public void renderMesh(@NotNull ModelPart.Mesh mesh, PoseStack.Pose matrix, int light, int overlay, int color){
+    public void renderMesh(Mesh mesh, PoseStack.Pose matrix, int light, int overlay, int color){
         ParameterList parameters = map.get(mesh.renderId);
-        if(parameters == null || parameters.list.isEmpty()) return;
+        if(parameters == null || parameters.multiConsumer.isEmpty()) return;
 
-        for(RenderParameters param : parameters){
-            mesh.compile(matrix, param.consumer, light, param.overlay != 0 ? param.overlay : overlay, param.color != 0 ? param.color : color);
+        parameters.multiConsumer.forEach(consumer ->
+                ((Parameters)consumer).setupIfNS(overlay, color).light(light));
+
+        mesh.compile(matrix, parameters.multiConsumer);
+    }
+
+    public static class ParameterList implements Pool.Poolable {
+
+        private final SimpleVertexMultiConsumer multiConsumer = new SimpleVertexMultiConsumer();
+        private boolean remap;
+
+        private ParameterList(){}
+
+        ParameterList init(boolean remap){
+            this.remap = remap;
+            return this;
+        }
+
+        public Parameters add(VertexConsumer consumer){
+            Parameters params = paramPool.obtain();
+            params.wrap(consumer);
+            multiConsumer.add(params);
+            params.remap = remap;
+
+            return params;
+        }
+
+        public void reset(){
+            multiConsumer.forEach(consumer -> paramPool.free((Parameters) consumer));
+            multiConsumer.clear();
         }
     }
 
-    public class ParameterList implements Iterable<RenderParameters> {
+    public static final class Parameters extends RemappingVertexConsumer {
 
-        private final List<RenderParameters> list = new ArrayList<>(2);
+        private boolean overlaySet;
+        private boolean colorSet;
+        private boolean remap;
 
-        public RenderParameters add(){
-            RenderParameters param = paramPool.obtain();
-            param.init(RenderStack.this);
-            list.add(param);
-            return param;
-        }
+        private Parameters(){}
 
-        public void clear(){
-            for(RenderParameters param : list) paramPool.free(param);
-            list.clear();
+        @Override
+        public Parameters texture(int textureWidth, int textureHeight) {
+            return remap ? (Parameters) super.texture(textureWidth, textureHeight) : this;
         }
 
         @Override
-        public @NotNull Iterator<RenderParameters> iterator() {
-            return list.iterator();
-        }
-    }
-
-    public static class RenderParameters implements Pool.Poolable {
-
-        private VertexConsumer consumer;
-        private int overlay;
-        private int color;
-
-        private boolean remap;
-
-        void init(RenderStack stack){
-            remap = stack.remap;
+        public Parameters texture(Texture texture) {
+            return remap ? (Parameters) super.texture(texture) : this;
         }
 
-        public RenderParameters set(@NotNull VertexConsumer consumer){
-            this.consumer = consumer;
+        public Parameters overlay(int overlay){
+            super.overlay(overlay);
+            overlaySet = true;
             return this;
         }
 
-        @CanIgnoreReturnValue
-        public RenderParameters setUVRemapped(@NotNull VertexConsumer consumer, int textureWidth, int textureHeight){
-            this.consumer = remap ? remapperPool.obtain().wrap(consumer, textureWidth, textureHeight) : consumer;
+        public Parameters color(int color){
+            super.color(color);
+            colorSet = true;
             return this;
         }
 
-        @CanIgnoreReturnValue
-        public RenderParameters setUVRemapped(@NotNull VertexConsumer consumer, Texture texture){
-            this.consumer = remap
-                    ? remapperPool.obtain().wrap(consumer, (int) (texture.getWidth() / texture.getScale()), (int) (texture.getHeight() / texture.getScale()))
-                    : consumer;
-            return this;
-        }
-
-        public RenderParameters setOverlay(int overlay){
-            this.overlay = overlay;
-            return this;
-        }
-
-        public RenderParameters setColor(int color){
-            this.color = color;
+        Parameters setupIfNS(int overlay, int color){
+            if(!overlaySet) overlay(overlay);
+            if(!colorSet) color(color);
             return this;
         }
 
         @Override
         public void reset() {
-            if(consumer instanceof RemappingVertexConsumer remapper) remapperPool.free(remapper);
-            consumer = null;
-            overlay = 0;
-            color = 0;
-            remap = false;
+            super.reset();
+            overlaySet = false;
+            colorSet = false;
+            textureWidth = 1;
+            textureHeight = 1;
         }
     }
 }

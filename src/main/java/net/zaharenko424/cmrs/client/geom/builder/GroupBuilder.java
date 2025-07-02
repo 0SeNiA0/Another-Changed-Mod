@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

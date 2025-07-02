@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.Direction;
@@ -8,12 +8,16 @@ import java.util.Map;
 
 public class CubeUV {
 
-    final Object2ObjectArrayMap<Direction, UVData> uv = new Object2ObjectArrayMap<>();
+    private final Object2ObjectArrayMap<Direction, UVData> uv = new Object2ObjectArrayMap<>();
 
     public CubeUV(){}
 
     public CubeUV(@NotNull Map<Direction, UVData> data){
         uv.putAll(data);
+    }
+
+    public Object2ObjectArrayMap<Direction, UVData> faces(){
+        return uv;
     }
 
     public CubeUV up(float u1, float v1, float u2, float v2){

@@ -5,12 +5,13 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelLayer;
 import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.renderer.ExtraRenderTypes;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
+import net.zaharenko424.cmrs.util.TransparencyType;
 
 import java.util.List;
 
@@ -56,13 +57,12 @@ public final class Glow implements ModelLayer {
     }
 
     @Override
-    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access) {
-        access.cmrs$startSubBatch();
-
+    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, MultiBufferSource source) {
         renderIdToTexture.forEach((renderId, textureId) -> {
             Texture texture = model.getTexture(textureId);
-            stack.getOrCreate(renderId).add()
-                    .setUVRemapped(access.cmrs$getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(texture.getLocation()), 0), texture);
+            stack.getOrCreate(renderId)
+                    .add(source.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(texture.getLocation()), TransparencyType.OPAQUE))
+                    .texture(texture);
         });
     }
 }

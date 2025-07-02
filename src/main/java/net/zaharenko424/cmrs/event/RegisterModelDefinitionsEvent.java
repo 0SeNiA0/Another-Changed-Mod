@@ -3,7 +3,7 @@ package net.zaharenko424.cmrs.event;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
-import net.zaharenko424.cmrs.client.geom.ModelDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

@@ -27,11 +27,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.neoforge.client.ClientHooks;
-import net.zaharenko424.cmrs.client.model.RenderStack;
-import net.zaharenko424.cmrs.api.BufferSourceAccess;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelLayer;
+import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
+import net.zaharenko424.cmrs.client.renderer.ExtraRenderTypes;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
+import net.zaharenko424.cmrs.util.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -73,9 +75,9 @@ public final class Armor implements ModelLayer {
     }
 
     @Override
-    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access) {
+    public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, MultiBufferSource source) {
         if(entity.isSpectator()) return;
-        access.cmrs$startSubBatch();
+
         ArmorItem.Type type;
         EquipmentSlot slot;
         ItemStack itemStack;
@@ -87,26 +89,25 @@ public final class Armor implements ModelLayer {
             if(!(itemStack.getItem() instanceof ArmorItem armor) || entity.getEquipmentSlotForItem(itemStack) != slot) continue;
             list = stack.getOrCreate(entry.getIntKey());
             if(armor instanceof AnimalArmorItem animalArmor){
-                setupAnimalArmor(list, access, itemStack, animalArmor);
-            } else setupArmorPiece(entity, list, access, itemStack, armor, slot);
+                setupAnimalArmor(list, source, itemStack, animalArmor);
+            } else setupArmorPiece(entity, list, source, itemStack, armor, slot);
         }
 
-        RenderStack.RenderParameters parameters;
         for(Int2ObjectMap.Entry<ArmorItem.Type> entry : idToGlow.int2ObjectEntrySet()){//Do the pass twice because glow buffer has to be created after everything else
             slot = entry.getValue().getSlot();                                         //Can be moved to setupArmor with getAndRefreshPooledBuffer but isn't used currently anyway
             itemStack = entity.getItemBySlot(slot);
             if(!(itemStack.getItem() instanceof ArmorItem armor) || entity.getEquipmentSlotForItem(itemStack) != slot) continue;
-            parameters = stack.getOrCreate(entry.getIntKey()).add();
             if(armor instanceof AnimalArmorItem animalArmor){
-                parameters
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.eyes(animalArmor.getTexture()), 3), 64, animalArmor.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN ? 64 : 32);
-            } else parameters//wrap here too
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.eyes(ClientHooks.getArmorTexture(entity, itemStack, armor.getMaterial().value().layers().getFirst(), slot == EquipmentSlot.LEGS, slot)), 3), 64, 32);
+                stack.getOrCreate(entry.getIntKey())
+                    .add(source.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(animalArmor.getTexture()), TransparencyType.OPAQUE_DECAL))
+                    .texture(64, animalArmor.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN ? 64 : 32);
+            } else stack.getOrCreate(entry.getIntKey())//wrap here too
+                    .add(source.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(ClientHooks.getArmorTexture(entity, itemStack, armor.getMaterial().value().layers().getFirst(), slot == EquipmentSlot.LEGS, slot)), TransparencyType.OPAQUE_DECAL))
+                    .texture(64, 32);
         }
     }
-//TMP make List<List<ByteBufBuilder>> for batches -> first batch(list) is main texture, then overlay list, then tint, then glow
-//TMP BufferSource: pushBatch() -> sets int to size of list, getBuffer(renderType, int relativeBatchIndex)
-    void setupArmorPiece(LivingEntity entity, RenderStack.ParameterList list, BufferSourceAccess access, ItemStack itemStack, ArmorItem item, EquipmentSlot slot){
+
+    void setupArmorPiece(LivingEntity entity, RenderStack.ParameterList list, MultiBufferSource source, ItemStack itemStack, ArmorItem item, EquipmentSlot slot){
         boolean innerModel = slot == EquipmentSlot.LEGS;
         ArmorMaterial material = item.getMaterial().value();
 
@@ -118,26 +119,25 @@ public final class Armor implements ModelLayer {
             if(j == 0) continue;
             texture = ClientHooks.getArmorTexture(entity, itemStack, armormaterial$layer, innerModel, slot);
 
-            list.add()
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.armorCutoutNoCull(texture), 0), 64, 32)// <-- wrap consumer here
-                    .setColor(j)
-                    .setOverlay(OverlayTexture.NO_OVERLAY);
+            list.add(source.getBuffer(RenderType.armorCutoutNoCull(texture), TransparencyType.OPAQUE_DECAL))
+                    .texture(64, 32)// <-- wrap consumer here
+                    .color(j).overlay(OverlayTexture.NO_OVERLAY);
         }
 
         ArmorTrim trim = itemStack.get(DataComponents.TRIM);
         if(trim != null){
             Holder<ArmorMaterial> holder = item.getMaterial();
             TextureAtlasSprite textureatlassprite = spriteGetter().apply(innerModel ? trim.innerTexture(holder) : trim.outerTexture(holder));
-            VertexConsumer vertexconsumer = textureatlassprite.wrap(access.cmrs$getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal()), 1));
-            list.add()//wrap consumer?
-                    .setUVRemapped(vertexconsumer, 64, 32)
-                    .setOverlay(OverlayTexture.NO_OVERLAY);
+            VertexConsumer vertexconsumer = textureatlassprite.wrap(source.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal()), TransparencyType.OPAQUE_DECAL));
+            list.add(vertexconsumer)
+                    .texture(64, 32)//wrap consumer?
+                    .overlay(OverlayTexture.NO_OVERLAY);
         }
 
         if(itemStack.hasFoil()) {
-            list.add()
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.armorEntityGlint(), 2), 64, 32)
-                    .setOverlay(OverlayTexture.NO_OVERLAY);
+            list.add(source.getBuffer(RenderType.armorEntityGlint(), TransparencyType.DECAL))
+                    .texture(64, 32)
+                    .overlay(OverlayTexture.NO_OVERLAY);
         }
     }
 
@@ -147,27 +147,27 @@ public final class Armor implements ModelLayer {
         return func;
     }
 
-    void setupAnimalArmor(RenderStack.ParameterList list, BufferSourceAccess access, ItemStack itemStack, AnimalArmorItem item){
+    void setupAnimalArmor(RenderStack.ParameterList list, MultiBufferSource source, ItemStack itemStack, AnimalArmorItem item){
         if(item.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN){//Horse
             int color = itemStack.is(ItemTags.DYEABLE) ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemStack, -6265536)) : -1;
-            list.add()
-                    .setUVRemapped(access.cmrs$getBuffer(RenderType.entityCutoutNoCull(item.getTexture()), 0), 64, 64)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setColor(color);
+            list.add(source.getBuffer(RenderType.entityCutoutNoCull(item.getTexture()), TransparencyType.OPAQUE_DECAL))
+                    .texture(64, 64)
+                    .overlay(OverlayTexture.NO_OVERLAY)
+                    .color(color);
             return;
         }
         //Wolf
-        list.add()
-                .setUVRemapped(access.cmrs$getBuffer(RenderType.entityCutoutNoCull(item.getTexture()), 0), 64, 32)//wrap consumer
-                .setOverlay(OverlayTexture.NO_OVERLAY);
+        list.add(source.getBuffer(RenderType.entityCutoutNoCull(item.getTexture()), TransparencyType.OPAQUE_DECAL))
+                .texture(64, 32)//wrap consumer
+                .overlay(OverlayTexture.NO_OVERLAY);
 
         if (!itemStack.is(ItemTags.DYEABLE)) return;//TODO add cracks?
         int color = DyedItemColor.getOrDefault(itemStack, 0);
         if (FastColor.ARGB32.alpha(color) == 0) return;
         ResourceLocation overlay = item.getOverlayTexture();
         if (overlay == null) return;
-        list.add()
-                .setUVRemapped(access.cmrs$getBuffer(RenderType.armorCutoutNoCull(overlay), 1), 64, 32)
-                .setColor(color).setOverlay(OverlayTexture.NO_OVERLAY);//wrap
+        list.add(source.getBuffer(RenderType.armorCutoutNoCull(overlay), TransparencyType.OPAQUE_DECAL))
+                .texture(64, 32)//wrap
+                .color(color).overlay(OverlayTexture.NO_OVERLAY);
     }
 }

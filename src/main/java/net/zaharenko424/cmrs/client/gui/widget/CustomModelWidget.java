@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.cmrs.client.CustomModelManager;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 
 public class CustomModelWidget extends ModelWidget {
 
@@ -70,6 +71,7 @@ public class CustomModelWidget extends ModelWidget {
         player.yHeadRotO = 0;
 
         CustomModelManager.getInstance().renderModel(modelId, player, stack, LightTexture.FULL_BRIGHT);
+        MultiBufferSource.getInstance().endBatch();
 
         player.yBodyRot = yBody;
         player.setYRot(yRot);

@@ -34,8 +34,11 @@ public class ModelOverviewScreen extends Screen implements MouseMoveListener {
     protected void init() {
         super.init();
 
+        float scale = minecraft.getWindow().getWidth() / 1920f;
+        model.setScale(scale, scale, scale);
         model.setOrigin(width / 2f, height / 2f, 0)
                 .setSize(width / 3f, height / 3f * 2);
+        window.setScale(scale, scale, scale);
 
         addRenderableWidget(model);
         addRenderableWidget(window.setOrigin(width / 2f, height / 2f, -1000));

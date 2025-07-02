@@ -1,8 +1,9 @@
-package net.zaharenko424.cmrs.client.geom;
+package net.zaharenko424.cmrs.client.geom.builder;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,10 +47,6 @@ public class ModelDefinition {
 
     public static @NotNull ModelDefinition create(Builder mesh, int textureWidth, int textureHeight, float uvScale){
         return new ModelDefinition(mesh.root, textureWidth, textureHeight, uvScale);
-    }
-
-    public static GroupDefinition createRoot(){
-        return new GroupDefinition();
     }
 
     public static class Builder {

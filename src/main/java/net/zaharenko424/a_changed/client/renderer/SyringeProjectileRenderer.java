@@ -10,19 +10,25 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.cmrs.client.ModelDefinitionCache;
-import net.zaharenko424.cmrs.api.BufferSourceAccess;
-import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.client.geom.*;
-import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.client.model.RenderStack;
+import net.zaharenko424.cmrs.util.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 
 public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile> {
@@ -69,28 +75,26 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
             stack.mulPose(Axis.ZP.rotationDegrees(-Mth.sin(f9 * 3.0F) * f9));
         }
 
-        this.stack.reset();
-        BufferSourceAccess access = BufferSourceAccess.get();
-        access.cmrs$finishBatched();
+        net.zaharenko424.cmrs.client.renderer.MultiBufferSource source = net.zaharenko424.cmrs.client.renderer.MultiBufferSource.getInstance();
 
-        VertexConsumer solid = access.cmrs$getBuffer(RenderType.entitySolid(TEXTURE), 0);
-        this.stack.getOrCreate(0).add().set(solid);
-        this.stack.getOrCreate(1).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 2));
+        this.stack.getOrCreate(0).add(source.getBuffer(RenderType.entitySolid(TEXTURE), TransparencyType.OPAQUE));
+        this.stack.getOrCreate(1).add(source.getBuffer(RenderType.entityTranslucent(TEXTURE), TransparencyType.DECAL));
 
         ItemStack syringe = entity.getPickupItemStackOrigin();
         AbstractSyringe item = (AbstractSyringe) syringe.getItem();
 
+        VertexConsumer translucent = source.getBuffer(RenderType.entityTranslucent(TEXTURE), TransparencyType.TRANSLUCENT);
         piston.resetPose();
         boolean empty = true;
         int color = item.getContentsColor(syringe);
         if(FastColor.ARGB32.alpha(color) != 0){
-            this.stack.getOrCreate(2).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 1)).setColor(color);
+            this.stack.getOrCreate(2).add(translucent).color(color);
             empty = false;
         }
 
         color = item.getSecondaryColor(syringe);
         if(FastColor.ARGB32.alpha(color) != 0){
-            this.stack.getOrCreate(3).add().set(access.cmrs$getBuffer(RenderType.entityTranslucent(TEXTURE), 0)).setColor(color);
+            this.stack.getOrCreate(3).add(translucent).color(color);
             empty = false;
         }
 
@@ -99,9 +103,14 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
         }
 
         root.render(stack, this.stack, packedLight, OverlayTexture.NO_OVERLAY, -1);
-        access.cmrs$finishBatched();
+        this.stack.reset();
+
         MatrixStack.pop(stack);
-        super.render(entity, entityYaw, partialTick, stack, buffer, packedLight);
+
+        Component customName = entity.getPickupItemStackOrigin().get(DataComponents.CUSTOM_NAME);
+        if (entity == entityRenderDispatcher.crosshairPickEntity && customName != null) {
+            renderNameTag(entity, customName, stack, buffer, packedLight, partialTick);
+        }
     }
 
     @Override

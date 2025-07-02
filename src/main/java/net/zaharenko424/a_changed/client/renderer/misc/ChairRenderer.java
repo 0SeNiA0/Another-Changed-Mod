@@ -15,6 +15,10 @@ import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.RotatingChairEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {

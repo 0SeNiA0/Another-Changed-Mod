@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
+import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface ModelLayer {
 
     boolean shouldRenderInFirstPerson();
 
-    void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, BufferSourceAccess access);
+    void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, MultiBufferSource source);
 }

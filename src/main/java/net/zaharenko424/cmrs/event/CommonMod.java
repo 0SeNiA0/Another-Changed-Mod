@@ -10,7 +10,7 @@ import net.zaharenko424.cmrs.network.packets.ClientboundRemovePlayerModelPacket;
 import net.zaharenko424.cmrs.network.packets.ClientboundSetBuiltInPlayerModelPacket;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber()
 public class CommonMod {
 
     @SubscribeEvent

@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.mixin.client.cmrs;
+package net.zaharenko424.a_changed.mixin.cmrs.renderer;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

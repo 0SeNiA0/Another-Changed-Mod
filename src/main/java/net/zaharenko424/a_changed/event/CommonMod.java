@@ -40,8 +40,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.zaharenko424.a_changed.AChanged.*;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
+
 @ParametersAreNonnullByDefault
-@EventBusSubscriber(modid = AChanged.MODID,bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AChanged.MODID)
 public class CommonMod {
 
     @SubscribeEvent

@@ -65,7 +65,7 @@ import static net.zaharenko424.a_changed.registry.EntityRegistry.*;
 import static net.zaharenko424.a_changed.registry.TransfurRegistry.*;
 
 @ParametersAreNonnullByDefault
-@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
 public class ClientMod {
 
     @SubscribeEvent

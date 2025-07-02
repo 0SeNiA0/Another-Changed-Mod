@@ -3,13 +3,14 @@ package net.zaharenko424.cmrs.client;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.neoforged.fml.ModLoader;
 import net.zaharenko424.cmrs.event.RegisterModelDefinitionsEvent;
-import net.zaharenko424.cmrs.client.geom.ModelDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
+@Deprecated
 @ParametersAreNonnullByDefault
 public final class ModelDefinitionCache {
 

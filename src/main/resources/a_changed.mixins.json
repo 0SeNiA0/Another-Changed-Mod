@@ -39,11 +39,6 @@
     "client.MixinLightTexture",
     "client.MixinLocalPlayer",
     "client.MixinMultiPlayerGameMode",
-    "client.cmrs.MixinBufferSource",
-    "client.cmrs.MixinClientPacketListener",
-    "client.cmrs.MixinEntityRenderDispatcher",
-    "client.cmrs.MixinPlayerRenderer",
-    "client.cmrs.MixinPoseStack",
     "client.latex.AnimationMetadataAccessor",
     "client.latex.MixinBakedQuad",
     "client.latex.MixinBlockRendererDispatcher",
@@ -56,6 +51,16 @@
     "client.renderer.MixinGameRenderer",
     "client.renderer.MixinItemRenderer",
     "client.renderer.MixinLevelRenderer",
-    "client.renderer.MixinLivingEntityRenderer"
+    "client.renderer.MixinLivingEntityRenderer",
+    "cmrs.BufferBuilderAccessor",
+    "cmrs.MixinClientPacketListener",
+    "cmrs.MixinDebugScreenOverlay",
+    "cmrs.MixinInventoryScreen",
+    "cmrs.MixinPoseStack",
+    "cmrs.renderer.MixinEntityRenderDispatcher",
+    "cmrs.renderer.MixinGameRenderer",
+    "cmrs.renderer.MixinLevelRenderer",
+    "cmrs.renderer.MixinLivingEntityRenderer",
+    "cmrs.renderer.MixinPlayerRenderer"
   ]
 }

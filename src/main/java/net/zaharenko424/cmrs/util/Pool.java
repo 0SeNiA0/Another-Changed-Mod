@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class Pool <E extends Pool.Poolable> {
 
-    List<E> pool = new ArrayList<>(8);
+    protected final List<E> pool = new ArrayList<>(8);
 
     protected abstract E newObject();
 
