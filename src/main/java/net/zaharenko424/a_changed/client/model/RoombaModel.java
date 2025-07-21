@@ -36,8 +36,10 @@ public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
         root.yRot = pNetHeadYaw * Mth.DEG_TO_RAD;
 
         float rotDeg = pEntity.tickCount % 90 * 4;
+        float rotDegNext = (pEntity.tickCount + 1) % 90 * 4;
+        if(rotDegNext < rotDeg) rotDegNext += rotDeg;
 
-        brushRight.yRot = rotDeg * Mth.DEG_TO_RAD;
+        brushRight.yRot = Mth.lerp(pAgeInTicks - pEntity.tickCount, rotDeg, rotDegNext) * Mth.DEG_TO_RAD;
         brushLeft.yRot = -brushRight.yRot;
     }
 

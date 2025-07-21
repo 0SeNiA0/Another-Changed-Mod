@@ -11,6 +11,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.LatexPurifierEntity;
 import net.zaharenko424.a_changed.menu.machine.LatexPurifierMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEntity, LatexPurifierMenu> {
@@ -34,7 +35,10 @@ public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEnti
 
         int progress = entity.getProgress();
         if(progress > 0) {
-            guiGraphics.blit(TEXTURE, leftPos + 76, topPos + 35, 0, 176, 0, 24 * progress / entity.getRecipeProcessingTime(), 16, 256, 166);
+            float progressBar = (float) progress / entity.getRecipeProcessingTime() * 24f;
+
+            WidgetHelper.blit(TEXTURE, guiGraphics.pose(), leftPos + 76, topPos + 35, progressBar, 16,
+                    176, 0, progressBar, 16, 256, 166);
         }
 
         if(!entity.isEnabled()){
@@ -43,7 +47,7 @@ public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEnti
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(areaClicked(leftPos + 149, leftPos + 168, topPos + 60, topPos + 79, mouseX, mouseY)){
             PacketDistributor.sendToServer(new ServerboundProcessingMachinePacket(entity.getBlockPos(), 0, entity.isEnabled() ? 0 : 1));
             minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -51,6 +55,6 @@ public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEnti
             //enable / disable
         }
 
-        return super.mouseClicked(mouseX, mouseY, pButton);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }

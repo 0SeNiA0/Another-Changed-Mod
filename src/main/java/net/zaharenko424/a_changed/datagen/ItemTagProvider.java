@@ -35,6 +35,9 @@ public class ItemTagProvider extends ItemTagsProvider {
         tag(ItemTags.CHEST_ARMOR).add(HAZMAT_CHESTPLATE.get());
         tag(ItemTags.LEG_ARMOR).add(BLACK_LATEX_SHORTS.get(), HAZMAT_LEGGINGS.get());
         tag(ItemTags.FOOT_ARMOR).add(HAZMAT_BOOTS.get());
+
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(PNEUMATIC_SYRINGE_RIFLE.get(), STUN_BATON.get(), STUN_LANCE.get(), SYRINGE_COIL_GUN.get());
+
         tag(ItemTags.FENCE_GATES).add(ORANGE_FENCE_GATE_ITEM.get());
         tag(Tags.Items.GEMS).add(DARK_LATEX_CRYSTAL_SHARD.get(), GREEN_CRYSTAL_SHARD.get());
         tag(PLATES_GOLD).add(GOLDEN_PLATE.get());
@@ -48,6 +51,7 @@ public class ItemTagProvider extends ItemTagsProvider {
         tag(ItemTags.SAPLINGS).add(ORANGE_SAPLING_ITEM.get());
         tag(ItemTags.SIGNS).add(ORANGE_SIGN_ITEM.get());
         tag(WIRES_COPPER).add(COPPER_WIRE_ITEM.get());
+
         tag(ItemTags.WOODEN_BUTTONS).add(ORANGE_BUTTON_ITEM.get());
         tag(ItemTags.WOODEN_DOORS).add(ORANGE_DOOR_ITEM.get());
         tag(ItemTags.WOODEN_FENCES).add(ORANGE_FENCE_ITEM.get());

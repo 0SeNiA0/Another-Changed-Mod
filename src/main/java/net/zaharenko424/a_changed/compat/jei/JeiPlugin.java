@@ -1,11 +1,14 @@
 package net.zaharenko424.a_changed.compat.jei;
 
 import mezz.jei.api.IModPlugin;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
+import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
 import mezz.jei.api.registration.*;
 import mezz.jei.neoforge.network.ConnectionToServer;
 import net.minecraft.client.Minecraft;
@@ -14,9 +17,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.screen.machine.CompressorScreen;
 import net.zaharenko424.a_changed.client.screen.machine.DNAExtractorScreen;
@@ -94,7 +100,21 @@ public class JeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
-        registration.getIngredientManager().removeIngredientsAtRuntime(GenderIngredient.TYPE, Arrays.stream(Gender.values()).toList());
+        IVanillaRecipeFactory vanillaFactory = registration.getVanillaRecipeFactory();
+        registration.addRecipes(RecipeTypes.ANVIL, List.of(
+                makeRepairRecipe(vanillaFactory, ItemRegistry.COPPER_WRENCH),
+                makeSelfRepairRecipe(vanillaFactory, ItemRegistry.COPPER_WRENCH),
+                makeRepairRecipe(vanillaFactory, ItemRegistry.STUN_BATON),
+                makeSelfRepairRecipe(vanillaFactory, ItemRegistry.STUN_BATON),
+                makeRepairRecipe(vanillaFactory, ItemRegistry.STUN_LANCE),
+                makeSelfRepairRecipe(vanillaFactory, ItemRegistry.STUN_LANCE),
+                makeRepairRecipe(vanillaFactory, ItemRegistry.SYRINGE_COIL_GUN, Ingredient.of(ItemRegistry.COPPER_COIL)),
+                makeSelfRepairRecipe(vanillaFactory, ItemRegistry.SYRINGE_COIL_GUN),
+                makeRepairRecipe(vanillaFactory, ItemRegistry.PNEUMATIC_SYRINGE_RIFLE, Ingredient.of(ItemRegistry.PIPE_ITEM)),
+                makeSelfRepairRecipe(vanillaFactory, ItemRegistry.PNEUMATIC_SYRINGE_RIFLE)
+        ));
+
+        registration.getIngredientManager().removeIngredientsAtRuntime(GenderIngredient.TYPE, List.of(Gender.values()));
 
         RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
 
@@ -109,6 +129,30 @@ public class JeiPlugin implements IModPlugin {
 
         registration.addRecipes(LatexPurifierRecipeCategory.TYPE,
                 unWrapRecipes(manager.getAllRecipesFor(RecipeRegistry.LATEX_PURIFIER_RECIPE.get())));
+    }
+
+    private IJeiAnvilRecipe makeRepairRecipe(IVanillaRecipeFactory factory, DeferredItem<? extends TieredItem> item){
+        return makeRepairRecipe(factory, item, item.get().getTier().getRepairIngredient());
+    }
+
+    private IJeiAnvilRecipe makeRepairRecipe(IVanillaRecipeFactory factory, DeferredItem<?> item, Ingredient repairIngredient){
+        ItemStack fullyDamaged = item.toStack();
+        fullyDamaged.setDamageValue(fullyDamaged.getMaxDamage());
+
+        ItemStack damageThreeQuarters = item.toStack();
+        damageThreeQuarters.setDamageValue((int) (damageThreeQuarters.getMaxDamage() * .75f));
+
+        return factory.createAnvilRecipe(fullyDamaged, List.of(repairIngredient.getItems()), List.of(damageThreeQuarters), item.getId().withPrefix("materials_repair."));
+    }
+
+    private IJeiAnvilRecipe makeSelfRepairRecipe(IVanillaRecipeFactory factory, DeferredItem<?> item){
+        ItemStack damageThreeQuarters = item.toStack();
+        damageThreeQuarters.setDamageValue((int) (damageThreeQuarters.getMaxDamage() * .75f));
+
+        ItemStack damageHalf = item.toStack();
+        damageHalf.setDamageValue((int) (damageHalf.getMaxDamage() * .5f));
+
+        return factory.createAnvilRecipe(damageThreeQuarters, List.of(damageThreeQuarters), List.of(damageHalf), item.getId().withPrefix("self_repair."));
     }
 
     private <T extends Recipe<?>> List<T> unWrapRecipes(@NotNull List<RecipeHolder<T>> holders){

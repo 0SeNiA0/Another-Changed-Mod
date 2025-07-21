@@ -3,6 +3,8 @@ package net.zaharenko424.a_changed.event;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectObjectMutablePair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -21,20 +23,17 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.IItemDecorator;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.cmrs.client.CustomBEWLR;
-import net.zaharenko424.cmrs.event.RegisterModelDefinitionsEvent;
-import net.zaharenko424.cmrs.client.renderer.CustomModelRenderer;
-import net.zaharenko424.cmrs.client.renderer.DynamicModelRenderer;
-import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
 import net.zaharenko424.a_changed.client.model.*;
 import net.zaharenko424.a_changed.client.overlay.*;
 import net.zaharenko424.a_changed.client.particle.BlueGasParticle;
@@ -53,9 +52,16 @@ import net.zaharenko424.a_changed.item.AbstractSyringeRifle;
 import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.util.IOUtils;
 import net.zaharenko424.a_changed.util.Thing;
+import net.zaharenko424.cmrs.client.CustomBEWLR;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.renderer.CustomModelRenderer;
+import net.zaharenko424.cmrs.client.renderer.DynamicModelRenderer;
+import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
+import net.zaharenko424.cmrs.event.RegisterModelDefinitionsEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -273,6 +279,37 @@ public class ClientMod {
                 MobEffectRegistry.UNTRANSFUR_STACK.get());
     }
 
+    private static final IItemDecorator ENERGY_BAR = (GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset) -> {
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if(storage.getEnergyStored() == 0) return false;
+
+        WidgetHelper.fill(guiGraphics.pose(), xOffset + 2, yOffset + 11, xOffset + 15, yOffset + 13, 200, -16777216);
+        WidgetHelper.fill(guiGraphics.pose(), xOffset + 2, yOffset + 11, xOffset + 2 + ((float) storage.getEnergyStored() / storage.getMaxEnergyStored() * 13f), yOffset + 12, 200, Color.CYAN.getRGB());
+
+        return false;
+    };
+
+    @SubscribeEvent
+    public static void onRegisterItemDecorations(RegisterItemDecorationsEvent event){
+        event.register(ItemRegistry.POWER_CELL, ENERGY_BAR);
+        event.register(ItemRegistry.STUN_BATON, ENERGY_BAR);
+        event.register(ItemRegistry.STUN_LANCE, ENERGY_BAR);
+        event.register(ItemRegistry.SYRINGE_COIL_GUN, ENERGY_BAR);
+
+        event.register(ItemRegistry.PNEUMATIC_SYRINGE_RIFLE, (GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset) -> {
+            IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+            ItemStack compressedAir = handler.getStackInSlot(0);
+            float airBar = (compressedAir.isEmpty() || !compressedAir.is(ItemRegistry.COMPRESSED_AIR_CANISTER) ? 0 : (float) (compressedAir.getMaxDamage() - compressedAir.getDamageValue()) / compressedAir.getMaxDamage() * 13f);
+            if(airBar == 0) return false;
+
+            WidgetHelper.fill(guiGraphics.pose(), xOffset + 2, yOffset + 11, xOffset + 15, yOffset + 13, 200, -16777216);
+            WidgetHelper.fill(guiGraphics.pose(), xOffset + 2, yOffset + 11, xOffset + 2 + airBar,
+                    yOffset + 12, 200, -2302756);
+
+            return false;
+        });
+    }
+
     @SubscribeEvent
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event){
         event.registerSpriteSet(BLUE_GAS_PARTICLE.get(), BlueGasParticle.Provider::new);
@@ -282,7 +319,6 @@ public class ClientMod {
     public static void onRegisterModelDefinitions(RegisterModelDefinitionsEvent event){
         event.registerModelDefinition(CannedOrangesRenderer.LAYER, CannedOrangesRenderer.bodyLayer());
         event.registerModelDefinition(CryoChamberRenderer.LAYER, CryoChamberRenderer.bodyLayer());
-        event.registerModelDefinition(DNAExtractorRenderer.LAYER, DNAExtractorRenderer.bodyLayer());
         event.registerModelDefinition(LaserEmitterRenderer.LAYER, LaserEmitterRenderer.bodyLayer());
         event.registerModelDefinition(LatexEncoderRenderer.LAYER, LatexEncoderRenderer.bodyLayer());
         event.registerModelDefinition(PileOfOrangesRenderer.LAYER, PileOfOrangesRenderer.bodyLayer());

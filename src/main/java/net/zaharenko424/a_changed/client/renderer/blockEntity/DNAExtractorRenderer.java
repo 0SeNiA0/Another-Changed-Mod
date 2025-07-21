@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.client.renderer.blockEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -10,11 +9,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.cmrs.client.ModelDefinitionCache;
-import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
-import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
@@ -23,13 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEntity> {
 
-    public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.getId(), "main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/dna_extractor_entity");
     private final ModelPart root;
     private final ModelPart[] tubes = new ModelPart[4];
 
     public DNAExtractorRenderer(){
-        root = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
+        root = bodyLayer().bake().getDirectChild("root");
         tubes[0] = root.getDirectChild("tube0");
         tubes[1] = root.getDirectChild("tube1");
         tubes[2] = root.getDirectChild("tube2");

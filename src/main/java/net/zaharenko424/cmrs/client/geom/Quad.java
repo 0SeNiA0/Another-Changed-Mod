@@ -61,7 +61,7 @@ public class Quad {
         for (Vertex vertex : vertices) {
             data = vertex.data();
             consumer.addVertex(data.transformOrGet(posTransform),
-                    data.normal() != null ? data.transformOrGetNormal(normalTransform) : vector3f,
+                    data.normal != null ? data.transformOrGetNormal(normalTransform) : vector3f,
                     vertex.u(), vertex.v());
         }
     }

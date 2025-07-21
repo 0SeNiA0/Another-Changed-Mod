@@ -15,6 +15,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import net.zaharenko424.a_changed.menu.SyringeCoilGunMenu;
+import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,19 +25,12 @@ import java.util.List;
 public class SyringeCoilGun extends AbstractSyringeRifle {
 
     public SyringeCoilGun() {
-        super(new Properties().rarity(Rarity.RARE).durability(100), 5, 10);
+        super(new Properties().rarity(Rarity.RARE).durability(256), 5, 10);
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public @NotNull ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        stack.setDamageValue(stack.getMaxDamage());
-        return stack;
+    public boolean isValidRepairItem(@NotNull ItemStack stack, @NotNull ItemStack repairCandidate) {
+        return repairCandidate.is(ItemRegistry.COPPER_COIL);
     }
 
     @Override

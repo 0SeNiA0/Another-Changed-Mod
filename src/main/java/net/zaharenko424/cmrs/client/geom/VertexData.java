@@ -6,22 +6,39 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * normal !null -> transformedNormal !null
  */
-public record VertexData(Vector3f pos, Vector3f transformedPos, @Nullable Vector3f normal,
-                         @Nullable Vector3f transformedNormal, Quad[] quads, Mesh mesh) {
+public class VertexData {
 
-    public VertexData(Vector3f pos, Quad[] quads, Mesh mesh) {
-        this(pos, new Vector3f(Float.POSITIVE_INFINITY), null, null, quads, mesh);
+    public final Vector3f pos;
+    public final Vector3f transformedPos = new Vector3f(Float.POSITIVE_INFINITY);
+    public final Vector3f normal;
+    public final Vector3f transformedNormal;
+    protected final List<Quad> quads = new ArrayList<>();
+    public final Mesh mesh;
+
+    public VertexData(Vector3f pos, @Nullable Vector3f normal, Quad[] quads, Mesh mesh){
+        this.pos = pos;
+        this.normal = normal;
+        this.transformedNormal = normal != null ? new Vector3f(Float.POSITIVE_INFINITY) : null;
+        if(quads != null) this.quads.addAll(List.of(quads));
+        this.mesh = mesh;
     }
 
-    public VertexData(Vector3f pos, Vector3f normal, Quad[] quads, Mesh mesh) {
-        this(pos, new Vector3f(Float.POSITIVE_INFINITY), normal, new Vector3f(Float.POSITIVE_INFINITY), quads, mesh);
+    public VertexData(Vector3f pos, Quad[] quads, Mesh mesh) {
+        this(pos, null, quads, mesh);
     }
 
     public VertexData(Vector3f pos, Quad[] quads) {
-        this(pos, new Vector3f(Float.POSITIVE_INFINITY), null, null, quads, null);
+        this(pos, null, quads, null);
+    }
+
+    public Mesh mesh(){
+        return mesh;
     }
 
     public void resetTransform() {

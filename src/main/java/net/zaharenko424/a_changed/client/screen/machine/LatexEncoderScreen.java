@@ -13,6 +13,7 @@ import net.zaharenko424.a_changed.entity.block.machine.LatexEncoderEntity;
 import net.zaharenko424.a_changed.menu.machine.LatexEncoderMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity, LatexEncoderMenu> {
@@ -35,9 +36,12 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
         guiGraphics.blit(TEXTURE, leftPos, topPos, 175, 165, 0, 0, 175, 165, 256, 166);
 
         int progress = entity.getProgress();
-        if(progress > 0)
-            guiGraphics.blit(TEXTURE, leftPos + 67, topPos + 28, 0,
-                    176, 0, 42 * progress / entity.getRecipeProcessingTime(), 27, 256, 166);
+        if(progress > 0) {
+            float progressBar = (float) progress / entity.getRecipeProcessingTime() * 42f;
+
+            WidgetHelper.blit(TEXTURE, guiGraphics.pose(), leftPos + 67, topPos + 28, progressBar, 27,
+                    176, 0, progressBar, 27, 256, 166);
+        }
 
         Gender gender = entity.getSelectedGender();
         if(gender != Gender.MALE)
@@ -56,7 +60,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean buttonClicked = false;
         Gender gender = entity.getSelectedGender();
         if(areaClicked(leftPos + 149, leftPos + 168, topPos + 60, topPos + 79, mouseX, mouseY)){
@@ -67,7 +71,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
 
         if (!entity.hasRecipe() && areaClicked(leftPos + 121, leftPos + 138, topPos + 61, topPos + 78, mouseX, mouseY)) {
             buttonClicked = true;
-            int ordinal = gender.ordinal() + (pButton == InputConstants.MOUSE_BUTTON_LEFT ? 1 : -1);
+            int ordinal = gender.ordinal() + (button == InputConstants.MOUSE_BUTTON_LEFT ? 1 : -1);
 
             if(ordinal < 0) ordinal = 2;
             if(ordinal > 2) ordinal = 0;
@@ -80,7 +84,7 @@ public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, pButton);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     protected void sendDataPacket(int index, int data){

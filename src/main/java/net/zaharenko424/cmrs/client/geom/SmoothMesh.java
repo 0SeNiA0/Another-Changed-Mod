@@ -23,15 +23,15 @@ public class SmoothMesh extends Mesh {
         Vector3f buffer = Reusable.VEC3F.get();
         for (VertexData data : vertexData) {
             buffer.set(0);
-            for (Quad quad : data.quads()) buffer.add(quad.normal);
-            buffer.div(data.quads().length, data.normal());
-            data.transformedNormal().set(Float.POSITIVE_INFINITY);
+            for (Quad quad : data.quads) buffer.add(quad.normal);
+            buffer.div(data.quads.size(), data.normal);
+            data.transformedNormal.set(Float.POSITIVE_INFINITY);
         }
     }
 
     @Override
-    protected @NotNull VertexData createData(Vector3f pos, Quad[] quads) {
-        return new VertexData(pos, new Vector3f(), quads, this);
+    protected @NotNull VertexData createData(Vector3f pos) {
+        return new VertexData(pos, new Vector3f(), null, this);
     }
 
     @Override

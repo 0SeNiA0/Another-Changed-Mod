@@ -9,7 +9,10 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.GeneratorEntity;
 import net.zaharenko424.a_changed.menu.machine.GeneratorMenu;
 import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
@@ -33,21 +36,27 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
 
         int burnTicks = generatorEntity.getBurnTicks();
         if(burnTicks > 0){
-            int offset = 14 * burnTicks / generatorEntity.getMaxBurnTicks();
-            int y = 14 - offset;
-            guiGraphics.blit(TEXTURE, leftPos + 45, topPos + 57 + y, 0, 177, y, 14, offset, 256, 166);
+            float offset = 14f * burnTicks / (float) generatorEntity.getMaxBurnTicks();
+            float y = 14 - offset;
+
+            WidgetHelper.blit(TEXTURE, guiGraphics.pose(), leftPos + 45, topPos + 57 + y, 14, offset,
+                    177, y, 14, offset, 256, 166);
             guiGraphics.blit(TEXTURE, leftPos + 73, topPos + 33, 32, 21,
-                    177, 15, 32, 21, 128, 96);
+                    177, 15, 32, 21, 256, 166);
         }
 
         int energy = generatorEntity.getEnergy();
         int capacity = generatorEntity.getCapacity();
 
         if(energy > 0) {
-            int size = 55 * energy / capacity;
-            guiGraphics.blit(AbstractMachineScreen.SIDEBAR, leftPos + 113, topPos + 70 - size, 22, size,
-                    74, size < 9 ? 82 : size < 27 ? 56 : 0, 20, size, 128, 96);
+            float size = 56f * energy / (float) capacity;
+
+            WidgetHelper.fill(guiGraphics.pose(), leftPos + 113, topPos + 15 + (56 - size), leftPos + 135, topPos + 71, 0, Color.GREEN.getRGB());
+            guiGraphics.bufferSource().endLastBatch();
         }
+
+        WidgetHelper.blit(AbstractMachineScreen.SIDEBAR, guiGraphics.pose(), leftPos + 113, topPos + 15, 22, 56,
+                74, 8, 21, 56, 128, 96);
 
         guiGraphics.drawString(font, "EU: ", leftPos + 105, topPos + 72, 4210752, false);
         String str = Utils.formatEnergy(energy);

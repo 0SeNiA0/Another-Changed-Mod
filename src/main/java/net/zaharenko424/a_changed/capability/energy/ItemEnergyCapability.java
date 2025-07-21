@@ -26,11 +26,6 @@ public class ItemEnergyCapability {
         @Override
         public void onEnergyChanged() {
             item.set(ComponentRegistry.ITEM_ENERGY, energy);
-            updateItemDamage();
-        }
-
-        private void updateItemDamage(){
-            item.setDamageValue(item.getMaxDamage() * (capacity - energy) / capacity);
         }
     }
 }

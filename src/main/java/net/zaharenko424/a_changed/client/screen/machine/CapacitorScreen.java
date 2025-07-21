@@ -8,7 +8,10 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.CapacitorEntity;
 import net.zaharenko424.a_changed.menu.machine.CapacitorMenu;
 import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class CapacitorScreen extends AbstractMachineScreen<CapacitorEntity, CapacitorMenu> {
 
@@ -32,10 +35,14 @@ public class CapacitorScreen extends AbstractMachineScreen<CapacitorEntity, Capa
         int capacity = entity.getCapacity();
 
         if(energy > 0) {
-            int size = 55 * energy / capacity;
-            guiGraphics.blit(AbstractMachineScreen.SIDEBAR, leftPos + 139, topPos + 70 - size, 20, size,
-                    74, size < 9 ? 82 : size < 27 ? 56 : 0, 20, size, 128, 96);
+            float size = 56f * energy / (float) capacity;
+
+            WidgetHelper.fill(guiGraphics.pose(), leftPos + 139, topPos + 15 + (56 - size), leftPos + 160, topPos + 71, 0, Color.GREEN.getRGB());
+            guiGraphics.bufferSource().endLastBatch();
         }
+
+        WidgetHelper.blit(AbstractMachineScreen.SIDEBAR, guiGraphics.pose(), leftPos + 139, topPos + 15, 21, 56,
+                74, 8, 21, 56, 128, 96);
 
         guiGraphics.drawString(font, "EU: ", leftPos + 75, topPos + 72, 4210752, false);
         String str = Utils.formatEnergy(energy);

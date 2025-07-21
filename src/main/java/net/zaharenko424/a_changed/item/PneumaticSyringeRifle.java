@@ -23,7 +23,12 @@ import java.util.List;
 public class PneumaticSyringeRifle extends AbstractSyringeRifle {
 
     public PneumaticSyringeRifle() {
-        super(new Properties().rarity(Rarity.UNCOMMON).stacksTo(1), 3, 20);
+        super(new Properties().rarity(Rarity.UNCOMMON).durability(128), 3, 20);
+    }
+
+    @Override
+    public boolean isValidRepairItem(@NotNull ItemStack stack, @NotNull ItemStack repairCandidate) {
+        return repairCandidate.is(ItemRegistry.PIPE_ITEM);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
      * @param amount amount of energy to add
      */
     public void addEnergy(int amount){
-        setEnergy(energy + amount);
+        setEnergy(Math.max(energy + amount, 0));
     }
 
     protected void setEnergy(int amount){

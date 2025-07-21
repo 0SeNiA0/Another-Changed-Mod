@@ -2,7 +2,9 @@ package net.zaharenko424.a_changed.registry;
 
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Tiers;
@@ -51,5 +53,5 @@ public class ArmorMaterialRegistry {
             0
     ));
 
-    public static final SimpleTier ITEM_TIER = new SimpleTier(Tiers.WOOD.getIncorrectBlocksForDrops(), 100, Tiers.WOOD.getSpeed(), Tiers.WOOD.getAttackDamageBonus(), 0, () -> Ingredient.EMPTY);
+    public static final SimpleTier STUN_WEAPON_TIER = new SimpleTier(Tiers.WOOD.getIncorrectBlocksForDrops(), 512, Tiers.WOOD.getSpeed(), Tiers.WOOD.getAttackDamageBonus(), 0, () -> Ingredient.of(ItemTags.create(ResourceLocation.parse("c:plates/iron"))));
 }

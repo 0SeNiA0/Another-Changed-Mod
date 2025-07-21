@@ -8,14 +8,19 @@ import net.minecraft.world.level.block.Block;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class GasCanisterItem extends BlockItem {
+public class GasTankItem extends BlockItem {
 
-    public GasCanisterItem(Block block, Properties properties) {
-        super(block, properties.durability(256).rarity(Rarity.UNCOMMON));
+    public GasTankItem(Block block, Properties properties) {
+        super(block, properties.durability(128).rarity(Rarity.UNCOMMON));
     }
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return -12761089;
     }
 }

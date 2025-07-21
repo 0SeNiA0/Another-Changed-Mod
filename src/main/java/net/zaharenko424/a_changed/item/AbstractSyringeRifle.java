@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +41,10 @@ public abstract class AbstractSyringeRifle extends Item implements MenuProvider 
 
         if(!hasFuel(rifle, handler) || !hasAmmo(handler)) return InteractionResultHolder.fail(rifle);//no energy/air or ammo
 
-        if(!player.isCreative()) consumeFuel(rifle, handler);
+        if(!player.isCreative()) {
+            consumeFuel(rifle, handler);
+            rifle.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        }
 
         //shoot projectile (only take 1 at a time as stack inside of projectile is set to 1)
         SyringeProjectile syringe = new SyringeProjectile(level, player, useFirst(handler, player.isCreative()), rifle);

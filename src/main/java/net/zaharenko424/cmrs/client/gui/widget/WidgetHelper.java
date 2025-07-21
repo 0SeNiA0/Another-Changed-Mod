@@ -57,6 +57,8 @@ public class WidgetHelper {
     }
 
     public static void fill(RenderType renderType, PoseStack stack, float minX, float minY, float maxX, float maxY, float z, int color) {
+        if(minY == maxY || minX == maxX) return;
+
         Matrix4f matrix4f = stack.last().pose();
         if (minX < maxX) {
             float i = minX;

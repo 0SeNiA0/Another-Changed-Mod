@@ -62,7 +62,7 @@ public class ItemRegistry {
     public static final DeferredItem<BlockItem> DISC_ITEM = ITEMS.registerSimpleBlockItem(DISC);
     public static final DeferredItem<BlockItem> EXPOSED_PIPES_ITEM = ITEMS.registerSimpleBlockItem(EXPOSED_PIPES);
     public static final DeferredItem<BlockItem> FLASK_ITEM = ITEMS.registerSimpleBlockItem(FLASK);
-    public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasCanisterItem(GAS_TANK.get(), new Item.Properties()));
+    public static final DeferredItem<BlockItem> GAS_TANK_ITEM = ITEMS.register("gas_tank", ()-> new GasTankItem(GAS_TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GREEN_CRYSTAL_ITEM = ITEMS.registerSimpleBlockItem(GREEN_CRYSTAL);
     public static final DeferredItem<BlockItem> HAZARD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_BLOCK);
     public static final DeferredItem<BlockItem> HAZARD_SLAB_ITEM = ITEMS.registerSimpleBlockItem(HAZARD_SLAB);

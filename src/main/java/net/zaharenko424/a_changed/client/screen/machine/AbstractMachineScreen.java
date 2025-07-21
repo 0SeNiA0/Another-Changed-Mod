@@ -10,7 +10,10 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.AbstractMachineEntity;
 import net.zaharenko424.a_changed.menu.machine.AbstractMachineMenu;
 import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, ?>, C extends AbstractMachineMenu<T>> extends AbstractContainerScreen<C> {
 
@@ -21,20 +24,20 @@ public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, 
     protected int pos = open ? 60 : 0;
     protected int posO = pos;
 
-    public AbstractMachineScreen(C pMenu, Inventory pPlayerInventory, Component pTitle, boolean sideBarActive) {
-        super(pMenu, pPlayerInventory, pTitle);
-        entity = pMenu.getEntity();
+    public AbstractMachineScreen(C menu, Inventory playerInventory, Component title, boolean sideBarActive) {
+        super(menu, playerInventory, title);
+        entity = menu.getEntity();
         this.sideBarActive = sideBarActive;
     }
 
     @Override
-    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        if(!sideBarActive) return super.mouseClicked(pMouseX, pMouseY, pButton);
-        if(areaClicked(leftPos - pos - 14, leftPos, topPos + 4, topPos + 82, pMouseX, pMouseY)){
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(!sideBarActive) return super.mouseClicked(mouseX, mouseY, button);
+        if(areaClicked(leftPos - pos - 14, leftPos, topPos + 4, topPos + 82, mouseX, mouseY)){
             open = !open;
             return true;
         }
-        return super.mouseClicked(pMouseX, pMouseY, pButton);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -50,18 +53,23 @@ public abstract class AbstractMachineScreen <T extends AbstractMachineEntity<?, 
     }
 
     protected void drawEnergySidebar(@NotNull GuiGraphics guiGraphics, int usage, int maxIn, float partialTick){
-        int lerpPos = posO == pos ? pos : (int) Mth.lerp(partialTick, posO, pos);
-        guiGraphics.blit(SIDEBAR, leftPos - 14 - lerpPos, topPos + 4, 14 + Math.min(lerpPos, 60), 78,
+        float lerpPos = posO == pos ? pos : Mth.lerp(partialTick, posO, pos);
+
+        WidgetHelper.blit(SIDEBAR, guiGraphics.pose(), leftPos - 14 - lerpPos, topPos + 4, 14 + Math.min(lerpPos, 60), 78,
                 0, 0, 14 + Math.min(lerpPos, 60), 78, 128, 96);
 
         int energy = entity.getEnergy();
         int capacity = entity.getCapacity();
 
         if(energy > 0) {
-            int size = 55 * energy / capacity;
-            guiGraphics.blit(SIDEBAR, leftPos - 4 - lerpPos, topPos + 67 - size, 4 + Math.min(lerpPos, 16), size,
-                    74, size < 9 ? 82 : size < 27 ? 56 : 0, 4 + Math.min(lerpPos, 16), size, 128, 96);
+            float size = 56f * energy / (float) capacity;
+
+            WidgetHelper.fill(guiGraphics.pose(), leftPos - 4 - lerpPos, topPos + 12 + (56 - size), leftPos - lerpPos + 1 + Math.min(lerpPos, 16), topPos + 68, 0, Color.GREEN.getRGB());
+            guiGraphics.bufferSource().endLastBatch();
         }
+
+        WidgetHelper.blit(SIDEBAR, guiGraphics.pose(), leftPos - 4 - lerpPos, topPos + 12, 5 + Math.min(lerpPos, 16), 56,
+                74, 8, 5 + Math.min(lerpPos, 16), 56, 128, 96);
 
         if(lerpPos < 15) return;
 

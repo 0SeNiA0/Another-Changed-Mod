@@ -33,27 +33,9 @@ public class StunLance extends SwordItem {
     private static final ResourceLocation modifier = AChanged.resourceLoc("lance_range");
 
     public StunLance() {
-        super(ArmorMaterialRegistry.ITEM_TIER, new Properties().rarity(Rarity.UNCOMMON)
-                .attributes(createAttributes(ArmorMaterialRegistry.ITEM_TIER, 2, -3f)
+        super(ArmorMaterialRegistry.STUN_WEAPON_TIER, new Properties().rarity(Rarity.UNCOMMON)
+                .attributes(createAttributes(ArmorMaterialRegistry.STUN_WEAPON_TIER, 2, -3f)
                         .withModifierAdded(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(modifier, 2, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)));
-    }
-
-    @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getBarColor(@NotNull ItemStack stack) {
-        if(stack.has(ComponentRegistry.ENABLED)) return super.getBarColor(stack);
-        return -4795971;
-    }
-
-    @Override
-    public @NotNull ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        stack.setDamageValue(stack.getMaxDamage());
-        return stack;
     }
 
     @Override
@@ -77,6 +59,11 @@ public class StunLance extends SwordItem {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
         ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if(storage.getEnergyStored() < 500){
+            stack.remove(ComponentRegistry.ENABLED);
+            return true;
+        }
+
         if(!(attacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
         if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
 
@@ -104,15 +91,13 @@ public class StunLance extends SwordItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
+
         if(stack.has(ComponentRegistry.ENABLED)){
             tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.on").withStyle(ChatFormatting.DARK_GREEN));
         } else tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.off").withStyle(ChatFormatting.GOLD));
-    }
+        tooltipComponents.add(Component.empty());
 
-    @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return false;
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
     }
 }

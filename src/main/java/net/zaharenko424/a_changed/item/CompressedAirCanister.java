@@ -8,7 +8,12 @@ import org.jetbrains.annotations.NotNull;
 public class CompressedAirCanister extends Item {
 
     public CompressedAirCanister() {
-        super(new Properties().durability(32));
+        super(new Properties().durability(32).setNoRepair());
+    }
+
+    @Override
+    public int getBarColor(@NotNull ItemStack stack) {
+        return -2302756;
     }
 
     public static @NotNull ItemStack consumeAir(@NotNull ItemStack canister){

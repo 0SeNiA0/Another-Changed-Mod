@@ -15,19 +15,7 @@ import java.util.List;
 public class PowerCell extends Item {
 
     public PowerCell(@NotNull Properties properties) {
-        super(properties.durability(100).setNoRepair());
-    }
-
-    @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public @NotNull ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        stack.setDamageValue(stack.getMaxDamage());
-        return stack;
+        super(properties);
     }
 
     @Override
@@ -35,6 +23,5 @@ public class PowerCell extends Item {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
         tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
-
     }
 }
