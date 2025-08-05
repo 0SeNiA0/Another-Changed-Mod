@@ -23,9 +23,9 @@ import java.util.function.Function;
 
 public class LatexPupAgingAbility implements PassiveAbility {
 
-    protected final Function<LivingEntity, TransfurType> turnInto;
+    protected final Function<LivingEntity, TransfurType<?>> turnInto;
 
-    public LatexPupAgingAbility(Function<LivingEntity, TransfurType> turnInto){
+    public LatexPupAgingAbility(Function<LivingEntity, TransfurType<?>> turnInto){
         this.turnInto = turnInto;
     }
 
@@ -64,7 +64,7 @@ public class LatexPupAgingAbility implements PassiveAbility {
         data.tickAge();
 
         if(data.isAboutToTurn()){
-            TransfurType type = turnInto.apply(holder);
+            TransfurType<?> type = turnInto.apply(holder);
             if(holder instanceof Player player){
                 TransfurHandler.nonNullOf(player).transfur(type, TransfurContext.TRANSFUR);
             } else {

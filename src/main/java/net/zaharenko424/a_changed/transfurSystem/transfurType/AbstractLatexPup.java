@@ -9,9 +9,9 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractLatexPup extends TransfurType {
+public abstract class AbstractLatexPup <T extends net.zaharenko424.a_changed.entity.AbstractLatexPup> extends TransfurType<T> {
 
-    public AbstractLatexPup(@NotNull Properties properties) {
+    public AbstractLatexPup(@NotNull Properties<T> properties) {
         super(properties);
     }
 

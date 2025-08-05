@@ -35,7 +35,7 @@ public abstract class MixinGui {
     private static final ResourceLocation achanged$container = AChanged.resourceLoc("container");
 
     @Unique
-    private TransfurType achanged$transfurType;
+    private TransfurType<?> achanged$transfurType;
     @Unique
     private GuiSpriteManager achanged$sprites;
     @Unique

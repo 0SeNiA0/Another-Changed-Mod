@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record ClientboundTransfurSyncPacket(int holderId, ResourceLocation abilityId, float transfurProgress, boolean isTransfurred, TransfurType transfurType) implements CustomPacketPayload {
+public record ClientboundTransfurSyncPacket(int holderId, ResourceLocation abilityId, float transfurProgress, boolean isTransfurred, TransfurType<?> transfurType) implements CustomPacketPayload {
 
     public static final Type<ClientboundTransfurSyncPacket> TYPE = new Type<>(AChanged.resourceLoc("transfur_sync"));
 

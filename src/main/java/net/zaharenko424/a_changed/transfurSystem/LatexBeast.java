@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface LatexBeast extends AbilityHolder {
 
-    @NotNull TransfurType transfurType();
+    @NotNull TransfurType<?> transfurType();
 
     @Override
     default @NotNull List<? extends Ability> getAllowedAbilities(){

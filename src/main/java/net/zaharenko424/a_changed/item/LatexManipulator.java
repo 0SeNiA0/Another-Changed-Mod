@@ -46,7 +46,7 @@ public class LatexManipulator extends Item {
             if(TransfurManager.isTransfurred(player)){
                 handler.unTransfur(TransfurContext.UNTRANSFUR);             //success unTF
             } else if(manipulator.has(transfurType)) {
-                TransfurType transfurType1 = TransfurManager.getTransfurType(manipulator.get(transfurType));
+                TransfurType<?> transfurType1 = TransfurManager.getTransfurType(manipulator.get(transfurType));
                 if(transfurType1 == null) return InteractionResultHolder.pass(manipulator);
                 handler.transfur(transfurType1, TransfurContext.TRANSFUR);//success, tf
             } else return InteractionResultHolder.pass(manipulator);

@@ -44,7 +44,7 @@ public class HeartConverter implements DataProvider {
                 convertHeartsForTFType(transfurType, output));
     }
 
-    protected void convertHeartsForTFType(DeferredHolder<TransfurType, ? extends TransfurType> transfurType, CachedOutput output){
+    protected void convertHeartsForTFType(DeferredHolder<TransfurType<?>, ? extends TransfurType<?>> transfurType, CachedOutput output){
         if(!transfurType.getId().getNamespace().equals(modId)) throw new RuntimeException("Trying to generate textures for other mod");
         collectTemplates();
         File subDir = new File(assetsDirectory, transfurType.getId().getPath());

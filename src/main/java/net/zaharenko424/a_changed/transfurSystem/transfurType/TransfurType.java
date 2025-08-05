@@ -15,12 +15,13 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.cmrs.client.CustomModelManager;
-import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
-import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.cmrs.client.CustomModelManager;
+import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
+import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +30,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public abstract class TransfurType {
+public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
 
     public final ResourceLocation id;
     public final Latex latex;
 
+    protected final Supplier<EntityType<T>> entityType;
     protected final int primaryColor;
     protected final int secondaryColor;
     protected final Map<Pose, EntityDimensions> dimensions;
@@ -48,8 +51,9 @@ public abstract class TransfurType {
      */
     public final List<? extends Ability> abilities;
 
-    public TransfurType(@NotNull Properties properties){
+    public TransfurType(@NotNull Properties<T> properties){
         id = properties.location;
+        entityType = properties.entityType;
         latex = properties.latex;
         primaryColor = properties.primaryColor;
         secondaryColor = properties.secondaryColor;
@@ -91,6 +95,10 @@ public abstract class TransfurType {
         return CustomModelManager.getInstance().getModel(modelId);
     }
 
+    public EntityType<T> getEntityType(){
+        return entityType.get();
+    }
+
     public int getPrimaryColor(){
         return primaryColor;
     }
@@ -129,10 +137,11 @@ public abstract class TransfurType {
         return "TransfurType: " + id.toString();
     }
 
-    public static class Properties {
+    public static class Properties <T extends LivingEntity & LatexBeast> {
 
-        protected ResourceLocation location;
-        protected Latex latex;
+        protected final ResourceLocation location;
+        protected final Latex latex;
+        protected final Supplier<EntityType<T>> entityType;
         protected int primaryColor = -1644826;
         protected int secondaryColor = -4934476;
         protected final Map<Pose, EntityDimensions> dimensions = new HashMap<>(Map.of(
@@ -153,30 +162,31 @@ public abstract class TransfurType {
         protected Consumer<LivingEntity> onUnTransfur;
         protected final List<DeferredHolder<Ability, ? extends Ability>> abilities = new ArrayList<>(TransfurManager.MAX_ABILITIES);
 
-        protected Properties(ResourceLocation resourceLocation, Latex latex){
+        protected Properties(ResourceLocation resourceLocation, Supplier<EntityType<T>> entityType, Latex latex){
             location = resourceLocation;
+            this.entityType = entityType;
             this.latex = latex;
         }
 
-        public static @NotNull Properties of(ResourceLocation resourceLocation, Latex latex){
-            return new TransfurType.Properties(resourceLocation, latex);
+        public static <T extends LivingEntity & LatexBeast> @NotNull Properties<T> of(ResourceLocation resourceLocation, Supplier<EntityType<T>> entity, Latex latex){
+            return new TransfurType.Properties<>(resourceLocation, entity, latex);
         }
 
         /**
          * Color in ARGB
          */
-        public Properties colors(int primary, int secondary){
+        public Properties<T> colors(int primary, int secondary){
             primaryColor = primary;
             secondaryColor = secondary;
             return this;
         }
 
-        public Properties poseSize(Pose pose, EntityDimensions size){
+        public Properties<T> poseSize(Pose pose, EntityDimensions size){
             dimensions.put(pose, size);
             return this;
         }
 
-        public Properties poseSize(Map<Pose, EntityDimensions> map){
+        public Properties<T> poseSize(Map<Pose, EntityDimensions> map){
             dimensions.putAll(map);
             return this;
         }
@@ -187,7 +197,7 @@ public abstract class TransfurType {
          * @param amount amount.
          * @param op modifier operation.
          */
-        public Properties addModifier(Holder<Attribute> attribute, String name, double amount, AttributeModifier.Operation op){
+        public Properties<T> addModifier(Holder<Attribute> attribute, String name, double amount, AttributeModifier.Operation op){
             return addModifier(attribute, new AttributeModifier(AChanged.resourceLoc(name), amount, op));
         }
 
@@ -197,7 +207,7 @@ public abstract class TransfurType {
          * @param amount amount.
          * @param op modifier operation.
          */
-        public Properties addModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, AttributeModifier.Operation op){
+        public Properties<T> addModifier(Holder<Attribute> attribute, ResourceLocation id, double amount, AttributeModifier.Operation op){
             return addModifier(attribute, new AttributeModifier(id, amount, op));
         }
 
@@ -206,7 +216,7 @@ public abstract class TransfurType {
          * @param attribute attribute to add modifier to.
          * @param modifier modifier to add.
          */
-        public Properties addModifier(Holder<Attribute> attribute, AttributeModifier modifier){
+        public Properties<T> addModifier(Holder<Attribute> attribute, AttributeModifier modifier){
             modifiers.put(attribute, modifier);
             return this;
         }
@@ -214,30 +224,30 @@ public abstract class TransfurType {
         /**
          * Zero (default) -> no changes to minecraft logic. Operation - Addition.<p>modifier > 0 -> faster air depletion. <p>-1 < modifier < 0 -> slower depletion. <p>modifier <= -1 -> no depletion.
          */
-        public Properties airReductionModifier(float airReductionModifier){
+        public Properties<T> airReductionModifier(float airReductionModifier){
             return addModifier(AChanged.AIR_DECREASE_SPEED, "latex_air_decrease_speed_mod", airReductionModifier, AttributeModifier.Operation.ADD_VALUE);
         }
 
         /**
          * Operation - Addition
          */
-        public Properties maxHealthModifier(int maxHealthModifier){
+        public Properties<T> maxHealthModifier(int maxHealthModifier){
             return addModifier(Attributes.MAX_HEALTH, "latex_health_mod", maxHealthModifier, AttributeModifier.Operation.ADD_VALUE);
         }
 
         /**
          * Higher modifier -> higher swim speed. <p> Operation - Multiply Total.
          */
-        public Properties swimSpeedModifier(float swimSpeedModifier){
+        public Properties<T> swimSpeedModifier(float swimSpeedModifier){
             return addModifier(NeoForgeMod.SWIM_SPEED, "latex_swim_speed_mod", swimSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
 
-        public Properties gender(Gender gender){
+        public Properties<T> gender(Gender gender){
             this.gender = gender;
             return this;
         }
 
-        public Properties organic(boolean organic){
+        public Properties<T> organic(boolean organic){
             this.organic = organic;
             return this;
         }
@@ -245,7 +255,7 @@ public abstract class TransfurType {
         /**
          * Executed right after player was transfurred & in latex beast constructor. <p>Called serverside only.</p>
          */
-        public Properties onTransfur(Consumer<LivingEntity> onTransfur){
+        public Properties<T> onTransfur(Consumer<LivingEntity> onTransfur){
             this.onTransfur = onTransfur;
             return this;
         }
@@ -253,7 +263,7 @@ public abstract class TransfurType {
         /**
          * Executed right before player is untransfurred. Transfur, when already transfurred, will trigger this too. <p>Called serverside only.</p>
          */
-        public Properties onUnTransfur(Consumer<LivingEntity> onUnTransfur){
+        public Properties<T> onUnTransfur(Consumer<LivingEntity> onUnTransfur){
             this.onUnTransfur = onUnTransfur;
             return this;
         }
@@ -262,12 +272,12 @@ public abstract class TransfurType {
             return abilities.size();
         }
 
-        public Properties addAbility(DeferredHolder<Ability, ? extends Ability> ability){
+        public Properties<T> addAbility(DeferredHolder<Ability, ? extends Ability> ability){
             if(abilities.size() < TransfurManager.MAX_ABILITIES && !abilities.contains(ability)) abilities.add(ability);
             return this;
         }
 
-        public Properties addAbilityBefore(DeferredHolder<Ability, ? extends Ability> before, DeferredHolder<Ability, ? extends Ability> ability){
+        public Properties<T> addAbilityBefore(DeferredHolder<Ability, ? extends Ability> before, DeferredHolder<Ability, ? extends Ability> ability){
             if(abilities.size() == TransfurManager.MAX_ABILITIES || abilities.contains(ability)) return this;
             int index = abilities.indexOf(before);
             if(index < 1) index = 0; else index--;
@@ -275,14 +285,14 @@ public abstract class TransfurType {
             return this;
         }
 
-        public Properties addAbilityAfter(DeferredHolder<Ability, ? extends Ability> after, DeferredHolder<Ability, ? extends Ability> ability){
+        public Properties<T> addAbilityAfter(DeferredHolder<Ability, ? extends Ability> after, DeferredHolder<Ability, ? extends Ability> ability){
             if(abilities.size() == TransfurManager.MAX_ABILITIES || abilities.contains(ability)) return this;
             int index = abilities.indexOf(after) + 1;
             abilities.add(index, ability);
             return this;
         }
 
-        public Properties removeAbility(DeferredHolder<Ability, ? extends Ability> ability){
+        public Properties<T> removeAbility(DeferredHolder<Ability, ? extends Ability> ability){
             abilities.remove(ability);
             return this;
         }

@@ -18,19 +18,21 @@ public class TransfurredEvent extends Event {
 
     private final LivingEntity entity;
     private final LatexBeast latex;
-    private final TransfurType transfurType;
+    private final TransfurType<?> previous;
+    private final TransfurType<?> transfurType;
     private final TransfurContext context;
     private final DamageSource source;
 
     @ApiStatus.Internal
-    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType, TransfurContext context){
-        this(entity, latex, transfurType, context, entity.getLastDamageSource());
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType<?> transfurType, TransfurContext context){
+        this(entity, latex, null, transfurType, context, entity.getLastDamageSource());
     }
 
     @ApiStatus.Internal
-    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType transfurType, TransfurContext context, DamageSource source){
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType<?> previous, TransfurType<?> transfurType, TransfurContext context, DamageSource source){
         this.entity = entity;
         this.latex = latex;
+        this.previous = previous;
         this.transfurType = transfurType;
         this.context = context;
         this.source = source;
@@ -52,7 +54,11 @@ public class TransfurredEvent extends Event {
         return latex;
     }
 
-    public TransfurType getTransfurType(){
+    public @Nullable TransfurType<?> getPrevious(){
+        return previous;
+    }
+
+    public TransfurType<?> getTransfurType(){
         return transfurType;
     }
 

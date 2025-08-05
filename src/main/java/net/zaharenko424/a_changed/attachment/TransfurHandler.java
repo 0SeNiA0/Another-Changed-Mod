@@ -78,7 +78,7 @@ public class TransfurHandler implements AbilityHolder {
     //Synced data
     private Ability selectedAbility;
     private float transfurProgress = 0;
-    private TransfurType transfurType = null;
+    private TransfurType<?> transfurType = null;
     private boolean isTransfurred = false;
 
     //Client only data
@@ -138,7 +138,7 @@ public class TransfurHandler implements AbilityHolder {
         return transfurProgress;
     }
 
-    public void addTransfurProgress(float amount, @NotNull TransfurType transfurType, @NotNull TransfurContext context) {
+    public void addTransfurProgress(float amount, @NotNull TransfurType<?> transfurType, @NotNull TransfurContext context) {
         if(holder.level().isClientSide || amount <= 0) return;
         if(isBeingTransfurred() || isTransfurred()) return;
 
@@ -200,11 +200,11 @@ public class TransfurHandler implements AbilityHolder {
         syncClients();
     }
 
-    public @Nullable TransfurType getTransfurType() {
+    public @Nullable TransfurType<?> getTransfurType() {
         return transfurType;
     }
 
-    public void setTransfurType(@NotNull TransfurType transfurType) {
+    public void setTransfurType(@NotNull TransfurType<?> transfurType) {
             this.transfurType = transfurType;
     }
 
@@ -212,7 +212,7 @@ public class TransfurHandler implements AbilityHolder {
         return isTransfurred && transfurType != null;
     }
 
-    public void transfur(@NotNull TransfurType transfurType, @NotNull TransfurContext context) {
+    public void transfur(@NotNull TransfurType<?> transfurType, @NotNull TransfurContext context) {
         Level level = holder.level();
         if(level.isClientSide) return;
 
@@ -248,7 +248,7 @@ public class TransfurHandler implements AbilityHolder {
                 DamageSource source = DamageSources.transfurKill(player.level(), player.getLastHurtByMob());
                 player.hurt(source, Float.MAX_VALUE);
 
-                NeoForge.EVENT_BUS.post(new TransfurredEvent(player, latexBeast, transfurType, context, source));
+                NeoForge.EVENT_BUS.post(new TransfurredEvent(player, latexBeast, null, transfurType, context, source));
             }
             case PROMPT -> {
                 setBeingTransfurred(true);
@@ -259,10 +259,12 @@ public class TransfurHandler implements AbilityHolder {
         }
     }
 
-    private void actuallyTransfur(TransfurType transfurType, TransfurContext context){
+    private void actuallyTransfur(TransfurType<?> transfurType, TransfurContext context){
         setBeingTransfurred(false);
 
+        TransfurType<?> previous = null;
         if(isTransfurred()){
+            previous = this.transfurType;
             this.transfurType.onUnTransfur(holder);
             TransfurUtils.removeModifiers(holder, this.transfurType);
             this.transfurType.abilities.forEach(ability -> ability.remove(holder));
@@ -278,7 +280,7 @@ public class TransfurHandler implements AbilityHolder {
         syncClients();
         AbilityUtils.syncAbilities(holder);
 
-        NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, transfurType, context, null));
+        NeoForge.EVENT_BUS.post(new TransfurredEvent(holder, null, previous, transfurType, context, null));
     }
 
     public void unTransfur(@NotNull TransfurContext context) {
@@ -295,7 +297,7 @@ public class TransfurHandler implements AbilityHolder {
 
         setBeingTransfurred(false);
 
-        TransfurType transfurTypeO = transfurType;
+        TransfurType<?> transfurTypeO = transfurType;
         if(isTransfurred()) {
             transfurType.onUnTransfur(holder);
             TransfurUtils.removeModifiers(holder, transfurType);
@@ -365,7 +367,7 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     @ApiStatus.Internal
-    public void loadSyncedData(@Nullable Ability ability, float transfurProgress, boolean isTransfurred, TransfurType transfurType){
+    public void loadSyncedData(@Nullable Ability ability, float transfurProgress, boolean isTransfurred, TransfurType<?> transfurType){
         this.selectedAbility = ability;
         this.transfurProgress = transfurProgress;
         this.isTransfurred = isTransfurred;
@@ -402,7 +404,7 @@ public class TransfurHandler implements AbilityHolder {
 
             tag.putFloat(TRANSFUR_PROGRESS_KEY, attachment.transfurProgress);
 
-            TransfurType transfurType = attachment.transfurType;
+            TransfurType<?> transfurType = attachment.transfurType;
             if(transfurType != null) {
                 tag.putBoolean(TRANSFURRED_KEY, attachment.isTransfurred);
                 tag.putString(TRANSFUR_TYPE_KEY, transfurType.id.toString());

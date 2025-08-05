@@ -73,7 +73,7 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
     }
 
     @Override
-    public @NotNull TransfurType transfurType() {
+    public @NotNull TransfurType<DarkLatexPup> transfurType() {
         return TransfurRegistry.DARK_LATEX_PUP_TF.get();
     }
 

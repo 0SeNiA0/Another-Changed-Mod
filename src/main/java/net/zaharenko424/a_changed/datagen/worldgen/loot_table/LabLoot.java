@@ -143,7 +143,7 @@ public record LabLoot(HolderLookup.Provider registries) implements LootTableSubP
                 .add(latexSyringe(TransfurRegistry.SNOW_LEOPARD_M_TF).when(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomeGetter.getOrThrow(Tags.Biomes.IS_SNOWY)))));
     }
 
-    private LootPoolSingletonContainer.Builder<?> latexSyringe(DeferredHolder<TransfurType, ? extends TransfurType> transfurType){
+    private LootPoolSingletonContainer.Builder<?> latexSyringe(DeferredHolder<TransfurType<?>, ? extends TransfurType<?>> transfurType){
         return LootItem.lootTableItem(ItemRegistry.LATEX_SYRINGE).apply(SetComponentsFunction.setComponent(ComponentRegistry.TRANSFUR_TYPE.get(), transfurType.getId()));
     }
 }

@@ -42,10 +42,10 @@ import java.util.Arrays;
 @ParametersAreNonnullByDefault
 public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
 
-    public final @NotNull TransfurType transfurType;
+    public final @NotNull TransfurType<?> transfurType;
     protected Ability selectedAbility;
 
-    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
+    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType<?> transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
         EntityDimensions dimensions = transfurType.getPoseDimensions(this, Pose.STANDING);
@@ -74,7 +74,7 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
     }
 
     @Override
-    public @NotNull TransfurType transfurType() {
+    public @NotNull TransfurType<?> transfurType() {
         return transfurType;
     }
 

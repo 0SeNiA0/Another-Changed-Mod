@@ -8,9 +8,9 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WhiteLatexPup extends AbstractLatexPup {
+public class WhiteLatexPup extends AbstractLatexPup<net.zaharenko424.a_changed.entity.WhiteLatexPup> {
 
-    public WhiteLatexPup(@NotNull Properties properties) {
+    public WhiteLatexPup(@NotNull Properties<net.zaharenko424.a_changed.entity.WhiteLatexPup> properties) {
         super(properties
                 .maxHealthModifier(-4)
                 .addAbility(AbilityRegistry.WL_PUP_AGE).addAbility(AbilityRegistry.WOLF_PASSIVE));

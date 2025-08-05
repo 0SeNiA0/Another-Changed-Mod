@@ -63,7 +63,7 @@ public abstract class AbstractLatexPup extends TamableAnimal implements LatexBea
         setPathfindingMalus(PathType.POWDER_SNOW, -1.0F);
         setPathfindingMalus(PathType.DANGER_POWDER_SNOW, -1.0F);
 
-        TransfurType transfurType = transfurType();
+        TransfurType<?> transfurType = transfurType();
         EntityDimensions dimensions = transfurType.getPoseDimensions(this, Pose.STANDING);
         if(dimensions != null) {
             this.dimensions = dimensions;

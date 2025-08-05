@@ -102,7 +102,7 @@ public abstract class LanguageProvider extends net.neoforged.neoforge.common.dat
         add("tooltip." + modid + "." + key, value);
     }
 
-    protected void addTransfur(DeferredHolder<TransfurType, ? extends TransfurType> type){
+    protected void addTransfur(DeferredHolder<TransfurType<?>, ? extends TransfurType<?>> type){
         add(type.getId().toLanguageKey("transfur"), type.getId().getPath().replace("_", " "));
     }
 }

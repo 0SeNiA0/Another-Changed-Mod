@@ -12,22 +12,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optional<Type> type) {
+public record TransfurTypePredicate(Optional<TransfurType<?>> transfurType, Optional<Type> type) {
 
     public static final Codec<TransfurTypePredicate> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(
-                    Codec.optionalField("transfur_type", ResourceLocation.CODEC.xmap(TransfurManager::getTransfurType, tfType -> tfType.id), false).forGetter(TransfurTypePredicate::transfurType),
+                    Codec.optionalField("transfur_type", ResourceLocation.CODEC.<TransfurType<?>>xmap(TransfurManager::getTransfurType, tfType -> tfType.id), false).forGetter(TransfurTypePredicate::transfurType),
                     Codec.optionalField("type", Codec.stringResolver(Type::toString, Type::valueOf), false).forGetter(TransfurTypePredicate::type)
             ).apply(builder, TransfurTypePredicate::new));
 
-    public boolean matches(TransfurType transfurType){
+    public boolean matches(TransfurType<?> transfurType){
         if(type.isPresent() && !type.get().test(transfurType)) return false;
 
         return transfurType().isEmpty() || transfurType().get() == transfurType;
     }
 
     @Contract("_ -> new")
-    public static @NotNull TransfurTypePredicate of(TransfurType transfurType){
+    public static @NotNull TransfurTypePredicate of(TransfurType<?> transfurType){
         return new TransfurTypePredicate(Optional.of(transfurType), Optional.empty());
     }
 
@@ -41,13 +41,13 @@ public record TransfurTypePredicate(Optional<TransfurType> transfurType, Optiona
         SWIMMING(type -> type.abilities.contains(AbilityRegistry.FISH_PASSIVE.get())),
         FLYING(type -> type.abilities.contains(AbilityRegistry.FALL_FLYING_PASSIVE.get()));
 
-        private final Predicate<TransfurType> check;
+        private final Predicate<TransfurType<?>> check;
 
-        Type(Predicate<TransfurType> check){
+        Type(Predicate<TransfurType<?>> check){
             this.check = check;
         }
 
-        public boolean test(TransfurType transfurType){
+        public boolean test(TransfurType<?> transfurType){
             return check.test(transfurType);
         }
     }

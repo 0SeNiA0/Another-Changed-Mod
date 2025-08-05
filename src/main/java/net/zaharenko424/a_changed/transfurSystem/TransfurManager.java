@@ -1,11 +1,8 @@
 package net.zaharenko424.a_changed.transfurSystem;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
@@ -39,13 +36,13 @@ public class TransfurManager {
         return TransfurHandler.nonNullOf(entity).getTransfurProgress();
     }
 
-    public static @Nullable TransfurType getTransfurType(@NotNull LivingEntity entity){
+    public static @Nullable TransfurType<?> getTransfurType(@NotNull LivingEntity entity){
         if(entity instanceof LatexBeast latex) return latex.transfurType();
         TransfurHandler handler = TransfurHandler.of(entity);
         return handler == null ? null : handler.getTransfurType();
     }
 
-    public static @Nullable TransfurType getTransfurType(@NotNull ResourceLocation transfurType){
+    public static @Nullable TransfurType<?> getTransfurType(@NotNull ResourceLocation transfurType){
         return TransfurRegistry.TRANSFUR_REGISTRY.get(transfurType);
     }
 
@@ -70,16 +67,5 @@ public class TransfurManager {
 
     public static boolean wantsToBeGrabbed(@NotNull Player player){
         return GrabData.dataOf(player).wantsToBeGrabbed();
-    }
-
-    public static <T extends LivingEntity & LatexBeast> @Nullable EntityType<T> getTransfurEntity(@NotNull TransfurType transfurType){
-        try {
-            EntityType<?> entity = BuiltInRegistries.ENTITY_TYPE.get(transfurType.id);
-            if(entity == EntityType.PIG) return null;
-            return (EntityType<T>) entity;
-        } catch (Exception exception){
-            AChanged.LOGGER.error("Exception occurred while fetching entity for transfur type {}", transfurType, exception);
-            return null;
-        }
     }
 }

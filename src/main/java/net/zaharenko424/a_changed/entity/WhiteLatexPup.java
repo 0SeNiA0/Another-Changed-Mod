@@ -73,7 +73,7 @@ public class WhiteLatexPup extends AbstractLatexPup implements SmartBrainOwner<W
     }
 
     @Override
-    public @NotNull TransfurType transfurType() {
+    public @NotNull TransfurType<WhiteLatexPup> transfurType() {
         return TransfurRegistry.WHITE_LATEX_PUP_TF.get();
     }
 

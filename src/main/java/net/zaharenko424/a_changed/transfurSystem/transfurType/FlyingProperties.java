@@ -1,24 +1,29 @@
 package net.zaharenko424.a_changed.transfurSystem.transfurType;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import org.jetbrains.annotations.NotNull;
 
-public class FlyingProperties extends TransfurType.Properties {
+import java.util.function.Supplier;
 
-    protected FlyingProperties(ResourceLocation resourceLocation, Latex latex) {
-        super(resourceLocation, latex);
+public class FlyingProperties <T extends LivingEntity & LatexBeast> extends TransfurType.Properties<T> {
+
+    protected FlyingProperties(ResourceLocation resourceLocation, Supplier<EntityType<T>> entityType, Latex latex) {
+        super(resourceLocation, entityType, latex);
         airReductionModifier(.5f);
         swimSpeedModifier(-.25f);
         addAbility(AbilityRegistry.FALL_FLYING_PASSIVE);
     }
 
-    public static @NotNull FlyingProperties of(ResourceLocation resourceLocation) {
-        return new FlyingProperties(resourceLocation, Latex.WHITE);
+    public static <T extends LivingEntity & LatexBeast> @NotNull FlyingProperties<T> of(ResourceLocation resourceLocation, Supplier<EntityType<T>> entityType) {
+        return new FlyingProperties<>(resourceLocation, entityType, Latex.WHITE);
     }
 
-    public static @NotNull FlyingProperties of(ResourceLocation resourceLocation, Latex latex) {
-        return new FlyingProperties(resourceLocation, latex);
+    public static <T extends LivingEntity & LatexBeast> @NotNull FlyingProperties<T> of(ResourceLocation resourceLocation, Supplier<EntityType<T>> entityType, Latex latex) {
+        return new FlyingProperties<>(resourceLocation, entityType, latex);
     }
 }

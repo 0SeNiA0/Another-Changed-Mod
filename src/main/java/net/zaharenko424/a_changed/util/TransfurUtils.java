@@ -16,14 +16,11 @@ import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
-import static net.zaharenko424.a_changed.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TOLERANCE;
 
 public class TransfurUtils {
@@ -38,7 +35,7 @@ public class TransfurUtils {
             handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     };
 
-    public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
+    public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType<?> transfurType){
         float maxHealthO = holder.getMaxHealth();
         holder.getAttributes().addTransientAttributeModifiers(transfurType.modifiers);
         float maxHealth = holder.getMaxHealth();
@@ -50,7 +47,7 @@ public class TransfurUtils {
         if(holder.getHealth() > maxHealth) holder.setHealth(maxHealth);
     }
 
-    public static void  removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType transfurType){
+    public static void removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType<?> transfurType){
         holder.getAttributes().removeAttributeModifiers(transfurType.modifiers);
         if(holder.getHealth() > holder.getMaxHealth()) holder.setHealth(holder.getMaxHealth());
     }
@@ -58,8 +55,8 @@ public class TransfurUtils {
     /**
      * Returned entity can be safely cast to LivingEntity.
      */
-    public static LatexBeast spawnLatex(@NotNull TransfurType transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
-        return Objects.requireNonNullElseGet(TransfurManager.getTransfurEntity(transfurType), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
+    public static <T extends LivingEntity & LatexBeast> T spawnLatex(@NotNull TransfurType<T> transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
+        return transfurType.getEntityType().spawn(level, pos, MobSpawnType.CONVERSION);
     }
 
     public static Vec2 targetLookAngles(@NotNull Vec3 looker, @NotNull Vec3 target){

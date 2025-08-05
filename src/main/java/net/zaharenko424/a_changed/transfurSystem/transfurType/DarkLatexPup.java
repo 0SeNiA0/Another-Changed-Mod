@@ -11,11 +11,11 @@ import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DarkLatexPup extends AbstractLatexPup {
+public class DarkLatexPup extends AbstractLatexPup<net.zaharenko424.a_changed.entity.DarkLatexPup> {
 
     protected final ResourceLocation molten;
 
-    public DarkLatexPup(@NotNull Properties properties) {
+    public DarkLatexPup(@NotNull Properties<net.zaharenko424.a_changed.entity.DarkLatexPup> properties) {
         super(properties.organic(true)
                 .maxHealthModifier(-4).colors(-13686230, -14146010)
                 .addAbility(AbilityRegistry.DL_PUP_MELT).addAbility(AbilityRegistry.DL_PUP_AGE).addAbility(AbilityRegistry.WOLF_PASSIVE));
