@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.property;
+package net.zaharenko424.cmrs.client.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,10 +13,12 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
+import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +41,11 @@ public final class TridentSpinEffect implements RenderLayer {
     public TridentSpinEffect(@Nullable PoseTransform transform){
         box = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SPIN_ATTACK).getChild("box");
         this.transform = transform == null ? new PoseTransform() : transform;
+    }
+
+    @Override
+    public DeferredHolder<RenderLayerType<?>, RenderLayerType<TridentSpinEffect>> type() {
+        return RenderLayerRegistry.TRIDENT_SPIN_EFFECT;
     }
 
     @Override

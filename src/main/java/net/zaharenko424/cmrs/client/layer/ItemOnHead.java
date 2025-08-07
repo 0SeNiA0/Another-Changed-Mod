@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.property;
+package net.zaharenko424.cmrs.client.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -19,10 +19,12 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -41,6 +43,11 @@ public final class ItemOnHead implements RenderLayer {
 
     public ItemOnHead(@NotNull String head){
         headName = head;
+    }
+
+    @Override
+    public DeferredHolder<RenderLayerType<?>, RenderLayerType<ItemOnHead>> type() {
+        return RenderLayerRegistry.ITEM_ON_HEAD;
     }
 
     public ModelPart getPart(@NotNull CustomModel<?> model){

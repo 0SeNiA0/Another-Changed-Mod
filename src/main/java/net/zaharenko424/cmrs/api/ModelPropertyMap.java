@@ -1,10 +1,9 @@
 package net.zaharenko424.cmrs.api;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.zaharenko424.cmrs.client.property.ModelPropertyType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 public interface ModelPropertyMap {
 
@@ -43,10 +42,6 @@ public interface ModelPropertyMap {
     @Nullable PropertyOverrideMap getOverrides();
 
     void clearOverrides();
-
-    void forEachModelLayer(@NotNull Consumer<ModelLayer> op);
-
-    void forEachRenderLayer(@NotNull Consumer<RenderLayer> op);
 
     boolean isEmpty();
 

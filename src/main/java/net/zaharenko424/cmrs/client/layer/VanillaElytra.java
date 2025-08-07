@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.property;
+package net.zaharenko424.cmrs.client.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -19,10 +19,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
+import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,6 +81,11 @@ public final class VanillaElytra implements RenderLayer {
         this.bTransform = bTransform == null ? new PoseTransform() : bTransform;
         this.bTransformFlying = bTransformFlying == null ? new PoseTransform() : bTransformFlying;
         this.bTransformCrouching = bTransformCrouching == null ? new PoseTransform() : bTransformCrouching;
+    }
+
+    @Override
+    public DeferredHolder<RenderLayerType<?>, RenderLayerType<VanillaElytra>> type() {
+        return RenderLayerRegistry.VANILLA_ELYTRA;
     }
 
     @Override

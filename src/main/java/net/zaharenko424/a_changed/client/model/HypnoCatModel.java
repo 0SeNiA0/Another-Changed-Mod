@@ -1,7 +1,5 @@
 package net.zaharenko424.a_changed.client.model;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.client.animation.Keyframe;
@@ -20,7 +18,6 @@ import net.zaharenko424.a_changed.client.animation.FallFlyingAnim;
 import net.zaharenko424.a_changed.client.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.animation.SwimAnim;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.animation.AnimationChannel;
 import net.zaharenko424.cmrs.client.animation.AnimationDefinition;
@@ -29,15 +26,23 @@ import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.client.layer.ItemInHandLayer;
+import net.zaharenko424.cmrs.client.layer.ItemOnHead;
+import net.zaharenko424.cmrs.client.layer.TridentSpinEffect;
+import net.zaharenko424.cmrs.client.layer.VanillaElytra;
+import net.zaharenko424.cmrs.client.material.CutOut;
+import net.zaharenko424.cmrs.client.material.Glow;
+import net.zaharenko424.cmrs.client.material.VanillaTexArmor;
 import net.zaharenko424.cmrs.client.model.PartTransform;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
-import net.zaharenko424.cmrs.client.property.*;
+import net.zaharenko424.cmrs.client.property.FPArms;
+import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HypnoCatModel<E extends LivingEntity> extends UniversalCustomModel<E> {
@@ -46,38 +51,25 @@ public class HypnoCatModel<E extends LivingEntity> extends UniversalCustomModel<
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/hypno_cat");
 
     public HypnoCatModel() {
-        super(ModelDefinitionCache.getInstance().bake(bodyLayer), List.of(Texture.fromAsset(TEXTURE, 2)),
+        super(ModelDefinitionCache.getInstance().bake(bodyLayer),
+                List.of(Texture.fromAsset(TEXTURE, 2)),
+                List.of(new CutOut(0), new Glow(0), new VanillaTexArmor(ArmorItem.Type.HELMET), new VanillaTexArmor(ArmorItem.Type.CHESTPLATE), new VanillaTexArmor(ArmorItem.Type.LEGGINGS), new VanillaTexArmor(ArmorItem.Type.BOOTS)),
+                List.of(new ItemOnHead("head"), new ItemInHandLayer(
+                        "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
+                        "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
+                        ),
+                        new VanillaElytra(), new TridentSpinEffect()
+                ),
                 Util.make(new ModelPropertyMapImpl(), map -> {
-            map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-            map.addLast(ModelPropertyRegistry.CUT_OUT.get(), new CutOut(Util.make(new Int2IntArrayMap(2), m -> {
-                m.put(0, 0);
-            })));
-            map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
-            map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
-            map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
-                    "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
-                    "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))
-            ));
-            map.addLast(ModelPropertyRegistry.ITEM_IN_HAND.get(), new ItemInHandLayer(
-                    "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
-                    "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
-            ));
-            map.addLast(ModelPropertyRegistry.ARMOR.get(), new Armor(Util.make(new Int2ObjectArrayMap<>(), m -> {
-                m.put(2, ArmorItem.Type.HELMET);
-                m.put(3, ArmorItem.Type.CHESTPLATE);
-                m.put(4, ArmorItem.Type.LEGGINGS);
-                m.put(5, ArmorItem.Type.BOOTS);
-            }), new Int2ObjectArrayMap<>(0)));
-            map.addLast(ModelPropertyRegistry.GLOW.get(), new Glow(Util.make(new Int2IntArrayMap(), m -> {
-                m.put(1, 0);
-            })));
-            map.addLast(ModelPropertyRegistry.VANILLA_ELYTRA.get(), new VanillaElytra());
-            map.addLast(ModelPropertyRegistry.TRIDENT_SPIN_EFFECT.get(), new TridentSpinEffect());
-        }), Util.make(new ArrayList<>(4), l -> {
-            l.add(HumanoidAnim.getInstance());
-            l.add(FallFlyingAnim.getInstance());
-            l.add(SwimAnim.getInstance());
-        }), .5f);
+                    map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
+                    map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
+                    map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
+                            "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
+                            "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))
+                    ));
+                }),
+                List.of(HumanoidAnim.getInstance(), FallFlyingAnim.getInstance(), SwimAnim.getInstance()),
+                .5f);
     }
 
 

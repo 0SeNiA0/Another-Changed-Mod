@@ -1,20 +1,21 @@
 package net.zaharenko424.cmrs.api;
 
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.zaharenko424.cmrs.client.material.MaterialType;
 import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 
 import java.util.List;
 
-public interface ModelLayer {
+public interface Material {
 
-    IntSet renderIds();
+    DeferredHolder<MaterialType<?>, ?> type();
 
     void verifyTextures(List<Texture> textures);
 
     boolean shouldRenderInFirstPerson();
 
-    void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack stack, MultiBufferSource source);
+    void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack.ParameterList parameters, MultiBufferSource source);
 }

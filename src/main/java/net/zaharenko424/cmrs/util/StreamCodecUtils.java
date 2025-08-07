@@ -3,9 +3,11 @@ package net.zaharenko424.cmrs.util;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.codec.StreamDecoder;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +44,8 @@ public class StreamCodecUtils {
                 }
                 return arr;}
     );
+
+    public static final StreamCodec<FriendlyByteBuf, ResourceLocation> RESOURCE_LOC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ResourceLocation::toString, ResourceLocation::parse);
 
     public static final StreamCodec<FriendlyByteBuf, PartPose> POSE_CODEC = StreamCodec.of((buffer, pose) -> {
         int flag = pose.xRot == 0 && pose.yRot == 0 && pose.zRot == 0 ? 1 : 3;

@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.api;
+package net.zaharenko424.cmrs.client.property;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

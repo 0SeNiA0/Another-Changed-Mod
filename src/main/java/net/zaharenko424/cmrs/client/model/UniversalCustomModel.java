@@ -2,8 +2,6 @@ package net.zaharenko424.cmrs.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.RenderType;
@@ -15,12 +13,12 @@ import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.cmrs.api.*;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
+import net.zaharenko424.cmrs.client.property.ModelPropertyType;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -28,37 +26,27 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
 
     protected final ModelPart root;
     protected final List<Texture> textures;
+    protected final List<Material> materials;
+    protected final List<RenderLayer> layers;
     protected final ModelPropertyMap propertyMap;
     protected final List<AnimationComponent> animations;
     protected final float shadowRadius;
     protected RenderStack stack;
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, float shadowRadius){
-        this(root, textures, properties, new ArrayList<>(1), shadowRadius);
-    }
-
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull Reference2ObjectLinkedOpenHashMap<ModelPropertyType<?>, Object> properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
-        this(root, textures, new ModelPropertyMapImpl(properties), animations, shadowRadius);
-    }
-
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull List<Material> materials, @NotNull List<RenderLayer> layers, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
         super(RenderType::entityCutoutNoCull);
         this.root = root.getPart("root");
         this.textures = List.copyOf(textures);
-        verifyProperties(properties);
+        this.materials = List.copyOf(materials);
+
+        for(Material mat : materials){
+            mat.verifyTextures(textures);
+        }
+
+        this.layers = List.copyOf(layers);
         this.propertyMap = properties;
         this.animations = animations;
         this.shadowRadius = shadowRadius;
-    }
-
-    protected void verifyProperties(@NotNull ModelPropertyMap properties){
-        IntOpenHashSet set = new IntOpenHashSet();
-        properties.forEachModelLayer(layer -> {
-            layer.renderIds().forEach(id -> {
-                if (!set.add(id)) throw new IllegalStateException("Repeated renderId: " + id);
-            });
-            layer.verifyTextures(textures);
-        });
     }
 
     public ModelPart root(){
@@ -86,16 +74,6 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         return stack;
     }
 
-    /**
-     * Call on render thread after modifying model in editor(TODO). In fact do all modifications to the model on render thread(end of frame or start of frame) just in case. or even better: just stop rendering while applying changes
-     */
-    public void refreshModel(boolean properties){
-        if(properties) {
-            getStack().setRemap(hasProperty(ModelPropertyRegistry.REMAP_UV.get()));
-            stack.reset();
-        }
-    }
-
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer consumer, int packedLight, int packedOverlay, int color) {
         root.render(poseStack, consumer, packedLight, packedOverlay, color);
@@ -108,7 +86,10 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         MultiBufferSource source = MultiBufferSource.getInstance();
 
         getStack().setRenderTypeFunc(suggestedRenderType);
-        propertyMap.forEachModelLayer(layer -> layer.setupRenderStack(this, entity, stack, source));
+
+        for(int i = 0; i < materials.size(); i++){
+            materials.get(i).setupRenderStack(this, entity, stack.getOrCreate(i), source);
+        }
 
         root().render(poseStack, stack, packedLight, packedOverlay, color);
 
@@ -118,7 +99,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     public void renderLayers(@NotNull PoseStack poseStack, int packedLight, @NotNull E entity,
                              float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
         net.minecraft.client.renderer.MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        propertyMap.forEachRenderLayer(layer -> layer.render(entity, this, poseStack, buffer, packedLight, limbSwing,
+        layers.forEach(layer -> layer.render(entity, this, poseStack, buffer, packedLight, limbSwing,
                 limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch));
     }
 
@@ -146,9 +127,11 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         MultiBufferSource source = MultiBufferSource.getInstance();
         getStack();
 
-        propertyMap.forEachModelLayer(layer -> {
-            if(layer.shouldRenderInFirstPerson()) layer.setupRenderStack(this, entity, stack, source);
-        });
+        Material mat;
+        for(int i = 0; i < materials.size(); i++){
+            mat = materials.get(i);
+            if(mat.shouldRenderInFirstPerson()) mat.setupRenderStack(this, entity, stack.getOrCreate(i), source);
+        }
 
         setAllVisible(true, part);
         setDrawAll(true, part);

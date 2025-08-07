@@ -4,12 +4,13 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.zaharenko424.cmrs.api.*;
+import net.zaharenko424.cmrs.api.ModelPropertyMap;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.api.PropertyOverrideMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class ModelPropertyMapImpl implements ModelPropertyMap {
 
@@ -113,20 +114,6 @@ public class ModelPropertyMapImpl implements ModelPropertyMap {
     @Override
     public void clearOverrides() {
         overrides = null;
-    }
-
-    @Override
-    public void forEachModelLayer(@NotNull Consumer<ModelLayer> op) {
-        for(Object obj : properties.values()){
-            if(obj instanceof ModelLayer layer) op.accept(layer);
-        }
-    }
-
-    @Override
-    public void forEachRenderLayer(@NotNull Consumer<RenderLayer> op) {
-        for(Object obj : properties.values()){
-            if(obj instanceof RenderLayer layerLike) op.accept(layerLike);
-        }
     }
 
     @Override

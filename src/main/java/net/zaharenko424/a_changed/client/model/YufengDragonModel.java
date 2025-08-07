@@ -1,7 +1,5 @@
 package net.zaharenko424.a_changed.client.model;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
@@ -17,22 +15,28 @@ import net.zaharenko424.a_changed.client.animation.FallFlyingAnim;
 import net.zaharenko424.a_changed.client.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.animation.SwimAnim;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
-import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.animation.KeyframeAnimator;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.client.layer.ItemInHandLayer;
+import net.zaharenko424.cmrs.client.layer.ItemOnHead;
+import net.zaharenko424.cmrs.client.layer.TridentSpinEffect;
+import net.zaharenko424.cmrs.client.layer.VanillaElytra;
+import net.zaharenko424.cmrs.client.material.CutOut;
+import net.zaharenko424.cmrs.client.material.VanillaTexArmor;
 import net.zaharenko424.cmrs.client.model.PartTransform;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
-import net.zaharenko424.cmrs.client.property.*;
+import net.zaharenko424.cmrs.client.property.FPArms;
+import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomModel<E> {
@@ -41,35 +45,26 @@ public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomMo
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/yufeng_dragon");
 
     public YufengDragonModel() {
-        super(ModelDefinitionCache.getInstance().bake(bodyLayer), List.of(Texture.fromAsset(TEXTURE, 2)),
+        super(ModelDefinitionCache.getInstance().bake(bodyLayer),
+                List.of(Texture.fromAsset(TEXTURE, 2)),
+                List.of(new CutOut(0), new VanillaTexArmor(ArmorItem.Type.HELMET), new VanillaTexArmor(ArmorItem.Type.CHESTPLATE), new VanillaTexArmor(ArmorItem.Type.LEGGINGS), new VanillaTexArmor(ArmorItem.Type.BOOTS)),
+                List.of(new ItemOnHead("head"),
+                        new ItemInHandLayer(
+                        "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
+                        "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
+                        ),
+                        new VanillaElytra(), new TridentSpinEffect()
+                ),
                 Util.make(new ModelPropertyMapImpl(), map -> {
-            map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-            map.addLast(ModelPropertyRegistry.CUT_OUT.get(), new CutOut(Util.make(new Int2IntArrayMap(2), m -> {
-                m.put(0, 0);
-            })));
-            map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
-            map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
-            map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
-                    "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
-                    "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))
-            ));
-            map.addLast(ModelPropertyRegistry.ITEM_IN_HAND.get(), new ItemInHandLayer(
-                    "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
-                    "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
-            ));
-            map.addLast(ModelPropertyRegistry.ARMOR.get(), new Armor(Util.make(new Int2ObjectArrayMap<>(), m -> {
-                m.put(2, ArmorItem.Type.HELMET);
-                m.put(3, ArmorItem.Type.CHESTPLATE);
-                m.put(4, ArmorItem.Type.LEGGINGS);
-                m.put(5, ArmorItem.Type.BOOTS);
-            }), new Int2ObjectArrayMap<>(0)));
-            map.addLast(ModelPropertyRegistry.VANILLA_ELYTRA.get(), new VanillaElytra());
-            map.addLast(ModelPropertyRegistry.TRIDENT_SPIN_EFFECT.get(), new TridentSpinEffect());
-        }), Util.make(new ArrayList<>(4), l -> {
-            l.add(HumanoidAnim.getInstance());
-            l.add(FallFlyingAnim.getInstance());
-            l.add(SwimAnim.getInstance());
-        }), .5f);
+                    map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
+                    map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
+                    map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
+                            "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f)),
+                            "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.DEG_TO_RAD * 180), true, new Vector3f(-.1f))
+                    ));
+                }),
+                List.of(HumanoidAnim.getInstance(), FallFlyingAnim.getInstance(), SwimAnim.getInstance()),
+                .5f);
     }
 
     AnimationState ears = new AnimationState();
@@ -92,7 +87,7 @@ public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomMo
         GroupDefinition root = groupDefinition.addOrReplaceChild("root", GroupBuilder.create());
         GroupDefinition head = root.addOrReplaceChild("head", GroupBuilder.create()
                 .addBox(-4f, 0f, -4f, 8, 8, 8, new CubeUV().down(54, 18, 46, 26).north(43, 18, 35, 10).up(35, 51, 27, 43).west(51, 18, 43, 10).east(46, 33, 38, 25).south(18, 49, 10, 41))
-                .addBox(-4f, 0f, -4f, 8, 8, 8, new Vector3f(0.6f), new CubeUV().down(24, 0, 16, 8).north(16, 16, 8, 8).up(16, 8, 8, 0).west(24, 16, 16, 8).east(8, 16, 0, 8).south(32, 16, 24, 8), 2), PartPose.offset(0, 24, 0));
+                .addBox(-4f, 0f, -4f, 8, 8, 8, new Vector3f(0.6f), new CubeUV().down(24, 0, 16, 8).north(16, 16, 8, 8).up(16, 8, 8, 0).west(24, 16, 16, 8).east(8, 16, 0, 8).south(32, 16, 24, 8), 1), PartPose.offset(0, 24, 0));
         head.addOrReplaceChild("right_ear", GroupBuilder.create()
                 .addMesh(new float[]{-1, 5, 4, -1, 5, -1, -1, -2, 4, -1, -2, -1, 1, 5, 4, 1, 5, -1, 1, -2, 4, 1, -2, -1, -0.99f, 2, 4, -0.99f, 5, 1, 0.99f, 2, 4, 0.99f, 5, 1}, new float[]{0, 48, 50, 1, 43, 50, 3, 43, 57, 2, 48, 57, 5, 53, 50, 4, 48, 50, 6, 48, 57, 7, 53, 57, 5, 26, 3, 1, 24, 3, 0, 24, 8, 4, 26, 8, 4, 10, 22, 0, 8, 22, 2, 8, 29, 6, 10, 29, 1, 26, 14, 5, 24, 14, 7, 24, 21, 3, 26, 21, 11, 64, 34, 9, 62, 34, 8, 62, 38, 10, 64, 38}), PartPose.offsetAndRotation(3, 7, 0, 0.4276f, 0.384f, -0.3665f));
         head.addOrReplaceChild("left_ear", GroupBuilder.create()
@@ -107,8 +102,8 @@ public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomMo
                 .addBox(-1.5f, -1f, -1.5f, 3, 1, 1.5f, new CubeUV().down(29, 19, 26, 20.5f).north(24, 15, 21, 14).up(8, 15.5f, 5, 14).west(1.5f, 19, 0, 18).east(17.5f, 18, 16, 17).south(13, 30, 10, 29)), PartPose.offset(0, 1, -4));
         GroupDefinition body = root.addOrReplaceChild("body", GroupBuilder.create()
                 .addBox(-4f, 0f, -2f, 8, 12, 4, new CubeUV().down(59, 13, 51, 17).north(27, 49, 19, 37).up(59, 13, 51, 9).west(50, 50, 46, 38).east(50, 38, 46, 26).south(46, 50, 38, 38))
-                .addBox(-4f, 0f, -2f, 8, 12, 4, new Vector3f(0.6f), new CubeUV().down(40, 34, 32, 38).north(28, 32, 20, 20).up(40, 11, 32, 7).west(20, 32, 16, 20).east(32, 32, 28, 20).south(40, 32, 32, 20), 3)
-                .addBox(-4f, 0f, -2f, 8, 3, 4, new Vector3f(0.5f), new CubeUV().down(40, 34, 32, 38).north(28, 32, 20, 27).up(40, 11, 32, 7).west(20, 32, 16, 27).east(32, 32, 28, 27).south(40, 32, 32, 27), 4), PartPose.offset(0, 12, 0));
+                .addBox(-4f, 0f, -2f, 8, 12, 4, new Vector3f(0.6f), new CubeUV().down(40, 34, 32, 38).north(28, 32, 20, 20).up(40, 11, 32, 7).west(20, 32, 16, 20).east(32, 32, 28, 20).south(40, 32, 32, 20), 2)
+                .addBox(-4f, 0f, -2f, 8, 3, 4, new Vector3f(0.5f), new CubeUV().down(40, 34, 32, 38).north(28, 32, 20, 27).up(40, 11, 32, 7).west(20, 32, 16, 27).east(32, 32, 28, 27).south(40, 32, 32, 27), 3), PartPose.offset(0, 12, 0));
         GroupDefinition wings = body.addOrReplaceChild("wings", GroupBuilder.create()
                 .addBox(-1f, -5f, -1f, 2, 7, 2, new CubeUV().down(37, 21, 35, 23).north(28, 36, 26, 29).up(35, 6, 33, 4).west(38, 47, 36, 40).east(15, 37, 13, 30).south(33, 10, 31, 3)), PartPose.offset(0, 8, 3));
         wings.addOrReplaceChild("right", GroupBuilder.create()
@@ -128,10 +123,10 @@ public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomMo
                 .addBox(-1f, -1f, 0f, 2, 2.4f, 3, new Vector3f(0.6f), new CubeUV().down(8, 25, 4, 29).up(8, 29, 4, 25).west(8, 29, 4, 25).east(8, 29, 4, 25).south(8, 29, 4, 25)), PartPose.offset(0, 0.5f, 4));
         root.addOrReplaceChild("right_arm", GroupBuilder.create()
                 .addBox(0f, -10f, -2f, 4, 12, 4, new CubeUV().down(21, 0, 17, 4).north(14, 61, 10, 49).up(18, 11, 14, 7).west(26, 61, 22, 49).east(18, 61, 14, 49).south(22, 61, 18, 49))
-                .addBox(0f, -10f, -2f, 4, 12, 4, new Vector3f(0.6f), new CubeUV().north(48, 32, 44, 20).up(48, 20, 44, 16).west(52, 32, 48, 20).east(44, 32, 40, 20).south(56, 32, 52, 20), 3), PartPose.offset(4, 22, 0));
+                .addBox(0f, -10f, -2f, 4, 12, 4, new Vector3f(0.6f), new CubeUV().north(48, 32, 44, 20).up(48, 20, 44, 16).west(52, 32, 48, 20).east(44, 32, 40, 20).south(56, 32, 52, 20), 2), PartPose.offset(4, 22, 0));
         root.addOrReplaceChild("left_arm", GroupBuilder.create()
                 .addBox(-4f, -10f, -2f, 4, 12, 4, new CubeUV().down(62, 37, 58, 41).north(54, 38, 50, 26).up(62, 37, 58, 33).west(43, 62, 39, 50).east(39, 62, 35, 50).south(54, 50, 50, 38))
-                .addBox(-4f, -10f, -2f, 4, 12, 4, new Vector3f(0.6f), new CubeUV().north(56, 32, 52, 20).up(44, 20, 48, 16).west(40, 32, 44, 20).east(52, 32, 48, 20).south(48, 32, 44, 20), 3), PartPose.offset(-4, 22, 0));
+                .addBox(-4f, -10f, -2f, 4, 12, 4, new Vector3f(0.6f), new CubeUV().north(56, 32, 52, 20).up(44, 20, 48, 16).west(40, 32, 44, 20).east(52, 32, 48, 20).south(48, 32, 44, 20), 2), PartPose.offset(-4, 22, 0));
         GroupDefinition right_leg = root.addOrReplaceChild("right_leg", GroupBuilder.create(), PartPose.offsetAndRotation(2, 13, 0, 0, -0.1309f, 0.1309f));
         GroupDefinition right_leg_shin = right_leg.addOrReplaceChild("right_leg_shin", GroupBuilder.create(), PartPose.offset(0, -6, -2));
         GroupDefinition right_leg_ = right_leg_shin.addOrReplaceChild("right_leg_", GroupBuilder.create(), PartPose.offset(0, -1, 3));
@@ -139,33 +134,33 @@ public class YufengDragonModel<E extends LivingEntity> extends UniversalCustomMo
         right_foot.addOrReplaceChild("right_foot_i0", GroupBuilder.create()
                 .addBox(-1.3f, -6f, -3.5f, 4f, 2, 5, new CubeUV().down(62, 28, 58, 33).north(66, 26, 62, 24).up(62, 28, 58, 23).west(66, 55, 61, 53).east(66, 53, 61, 51).south(66, 28, 62, 26))
                 .addMesh(new float[]{1.6929f, -6.025f, -2, 1.4f, -6.025f, -2.7071f, 2.4f, -6.025f, -2.2929f, 2.1071f, -6.025f, -3, 1.9f, -6.025f, -2.5f, 1.4f, -6.025f, -2.2929f, 2.1071f, -6.025f, -2, 2.4f, -6.025f, -2.7071f, 1.6929f, -6.025f, -3, 0.4929f, -6.025f, -2, 0.2f, -6.025f, -2.7071f, 1.2f, -6.025f, -2.2929f, 0.9071f, -6.025f, -3, 0.7f, -6.025f, -2.5f, 0.2f, -6.025f, -2.2929f, 0.9071f, -6.025f, -2, 1.2f, -6.025f, -2.7071f, 0.4929f, -6.025f, -3, -0.7071f, -6.025f, -2, -1, -6.025f, -2.7071f, 0, -6.025f, -2.2929f, -0.2929f, -6.025f, -3, -0.5f, -6.025f, -2.5f, -1, -6.025f, -2.2929f, -0.2929f, -6.025f, -2, 0, -6.025f, -2.7071f, -0.7071f, -6.025f, -3, -0.915f, -6.025f, 1.025f, -0.725f, -6.025f, -1.325f, 2.315f, -6.025f, 1.025f, 2.125f, -6.025f, -1.325f, 0.7f, -6.025f, -0.3f, -1.2f, -6.025f, 0, 0.7f, -6.025f, 0.9f, 2.6f, -6.025f, 0, 0.7f, -6.025f, -1.8f}, new float[]{5, 9, 2.2929f, 1, 9, 2.7071f, 8, 9.2929f, 3, 4, 9.5f, 2.5f, 6, 9.7071f, 2, 0, 9.2929f, 2, 5, 9, 2.2929f, 4, 9.5f, 2.5f, 7, 10, 2.7071f, 2, 10, 2.2929f, 6, 9.7071f, 2, 4, 9.5f, 2.5f, 8, 9.2929f, 3, 3, 9.7071f, 3, 7, 10, 2.7071f, 4, 9.5f, 2.5f, 14, 12, 12.2929f, 10, 12, 12.7071f, 17, 12.2929f, 13, 13, 12.5f, 12.5f, 15, 12.7071f, 12, 9, 12.2929f, 12, 14, 12, 12.2929f, 13, 12.5f, 12.5f, 16, 13, 12.7071f, 11, 13, 12.2929f, 15, 12.7071f, 12, 13, 12.5f, 12.5f, 17, 12.2929f, 13, 12, 12.7071f, 13, 16, 13, 12.7071f, 13, 12.5f, 12.5f, 23, 13, 9.2929f, 19, 13, 9.7071f, 26, 13.2929f, 10, 22, 13.5f, 9.5f, 24, 13.7071f, 9, 18, 13.2929f, 9, 23, 13, 9.2929f, 22, 13.5f, 9.5f, 25, 14, 9.7071f, 20, 14, 9.2929f, 24, 13.7071f, 9, 22, 13.5f, 9.5f, 26, 13.2929f, 10, 21, 13.7071f, 10, 25, 14, 9.7071f, 22, 13.5f, 9.5f, 32, 16.1f, 62.2f, 28, 16.575f, 63.525f, 35, 18, 64, 31, 18, 62.5f, 33, 18, 61.3f, 27, 16.385f, 61.175f, 32, 16.1f, 62.2f, 31, 18, 62.5f, 34, 19.9f, 62.2f, 29, 19.615f, 61.175f, 33, 18, 61.3f, 31, 18, 62.5f, 35, 18, 64, 30, 19.425f, 63.525f, 34, 19.9f, 62.2f, 31, 18, 62.5f})
-                .addBox(-1.3f, -6f, -3.5f, 4f, 2, 5, new Vector3f(0.6f), new CubeUV().down(12, 16, 8, 20).north(12, 20, 8, 16).up(12, 20, 8, 16).west(12, 20, 8, 16).east(12, 20, 8, 16).south(12, 20, 8, 16), 5), PartPose.rotation(0, 0, -0.1309f));
+                .addBox(-1.3f, -6f, -3.5f, 4f, 2, 5, new Vector3f(0.6f), new CubeUV().down(12, 16, 8, 20).north(12, 20, 8, 16).up(12, 20, 8, 16).west(12, 20, 8, 16).east(12, 20, 8, 16).south(12, 20, 8, 16), 4), PartPose.rotation(0, 0, -0.1309f));
         right_leg_.addOrReplaceChild("right_leg__i0", GroupBuilder.create()
                 .addBox(-2f, -5f, -2f, 4, 6, 4, new CubeUV().down(4, 61, 0, 65).north(26, 14, 22, 8).up(64, 8, 60, 4).west(51, 63, 47, 57).east(4, 61, 0, 55).south(47, 63, 43, 57))
-                .addBox(-2f, -5f, -2f, 4, 6, 4, new Vector3f(0.6f), new CubeUV().down(49, 16, 45, 20).north(4, 32, 0, 26).up(49, 16, 45, 12).west(8, 32, 4, 26).east(8, 32, 4, 26).south(4, 32, 0, 26), 5), PartPose.rotation(0.1309f, 0, 0));
+                .addBox(-2f, -5f, -2f, 4, 6, 4, new Vector3f(0.6f), new CubeUV().down(49, 16, 45, 20).north(4, 32, 0, 26).up(49, 16, 45, 12).west(8, 32, 4, 26).east(8, 32, 4, 26).south(4, 32, 0, 26), 4), PartPose.rotation(0.1309f, 0, 0));
         right_leg_shin.addOrReplaceChild("right_leg_shin_i0", GroupBuilder.create()
                 .addBox(-2f, 0.3f, 1f, 4, 2, 4, new CubeUV().down(63, 12, 59, 16).north(12, 2, 8, 0).up(63, 12, 59, 8).west(65, 59, 61, 57).east(59, 63, 55, 61).south(65, 57, 61, 55))
-                .addBox(-2f, 0.3f, 1f, 4, 2, 4, new Vector3f(0.59f), new CubeUV().down(49, 8, 45, 12).up(8, 29, 4, 25).west(8, 29, 4, 25).east(8, 29, 4, 25).south(8, 29, 4, 25), 4), PartPose.rotation(0.3491f, 0, 0));
+                .addBox(-2f, 0.3f, 1f, 4, 2, 4, new Vector3f(0.59f), new CubeUV().down(49, 8, 45, 12).up(8, 29, 4, 25).west(8, 29, 4, 25).east(8, 29, 4, 25).south(8, 29, 4, 25), 3), PartPose.rotation(0.3491f, 0, 0));
         right_leg.addOrReplaceChild("right_leg_thigh", GroupBuilder.create()
                 .addBox(-2f, -8f, -2f, 4, 8, 4, new CubeUV().down(62, 45, 58, 49).north(4, 27, 0, 19).up(62, 45, 58, 41).west(57, 58, 53, 50).east(30, 59, 26, 51).south(34, 59, 30, 51))
-                .addBox(-2f, -8f, -2f, 4, 8, 4, new Vector3f(0.6f), new CubeUV().down(8, 25, 4, 29).north(8, 29, 4, 20).up(8, 20, 4, 16).west(12, 29, 8, 20).east(12, 29, 8, 20).south(16, 29, 12, 20), 4), PartPose.rotation(0.3491f, 0, 0));
+                .addBox(-2f, -8f, -2f, 4, 8, 4, new Vector3f(0.6f), new CubeUV().down(8, 25, 4, 29).north(8, 29, 4, 20).up(8, 20, 4, 16).west(12, 29, 8, 20).east(12, 29, 8, 20).south(16, 29, 12, 20), 3), PartPose.rotation(0.3491f, 0, 0));
         GroupDefinition left_leg = root.addOrReplaceChild("left_leg", GroupBuilder.create(), PartPose.offsetAndRotation(-2, 13, 0, 0, 0.1309f, -0.1309f));
         GroupDefinition left_leg_shin = left_leg.addOrReplaceChild("left_leg_shin", GroupBuilder.create(), PartPose.offset(0, -6, -2));
         GroupDefinition left_leg_ = left_leg_shin.addOrReplaceChild("left_leg_", GroupBuilder.create(), PartPose.offset(0, -1, 3));
         GroupDefinition left_foot = left_leg_.addOrReplaceChild("left_foot", GroupBuilder.create());
         left_foot.addOrReplaceChild("left_foot_i0", GroupBuilder.create()
                 .addBox(-2.7f, -6f, -3.5f, 4f, 2, 5, new CubeUV().down(59, 0, 55, 5).north(66, 22, 62, 20).up(20, 23, 16, 18).west(66, 51, 61, 49).east(25, 63, 20, 61).south(66, 24, 62, 22))
-                .addBox(-2.7f, -6f, -3.5f, 4f, 2, 5, new Vector3f(0.6f), new CubeUV().down(8, 16, 12, 20).north(8, 20, 12, 16).up(12, 20, 8, 16).west(12, 16, 8, 20).east(12, 20, 8, 16).south(12, 20, 8, 16), 5)
+                .addBox(-2.7f, -6f, -3.5f, 4f, 2, 5, new Vector3f(0.6f), new CubeUV().down(8, 16, 12, 20).north(8, 20, 12, 16).up(12, 20, 8, 16).west(12, 16, 8, 20).east(12, 20, 8, 16).south(12, 20, 8, 16), 4)
                 .addMesh(new float[]{-1.6929f, -6.025f, -2, -1.4f, -6.025f, -2.7071f, -2.4f, -6.025f, -2.2929f, -2.1071f, -6.025f, -3, -1.9f, -6.025f, -2.5f, -1.4f, -6.025f, -2.2929f, -2.1071f, -6.025f, -2, -2.4f, -6.025f, -2.7071f, -1.6929f, -6.025f, -3, -0.4929f, -6.025f, -2, -0.2f, -6.025f, -2.7071f, -1.2f, -6.025f, -2.2929f, -0.9071f, -6.025f, -3, -0.7f, -6.025f, -2.5f, -0.2f, -6.025f, -2.2929f, -0.9071f, -6.025f, -2, -1.2f, -6.025f, -2.7071f, -0.4929f, -6.025f, -3, 0.7071f, -6.025f, -2, 1, -6.025f, -2.7071f, 0, -6.025f, -2.2929f, 0.2929f, -6.025f, -3, 0.5f, -6.025f, -2.5f, 1, -6.025f, -2.2929f, 0.2929f, -6.025f, -2, 0, -6.025f, -2.7071f, 0.7071f, -6.025f, -3, 0.915f, -6.025f, 1.025f, 0.725f, -6.025f, -1.325f, -2.315f, -6.025f, 1.025f, -2.125f, -6.025f, -1.325f, -0.7f, -6.025f, -0.3f, 1.2f, -6.025f, 0, -0.7f, -6.025f, 0.9f, -2.6f, -6.025f, 0, -0.7f, -6.025f, -1.8f}, new float[]{8, 2.7071f, 1, 1, 3, 0.7071f, 5, 3, 0.2929f, 4, 2.5f, 0.5f, 5, 3, 0.2929f, 0, 2.7071f, 0, 6, 2.2929f, 0, 4, 2.5f, 0.5f, 6, 2.2929f, 0, 2, 2, 0.2929f, 7, 2, 0.7071f, 4, 2.5f, 0.5f, 7, 2, 0.7071f, 3, 2.2929f, 1, 8, 2.7071f, 1, 4, 2.5f, 0.5f, 17, 0.7071f, 5, 10, 1, 4.7071f, 14, 1, 4.2929f, 13, 0.5f, 4.5f, 14, 1, 4.2929f, 9, 0.7071f, 4, 15, 0.2929f, 4, 13, 0.5f, 4.5f, 15, 0.2929f, 4, 11, 0, 4.2929f, 16, 0, 4.7071f, 13, 0.5f, 4.5f, 16, 0, 4.7071f, 12, 0.2929f, 5, 17, 0.7071f, 5, 13, 0.5f, 4.5f, 26, 7.7071f, 1, 19, 8, 0.7071f, 23, 8, 0.2929f, 22, 7.5f, 0.5f, 23, 8, 0.2929f, 18, 7.7071f, 0, 24, 7.2929f, 0, 22, 7.5f, 0.5f, 24, 7.2929f, 0, 20, 7, 0.2929f, 25, 7, 0.7071f, 22, 7.5f, 0.5f, 25, 7, 0.7071f, 21, 7.2929f, 1, 26, 7.7071f, 1, 22, 7.5f, 0.5f, 35, 37, 21, 28, 38.425f, 20.525f, 32, 38.9f, 19.2f, 31, 37, 19.5f, 32, 38.9f, 19.2f, 27, 38.615f, 18.175f, 33, 37, 18.3f, 31, 37, 19.5f, 33, 37, 18.3f, 29, 35.385f, 18.175f, 34, 35.1f, 19.2f, 31, 37, 19.5f, 34, 35.1f, 19.2f, 30, 35.575f, 20.525f, 35, 37, 21, 31, 37, 19.5f}), PartPose.rotation(0, 0, 0.1309f));
         left_leg_.addOrReplaceChild("left_leg__i0", GroupBuilder.create()
                 .addBox(-2f, -5f, -2f, 4, 6, 4, new CubeUV().down(16, 61, 12, 65).north(61, 55, 57, 49).up(12, 65, 8, 61).west(62, 23, 58, 17).east(61, 61, 57, 55).south(8, 64, 4, 58))
-                .addBox(-2f, -5f, -2f, 4, 6, 4, new Vector3f(0.6f), new CubeUV().down(27, 46, 23, 50).north(0, 32, 4, 26).up(8, 50, 4, 46).west(4, 32, 8, 26).east(8, 32, 4, 26).south(4, 32, 0, 26), 5), PartPose.rotation(0.1309f, 0, 0));
+                .addBox(-2f, -5f, -2f, 4, 6, 4, new Vector3f(0.6f), new CubeUV().down(27, 46, 23, 50).north(0, 32, 4, 26).up(8, 50, 4, 46).west(4, 32, 8, 26).east(8, 32, 4, 26).south(4, 32, 0, 26), 4), PartPose.rotation(0.1309f, 0, 0));
         left_leg_shin.addOrReplaceChild("left_leg_shin_i0", GroupBuilder.create()
                 .addBox(-2f, 0.3f, 1f, 4, 2, 4, new CubeUV().down(34, 59, 30, 63).north(63, 63, 59, 61).up(30, 63, 26, 59).west(66, 20, 62, 18).east(65, 61, 61, 59).south(66, 18, 62, 16))
-                .addBox(-2f, 0.3f, 1f, 4, 2, 4, new Vector3f(0.59f), new CubeUV().down(4, 46, 0, 50).north(53, 26, 49, 24).up(8, 29, 4, 25).west(4, 29, 8, 25).east(8, 29, 4, 25).south(8, 29, 4, 25), 4), PartPose.rotation(0.3491f, 0, 0));
+                .addBox(-2f, 0.3f, 1f, 4, 2, 4, new Vector3f(0.59f), new CubeUV().down(4, 46, 0, 50).north(53, 26, 49, 24).up(8, 29, 4, 25).west(4, 29, 8, 25).east(8, 29, 4, 25).south(8, 29, 4, 25), 3), PartPose.rotation(0.3491f, 0, 0));
         left_leg.addOrReplaceChild("left_leg_thigh", GroupBuilder.create()
                 .addBox(-2f, -8f, -2f, 4, 8, 4, new CubeUV().down(63, 0, 59, 4).north(58, 25, 54, 17).up(55, 62, 51, 58).west(58, 49, 54, 41).east(58, 33, 54, 25).south(58, 41, 54, 33))
-                .addBox(-2f, -8f, -2f, 4, 8, 4, new Vector3f(0.6f), new CubeUV().down(4, 25, 8, 29).north(4, 29, 8, 20).up(8, 20, 4, 16).west(12, 29, 8, 20).east(12, 29, 8, 20).south(16, 29, 12, 20), 4), PartPose.rotation(0.3491f, 0, 0));
+                .addBox(-2f, -8f, -2f, 4, 8, 4, new Vector3f(0.6f), new CubeUV().down(4, 25, 8, 29).north(4, 29, 8, 20).up(8, 20, 4, 16).west(12, 29, 8, 20).east(12, 29, 8, 20).south(16, 29, 12, 20), 3), PartPose.rotation(0.3491f, 0, 0));
 
         return ModelDefinition.create(modelBuilder, 1, 1);
     }

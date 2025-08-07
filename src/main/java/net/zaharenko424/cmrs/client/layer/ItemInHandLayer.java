@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.property;
+package net.zaharenko424.cmrs.client.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -14,12 +14,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
+import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,6 +60,11 @@ public final class ItemInHandLayer implements RenderLayer {
         this.armL = armL;
         this.transformL = transformL == null ? new PoseTransform(null, null, null) : transformL;
         this.headOverride = headOverride;
+    }
+
+    @Override
+    public DeferredHolder<RenderLayerType<?>, RenderLayerType<ItemInHandLayer>> type() {
+        return RenderLayerRegistry.ITEM_IN_HAND;
     }
 
     public ModelPart getArm(CustomModel<?> model, HumanoidArm arm){

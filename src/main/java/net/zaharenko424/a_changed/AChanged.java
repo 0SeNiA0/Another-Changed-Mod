@@ -24,7 +24,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.cmrs.api.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.registry.MaterialRegistry;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import org.apache.logging.log4j.util.InternalApi;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -137,7 +139,11 @@ public class AChanged {
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
 
-        if(FMLEnvironment.dist.isClient()) ModelPropertyRegistry.PROPERTIES.register(modEventBus);//Server doesn't crash
+        if(FMLEnvironment.dist.isClient()) {//Server doesn't crash
+            MaterialRegistry.MATERIALS.register(modEventBus);
+            ModelPropertyRegistry.PROPERTIES.register(modEventBus);
+            RenderLayerRegistry.LAYERS.register(modEventBus);
+        }
     }
 
     @InternalApi
