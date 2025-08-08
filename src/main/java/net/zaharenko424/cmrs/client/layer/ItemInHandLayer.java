@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.api.RenderLayer;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
@@ -95,7 +96,7 @@ public final class ItemInHandLayer implements RenderLayer {
 
     private <E extends LivingEntity> void renderArmWithItem(E livingEntity, CustomModel<E> model, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         if (itemStack.is(Items.SPYGLASS) && livingEntity.getUseItem() == itemStack && livingEntity.swingTime == 0
-                && (headOverride != null || model.hasProperty(ModelPropertyRegistry.HEAD.get()))) {
+                && (headOverride != null || model.hasProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING))) {
             if(renderArmWithSpyglass(livingEntity, model, itemStack, arm, matrixStack, buffer, packedLight)) return;
         }
         MatrixStack.push(matrixStack);
@@ -110,7 +111,7 @@ public final class ItemInHandLayer implements RenderLayer {
 
     private <E extends LivingEntity> boolean renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {
         MatrixStack.push(matrixStack);
-        ModelPart modelpart = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyRegistry.HEAD.get()));
+        ModelPart modelpart = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING).str());
         if(modelpart == null) return false;
         float f = modelpart.xRot;
         modelpart.xRot = Mth.clamp(modelpart.xRot, (float) (-Math.PI / 6), (float) (Math.PI / 2));

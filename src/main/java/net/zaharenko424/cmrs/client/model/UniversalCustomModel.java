@@ -9,17 +9,20 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.cmrs.api.*;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.property.FPArms;
 import net.zaharenko424.cmrs.client.property.ModelPropertyType;
+import net.zaharenko424.cmrs.client.property.StringProperty;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E> implements NoYFlip, CustomModel<E> {
@@ -28,12 +31,12 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     protected final List<Texture> textures;
     protected final List<Material> materials;
     protected final List<RenderLayer> layers;
-    protected final ModelPropertyMap propertyMap;
+    protected final Map<String, ModelProperty> properties;
     protected final List<AnimationComponent> animations;
     protected final float shadowRadius;
     protected RenderStack stack;
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull List<Material> materials, @NotNull List<RenderLayer> layers, @NotNull ModelPropertyMap properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
+    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull List<Material> materials, @NotNull List<RenderLayer> layers, @NotNull Map<String, ModelProperty> properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
         super(RenderType::entityCutoutNoCull);
         this.root = root.getPart("root");
         this.textures = List.copyOf(textures);
@@ -44,7 +47,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         }
 
         this.layers = List.copyOf(layers);
-        this.propertyMap = properties;
+        this.properties = Map.copyOf(properties);
         this.animations = animations;
         this.shadowRadius = shadowRadius;
     }
@@ -57,18 +60,36 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         return root.getPart(name);
     }
 
-    public boolean hasProperty(@NotNull ModelPropertyType<?> propertyType){
-        return propertyMap.hasProperty(propertyType);
+    public boolean hasProperty(@NotNull String key, @NotNull ModelPropertyType<?> type){
+        ModelProperty property = properties.get(key);
+
+        return property != null && property.type().get() == type;
     }
 
-    public <P> P getProperty(@NotNull ModelPropertyType<P> type){
-        return propertyMap.getProperty(type);
+    public boolean hasProperty(@NotNull String key, @NotNull DeferredHolder<ModelPropertyType<?>, ?> type){
+        ModelProperty property = properties.get(key);
+
+        return property != null && property.type().equals(type);
+    }
+
+    public <P extends ModelProperty> P getProperty(@NotNull String key, @NotNull ModelPropertyType<P> type){
+        ModelProperty property = properties.get(key);
+
+        if(property == null || property.type().get() != type) return null;
+        return (P) property;
+    }
+
+    public <P extends ModelProperty> P getProperty(@NotNull String key, @NotNull DeferredHolder<ModelPropertyType<?>, ModelPropertyType<P>> type){
+        ModelProperty property = properties.get(key);
+
+        if(property == null || !property.type().equals(type)) return null;
+        return (P) property;
     }
 
     protected RenderStack getStack(){
         if(stack == null){
             stack = new RenderStack();
-            stack.setRemap(hasProperty(ModelPropertyRegistry.REMAP_UV.get()));
+            stack.setRemap(hasProperty(ModelPropertyKeys.REMAP_UV, ModelPropertyRegistry.UNIT));
         }
 
         return stack;
@@ -118,7 +139,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     public void setupAnim(@NotNull E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
 
     public void renderHand(@NotNull E entity, @NotNull PoseStack poseStack, int light, @NotNull HumanoidArm arm){
-        FPArms fpArms = getProperty(ModelPropertyRegistry.FP_ARMS.get());
+        FPArms fpArms = getProperty(ModelPropertyKeys.FP_ARMS, ModelPropertyRegistry.FP_ARMS);
         if(fpArms == null) return;
 
         ModelPart part = fpArms.getTransformed(this, arm);
@@ -151,7 +172,10 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
             setDrawAll(false);
 
             ModelPart head = null;
-            if(hasProperty(ModelPropertyRegistry.HEAD.get())) head = getPart(getProperty(ModelPropertyRegistry.HEAD.get()));
+
+            StringProperty str = getProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING);
+            if(str != null) head = getPart(str.str());
+
             if(head == null) head = getPart("head");
             if(head != null) setDrawAll(true, head);
         } else setDrawAll(true);

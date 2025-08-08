@@ -1,26 +1,39 @@
 package net.zaharenko424.cmrs.registry;
 
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.Unit;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.cmrs.CMRS;
-import net.zaharenko424.cmrs.client.layer.ItemOnHead;
-import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.ModelPropertyType;
+import net.zaharenko424.cmrs.api.ModelProperty;
+import net.zaharenko424.cmrs.client.property.*;
+import net.zaharenko424.cmrs.util.StreamCodecUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModelPropertyRegistry {
 
     public static final DeferredRegister<ModelPropertyType<?>> PROPERTIES = DeferredRegister.create(CMRS.resourceLoc("model_property"), CMRS.MODID);
     public static final Registry<ModelPropertyType<?>> PROPERTY_REGISTRY = PROPERTIES.makeRegistry(builder ->{});
 
-    /**
-     * Remaps absolute uv to uv relative to the size of the texture. //TODO create UV container for each vertex to easier differentiate absolute & relative?
-     */
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<Unit>> REMAP_UV = PROPERTIES.register("remap_uv", () -> new ModelPropertyType<>(StreamCodec.unit(Unit.INSTANCE)));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<String>> HEAD = PROPERTIES.register("head", () -> new ModelPropertyType<>(ByteBufCodecs.STRING_UTF8.mapStream(friendly -> friendly)));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<ItemOnHead>> ITEM_ON_HEAD = PROPERTIES.register("item_on_head", () -> new ModelPropertyType<>(ItemOnHead.CODEC));
+    public static final StreamCodec<FriendlyByteBuf, ModelProperty> CODEC = StreamCodecUtils.RESOURCE_LOC.dispatch(
+            property -> property.type().getId(),
+            loc -> {
+                ModelPropertyType<?> type = PROPERTY_REGISTRY.get(loc);
+
+                if(type == null) throw new IllegalStateException("No ModelPropertyType is registered under " + loc);
+                return type.codec();
+            }
+    );
+    public static final StreamCodec<FriendlyByteBuf, Map<String, ModelProperty>> MAP = ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, CODEC);
+
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<BooleanProperty>> BOOLEAN = PROPERTIES.register("boolean", () -> new ModelPropertyType<>(BooleanProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FloatProperty>> FLOAT = PROPERTIES.register("float", () -> new ModelPropertyType<>(FloatProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<StringProperty>> STRING = PROPERTIES.register("string", () -> new ModelPropertyType<>(StringProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<UnitProperty>> UNIT = PROPERTIES.register("unit", () -> new ModelPropertyType<>(UnitProperty.CODEC));
+
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FPArms>> FP_ARMS = PROPERTIES.register("fp_arms", () -> new ModelPropertyType<>(FPArms.CODEC));
 }

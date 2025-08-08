@@ -1,15 +1,14 @@
 package net.zaharenko424.a_changed.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Unit;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.cmrs.api.AnimationComponent;
+import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.geom.Reusable;
@@ -23,12 +22,12 @@ import net.zaharenko424.cmrs.client.material.CutOut;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
-import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
-import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.client.property.UnitProperty;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Map;
 
 public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomModel<E> {
 
@@ -40,11 +39,10 @@ public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomMo
         super(ModelDefinitionCache.getInstance().bake(bodyLayer),
                 List.of(Texture.fromAsset(TEXTURE0, 1), Texture.fromAsset(TEXTURE1, 1)),
                 List.of(new CutOut(0), new CutOut(1)),
-                List.of(new ItemOnHead("head"), new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, .1f, -.4f), null, new Vector3f(.4f)))),
-                Util.make(new ModelPropertyMapImpl(), map -> {
-                    map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-                    map.addLast(ModelPropertyRegistry.ITEM_ON_HEAD.get(), new ItemOnHead("head"));
-                }),
+                List.of(new ItemOnHead("head"),
+                        new ItemInMawLayer("head", new PoseTransform(new Vector3f(0, .1f, -.4f), null, new Vector3f(.4f)))
+                ),
+                Map.of(ModelPropertyKeys.REMAP_UV, UnitProperty.INSTANCE),
                 List.of(new AnimationComponent() {
                             @Override
                             public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

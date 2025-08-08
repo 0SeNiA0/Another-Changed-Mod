@@ -1,14 +1,13 @@
 package net.zaharenko424.a_changed.client.model;
 
-import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Unit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.client.animation.FallFlyingAnim;
 import net.zaharenko424.a_changed.client.animation.LatexPupAnim;
+import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.layer.ItemInMawLayer;
 import net.zaharenko424.cmrs.client.layer.ItemOnHead;
@@ -21,12 +20,13 @@ import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
 import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.ModelPropertyMapImpl;
-import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
+import net.zaharenko424.cmrs.client.property.StringProperty;
+import net.zaharenko424.cmrs.client.property.UnitProperty;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Map;
 
 public class WhiteLatexPupModel <E extends LivingEntity> extends UniversalCustomModel<E> {
 
@@ -48,14 +48,13 @@ public class WhiteLatexPupModel <E extends LivingEntity> extends UniversalCustom
                         ),
                         new TridentSpinEffect()
                 ),
-                Util.make(new ModelPropertyMapImpl(), map -> {
-                    map.addLast(ModelPropertyRegistry.REMAP_UV.get(), Unit.INSTANCE);
-                    map.addLast(ModelPropertyRegistry.HEAD.get(), "head");
-                    map.addLast(ModelPropertyRegistry.FP_ARMS.get(), new FPArms(
-                            "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.PI), false, null),
-                            "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.PI), false, null)
-                    ));
-                }),
+                Map.of(ModelPropertyKeys.REMAP_UV, UnitProperty.INSTANCE,
+                        ModelPropertyKeys.HEAD, new StringProperty("head"),
+                        ModelPropertyKeys.FP_ARMS, new FPArms(
+                                "right_arm", new PartTransform(false, new Vector3f(-6, 1.5f, -2), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * 5, Mth.PI), false, null),
+                                "left_arm", new PartTransform(false, new Vector3f(5, 1.5f, 0), false, new Vector3f(Float.POSITIVE_INFINITY, Mth.DEG_TO_RAD * -5, Mth.PI), false, null)
+                        )
+                ),
                 List.of(LatexPupAnim.getInstance(), FallFlyingAnim.getInstance()),
                 .5f);
     }

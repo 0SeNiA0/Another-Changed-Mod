@@ -10,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModLoader;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelSetReason;
-import net.zaharenko424.cmrs.api.PropertyOverrideMap;
 import net.zaharenko424.cmrs.client.renderer.AnyModelRenderer;
 import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
 import net.zaharenko424.cmrs.util.SetView;
@@ -237,8 +236,6 @@ public class CustomModelManager {
 
         private Set<ModelEntry> view;
         private final List<ModelEntry> models = Collections.synchronizedList(new ArrayList<>());
-        private PropertyOverrideMap globalOverrides;
-        private Map<ResourceLocation, PropertyOverrideMap> perModelOverrides;
 
         public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(){
             ModelWrapper<?, ?> wrapper = getModelWrapper();

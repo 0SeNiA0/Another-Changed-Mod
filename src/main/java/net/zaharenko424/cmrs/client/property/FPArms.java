@@ -4,13 +4,16 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.HumanoidArm;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
+import net.zaharenko424.cmrs.api.ModelProperty;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.model.PartTransform;
+import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.Nullable;
 
-public final class FPArms {
+public final class FPArms implements ModelProperty {
 
     public static final StreamCodec<FriendlyByteBuf, FPArms> CODEC = StreamCodec.of((buffer, fparms) -> {
         boolean write = fparms.armR != null;
@@ -37,6 +40,11 @@ public final class FPArms {
         this.transformR = transformR == null ? new PartTransform() : transformR;
         this.armL = armL;
         this.transformL = transformL == null ? new PartTransform() : transformL;
+    }
+
+    @Override
+    public DeferredHolder<ModelPropertyType<?>, ?> type() {
+        return ModelPropertyRegistry.FP_ARMS;
     }
 
     public ModelPart getTransformed(CustomModel<?> model, HumanoidArm arm){
