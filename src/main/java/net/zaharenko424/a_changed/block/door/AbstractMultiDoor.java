@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -21,6 +22,7 @@ import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Map;
 
 @ParametersAreNonnullByDefault
 public abstract class AbstractMultiDoor extends AbstractMultiBlock {
@@ -35,6 +37,12 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
     protected void use(BlockState state, Level level, BlockPos pos) {
         BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
+
+        if(!mainState.is(this)){
+            level.setBlock(mainPos, Blocks.AIR.defaultBlockState(), 3);
+            return;
+        }
+
         if(isPowered(mainPos, mainState, level)) {
             setOpen(mainState, mainPos, level, !state.getValue(OPEN));
             level.playSound(null, pos, mainState.getValue(OPEN) ? SoundRegistry.DOOR_CLOSE.get() : SoundRegistry.DOOR_OPEN.get(), SoundSource.BLOCKS);
@@ -76,9 +84,19 @@ public abstract class AbstractMultiDoor extends AbstractMultiBlock {
 
     void setOpen(BlockState mainState, BlockPos mainPos, LevelAccessor level, boolean open){
         Direction direction = mainState.getValue(FACING);
-        parts().forEach((id, part) -> {
-            BlockPos pos = part.toSecondaryPos(mainPos, direction);
-            level.setBlock(pos, level.getBlockState(pos).setValue(OPEN, open), 3);
-        });
+
+        BlockPos pos;
+        BlockState state;
+        for(Map.Entry<Integer, Part> entry : parts().entrySet()){
+            pos = entry.getValue().toSecondaryPos(mainPos, direction);
+            state = level.getBlockState(pos);
+
+            if(!state.is(this)){
+                level.setBlock(mainPos, Blocks.AIR.defaultBlockState(), 3);
+                return;
+            }
+
+            level.setBlock(pos, state.setValue(OPEN, open), 3);
+        }
     }
 }

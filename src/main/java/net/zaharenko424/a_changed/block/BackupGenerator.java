@@ -15,6 +15,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,6 +39,8 @@ import net.zaharenko424.a_changed.util.StateProperties;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterloggedBlock, EntityBlock {
 
@@ -97,10 +100,20 @@ public class BackupGenerator extends AbstractMultiBlock implements SimpleWaterlo
 
     protected void setActive(@NotNull BlockState mainState, BlockPos mainPos, LevelAccessor level, boolean active){
         Direction direction = mainState.getValue(FACING);
-        parts().forEach((id, part) -> {
-            BlockPos pos = part.toSecondaryPos(mainPos, direction);
-            level.setBlock(pos, level.getBlockState(pos).setValue(ACTIVE, active), 3);
-        });
+
+        BlockPos pos;
+        BlockState state;
+        for(Map.Entry<Integer, Part> entry : parts().entrySet()){
+            pos = entry.getValue().toSecondaryPos(mainPos, direction);
+            state = level.getBlockState(pos);
+
+            if(!state.is(this)){
+                level.setBlock(mainPos, Blocks.AIR.defaultBlockState(), 3);
+                return;
+            }
+
+            level.setBlock(pos, state.setValue(ACTIVE, active), 3);
+        }
     }
 
     @Override

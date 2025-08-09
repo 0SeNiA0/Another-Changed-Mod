@@ -88,12 +88,14 @@ public abstract class AbstractMultiBlock extends Block {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
             BlockPos pos1 = part.toSecondaryPos(pos, direction);
-            if(id != 0) level.setBlockAndUpdate(pos1, Blocks.AIR.defaultBlockState());
+            BlockState foundState = level.getBlockState(pos1);
+
+            if(id != 0 && foundState.is(this)) level.setBlockAndUpdate(pos1, Blocks.AIR.defaultBlockState());
         });
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
             if(id == 0) return;
@@ -134,14 +136,14 @@ public abstract class AbstractMultiBlock extends Block {
 
     public record Part(int x, int y, int z){
 
-        public @NotNull BlockPos toMainPos(@NotNull BlockPos secondaryPos, @NotNull Direction direction){
+        public @NotNull BlockPos toMainPos(BlockPos secondaryPos, Direction direction){
             return secondaryPos
                     .relative(direction.getCounterClockWise(), x)
                     .below(y)
                     .relative(direction, z);
         }
 
-        public @NotNull BlockPos toSecondaryPos(@NotNull BlockPos mainPos, @NotNull Direction direction){
+        public @NotNull BlockPos toSecondaryPos(BlockPos mainPos, Direction direction){
             return mainPos
                     .relative(direction.getClockWise(), x)
                     .above(y)

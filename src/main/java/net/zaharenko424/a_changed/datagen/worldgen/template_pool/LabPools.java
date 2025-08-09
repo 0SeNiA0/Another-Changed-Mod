@@ -6,11 +6,9 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.Pools;
-import net.minecraft.data.worldgen.ProcessorLists;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.Contract;
@@ -31,9 +29,7 @@ public class LabPools {
 
     public static void bootstrap(@NotNull BootstrapContext<StructureTemplatePool> context){
         HolderGetter<StructureTemplatePool> poolGetter = context.lookup(Registries.TEMPLATE_POOL);
-        HolderGetter<StructureProcessorList> processorGetter = context.lookup(Registries.PROCESSOR_LIST);
         Holder<StructureTemplatePool> empty = poolGetter.getOrThrow(Pools.EMPTY);
-        Holder<StructureProcessorList> fossilRot = processorGetter.getOrThrow(ProcessorLists.FOSSIL_ROT);
 
         List<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> chair = List.of(
                 Pair.of(StructurePoolElement.empty(), 3),

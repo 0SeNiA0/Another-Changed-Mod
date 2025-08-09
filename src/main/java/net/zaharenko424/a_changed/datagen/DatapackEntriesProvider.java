@@ -20,6 +20,7 @@ import net.zaharenko424.a_changed.datagen.worldgen.StructureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.DarkLatexBiome;
 import net.zaharenko424.a_changed.datagen.worldgen.biome.WhiteLatexBiome;
 import net.zaharenko424.a_changed.datagen.worldgen.template_pool.LabPools;
+import net.zaharenko424.a_changed.datagen.worldgen.template_pool.RuinedLabPools;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 
@@ -62,5 +63,6 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
 
     private static void templatePools(BootstrapContext<StructureTemplatePool> context){
         LabPools.bootstrap(context);
+        RuinedLabPools.bootstrap(context);
     }
 }
