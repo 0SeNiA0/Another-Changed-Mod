@@ -36,10 +36,14 @@ public final class DatagenEvent {
         generator.addProvider(event.includeClient(), new ItemModelProvider(out, helper));
         generator.addProvider(event.includeClient(), new SoundDefinitionProvider(out, helper));
 
+        BlockTagProvider tagProvider = generator.addProvider(event.includeServer(),new BlockTagProvider(out, lookup, helper));
+        generator.addProvider(event.includeServer(), new ItemTagProvider(out, lookup, tagProvider.contentsGetter(), helper));
+        generator.addProvider(event.includeServer(), new EntityTypeTagProvider(out, lookup, helper));
+
         CompletableFuture<HolderLookup.Provider> lookup0 =
-                generator.addProvider(event.includeServer(), new DatapackEntriesProvider(out,lookup)).getRegistryProvider();
-        generator.addProvider(event.includeServer(), new BiomeTagProvider(out,lookup0,helper));
-        generator.addProvider(event.includeServer(), new DamageTypeTagProvider(out,lookup0,helper));
+                generator.addProvider(event.includeServer(), new DatapackEntriesProvider(out, lookup)).getRegistryProvider();
+        generator.addProvider(event.includeServer(), new BiomeTagProvider(out, lookup0, helper));
+        generator.addProvider(event.includeServer(), new DamageTypeTagProvider(out, lookup0, helper));
 
         generator.addProvider(event.includeServer(), new RecipeProvider(out, lookup0));
         generator.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(), List.of(
@@ -47,10 +51,6 @@ public final class DatagenEvent {
                 new LootTableProvider.SubProviderEntry(EntityLootTableProvider::new, LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(LabLoot::new, LootContextParamSets.CHEST)
         ), lookup0));
-
-        BlockTagProvider tagProvider = generator.addProvider(event.includeServer(),new BlockTagProvider(out,lookup,helper));
-        generator.addProvider(event.includeServer(), new ItemTagProvider(out,lookup,tagProvider.contentsGetter(),helper));
-        generator.addProvider(event.includeServer(), new EntityTypeTagProvider(out,lookup,helper));
 
         generator.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, helper, List.of(
                 new AdvancementSubProvider()

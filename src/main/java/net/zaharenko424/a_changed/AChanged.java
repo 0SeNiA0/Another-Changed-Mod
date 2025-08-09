@@ -18,12 +18,14 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.zaharenko424.a_changed.worldgen.LabRotProcessor;
 import net.zaharenko424.cmrs.registry.MaterialRegistry;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
@@ -66,6 +68,7 @@ public class AChanged {
     public static final DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(BuiltInRegistries.ACTIVITY, MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
+    public static final DeferredRegister<StructureProcessorType<?>> PROCESSORS = DeferredRegister.create(BuiltInRegistries.STRUCTURE_PROCESSOR, MODID);
 
     //Activities
     public static final DeferredHolder<Activity, Activity> TRANSFUR_ATTACK = ACTIVITIES.register("transfur_attack", () -> new Activity("transfur_attack"));
@@ -82,6 +85,9 @@ public class AChanged {
 
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
+
+    //Structure processors
+    public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<LabRotProcessor>> LAB_ROT_PROCESSOR = PROCESSORS.register("lab_rot", () -> () -> LabRotProcessor.CODEC);
 
     //Tags
     public static final TagKey<Block> LATEX_RESISTANT = TagKey.create(Registries.BLOCK, resourceLoc("latex_resistant"));
@@ -138,6 +144,7 @@ public class AChanged {
         PARTICLE_TYPES.register(modEventBus);
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
+        PROCESSORS.register(modEventBus);
 
         if(FMLEnvironment.dist.isClient()) {//Server doesn't crash
             MaterialRegistry.MATERIALS.register(modEventBus);

@@ -3,6 +3,8 @@ package net.zaharenko424.a_changed.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
@@ -16,12 +18,18 @@ import java.util.concurrent.CompletableFuture;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.*;
 
 public class BlockTagProvider extends BlockTagsProvider {
+
+    public static final TagKey<Block> LAB_ROT_PROTECTED = BlockTags.create(AChanged.resourceLoc("lab_rot_protected"));
+
     public BlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, AChanged.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
+    protected void addTags(HolderLookup.@NotNull Provider holderLookup) {
+        tag(LAB_ROT_PROTECTED).addTag(BlockTags.FEATURES_CANNOT_REPLACE)
+                .add(AIR_CONDITIONER.get(), TABLE.get(), LIBRARY_DOOR.get(), MAINTENANCE_DOOR.get(), LAB_DOOR.get(), TALL_CARDBOARD_BOX.get());
+
         tag(BlockTags.CEILING_HANGING_SIGNS).add(ORANGE_HANGING_SIGN.get());
 
         tag(BlockTags.FENCE_GATES).add(ORANGE_FENCE_GATE.get());
