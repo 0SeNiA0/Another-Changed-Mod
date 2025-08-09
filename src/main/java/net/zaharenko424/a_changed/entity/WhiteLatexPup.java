@@ -134,7 +134,7 @@ public class WhiteLatexPup extends AbstractLatexPup implements SmartBrainOwner<W
         );
     }
 
-    @Override @SuppressWarnings("unchecked")
+    @Override
     public BrainActivityGroup<? extends WhiteLatexPup> getIdleTasks() {
         return BrainActivityGroup.<WhiteLatexPup>idleTasks(
                 new FirstApplicableBehaviour<>(

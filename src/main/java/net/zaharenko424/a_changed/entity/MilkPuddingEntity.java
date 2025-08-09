@@ -58,7 +58,7 @@ public class MilkPuddingEntity extends Monster {
             return false;
         }
 
-        TransfurHandler.of((LivingEntity) pEntity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2,
+        TransfurHandler.nonNullOf((LivingEntity) pEntity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2,
                 random.nextFloat() > .5 ? TransfurRegistry.WHITE_LATEX_WOLF_F_TF.get() : TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get(),
                 TransfurContext.DEF);
         ((LivingEntity) pEntity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));

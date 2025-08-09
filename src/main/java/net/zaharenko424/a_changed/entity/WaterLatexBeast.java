@@ -67,7 +67,7 @@ import java.util.Map;
 
 public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwner<WaterLatexBeast> {
 
-    public WaterLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
+    public WaterLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType<?> transfurType) {
         super(entityType, level, transfurType);
         ((Navigation)navigation).setCanOpenDoors(true);
         moveControl = new Control(this);
@@ -80,15 +80,15 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
                 .add(Attributes.STEP_HEIGHT, 1);
     }
 
-    public static boolean checkSpawnRules(EntityType<? extends AbstractLatexBeast> p_219014_, @NotNull ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random){
+    public static boolean checkSpawnRules(EntityType<? extends AbstractLatexBeast> type, @NotNull ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random){
         if(level.getDifficulty() == Difficulty.PEACEFUL) return false;
         if(!level.getFluidState(pos.below()).is(FluidTags.WATER) && !MobSpawnType.isSpawner(spawnType)) return false;
 
         return MobSpawnType.isSpawner(spawnType) || (random.nextInt(20) == 0 && isDeepEnoughToSpawn(level, pos));
     }
 
-    private static boolean isDeepEnoughToSpawn(@NotNull LevelAccessor pLevel, @NotNull BlockPos pPos) {
-        return pPos.getY() < pLevel.getSeaLevel() - 5;
+    private static boolean isDeepEnoughToSpawn(@NotNull LevelAccessor level, @NotNull BlockPos pos) {
+        return pos.getY() < level.getSeaLevel() - 5;
     }
 
     @Override
@@ -163,7 +163,6 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     public static final int LOOK_RANGE_SQR = 6 * 6;
 
     @Override
-    @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends WaterLatexBeast> getIdleTasks() {// not swimming
         return BrainActivityGroup.idleTasks(
                 targetRetaliateLook(LOOK_RANGE_SQR),

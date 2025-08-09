@@ -95,7 +95,7 @@ public class JeiPlugin implements IModPlugin {
     public void registerCategories(@NotNull IRecipeCategoryRegistration registration) {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(new CompressorRecipeCategory(guiHelper), new DNAExtractorRecipeCategory(guiHelper),
-                new LatexEncoderRecipeCategory(guiHelper), new LatexPurifierRecipeCategory(guiHelper));
+                new LatexEncoderRecipeCategory(guiHelper), new LatexPurifierRecipeCategory());
     }
 
     @Override

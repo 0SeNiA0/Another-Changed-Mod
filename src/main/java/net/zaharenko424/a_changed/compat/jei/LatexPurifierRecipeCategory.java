@@ -4,7 +4,6 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
-import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -22,11 +21,9 @@ public class LatexPurifierRecipeCategory implements IRecipeCategory<LatexPurifie
 
     public static final RecipeType<LatexPurifierRecipe> TYPE = new RecipeType<>(RecipeRegistry.LATEX_PURIFIER_RECIPE.getId(), LatexPurifierRecipe.class);
 
-    private final IGuiHelper guiHelper;
     private final IDrawable icon;
 
-    public LatexPurifierRecipeCategory(IGuiHelper guiHelper){
-        this.guiHelper = guiHelper;
+    public LatexPurifierRecipeCategory(){
         icon = new IDrawable() {
             @Override
             public int getWidth() {

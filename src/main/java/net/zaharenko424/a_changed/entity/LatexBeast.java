@@ -51,8 +51,8 @@ import java.util.Map;
 
 public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<LatexBeast> {
 
-    public LatexBeast(@NotNull EntityType<? extends Monster> p_21368_, @NotNull Level p_21369_, @NotNull TransfurType transfurType) {
-        super(p_21368_, p_21369_, transfurType);
+    public LatexBeast(@NotNull EntityType<? extends Monster> type, @NotNull Level level, @NotNull TransfurType<?> transfurType) {
+        super(type, level, transfurType);
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
     }
 
@@ -61,7 +61,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     }
 
     @Override
-    protected @NotNull PathNavigation createNavigation(@NotNull Level pLevel) {
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         return new SmoothGroundNavigation(this, level());
     }
 
@@ -117,7 +117,6 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     public static final int LOOK_RANGE_SQR = 6 * 6;
 
     @Override
-    @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends LatexBeast> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 targetRetaliateLook(LOOK_RANGE_SQR),

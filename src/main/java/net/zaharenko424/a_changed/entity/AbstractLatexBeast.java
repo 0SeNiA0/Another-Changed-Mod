@@ -112,7 +112,6 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
         return dimensions != null ? dimensions : super.getDefaultDimensions(pPose);
     }
 
-    @SuppressWarnings("unchecked")
     protected <E extends AbstractLatexBeast> FirstApplicableBehaviour<E> targetRetaliateLook(float lookRangeSqr){
         return new FirstApplicableBehaviour<>(
                 new TargetTransfurrable<E>().startCondition(latex -> !latex.transfurType.isOrganic()),
@@ -137,7 +136,7 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
         return true;
     }
 
-    public void copyEquipment(@NotNull LivingEntity copyFrom){
+    public void copyEquipment(LivingEntity copyFrom){
         for(EquipmentSlot slot : EquipmentSlot.values()){
             if(!copyFrom.hasItemInSlot(slot)) continue;
             setItemSlot(slot, copyFrom.getItemBySlot(slot));

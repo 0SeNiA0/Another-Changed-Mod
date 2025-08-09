@@ -189,7 +189,7 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
         );
     }
 
-    @Override @SuppressWarnings("unchecked")
+    @Override
     public BrainActivityGroup<? extends DarkLatexPup> getIdleTasks() {
         return BrainActivityGroup.<DarkLatexPup>idleTasks(
                 new FirstApplicableBehaviour<>(

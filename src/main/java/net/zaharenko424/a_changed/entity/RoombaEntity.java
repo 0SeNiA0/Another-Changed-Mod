@@ -20,8 +20,8 @@ import java.util.EnumSet;
 
 public class RoombaEntity extends PathfinderMob {
 
-    public RoombaEntity(Level pLevel) {
-        super(EntityRegistry.ROOMBA_ENTITY.get(), pLevel);
+    public RoombaEntity(Level level) {
+        super(EntityRegistry.ROOMBA_ENTITY.get(), level);
     }
 
     @Override
@@ -42,12 +42,12 @@ public class RoombaEntity extends PathfinderMob {
     }
 
     @Override
-    public boolean canAttack(@NotNull LivingEntity pTarget) {
+    public boolean canAttack(@NotNull LivingEntity target) {
         return false;
     }
 
     @Override
-    public boolean canAttack(@NotNull LivingEntity pLivingentity, @NotNull TargetingConditions pCondition) {
+    public boolean canAttack(@NotNull LivingEntity entity, @NotNull TargetingConditions condition) {
         return false;
     }
 

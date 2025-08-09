@@ -45,7 +45,7 @@ import java.util.Map;
 
 public class PureWhiteLatex extends LatexBeast {
 
-    public PureWhiteLatex(@NotNull EntityType<? extends Monster> type, @NotNull Level level, @NotNull TransfurType transfurType) {
+    public PureWhiteLatex(@NotNull EntityType<? extends Monster> type, @NotNull Level level, @NotNull TransfurType<?> transfurType) {
         super(type, level, transfurType);
     }
 
@@ -66,7 +66,6 @@ public class PureWhiteLatex extends LatexBeast {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends LatexBeast> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 targetRetaliateLook(LOOK_RANGE_SQR),
