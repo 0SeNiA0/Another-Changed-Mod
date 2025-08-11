@@ -66,9 +66,9 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
         MatrixStack.pop(stack);
     }
 
-    protected void setupBeam(Direction direction, int length){
+    protected void setupBeam(Direction direction, float length){
         beam.zScale = length;
-        float offset = (.5f + (float) length / 2) * 16;
+        float offset = (.5f + length / 2) * 16;
         switch (direction){
             case NORTH -> beam.z -= offset;
             case SOUTH -> beam.z += offset;

@@ -33,7 +33,7 @@ import static net.zaharenko424.a_changed.block.ConnectedTextureBlock.*;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class LatexPuddle extends Block {
+public class LatexPuddle extends Block implements LatexImmuneBlock {
 
     private static final VoxelShape SHAPE0;
     private static final VoxelShape SHAPE_N;
@@ -43,9 +43,9 @@ public class LatexPuddle extends Block {
     private static final VoxelShape SHAPE_NESW = Shapes.box(0, 0, 0, 1, 0.0625, 1);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
     private static final HashMap<VoxelShape, AABB> AABB_CACHE = new HashMap<>();
-    private final Supplier<? extends TransfurType> transfurType;
+    private final Supplier<? extends TransfurType<?>> transfurType;
 
-    public LatexPuddle(BlockBehaviour.Properties properties, Supplier<? extends TransfurType> transfurType) {
+    public LatexPuddle(BlockBehaviour.Properties properties, Supplier<? extends TransfurType<?>> transfurType) {
         super(properties.friction(.9f).speedFactor(.6f).jumpFactor(.6f));
         registerDefaultState(stateDefinition.any()
                 .setValue(NORTH,false)

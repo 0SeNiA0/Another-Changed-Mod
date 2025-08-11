@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class TallCrystal extends NotRotatedMultiBlock {
+public class TallCrystal extends NotRotatedMultiBlock implements LatexImmuneBlock {
 
     private static final VoxelShape SHAPE0 = Shapes.or(
             Shapes.box(0.25, 0, 0.25, 0.75, 1, 0.75),

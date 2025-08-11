@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.EntityBlock;
@@ -50,13 +51,31 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenc
     }
 
     @Override
-    public @NotNull InteractionResult useWrenchOn(BlockState state, BlockPos pos, ServerLevel level, @NotNull UseOnContext context) {
+    public @NotNull InteractionResult useWrenchOn(BlockState state, BlockPos pos, ServerLevel level, UseOnContext context) {
         Player player = context.getPlayer();
         if(player != null && player.isCrouching()){
             level.removeBlock(pos, false);
             ItemHandlerHelper.giveItemToPlayer(player, asItem().getDefaultInstance());
-        } else rotate(state, level, pos, Rotation.CLOCKWISE_90);
+        } else {
+            Direction clicked = context.getClickedFace();
+            Direction.Axis clickedAxis = clicked.getAxis();
+            Direction current = state.getValue(FACING);
+
+            BlockState newState = clickedAxis == Direction.Axis.Y
+                    ? rotate(state, level, pos, Rotation.CLOCKWISE_90)
+                    : state.setValue(FACING, current.getClockWise(clickedAxis));
+
+            if(state == newState) return InteractionResult.PASS;
+
+            level.setBlock(pos, newState, Block.UPDATE_ALL);
+        }
+
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public @NotNull BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
+        return state.setValue(FACING, direction.rotate(state.getValue(FACING)));
     }
 
     @Nullable
@@ -72,9 +91,7 @@ public class LaserEmitter extends DirectionalBlock implements EntityBlock, Wrenc
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
         boolean signal = level.hasNeighborSignal(pos);
         if(signal == state.getValue(ACTIVE)) return;
-        if(level.getBlockEntity(pos) instanceof LaserEmitterEntity emitter){
-            emitter.switchActive();
-        }
+
         level.setBlockAndUpdate(pos, state.setValue(ACTIVE, signal));
         level.playSound(null,pos, SoundRegistry.LASER.get(), SoundSource.BLOCKS);
     }

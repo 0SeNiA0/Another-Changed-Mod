@@ -22,6 +22,7 @@ import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.AChangedTags;
 import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.event.custom.AddTransfurProgressEvent;
@@ -59,7 +60,7 @@ public class TransfurHandler implements AbilityHolder {
     };
 
     public static @Nullable TransfurHandler of(@NotNull LivingEntity entity){
-        if(!entity.getType().is(TRANSFURRABLE_TAG)) return null;
+        if(!entity.getType().is(AChangedTags.Entity.TRANSFURRABLE_TAG)) return null;
         return entity.getData(AttachmentRegistry.TRANSFUR_HANDLER);
     }
 
@@ -92,7 +93,7 @@ public class TransfurHandler implements AbilityHolder {
 
     @ApiStatus.Internal
     public TransfurHandler(IAttachmentHolder holder){
-        if(!(holder instanceof LivingEntity living) || !living.getType().is(AChanged.TRANSFURRABLE_TAG))
+        if(!(holder instanceof LivingEntity living) || !living.getType().is(AChangedTags.Entity.TRANSFURRABLE_TAG))
             throw new IllegalStateException("Tried to create TransfurHandler for unsupported holder: " + holder);
         this.holder = living;
         if(isTransfurred()) return;

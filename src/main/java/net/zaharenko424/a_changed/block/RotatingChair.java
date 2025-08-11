@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class RotatingChair extends Block implements ISeatBlock<RotatingChairEntity> {
+public class RotatingChair extends Block implements SeatBlock<RotatingChairEntity> {
 
     private static final VoxelShape SHAPE = Shapes.or(Shapes.box(0.4375, 0, 0.4375, 0.5625, 0.4375, 0.5625)
             ,Shapes.box(0.125, 0.4375, 0.125, 0.875, 0.5625, 0.875)

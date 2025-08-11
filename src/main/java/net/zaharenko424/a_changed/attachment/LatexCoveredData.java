@@ -7,6 +7,7 @@ import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,7 +15,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.AChangedTags;
+import net.zaharenko424.a_changed.block.LatexImmuneBlock;
 import net.zaharenko424.a_changed.block.LatexPuddle;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
@@ -43,10 +45,12 @@ public class LatexCoveredData {
     }
 
     /**
-     * @return true if state cannot be latex covered.
+     * @return true if state cannot be covered with latex.
      */
     public static boolean isStateNotCoverable(@NotNull BlockState state){
-        return state.isEmpty() || state.is(AChanged.LATEX_RESISTANT) || state.getRenderShape() != RenderShape.MODEL || state.getBlock() instanceof LiquidBlock;
+        Block block = state.getBlock();
+        return state.isEmpty() || block instanceof LiquidBlock || block instanceof LatexImmuneBlock
+                || state.is(AChangedTags.Block.LATEX_RESISTANT) || state.getRenderShape() != RenderShape.MODEL;
     }
 
     private final LevelChunk holder;

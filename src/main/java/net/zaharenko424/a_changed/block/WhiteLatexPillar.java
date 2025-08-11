@@ -23,7 +23,7 @@ import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WhiteLatexPillar extends NotRotatedMultiBlock {
+public class WhiteLatexPillar extends NotRotatedMultiBlock implements LatexImmuneBlock {
 
     private static final VoxelShape SHAPE0 = Shapes.or(
             Shapes.box(0.0938f, 0, 0.0938f, 0.9062f, 1, 0.9062f),

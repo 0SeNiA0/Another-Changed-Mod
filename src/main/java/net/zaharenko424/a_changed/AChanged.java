@@ -4,18 +4,14 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
@@ -88,12 +84,6 @@ public class AChanged {
 
     //Structure processors
     public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<LabRotProcessor>> LAB_ROT_PROCESSOR = PROCESSORS.register("lab_rot", () -> () -> LabRotProcessor.CODEC);
-
-    //Tags
-    public static final TagKey<Block> LATEX_RESISTANT = TagKey.create(Registries.BLOCK, resourceLoc("latex_resistant"));
-    public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
-    public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
-    public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
 
     //Item tier
     public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 128, 4, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));

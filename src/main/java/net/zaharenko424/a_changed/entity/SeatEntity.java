@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.block.ISeatBlock;
+import net.zaharenko424.a_changed.block.SeatBlock;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class SeatEntity extends Entity {
     public void tick() {
         tick++;
         if(tick % 20 == 0){
-            if(!(level().getBlockState(blockPosition()).getBlock() instanceof ISeatBlock)){
+            if(!(level().getBlockState(blockPosition()).getBlock() instanceof SeatBlock)){
                 if(isVehicle()) getFirstPassenger().stopRiding();
                 discard();
                 return;

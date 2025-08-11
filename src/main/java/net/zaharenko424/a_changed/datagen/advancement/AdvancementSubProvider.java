@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.AChangedTags;
 import net.zaharenko424.a_changed.criterion.ShotWithSyringeTrigger;
 import net.zaharenko424.a_changed.criterion.SteppedOnSyringeTrigger;
 import net.zaharenko424.a_changed.criterion.TransfurTrigger;
@@ -203,7 +203,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                 )
                 .parent(rangedTransfur)
                 .addCriterion("hit_entity", ShotWithSyringeTrigger.TriggerInstance
-                        .playerShotEntityWithSyringe(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(AChanged.TRANSFURRABLE_TAG)
+                        .playerShotEntityWithSyringe(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(AChangedTags.Entity.TRANSFURRABLE_TAG)
                                 .distance(DistancePredicate.absolute(MinMaxBounds.Doubles.atLeast(64))).build())))
                 .save(saver, resourceLoc("hit_entity_syringe_coilgun"), existingFileHelper);
 

@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.AChangedTags;
 import net.zaharenko424.a_changed.datagen.worldgen.BiomeModifierProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.ConfiguredFeatureProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.PlacedFeatureProvider;
@@ -70,7 +71,7 @@ public class DatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
 
     public static final ResourceKey<StructureProcessorList> LAB_ROT = Utils.resourceKey(Registries.PROCESSOR_LIST, "lab_rot");
     private static void processorList(BootstrapContext<StructureProcessorList> context){
-        context.register(LAB_ROT, new StructureProcessorList(List.of(new LabRotProcessor(.9f, context.lookup(Registries.BLOCK).getOrThrow(BlockTagProvider.LAB_ROT_PROTECTED)))));
+        context.register(LAB_ROT, new StructureProcessorList(List.of(new LabRotProcessor(.9f, context.lookup(Registries.BLOCK).getOrThrow(AChangedTags.Block.LAB_ROT_PROTECTED)))));
     }
 
     private static void templatePools(BootstrapContext<StructureTemplatePool> context){

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface ISeatBlock <S extends SeatEntity> {
+public interface SeatBlock<S extends SeatEntity> {
 
     default boolean sit(@NotNull Level level, @NotNull BlockPos pos, @NotNull AABB ab, @NotNull Player player, boolean renderPlayer){
         List<S> list = level.getEntitiesOfClass(seatClass(), ab);

@@ -15,14 +15,14 @@ import net.minecraft.world.level.block.Fallable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.zaharenko424.a_changed.block.ISeatBlock;
+import net.zaharenko424.a_changed.block.SeatBlock;
 import net.zaharenko424.a_changed.entity.SeatEntity;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class TallCardboardBox extends TallBox implements ISeatBlock<SeatEntity>, Fallable {
+public class TallCardboardBox extends TallBox implements SeatBlock<SeatEntity>, Fallable {
 
     public TallCardboardBox(Properties properties) {
         super(properties);

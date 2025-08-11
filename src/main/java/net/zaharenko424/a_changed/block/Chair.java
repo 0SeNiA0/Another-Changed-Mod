@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class Chair extends HorizontalDirectionalBlock implements ISeatBlock<SeatEntity> {
+public class Chair extends HorizontalDirectionalBlock implements SeatBlock<SeatEntity> {
 
     private static final VoxelShape SHAPE_NORTH, SHAPE_EAST, SHAPE_SOUTH, SHAPE_WEST;
 

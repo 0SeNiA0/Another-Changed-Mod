@@ -25,13 +25,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class Crystal extends Block {
+public class Crystal extends Block implements LatexImmuneBlock {
 
     private static final VoxelShape SHAPE = Shapes.create(.375,0,.375,.625,.75,.625);
     private static final AABB aabb = SHAPE.bounds();
-    private final Supplier<? extends TransfurType> transfurType;
+    private final Supplier<? extends TransfurType<?>> transfurType;
 
-    public Crystal(Properties properties, Supplier<? extends TransfurType> transfurType) {
+    public Crystal(Properties properties, Supplier<? extends TransfurType<?>> transfurType) {
         super(properties.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }

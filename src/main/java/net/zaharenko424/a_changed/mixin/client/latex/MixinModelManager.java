@@ -101,10 +101,13 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     @ModifyReturnValue(at = @At(value = "RETURN", ordinal = 0), method = "lambda$loadModels$15")
     private static TextureAtlasSprite onLoadModelsSpriteGetter(TextureAtlasSprite original, @Local(argsOnly = true) ModelResourceLocation location){
         if(achanged$isForceReload()) return original;
+
         String path = original.contents().name().getPath();
         if(!path.startsWith("block") || path.endsWith("ltx")) return original;//make sure that there are no converted textures in hashSet!
+
         Block block = BuiltInRegistries.BLOCK.get(location.id());//accept textures only from block dir
         if(LatexCoveredData.isStateNotCoverable(block.defaultBlockState())) return original;//TMP TAGS DON'T WORK BEFORE THE WORLD IS LOADED
+
         achanged$sprites.put(original.contents().name(), original);
         return original;
     }
@@ -118,6 +121,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
             achanged$generateTextures(convertedDir);
             return;
         }
+
         File[] subDirectories = convertedDir.listFiles(File::isDirectory);
         if(subDirectories == null) {
             achanged$generateTextures(convertedDir);
