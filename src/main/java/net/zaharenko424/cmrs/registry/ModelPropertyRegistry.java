@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.cmrs.CMRS;
 import net.zaharenko424.cmrs.api.ModelProperty;
-import net.zaharenko424.cmrs.client.property.*;
+import net.zaharenko424.cmrs.property.*;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 
 import java.util.HashMap;
@@ -32,6 +32,7 @@ public class ModelPropertyRegistry {
 
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<BooleanProperty>> BOOLEAN = PROPERTIES.register("boolean", () -> new ModelPropertyType<>(BooleanProperty.CODEC));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FloatProperty>> FLOAT = PROPERTIES.register("float", () -> new ModelPropertyType<>(FloatProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<IntProperty>> INT = PROPERTIES.register("int", () -> new ModelPropertyType<>(IntProperty.CODEC));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<StringProperty>> STRING = PROPERTIES.register("string", () -> new ModelPropertyType<>(StringProperty.CODEC));
     public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<UnitProperty>> UNIT = PROPERTIES.register("unit", () -> new ModelPropertyType<>(UnitProperty.CODEC));
 

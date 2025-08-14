@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
-public class RoundedRectWidget extends Widget {
+public class RoundedRectWidget extends Widget implements SizedWidget {
 
     protected Mesh outline;
     protected Mesh inside;

@@ -4,45 +4,43 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.function.Predicate;
 
-public class SetView <E> implements Set<E> {
+public class CollectionView <E> implements Collection<E> {
 
-    private final Collection<E> set;
+    private final Collection<E> collection;
 
-    public SetView(Collection<E> set){
-        this.set = set;
+    public CollectionView(Collection<E> collection){
+        this.collection = collection;
     }
 
     @Override
     public int size() {
-        return set.size();
+        return collection.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return set.isEmpty();
+        return collection.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return set.contains(o);
+        return collection.contains(o);
     }
 
     @Override
     public @NotNull Iterator<E> iterator() {
-        return new IteratorView<>(set.iterator());
+        return new IteratorView<>(collection.iterator());
     }
 
     @Override
     public @NotNull Object @NotNull [] toArray() {
-        return set.toArray();
+        return collection.toArray();
     }
 
     @Override
-    public @NotNull <T> T @NotNull [] toArray(@NotNull T[] a) {
-        return set.toArray(a);
+    public @NotNull <T> T @NotNull [] toArray(@NotNull T @NotNull [] a) {
+        return collection.toArray(a);
     }
 
     @Override
@@ -56,22 +54,12 @@ public class SetView <E> implements Set<E> {
     }
 
     @Override
-    public boolean removeIf(@NotNull Predicate<? super E> filter) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return set.containsAll(c);
+        return collection.containsAll(c);
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends E> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -81,8 +69,12 @@ public class SetView <E> implements Set<E> {
     }
 
     @Override
-    public void clear() {
+    public boolean retainAll(@NotNull Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
 }

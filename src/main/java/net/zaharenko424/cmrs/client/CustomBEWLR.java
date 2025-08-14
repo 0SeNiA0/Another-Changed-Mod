@@ -72,7 +72,7 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             absoluteSolver.render(stack, builder, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             BufferUploader.drawWithShader(builder.end());*/
 
-            absoluteSolver.render(stack, buffer.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            absoluteSolver.render(stack, buffer.getBuffer(ExtraRenderTypes.OPAQUE_GLOW.apply(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             MatrixStack.pop(stack);
         }
     }

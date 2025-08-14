@@ -140,7 +140,7 @@ public class RoundedTextField extends RoundedRectWidget {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if(!shouldRender() && defText == null) return;
+        if(!shouldRender() && defText == null && getText().isEmpty()) return;
 
         PoseStack stack = guiGraphics.pose();
         MatrixStack.push(stack);
@@ -253,6 +253,15 @@ public class RoundedTextField extends RoundedRectWidget {
         builder.insert(cursorPos, text);
         moveCursorPos(text.length());
         this.text = null;
+        if(onChanged != null) onChanged.accept(this);
+        return this;
+    }
+
+    public RoundedTextField clearText(){
+        cursorPos = selectionPos = 0;
+
+        text = "";
+        builder = new StringBuilder();
         if(onChanged != null) onChanged.accept(this);
         return this;
     }

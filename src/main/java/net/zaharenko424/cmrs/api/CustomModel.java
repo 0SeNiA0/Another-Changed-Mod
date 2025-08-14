@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.cmrs.client.model.Texture;
-import net.zaharenko424.cmrs.client.property.ModelPropertyType;
+import net.zaharenko424.cmrs.property.ModelPropertyType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

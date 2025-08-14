@@ -190,7 +190,7 @@ public class CustomModelManager {
         private final ResourceLocation location;
         private final M model;
 
-        public DynamicModelWrapper(@NotNull ResourceLocation location, @NotNull M model){
+        public DynamicModelWrapper(ResourceLocation location, M model){
             this.location = location;
             this.model = model;
         }
@@ -234,7 +234,7 @@ public class CustomModelManager {
 
         private static final Comparator<ModelEntry> comp = Comparator.comparingInt(ModelEntry::priority).reversed();
 
-        private Set<ModelEntry> view;
+        private SetView<ModelEntry> view;
         private final List<ModelEntry> models = Collections.synchronizedList(new ArrayList<>());
 
         public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModel(){
@@ -254,7 +254,7 @@ public class CustomModelManager {
             models.sort(comp);
         }
 
-        public void removeModel(@NotNull Predicate<ModelEntry> predicate){
+        public void removeModel(Predicate<ModelEntry> predicate){
             if(models.isEmpty()) return;
             if(models.removeIf(predicate) && !models.isEmpty()) models.sort(comp);
         }

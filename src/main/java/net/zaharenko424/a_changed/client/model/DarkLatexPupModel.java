@@ -26,9 +26,9 @@ import net.zaharenko424.cmrs.client.model.PartTransform;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
-import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.StringProperty;
-import net.zaharenko424.cmrs.client.property.UnitProperty;
+import net.zaharenko424.cmrs.property.FPArms;
+import net.zaharenko424.cmrs.property.StringProperty;
+import net.zaharenko424.cmrs.property.UnitProperty;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

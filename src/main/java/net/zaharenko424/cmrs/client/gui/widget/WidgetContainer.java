@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class WidgetContainer extends Widget implements ContainerEventHandler {
+public class WidgetContainer extends Widget implements ContainerEventHandler, SizedWidget {
 
     protected static final Comparator<Widget> HIGHEST_Z = Comparator.<Widget, Float>comparing(widget -> widget.origin.z, Float::compare).reversed();
 

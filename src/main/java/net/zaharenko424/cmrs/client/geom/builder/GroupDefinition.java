@@ -8,7 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.zaharenko424.cmrs.client.geom.Cube;
 import net.zaharenko424.cmrs.client.geom.Mesh;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
-import net.zaharenko424.cmrs.util.StreamCodecUtils;
+import net.zaharenko424.cmrs.client.geom.PartPoseCodec;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class GroupDefinition {
             definition -> definition.cubes,
             ByteBufCodecs.collection(ArrayList::new, MeshDefinition.CODEC),
             definition -> definition.meshes,
-            StreamCodecUtils.POSE_CODEC,
+            PartPoseCodec.POSE_CODEC,
             definition -> definition.partPose,
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, GroupDefinition.CODEC),
             definition -> definition.children,

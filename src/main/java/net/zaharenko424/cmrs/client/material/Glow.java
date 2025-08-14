@@ -47,7 +47,7 @@ public final class Glow implements Material {
     @Override
     public void setupRenderStack(CustomModel<?> model, LivingEntity entity, RenderStack.ParameterList parameters, MultiBufferSource source) {
         Texture texture = model.getTexture(textureId);
-        parameters.add(source.getBuffer(ExtraRenderTypes.GLOW_SOLID.apply(texture.getLocation()), TransparencyType.OPAQUE))
+        parameters.add(source.getBuffer(ExtraRenderTypes.OPAQUE_GLOW.apply(texture.getLocation()), TransparencyType.OPAQUE))
                 .texture(texture);
     }
 }

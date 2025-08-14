@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record ClientboundSetBuiltInPlayerModelPacket(int entityId, ResourceLocation modelId, int priority, boolean removeOnDeath, ModelSetReason reason) implements CustomPacketPayload {
 
-    public static final Type<ClientboundSetBuiltInPlayerModelPacket> TYPE = new Type<>(CMRS.resourceLoc("clientbound_set_builtin_player_model"));
+    public static final Type<ClientboundSetBuiltInPlayerModelPacket> TYPE = new Type<>(CMRS.resourceLoc("cb_set_builtin_player_model"));
 
     public ClientboundSetBuiltInPlayerModelPacket(FriendlyByteBuf buf){
         this(buf.readVarInt(), buf.readResourceLocation(), buf.readVarInt(), buf.readBoolean(), buf.readEnum(ModelSetReason.class));

@@ -6,8 +6,10 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.zaharenko424.cmrs.CMRS;
 import net.zaharenko424.cmrs.network.ClientPacketHandler;
+import net.zaharenko424.cmrs.network.ServerPacketHandler;
 import net.zaharenko424.cmrs.network.packets.ClientboundRemovePlayerModelPacket;
 import net.zaharenko424.cmrs.network.packets.ClientboundSetBuiltInPlayerModelPacket;
+import net.zaharenko424.cmrs.network.packets.ServerboundModelPropertySync;
 import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber()
@@ -24,5 +26,11 @@ public class CommonMod {
 
         registrar.playToClient(ClientboundRemovePlayerModelPacket.TYPE, ClientboundRemovePlayerModelPacket.CODEC,
                 (payload, context) -> ClientPacketHandler.INSTANCE.handleRemovePlayerModelPacket(payload, context));
+
+
+        PayloadRegistrar optional = registrar.optional();
+
+        optional.playToServer(ServerboundModelPropertySync.TYPE, ServerboundModelPropertySync.CODEC,
+                ServerPacketHandler::handleModelPropertySync);
     }
 }

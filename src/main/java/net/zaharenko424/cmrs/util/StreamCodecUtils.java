@@ -1,7 +1,6 @@
 package net.zaharenko424.cmrs.util;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,6 +9,8 @@ import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class StreamCodecUtils {
 
@@ -47,20 +48,6 @@ public class StreamCodecUtils {
 
     public static final StreamCodec<FriendlyByteBuf, ResourceLocation> RESOURCE_LOC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ResourceLocation::toString, ResourceLocation::parse);
 
-    public static final StreamCodec<FriendlyByteBuf, PartPose> POSE_CODEC = StreamCodec.of((buffer, pose) -> {
-        int flag = pose.xRot == 0 && pose.yRot == 0 && pose.zRot == 0 ? 1 : 3;
-        flag += pose.x == 0 && pose.y == 0 && pose.z == 0 ? -1 : 0;
-        buffer.writeByte(flag);
-
-        if(flag == 1 || flag == 3) buffer.writeFloat(pose.x).writeFloat(pose.y).writeFloat(pose.z);
-        if(flag == 2 || flag == 3) buffer.writeFloat(pose.xRot).writeFloat(pose.yRot).writeFloat(pose.zRot);
-    }, buffer -> switch(buffer.readByte()){
-        case 0 -> PartPose.ZERO;
-        case 1 -> PartPose.offset(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-        case 2 -> PartPose.rotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-        default -> PartPose.offsetAndRotation(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-    });
-
     public static <T, B extends ByteBuf> void writeOptionally(T value, boolean write, @NotNull B buffer, @NotNull StreamEncoder<B, T> writer){
         buffer.writeBoolean(write);
         if(write) writer.encode(buffer, value);
@@ -71,5 +58,12 @@ public class StreamCodecUtils {
             return reader.decode(buffer);
         }
         return null;
+    }
+
+    public static <T, B extends ByteBuf> @Nullable T readOptionally(@NotNull B buffer, @NotNull StreamDecoder<B, T> reader, Supplier<T> defVal){
+        if(buffer.readBoolean()){
+            return reader.decode(buffer);
+        }
+        return defVal.get();
     }
 }

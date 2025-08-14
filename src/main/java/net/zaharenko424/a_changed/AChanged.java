@@ -17,14 +17,11 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.worldgen.LabRotProcessor;
-import net.zaharenko424.cmrs.registry.MaterialRegistry;
-import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
-import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
+import net.zaharenko424.cmrs.CMRS;
 import org.apache.logging.log4j.util.InternalApi;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -136,11 +133,8 @@ public class AChanged {
         TRIGGER_TYPES.register(modEventBus);
         PROCESSORS.register(modEventBus);
 
-        if(FMLEnvironment.dist.isClient()) {//Server doesn't crash
-            MaterialRegistry.MATERIALS.register(modEventBus);
-            ModelPropertyRegistry.PROPERTIES.register(modEventBus);
-            RenderLayerRegistry.LAYERS.register(modEventBus);
-        }
+
+        new CMRS(modEventBus);
     }
 
     @InternalApi

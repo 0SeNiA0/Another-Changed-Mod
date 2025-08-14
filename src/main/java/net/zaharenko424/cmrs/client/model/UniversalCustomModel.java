@@ -12,10 +12,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.cmrs.api.*;
+import net.zaharenko424.cmrs.client.ModelPropertyManager;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
-import net.zaharenko424.cmrs.client.property.FPArms;
-import net.zaharenko424.cmrs.client.property.ModelPropertyType;
-import net.zaharenko424.cmrs.client.property.StringProperty;
+import net.zaharenko424.cmrs.property.FPArms;
+import net.zaharenko424.cmrs.property.ModelPropertyType;
+import net.zaharenko424.cmrs.property.StringProperty;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     protected final List<Material> materials;
     protected final List<RenderLayer> layers;
     protected final Map<String, ModelProperty> properties;
+    protected Map<String, ModelProperty> overrides;
     protected final List<AnimationComponent> animations;
     protected final float shadowRadius;
     protected RenderStack stack;
@@ -61,26 +63,54 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     }
 
     public boolean hasProperty(@NotNull String key, @NotNull ModelPropertyType<?> type){
-        ModelProperty property = properties.get(key);
+        ModelProperty property;
+        if(overrides != null && !overrides.isEmpty()) {
+            property = overrides.get(key);
+
+            if(property != null && property.type().get() == type) return true;
+        }
+
+        property = properties.get(key);
 
         return property != null && property.type().get() == type;
     }
 
     public boolean hasProperty(@NotNull String key, @NotNull DeferredHolder<ModelPropertyType<?>, ?> type){
-        ModelProperty property = properties.get(key);
+        ModelProperty property;
+        if(overrides != null && !overrides.isEmpty()) {
+            property = overrides.get(key);
+
+            if(property != null && property.type().equals(type)) return true;
+        }
+
+        property = properties.get(key);
 
         return property != null && property.type().equals(type);
     }
 
     public <P extends ModelProperty> P getProperty(@NotNull String key, @NotNull ModelPropertyType<P> type){
-        ModelProperty property = properties.get(key);
+        ModelProperty property;
+        if(overrides != null && !overrides.isEmpty()) {
+            property = overrides.get(key);
+
+            if(property != null && property.type().get() == type) return (P) property;
+        }
+
+        property = properties.get(key);
 
         if(property == null || property.type().get() != type) return null;
         return (P) property;
     }
 
     public <P extends ModelProperty> P getProperty(@NotNull String key, @NotNull DeferredHolder<ModelPropertyType<?>, ModelPropertyType<P>> type){
-        ModelProperty property = properties.get(key);
+        ModelProperty property;
+        if(overrides != null && !overrides.isEmpty()) {
+            property = overrides.get(key);
+
+            if(property != null && property.type().equals(type)) return (P) property;
+        }
+
+        property = properties.get(key);
 
         if(property == null || !property.type().equals(type)) return null;
         return (P) property;
@@ -108,9 +138,11 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
 
         getStack().setRenderTypeFunc(suggestedRenderType);
 
+        overrides = ModelPropertyManager.getPropertiesOrEmpty(entity);
         for(int i = 0; i < materials.size(); i++){
             materials.get(i).setupRenderStack(this, entity, stack.getOrCreate(i), source);
         }
+        overrides = null;
 
         root().render(poseStack, stack, packedLight, packedOverlay, color);
 
