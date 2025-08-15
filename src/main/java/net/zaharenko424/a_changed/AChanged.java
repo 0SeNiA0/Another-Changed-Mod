@@ -16,7 +16,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -107,7 +109,7 @@ public class AChanged {
         return loc.withPrefix("textures/").withSuffix(".png");
     }
 
-    public AChanged(IEventBus modEventBus) {
+    public AChanged(IEventBus modEventBus, ModContainer container) {
         ABILITIES.register(modEventBus);
         ACTIVITIES.register(modEventBus);
         ARMOR_MATERIALS.register(modEventBus);
@@ -134,6 +136,7 @@ public class AChanged {
         PROCESSORS.register(modEventBus);
 
 
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_SPEC);
         new CMRS(modEventBus);
     }
 

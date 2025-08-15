@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
@@ -137,7 +138,8 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
         int halfWidth = width / 2;
         int halfHeight = height / 2;
 
-        guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.time_remaining", minecraft.player.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration() / 20f), halfWidth, halfHeight - 8, Color.RED.getRGB());
+        MobEffectInstance effect = minecraft.player.getEffect(MobEffectRegistry.GRABBED_DEBUFF);
+        guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.time_remaining",  effect == null ? "?" : effect.getDuration() / 20f), halfWidth, halfHeight - 8, Color.RED.getRGB());
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable("screen.a_changed.grab_escape.clicks", clicks[0], type.clicksRequired), halfWidth, halfHeight + 8, Color.CYAN.getRGB());
     }
 
@@ -201,6 +203,11 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
             return onClick.applyAsBoolean(this, keyCode);
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            return onClick.applyAsBoolean(this, button);
         }
     }
 }

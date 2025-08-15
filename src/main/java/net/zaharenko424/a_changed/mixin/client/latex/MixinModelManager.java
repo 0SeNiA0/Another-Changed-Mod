@@ -24,6 +24,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import net.zaharenko424.a_changed.ClientConfig;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.util.IOUtils;
@@ -85,6 +86,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
     @Unique
     private static void achanged$forceReload(){
+        if(!ClientConfig.HIDDEN_RELOAD.getAsBoolean()) return;
         achanged$isForceReload = true;
     }
 
@@ -100,7 +102,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
     @ModifyReturnValue(at = @At(value = "RETURN", ordinal = 0), method = "lambda$loadModels$15")
     private static TextureAtlasSprite onLoadModelsSpriteGetter(TextureAtlasSprite original, @Local(argsOnly = true) ModelResourceLocation location){
-        if(achanged$isForceReload()) return original;
+        if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() || achanged$isForceReload()) return original;
 
         String path = original.contents().name().getPath();
         if(!path.startsWith("block") || path.endsWith("ltx")) return original;//make sure that there are no converted textures in hashSet!
@@ -114,7 +116,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
     @Inject(at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;asMap()Ljava/util/Map;"), method = "loadModels")
     private void onLoadModels(ProfilerFiller profilerFiller, Map<ResourceLocation, AtlasSet.StitchResult> atlasPreparations, ModelBakery modelBakery, CallbackInfoReturnable<?> cir){
-        if(achanged$isForceReload() || achanged$sprites.isEmpty()) return;
+        if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() || achanged$isForceReload() || achanged$sprites.isEmpty()) return;
 
         File convertedDir = new File(Minecraft.getInstance().gameDirectory, "converted_textures");
         if(!convertedDir.exists()) {
@@ -178,6 +180,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     @ModifyReceiver(at = @At(value = "INVOKE", target = "Ljava/util/concurrent/CompletableFuture;thenCompose(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;", ordinal = 0),
             method = "reload")
     private <T, U> CompletableFuture<ModelManager.ReloadState> hiddenReload(CompletableFuture<ModelManager.ReloadState> instance, Function<? super T, ? extends CompletionStage<U>> fn, @Local(argsOnly = true) ResourceManager resourceManager, @Local(ordinal = 0, argsOnly = true) ProfilerFiller preparationsProfiler, @Local(ordinal = 1, argsOnly = true) ProfilerFiller reloadProfiler, @Local(ordinal = 0, argsOnly = true) Executor backgroundExecutor, @Local(ordinal = 1, argsOnly = true) Executor gameExecutor){
+        if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean()) return instance;
         return instance.thenCompose(state -> {
             if(!achanged$isForceReload()) return CompletableFuture.completedFuture(state);
 

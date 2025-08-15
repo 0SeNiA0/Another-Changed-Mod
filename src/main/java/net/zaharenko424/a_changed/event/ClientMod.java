@@ -32,6 +32,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ClientConfig;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.model.*;
@@ -115,7 +116,7 @@ public class ClientMod {
 
     @SubscribeEvent
     public static void onAddSprites(AddSpritesToAtlasEvent event){
-        if(!event.getAtlasLocation().equals(AddSpritesToAtlasEvent.BLOCK_ATLAS)) return;
+        if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() || !event.getAtlasLocation().equals(AddSpritesToAtlasEvent.BLOCK_ATLAS)) return;
 
         HashMap<ResourceLocation, Thing<File, File, File, File>> map = ((ModelManagerAccess)Minecraft.getInstance().getModelManager()).achanged$getConvertedTextures();
         if(!map.isEmpty()){

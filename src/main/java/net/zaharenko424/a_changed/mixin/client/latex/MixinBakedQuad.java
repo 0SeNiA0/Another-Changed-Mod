@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.client.model.IQuadTransformer;
 import net.zaharenko424.a_changed.BakedQuadExtension;
+import net.zaharenko424.a_changed.ClientConfig;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.spongepowered.asm.mixin.Final;
@@ -53,8 +54,8 @@ public abstract class MixinBakedQuad implements BakedQuadExtension {
         achanged$sprites[latex.ordinal() - 1] = switch (latex) {
             case DARK_LATEX -> atlas.getSprite(BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("block/"));
             case WHITE_LATEX -> atlas.getSprite(BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("block/"));
-            case LIGHT_DARK_LATEX -> atlas.getSprite(sprite.contents().name().withSuffix("_darkltx"));
-            case LIGHT_WHITE_LATEX -> atlas.getSprite(sprite.contents().name().withSuffix("_whiteltx"));
+            case LIGHT_DARK_LATEX -> atlas.getSprite(ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() ? sprite.contents().name().withSuffix("_darkltx") : BlockRegistry.DARK_LATEX_BLOCK.getId().withPrefix("block/"));
+            case LIGHT_WHITE_LATEX -> atlas.getSprite(ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() ? sprite.contents().name().withSuffix("_whiteltx") : BlockRegistry.WHITE_LATEX_BLOCK.getId().withPrefix("block/"));
             default -> throw new IllegalStateException("Unexpected value: " + latex);
         };
     }
