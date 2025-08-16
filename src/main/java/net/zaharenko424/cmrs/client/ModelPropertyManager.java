@@ -1,12 +1,19 @@
 package net.zaharenko424.cmrs.client;
 
-import io.netty.buffer.Unpooled;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonWriter;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -19,14 +26,13 @@ import net.zaharenko424.cmrs.network.packets.ServerboundModelPropertySync;
 import net.zaharenko424.cmrs.property.ModelPropertyType;
 import net.zaharenko424.cmrs.registry.AttachmentRegistry;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
-import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +40,25 @@ import java.util.Map;
 @ParametersAreNonnullByDefault
 public class ModelPropertyManager {
 
+    private static final Codec<ModelProperty> JSON_CODEC = ResourceLocation.CODEC.dispatch(
+            "type",
+            property -> property.type().getId(),
+            loc -> {
+                ModelPropertyType<?> type = ModelPropertyRegistry.PROPERTY_REGISTRY.get(loc);
+
+                if(type == null) throw new IllegalStateException("No ModelPropertyType is registered under " + loc);
+                return type.jsonCodec().fieldOf("property");
+            }
+    );
+    private static final Codec<Map<String, ModelProperty>> JSON_MAP = Codec.dispatchedMap(
+            Codec.STRING, str -> JSON_CODEC
+    );
+    private static final Codec<Map<String, Map<String, ModelProperty>>> JSON_PER_SERVER = Codec.dispatchedMap(
+            Codec.STRING, str -> JSON_MAP
+    );
+
     private static ModelPropertyManager INSTANCE;
-    private static final File PROPERTIES = new File(FMLPaths.CONFIGDIR.get().toFile(), CMRS.MODID + "_model_properties.bin");
-    private static final StreamCodec<FriendlyByteBuf, Map<String, Map<String, ModelProperty>>> PER_SERVER_MAP = ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ModelPropertyRegistry.MAP);
+    private static final File PROPERTIES = new File(FMLPaths.CONFIGDIR.get().toFile(), CMRS.MODID + "_model_properties.json");
 
     private Connection server;
 
@@ -44,28 +66,10 @@ public class ModelPropertyManager {
     private final Map<String, Map<String, ModelProperty>> perServerProperties = new HashMap<>();
     //Map<ResourceLocation, Map<String, ModelProperty>> perModelProperties;
 
-    private byte[] data;
-
     private Map<String, ModelProperty> bound;
 
     private ModelPropertyManager(){
-        if(!PROPERTIES.exists()) {
-            data = null;
-            load();
-            return;
-        }
-
-        try(FileInputStream fIn = new FileInputStream(PROPERTIES)) {
-            data = fIn.readAllBytes();
-        } catch (IOException e) {
-            CMRS.LOGGER.error("Failed to read model properties file.", e);
-
-            data = null;
-            load();
-            return;
-        }
-
-        load();
+        loadJSONFromFile();
     }
 
     public static ModelPropertyManager getInstance(){
@@ -186,7 +190,7 @@ public class ModelPropertyManager {
 
     public void saveAndSync(){
         syncServer();
-        save();
+        saveJSON();
     }
 
     public void syncServer(){
@@ -209,45 +213,77 @@ public class ModelPropertyManager {
 
     //------------------------------------------- IO --------------------------------------------//
 
-    public void load(){
-        if(data == null) {
-            mainProperties.clear();
-            perServerProperties.clear();
+    public void loadJSONFromFile(){
+        if(!PROPERTIES.exists()) {
+            jsonData = null;
+            loadJSON();
             return;
         }
 
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(data));
+        try (FileReader reader = new FileReader(PROPERTIES)){
+            jsonData = JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (IOException | JsonParseException e) {
+            CMRS.LOGGER.error("Failed to read model properties file.", e);
 
-        Map<String, ModelProperty> main = StreamCodecUtils.readOptionally(buf, ModelPropertyRegistry.MAP, HashMap::new);
+            jsonData = null;
+            loadJSON();
+            return;
+        }
+
+        loadJSON();
+    }
+
+    public void loadJSON() {
+        if(jsonData == null){
+            mainProperties.clear();
+            perServerProperties.clear();
+            bindMain();
+            return;
+        }
+
         mainProperties.clear();
-        if(main != null) mainProperties.putAll(main);
+        if(jsonData.has("main_properties")) {
+            DataResult<Pair<Map<String, ModelProperty>, JsonElement>> main = JSON_MAP.decode(JsonOps.INSTANCE, jsonData.getAsJsonObject("main_properties"));
+            if (main.hasResultOrPartial())
+                mainProperties.putAll(main.getPartialOrThrow().getFirst());
+        }
 
-        Map<String, Map<String, ModelProperty>> perServer = StreamCodecUtils.readOptionally(buf, PER_SERVER_MAP, HashMap::new);
         perServerProperties.clear();
-        if(perServer != null) perServerProperties.putAll(perServer);
-
+        if(jsonData.has("per_server_properties")) {
+            DataResult<Pair<Map<String, Map<String, ModelProperty>>, JsonElement>> perServer = JSON_PER_SERVER.decode(JsonOps.INSTANCE, jsonData.getAsJsonObject("per_server_properties"));
+            perServerProperties.clear();
+            if (perServer.hasResultOrPartial())
+                perServerProperties.putAll(perServer.getPartialOrThrow().getFirst());
+        }
         bindMain();
     }
 
-    public void save(){
+    JsonObject jsonData = null;
+
+    public void saveJSON() {
         if(mainProperties.isEmpty() && perServerProperties.isEmpty()){
             PROPERTIES.delete();
-            data = null;
+            jsonData = null;
             return;
         }
 
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        StreamCodecUtils.writeOptionally(mainProperties, !mainProperties.isEmpty(), buf, ModelPropertyRegistry.MAP);
+        JsonObject json = new JsonObject();
 
-        perServerProperties.entrySet().removeIf(map -> map.getValue().isEmpty());
-        StreamCodecUtils.writeOptionally(perServerProperties, !perServerProperties.isEmpty(), buf, PER_SERVER_MAP);
+        DataResult<JsonElement> main = JSON_MAP.encode(mainProperties, JsonOps.INSTANCE, new JsonObject());
+        if(main.hasResultOrPartial()) json.add("main_properties", main.getPartialOrThrow());
 
-        data = new byte[buf.readableBytes()];
-        buf.readBytes(data);
-        buf.release();
+        DataResult<JsonElement> perServer = JSON_PER_SERVER.encode(perServerProperties, JsonOps.INSTANCE, new JsonObject());
+        if(perServer.hasResultOrPartial()) json.add("per_server_properties", perServer.getPartialOrThrow());
 
-        try(FileOutputStream fOut = new FileOutputStream(PROPERTIES)) {
-            fOut.write(data);
+        jsonData = json;
+
+        try(FileWriter out = new FileWriter(PROPERTIES)){
+            JsonWriter writer = new JsonWriter(out);
+            writer.setIndent("    ");
+
+            Streams.write(jsonData, writer);
+
+            writer.close();
         } catch (IOException e) {
             CMRS.LOGGER.error("Failed to save model properties.", e);
         }

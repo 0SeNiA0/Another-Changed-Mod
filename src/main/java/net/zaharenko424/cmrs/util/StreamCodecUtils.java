@@ -2,15 +2,12 @@ package net.zaharenko424.cmrs.util;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.codec.StreamDecoder;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public class StreamCodecUtils {
 
@@ -46,7 +43,7 @@ public class StreamCodecUtils {
                 return arr;}
     );
 
-    public static final StreamCodec<FriendlyByteBuf, ResourceLocation> RESOURCE_LOC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ResourceLocation::toString, ResourceLocation::parse);
+    public static final StreamCodec<FriendlyByteBuf, ResourceLocation> RESOURCE_LOC = ResourceLocation.STREAM_CODEC.cast();
 
     public static <T, B extends ByteBuf> void writeOptionally(T value, boolean write, @NotNull B buffer, @NotNull StreamEncoder<B, T> writer){
         buffer.writeBoolean(write);
@@ -58,12 +55,5 @@ public class StreamCodecUtils {
             return reader.decode(buffer);
         }
         return null;
-    }
-
-    public static <T, B extends ByteBuf> @Nullable T readOptionally(@NotNull B buffer, @NotNull StreamDecoder<B, T> reader, Supplier<T> defVal){
-        if(buffer.readBoolean()){
-            return reader.decode(buffer);
-        }
-        return defVal.get();
     }
 }

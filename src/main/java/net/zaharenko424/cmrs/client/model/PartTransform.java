@@ -1,12 +1,26 @@
 package net.zaharenko424.cmrs.client.model;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.zaharenko424.cmrs.client.geom.ModelPart;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Optional;
+
 public final class PartTransform {
+
+    public static final Codec<PartTransform> CODEC_ = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.BOOL.fieldOf("relative_translation").forGetter(transform -> transform.relativeT),
+            ExtraCodecs.VECTOR3F.optionalFieldOf("translation").xmap(optional -> optional.orElse(null), Optional::of).forGetter(transform -> transform.translate),
+            Codec.BOOL.fieldOf("relative_rotation").forGetter(transform -> transform.relativeR),
+            ExtraCodecs.VECTOR3F.optionalFieldOf("rotation").xmap(optional -> optional.orElse(null), Optional::of).forGetter(transform -> transform.rotate),
+            Codec.BOOL.fieldOf("relative_scale").forGetter(transform -> transform.relativeS),
+            ExtraCodecs.VECTOR3F.optionalFieldOf("scale").xmap(optional -> optional.orElse(null), Optional::of).forGetter(transform -> transform.scale)
+    ).apply(instance, PartTransform::new));
 
     public static final StreamCodec<FriendlyByteBuf, PartTransform> CODEC = StreamCodec.of((buffer, transform) -> {
         boolean write = transform.relativeT ? !transform.translate.equals(0, 0, 0) : transform.translate.isFinite();

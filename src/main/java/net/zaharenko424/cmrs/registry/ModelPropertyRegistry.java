@@ -30,11 +30,11 @@ public class ModelPropertyRegistry {
     );
     public static final StreamCodec<FriendlyByteBuf, Map<String, ModelProperty>> MAP = ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, CODEC);
 
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<BooleanProperty>> BOOLEAN = PROPERTIES.register("boolean", () -> new ModelPropertyType<>(BooleanProperty.CODEC));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FloatProperty>> FLOAT = PROPERTIES.register("float", () -> new ModelPropertyType<>(FloatProperty.CODEC));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<IntProperty>> INT = PROPERTIES.register("int", () -> new ModelPropertyType<>(IntProperty.CODEC));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<StringProperty>> STRING = PROPERTIES.register("string", () -> new ModelPropertyType<>(StringProperty.CODEC));
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<UnitProperty>> UNIT = PROPERTIES.register("unit", () -> new ModelPropertyType<>(UnitProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<BooleanProperty>> BOOLEAN = PROPERTIES.register("boolean", () -> new ModelPropertyType<>(BooleanProperty.CODEC_, BooleanProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FloatProperty>> FLOAT = PROPERTIES.register("float", () -> new ModelPropertyType<>(FloatProperty.CODEC_, FloatProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<IntProperty>> INT = PROPERTIES.register("int", () -> new ModelPropertyType<>(IntProperty.CODEC_, IntProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<StringProperty>> STRING = PROPERTIES.register("string", () -> new ModelPropertyType<>(StringProperty.CODEC_, StringProperty.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<UnitProperty>> UNIT = PROPERTIES.register("unit", () -> new ModelPropertyType<>(UnitProperty.CODEC_, UnitProperty.CODEC));
 
-    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FPArms>> FP_ARMS = PROPERTIES.register("fp_arms", () -> new ModelPropertyType<>(FPArms.CODEC));
+    public static final DeferredHolder<ModelPropertyType<?>, ModelPropertyType<FPArms>> FP_ARMS = PROPERTIES.register("fp_arms", () -> new ModelPropertyType<>(FPArms.CODEC_, FPArms.CODEC));
 }

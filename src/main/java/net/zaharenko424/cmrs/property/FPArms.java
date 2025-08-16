@@ -1,5 +1,7 @@
 package net.zaharenko424.cmrs.property;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,7 +15,16 @@ import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public final class FPArms implements ModelProperty {
+
+    public static final Codec<FPArms> CODEC_ = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.optionalFieldOf("right_arm").xmap(optional -> optional.orElse(null), Optional::of).forGetter(fparms -> fparms.armR),
+            PartTransform.CODEC_.optionalFieldOf("right_transform").xmap(optional -> optional.orElse(null), Optional::of).forGetter(fparms -> fparms.transformR),
+            Codec.STRING.optionalFieldOf("left_arm").xmap(optional -> optional.orElse(null), Optional::of).forGetter(fparms -> fparms.armL),
+            PartTransform.CODEC_.optionalFieldOf("left_transform").xmap(optional -> optional.orElse(null), Optional::of).forGetter(fparms -> fparms.transformL)
+    ).apply(instance, FPArms::new));
 
     public static final StreamCodec<FriendlyByteBuf, FPArms> CODEC = StreamCodec.of((buffer, fparms) -> {
         boolean write = fparms.armR != null;

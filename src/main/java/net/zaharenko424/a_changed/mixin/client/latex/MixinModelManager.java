@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -24,6 +25,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ClientConfig;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.attachment.LatexCoveredData;
@@ -155,10 +157,14 @@ public abstract class MixinModelManager implements ModelManagerAccess {
 
         if(achanged$convertedTextures.keySet().containsAll(achanged$sprites.keySet())) {
             achanged$sprites.clear();
+            AChanged.LOGGER.info("All latex textures already generated.");
             return;//All textures present, no need to do anything
         }
 
+        int cached = achanged$sprites.size();
         achanged$sprites.keySet().removeAll(achanged$convertedTextures.keySet());
+        AChanged.LOGGER.info("Latex textures cached: {}", cached - achanged$sprites.size());
+
         achanged$generateTextures(convertedDir);
         if(!achanged$isForceReload()) achanged$convertedTextures.clear();
         achanged$sprites.clear();
@@ -181,8 +187,12 @@ public abstract class MixinModelManager implements ModelManagerAccess {
             method = "reload")
     private <T, U> CompletableFuture<ModelManager.ReloadState> hiddenReload(CompletableFuture<ModelManager.ReloadState> instance, Function<? super T, ? extends CompletionStage<U>> fn, @Local(argsOnly = true) ResourceManager resourceManager, @Local(ordinal = 0, argsOnly = true) ProfilerFiller preparationsProfiler, @Local(ordinal = 1, argsOnly = true) ProfilerFiller reloadProfiler, @Local(ordinal = 0, argsOnly = true) Executor backgroundExecutor, @Local(ordinal = 1, argsOnly = true) Executor gameExecutor){
         if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean()) return instance;
+
+
         return instance.thenCompose(state -> {
             if(!achanged$isForceReload()) return CompletableFuture.completedFuture(state);
+
+            AChanged.LOGGER.info("Rebuilding ReloadState");
 
             CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = loadBlockModels(resourceManager, backgroundExecutor);
             CompletableFuture<Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>>> completablefuture1 = loadBlockStates(resourceManager, backgroundExecutor);
@@ -216,15 +226,20 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         if(achanged$sprites.isEmpty()) return;
         achanged$forceReload();
 
-        final float[] hsb = new float[4];
-        achanged$generateTextures(root, hsb, FastColor.ARGB32.color(41, 39, 39), "_darkltx");
-        achanged$generateTextures(root, hsb, FastColor.ARGB32.color(255, 255, 255), "_whiteltx");
+        AChanged.LOGGER.info("Starting generation of {} textures ...", achanged$sprites.size());
+        long time = System.currentTimeMillis();
+
+        achanged$generateTextures(root, FastColor.ARGB32.color(41, 39, 39), "_darkltx");
+        achanged$generateTextures(root, FastColor.ARGB32.color(255, 255, 255), "_whiteltx");
+
+        AChanged.LOGGER.info("Texture generation finished. ({} ms. elapsed)", System.currentTimeMillis() - time);
 
         achanged$sprites.clear();
     }
 
     @Unique
-    private static void achanged$generateTextures(File root, float[] hsb, int latex, String suffix){
+    private static void achanged$generateTextures(File root, int latex, String suffix){
+        float[] hsb = new float[4];
         achanged$sprites.forEach((loc, sprite) -> {
             SpriteContents contents = sprite.contents();
             String file = loc.getNamespace() + "\\" + loc.getPath().replace("block/", "").replace('/', File.separatorChar) + suffix;
@@ -304,16 +319,24 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     }
 
     @Unique
+    private static final JsonObject a_changed$blur = Util.make(new JsonObject(), obj -> obj.addProperty("blur", true));
+    @Unique
+    private static final JsonObject a_changed$clamp = Util.make(new JsonObject(), obj -> obj.addProperty("clamp", true));
+    @Unique
+    private static final JsonObject a_changed$blurClamp = Util.make(new JsonObject(), obj -> {
+        obj.addProperty("blur", true);
+        obj.addProperty("clamp", true);
+    });
+
+    @Unique
     private static void achanged$writeTextureMeta(JsonObject json, Optional<TextureMetadataSection> optional){
         if(optional.isEmpty()) return;
         TextureMetadataSection meta = optional.get();
+        if(!meta.isBlur() && !meta.isClamp()) return;
 
-        JsonObject texture = new JsonObject();
-        if(meta.isBlur()) texture.addProperty("blur", true);
-        if(meta.isClamp()) texture.addProperty("clamp", true);
-
-        if(texture.isEmpty()) return;
-        json.add("texture", texture);
+        json.add("texture", meta.isBlur() && meta.isClamp()
+                ? a_changed$blurClamp
+                : meta.isBlur() ? a_changed$blur : a_changed$clamp);
     }
 
     @Unique
@@ -346,5 +369,5 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         }
 
         json.add("animation", animation);
-    }//TODO add setting to update loaded textures on level join
+    }
 }
