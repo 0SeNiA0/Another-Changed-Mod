@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.zaharenko424.cmrs.client.RemappingVertexConsumer;
+import net.zaharenko424.cmrs.client.geom.RemappingVertexConsumer;
 import net.zaharenko424.cmrs.client.geom.Mesh;
 import net.zaharenko424.cmrs.client.geom.SimpleVertexMultiConsumer;
 import net.zaharenko424.cmrs.util.Pool;

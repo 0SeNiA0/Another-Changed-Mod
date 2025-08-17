@@ -15,7 +15,7 @@ import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 import net.zaharenko424.cmrs.registry.MaterialRegistry;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
-import net.zaharenko424.cmrs.util.TransparencyType;
+import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 
 import javax.annotation.Nullable;
 import java.util.List;

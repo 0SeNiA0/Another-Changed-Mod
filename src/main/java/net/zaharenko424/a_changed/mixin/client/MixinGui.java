@@ -46,7 +46,7 @@ public abstract class MixinGui {
      */
     @Inject(at = @At("HEAD"), method = "renderHearts")
     private void onRenderHearts(GuiGraphics guiGraphics, Player player, int x, int y, int height, int offsetHeartIndex, float maxHealth, int currentHealth, int displayHealth, int absorptionAmount, boolean renderHighlight, CallbackInfo ci){
-        achanged$transfurType = TransfurManager.getTransfurType(player);
+        achanged$transfurType = TransfurManager.isTransfurred(player) ? TransfurManager.getTransfurType(player) : null;
         if(achanged$sprites == null) achanged$sprites = minecraft.getGuiSprites();
     }
 

@@ -64,14 +64,6 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             absoluteSolver.y = -3;
             absoluteSolver.zRot = Mth.DEG_TO_RAD * Mth.rotLerp(partialTick, deg, nextDeg);
 
-            /*RenderSystem.setShaderTexture(0, solverTexture);
-            //RenderSystem.setShader(CustomShaders.getInstance()::getBLOOM);
-            RenderSystem.setShader(GameRenderer::getRendertypeEntitySolidShader);
-            BufferBuilder builder = Tesselator.getInstance().getBuilder();
-            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
-            absoluteSolver.render(stack, builder, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-            BufferUploader.drawWithShader(builder.end());*/
-
             absoluteSolver.render(stack, buffer.getBuffer(ExtraRenderTypes.OPAQUE_GLOW.apply(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             MatrixStack.pop(stack);
         }

@@ -14,7 +14,7 @@ import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
-import net.zaharenko424.cmrs.util.TransparencyType;
+import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;

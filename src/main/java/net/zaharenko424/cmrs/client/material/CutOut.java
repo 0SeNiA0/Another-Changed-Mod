@@ -11,7 +11,7 @@ import net.zaharenko424.cmrs.client.model.RenderStack;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
 import net.zaharenko424.cmrs.registry.MaterialRegistry;
-import net.zaharenko424.cmrs.util.TransparencyType;
+import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 
 import java.util.List;
 

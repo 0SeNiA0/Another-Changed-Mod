@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.util;
+package net.zaharenko424.cmrs.client.renderer;
 
 public enum TransparencyType {
     OPAQUE,

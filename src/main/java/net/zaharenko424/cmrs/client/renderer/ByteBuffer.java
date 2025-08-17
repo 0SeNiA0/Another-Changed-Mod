@@ -1,8 +1,8 @@
-package net.zaharenko424.cmrs.util;
+package net.zaharenko424.cmrs.client.renderer;
 
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import net.zaharenko424.a_changed.mixin.cmrs.BufferBuilderAccessor;
-import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
+import net.zaharenko424.cmrs.util.Pool;
 
 public class ByteBuffer implements Pool.Poolable {
 

@@ -1,6 +1,5 @@
-package net.zaharenko424.cmrs.client;
+package net.zaharenko424.cmrs.client.geom;
 
-import net.zaharenko424.cmrs.client.geom.SimpleVertexConsumer;
 import net.zaharenko424.cmrs.client.model.Texture;
 import org.joml.Vector3f;
 

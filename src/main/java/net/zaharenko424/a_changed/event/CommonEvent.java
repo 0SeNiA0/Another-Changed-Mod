@@ -35,6 +35,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.AbilityHolder;
 import net.zaharenko424.a_changed.attachment.GrabChanceData;
 import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
@@ -297,6 +298,10 @@ public class CommonEvent {
     public static void onLivingDeath(LivingDeathEvent event){
         LivingEntity entity = event.getEntity();
         if(entity.level().isClientSide) return;
+
+        AbilityHolder holder = AbilityUtils.of(entity);
+        if(holder != null) holder.getAllowedAbilities().forEach(ability -> ability.deactivate(entity));
+
         if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTFTarget(entity)) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(entity);

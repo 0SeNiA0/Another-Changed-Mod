@@ -10,7 +10,7 @@ import net.zaharenko424.cmrs.CMRS;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.cmrs.client.renderer.MultiBufferSource;
-import net.zaharenko424.cmrs.util.TransparencyType;
+import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
