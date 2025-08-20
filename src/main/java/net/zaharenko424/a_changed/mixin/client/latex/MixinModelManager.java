@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.NativeImage;
+import it.unimi.dsi.fastutil.ints.IntObjectPair;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -29,6 +30,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ClientConfig;
 import net.zaharenko424.a_changed.ModelManagerAccess;
 import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.util.ConcurrentAction;
 import net.zaharenko424.a_changed.util.IOUtils;
 import net.zaharenko424.a_changed.util.Thing;
 import org.spongepowered.asm.mixin.Final;
@@ -50,6 +52,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -78,6 +81,8 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     @Shadow private int maxMipmapLevels;
 
 
+    @Shadow
+    private Map<ModelResourceLocation, BakedModel> bakedRegistry;
     @Unique
     private static boolean achanged$isForceReload = false;
 
@@ -116,19 +121,21 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         return original;
     }
 
+    @Unique
+    private static final File achanged$convertedDir = new File(Minecraft.getInstance().gameDirectory, "converted_textures");
+
     @Inject(at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;asMap()Ljava/util/Map;"), method = "loadModels")
     private void onLoadModels(ProfilerFiller profilerFiller, Map<ResourceLocation, AtlasSet.StitchResult> atlasPreparations, ModelBakery modelBakery, CallbackInfoReturnable<?> cir){
         if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean() || achanged$isForceReload() || achanged$sprites.isEmpty()) return;
 
-        File convertedDir = new File(Minecraft.getInstance().gameDirectory, "converted_textures");
-        if(!convertedDir.exists()) {
-            achanged$generateTextures(convertedDir);
+        if(!achanged$convertedDir.exists()) {
+            achanged$generateTextures();
             return;
         }
 
-        File[] subDirectories = convertedDir.listFiles(File::isDirectory);
+        File[] subDirectories = achanged$convertedDir.listFiles(File::isDirectory);
         if(subDirectories == null) {
-            achanged$generateTextures(convertedDir);
+            achanged$generateTextures();
             return;
         }
 
@@ -165,7 +172,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         achanged$sprites.keySet().removeAll(achanged$convertedTextures.keySet());
         AChanged.LOGGER.info("Latex textures cached: {}", cached - achanged$sprites.size());
 
-        achanged$generateTextures(convertedDir);
+        achanged$generateTextures();
         if(!achanged$isForceReload()) achanged$convertedTextures.clear();
         achanged$sprites.clear();
     }
@@ -187,7 +194,6 @@ public abstract class MixinModelManager implements ModelManagerAccess {
             method = "reload")
     private <T, U> CompletableFuture<ModelManager.ReloadState> hiddenReload(CompletableFuture<ModelManager.ReloadState> instance, Function<? super T, ? extends CompletionStage<U>> fn, @Local(argsOnly = true) ResourceManager resourceManager, @Local(ordinal = 0, argsOnly = true) ProfilerFiller preparationsProfiler, @Local(ordinal = 1, argsOnly = true) ProfilerFiller reloadProfiler, @Local(ordinal = 0, argsOnly = true) Executor backgroundExecutor, @Local(ordinal = 1, argsOnly = true) Executor gameExecutor){
         if(!ClientConfig.LIGHTLY_COVERED_BLOCKS.getAsBoolean()) return instance;
-
 
         return instance.thenCompose(state -> {
             if(!achanged$isForceReload()) return CompletableFuture.completedFuture(state);
@@ -222,100 +228,112 @@ public abstract class MixinModelManager implements ModelManagerAccess {
     }
 
     @Unique
-    private static void achanged$generateTextures(File root){
+    private static void achanged$generateTextures(){
         if(achanged$sprites.isEmpty()) return;
         achanged$forceReload();
 
         AChanged.LOGGER.info("Starting generation of {} textures ...", achanged$sprites.size());
         long time = System.currentTimeMillis();
 
-        achanged$generateTextures(root, FastColor.ARGB32.color(41, 39, 39), "_darkltx");
-        achanged$generateTextures(root, FastColor.ARGB32.color(255, 255, 255), "_whiteltx");
+        achanged$generateTextures(IntObjectPair.of(FastColor.ARGB32.color(41, 39, 39), "_darkltx"),
+                IntObjectPair.of(FastColor.ARGB32.color(255, 255, 255), "_whiteltx"));
 
         AChanged.LOGGER.info("Texture generation finished. ({} ms. elapsed)", System.currentTimeMillis() - time);
 
         achanged$sprites.clear();
     }
 
+    @SafeVarargs
     @Unique
-    private static void achanged$generateTextures(File root, int latex, String suffix){
-        float[] hsb = new float[4];
-        achanged$sprites.forEach((loc, sprite) -> {
-            SpriteContents contents = sprite.contents();
-            String file = loc.getNamespace() + "\\" + loc.getPath().replace("block/", "").replace('/', File.separatorChar) + suffix;
-            File texture = new File(root, file + ".png");
-            new File(texture.getParent()).mkdirs();
+    private static void achanged$generateTextures(IntObjectPair<String>... variants){
+        ForkJoinPool.commonPool().submit(new ConcurrentAction<>(achanged$sprites.entrySet().spliterator(), 50, entry -> {
+            SpriteContents contents = entry.getValue().contents();
+            ResourceLocation loc = entry.getKey();
 
+            String file = loc.getNamespace() + "\\" + loc.getPath().replace("block/", "").replace('/', File.separatorChar);
+
+            String file1;
+            File texture;
+            JsonObject json;
+            boolean mkdirs;
+            float[] hsb = new float[4];
+            float[] baseRGBA = new float[4];
+            float[] addedRGBA = new float[4];
             NativeImage image;
             try {
-                image = contents.getOriginalImage().mappedCopy(originalColor -> {
-                    if(FastColor.ARGB32.alpha(originalColor) == 0) return originalColor;
+                json = null;
+                if(contents.metadata() != ResourceMetadata.EMPTY) {
+                    json = new JsonObject();
+                    achanged$writeTextureMeta(json, contents.metadata().getSection(TextureMetadataSection.SERIALIZER));
+                    achanged$writeAnimationMeta(json, contents.metadata().getSection(AnimationMetadataSection.SERIALIZER));
+                }
 
-                    Color.RGBtoHSB(FastColor.ARGB32.red(originalColor), FastColor.ARGB32.green(originalColor), FastColor.ARGB32.blue(originalColor), hsb);
-                    int desaturated = Color.HSBtoRGB(hsb[0], hsb[1] * .3f, hsb[2] * .9f);
+                mkdirs = true;
+                for(IntObjectPair<String> pair : variants) {
+                    file1 = file + pair.second();
+                    texture = new File(achanged$convertedDir, file1 + ".png");
+                    if(mkdirs) {
+                        new File(texture.getParent()).mkdirs();
+                        mkdirs = false;
+                    }
 
-                    return a_changed$combineARGB(desaturated, latex, .75f, hsb);
-                });
+                    image = contents.getOriginalImage().mappedCopy(originalColor -> {
+                        if(FastColor.ARGB32.alpha(originalColor) == 0) return originalColor;
 
-                image.writeToFile(texture);
-                image.close();
+                        Color.RGBtoHSB(FastColor.ARGB32.red(originalColor), FastColor.ARGB32.green(originalColor), FastColor.ARGB32.blue(originalColor), hsb);
 
-                if(contents.metadata() == ResourceMetadata.EMPTY) return;
-                JsonObject json = new JsonObject();
-                achanged$writeTextureMeta(json, contents.metadata().getSection(TextureMetadataSection.SERIALIZER));
-                achanged$writeAnimationMeta(json, contents.metadata().getSection(AnimationMetadataSection.SERIALIZER));
+                        return a_changed$combineARGB(Color.HSBtoRGB(hsb[0], hsb[1] * .3f, hsb[2] * .9f), pair.firstInt(), .75f, hsb, baseRGBA, addedRGBA);
+                    });
+                    image.writeToFile(texture);
+                    image.close();
 
-                if(json.isEmpty()) return;
-                FileWriter writer = new FileWriter(new File(root, file + ".png.mcmeta"));
-                writer.write(json.toString());
-                writer.close();
+                    if(json == null || json.isEmpty()) continue;
+                    FileWriter writer = new FileWriter(new File(achanged$convertedDir, file1 + ".png.mcmeta"));
+                    writer.write(json.toString());
+                    writer.close();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
+        })).join();
     }
 
     @Unique
-    private static final float[] a_changed$baseRGBA = new float[4];
-    @Unique
-    private static final float[] a_changed$addedRGBA = new float[4];
+    private static int a_changed$combineARGB(int base, int added, float opacity, float[] mix, float[] baseRGBA, float[] addedRGBA){
+        baseRGBA[0] = FastColor.ARGB32.red(base);
+        baseRGBA[1] = FastColor.ARGB32.green(base);
+        baseRGBA[2] = FastColor.ARGB32.blue(base);
+        baseRGBA[3] = FastColor.ARGB32.alpha(base) / 255f;
 
-    @Unique
-    private static int a_changed$combineARGB(int base, int added, float opacity, float[] mix){
-        a_changed$baseRGBA[0] = FastColor.ARGB32.red(base);
-        a_changed$baseRGBA[1] = FastColor.ARGB32.green(base);
-        a_changed$baseRGBA[2] = FastColor.ARGB32.blue(base);
-        a_changed$baseRGBA[3] = FastColor.ARGB32.alpha(base) / 255f;
+        addedRGBA[0] = FastColor.ARGB32.red(added);
+        addedRGBA[1] = FastColor.ARGB32.green(added);
+        addedRGBA[2] = FastColor.ARGB32.blue(added);
+        addedRGBA[3] = FastColor.ARGB32.alpha(added) / 255f;
 
-        a_changed$addedRGBA[0] = FastColor.ARGB32.red(added);
-        a_changed$addedRGBA[1] = FastColor.ARGB32.green(added);
-        a_changed$addedRGBA[2] = FastColor.ARGB32.blue(added);
-        a_changed$addedRGBA[3] = FastColor.ARGB32.alpha(added) / 255f;
-
-        a_changed$combineColors(opacity, mix);
+        a_changed$combineColors(opacity, mix, baseRGBA, addedRGBA);
 
         return FastColor.ARGB32.color((int) (mix[3] * 255), (int) mix[0], (int) mix[1], (int) mix[2]);
     }
 
     //rgb in 0 - 255, a in 0 - 1
     @Unique
-    private static void a_changed$combineColors(float opacity, float[] mix){
-        if(a_changed$addedRGBA[3] * opacity == 1) {
-            System.arraycopy(a_changed$addedRGBA, 0, mix, 0, 4);
+    private static void a_changed$combineColors(float opacity, float[] mix, float[] baseRGBA, float[] addedRGBA){
+        if(addedRGBA[3] * opacity == 1) {
+            System.arraycopy(addedRGBA, 0, mix, 0, 4);
             return;
         }
 
-        float originalA = a_changed$addedRGBA[3];
-        a_changed$addedRGBA[3] *= opacity;
+        float originalA = addedRGBA[3];
+        addedRGBA[3] *= opacity;
 
-        mix[3] = Mth.clamp(1 - (1 - a_changed$addedRGBA[3]) * (1 - a_changed$baseRGBA[3]), 0, 1); // alpha
-        float aMix = a_changed$addedRGBA[3] / mix[3];
-        float baseInvAMix = a_changed$baseRGBA[3] * (1 - a_changed$addedRGBA[3]) / mix[3];
-        mix[0] = Math.round(a_changed$addedRGBA[0] * aMix + a_changed$baseRGBA[0] * baseInvAMix); // red
-        mix[1] = Math.round(a_changed$addedRGBA[1] * aMix + a_changed$baseRGBA[1] * baseInvAMix); // green
-        mix[2] = Math.round(a_changed$addedRGBA[2] * aMix + a_changed$baseRGBA[2] * baseInvAMix); // blue
+        mix[3] = Mth.clamp(1 - (1 - addedRGBA[3]) * (1 - baseRGBA[3]), 0, 1); // alpha
+        float aMix = addedRGBA[3] / mix[3];
+        float baseInvAMix = baseRGBA[3] * (1 - addedRGBA[3]) / mix[3];
+        mix[0] = Math.round(addedRGBA[0] * aMix + baseRGBA[0] * baseInvAMix); // red
+        mix[1] = Math.round(addedRGBA[1] * aMix + baseRGBA[1] * baseInvAMix); // green
+        mix[2] = Math.round(addedRGBA[2] * aMix + baseRGBA[2] * baseInvAMix); // blue
 
-        a_changed$addedRGBA[3] = originalA;
+        addedRGBA[3] = originalA;
     }
 
     @Unique

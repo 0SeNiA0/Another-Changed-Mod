@@ -13,6 +13,7 @@ public class IOUtils {
     public static void visitAllFiles(TriConsumer<String, File, String> fileConsumer, File dir, String relativePath){
         File[] files = dir.listFiles();
         if(files == null) return;
+
         String filename;
         for(File f : files){
             filename = f.getName();

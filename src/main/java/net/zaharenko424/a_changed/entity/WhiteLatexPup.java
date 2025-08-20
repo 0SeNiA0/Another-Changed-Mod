@@ -231,11 +231,6 @@ public class WhiteLatexPup extends AbstractLatexPup implements SmartBrainOwner<W
     }
 
     @Override
-    public @Nullable LivingEntity getTarget() {
-        return getTargetFromBrain();
-    }
-
-    @Override
     public @Nullable AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob otherParent) {
         WhiteLatexPup wlPup = EntityRegistry.WHITE_LATEX_PUP.get().create(level);
         if(wlPup == null || !(otherParent instanceof WhiteLatexPup)) return null;

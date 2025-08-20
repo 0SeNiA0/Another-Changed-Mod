@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.AChanged;
@@ -71,6 +72,10 @@ public class Utils {
         return nonNull;
     }
 
+    public static VoxelShape orUnoptimized(VoxelShape shape1, VoxelShape shape2){
+        return Shapes.joinUnoptimized(shape1, shape2, BooleanOp.OR);
+    }
+
     public static @NotNull VoxelShape rotateShape(Direction direction, VoxelShape source) {
         AtomicReference<VoxelShape> newShape = new AtomicReference<>(Shapes.empty());
         source.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
@@ -80,7 +85,7 @@ public class Utils {
             Vec3 v2 = rotateVec3(max, direction);
             VoxelShape s = Shapes.create(0.5 + Math.min(v1.x, v2.x), 0.5 + Math.min(v1.y, v2.y), 0.5 + Math.min(v1.z, v2.z),
                     0.5 + Math.max(v1.x, v2.x), 0.5 + Math.max(v1.y, v2.y), 0.5 + Math.max(v1.z, v2.z));
-            newShape.set(Shapes.or(newShape.get(), s));
+            newShape.set(orUnoptimized(newShape.get(), s));
         });
         return newShape.get();
     }
@@ -131,7 +136,7 @@ public class Utils {
     }
 
     /**
-     * A way to scam Java/Minecraft to not crash trying to load client only stuff.
+     * A way to not load client only stuff on server.
      */
     public static  <T> T get(Supplier<T> supplier){
         return supplier.get();

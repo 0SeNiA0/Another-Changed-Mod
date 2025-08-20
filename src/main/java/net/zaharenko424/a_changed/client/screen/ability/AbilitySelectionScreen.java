@@ -15,7 +15,7 @@ import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
 import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbilityPacket;
 import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.lwjgl.glfw.GLFW;
@@ -65,7 +65,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
     protected RadialButton makeButton(Ability ability){
         return new RadialButton()
                 .setOutlineColorFunc(button -> {
-                    if(!ability.isActive()) return button.isHovering() ? Color.ORANGE.getRGB() : -14236;
+                    if(!ability.isSelectable()) return button.isHovering() ? Color.ORANGE.getRGB() : -14236;
                     if(holder.getSelectedAbility() == ability && button.isHovering()) return Color.GREEN.getRGB();
                     if(holder.getSelectedAbility() == ability) return -16711836;
                     return button.isHovering() ? Color.GRAY.getRGB() : Color.BLACK.getRGB();
@@ -145,7 +145,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             return true;
         }
 
-        if(!ability.isActive()){
+        if(!ability.isSelectable()){
             if(ability.hasScreen()) minecraft.setScreen(ability.getScreen(minecraft.player));
             return true;
         }

@@ -10,7 +10,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.AbstractMachineEntity;
 import net.zaharenko424.a_changed.menu.machine.AbstractMachineMenu;
 import net.zaharenko424.a_changed.util.Utils;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;

@@ -54,7 +54,7 @@ import net.zaharenko424.a_changed.registry.*;
 import net.zaharenko424.a_changed.util.IOUtils;
 import net.zaharenko424.a_changed.util.Thing;
 import net.zaharenko424.cmrs.client.CustomBEWLR;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.cmrs.client.renderer.CustomModelRenderer;
 import net.zaharenko424.cmrs.client.renderer.DynamicModelRenderer;
 import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;

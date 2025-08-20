@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface PassiveAbility extends Ability {
 
     @Override
-    default boolean isActive() {
+    default boolean isSelectable() {
         return false;
     }
 

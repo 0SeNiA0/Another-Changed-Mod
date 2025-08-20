@@ -177,7 +177,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     @Override
     public BrainActivityGroup<? extends WaterLatexBeast> getFightTasks() {// Retaliate redirects here
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
+                new InvalidateAttackTarget<>().whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                 new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                 new SetWalkTargetToAttackTarget<>().speedMod((latex, target) -> 1.8f),
                 new AnimatableMeleeAttack<>(0)

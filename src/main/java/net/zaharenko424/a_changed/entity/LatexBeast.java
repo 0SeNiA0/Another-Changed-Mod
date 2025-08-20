@@ -130,7 +130,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     @Override
     public BrainActivityGroup<? extends LatexBeast> getFightTasks() {// Retaliate redirects here
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
+                new InvalidateAttackTarget<LatexBeast>().whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                 new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump? 1 ~= 3 blocks
                 new SetWalkTargetToAttackTarget<>(),
                 new AnimatableMeleeAttack<>(0)

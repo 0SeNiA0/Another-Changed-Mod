@@ -27,7 +27,7 @@ public class DLPupMeltAbility implements Ability {
     private static final ResourceLocation tex = AChanged.textureLoc("mob_effect/latex_solvent");
 
     @Override
-    public boolean isActive() {
+    public boolean isSelectable() {
         return true;
     }
 

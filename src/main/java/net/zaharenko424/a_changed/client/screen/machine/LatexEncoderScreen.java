@@ -13,7 +13,7 @@ import net.zaharenko424.a_changed.entity.block.machine.LatexEncoderEntity;
 import net.zaharenko424.a_changed.menu.machine.LatexEncoderMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexEncoderScreen extends AbstractMachineScreen<LatexEncoderEntity, LatexEncoderMenu> {

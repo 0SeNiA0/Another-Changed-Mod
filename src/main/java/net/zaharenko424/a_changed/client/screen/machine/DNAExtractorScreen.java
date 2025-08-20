@@ -11,7 +11,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
 import net.zaharenko424.a_changed.menu.machine.DNAExtractorMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorScreen extends AbstractMachineScreen<DNAExtractorEntity, DNAExtractorMenu> {

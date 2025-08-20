@@ -35,7 +35,7 @@ public class HypnosisAbility implements Ability {
     public static final ResourceLocation activated = AChanged.textureLoc("gui/ability_activated");
 
     @Override
-    public boolean isActive() {
+    public boolean isSelectable() {
         return true;
     }
 

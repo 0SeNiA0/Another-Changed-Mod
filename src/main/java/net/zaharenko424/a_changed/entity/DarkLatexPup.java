@@ -282,11 +282,6 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
     }
 
     @Override
-    public @Nullable LivingEntity getTarget() {
-        return getTargetFromBrain();
-    }
-
-    @Override
     public @Nullable AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob otherParent) {
         DarkLatexPup dlPup = EntityRegistry.DARK_LATEX_PUP.get().create(level);
         if(dlPup == null || !(otherParent instanceof DarkLatexPup)) return null;

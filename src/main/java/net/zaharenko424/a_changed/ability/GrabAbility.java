@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.client.Keybindings;
@@ -41,7 +42,7 @@ public class GrabAbility implements Ability {
     public static final float CLOSE_ENOUGH = (float) (2.5 * 2.5);
 
     @Override
-    public boolean isActive() {
+    public boolean isSelectable() {
         return true;
     }
 
@@ -66,13 +67,12 @@ public class GrabAbility implements Ability {
 
     @Override
     public Screen getScreen(@NotNull Player holder) {
-        if(FMLLoader.getDist().isClient()){
-            TransfurHandler handler = TransfurHandler.nonNullOf(holder);
-            if(handler.isTransfurred() && !handler.getTransfurType().isOrganic()) return Utils.get(GrabAbilityLatexScreen::new);
-            return Utils.get(GrabAbilityPlayerScreen::new);//organic latexes use same thing as humans
-        }
+        if(!FMLLoader.getDist().isClient()) return null;
 
-        return null;
+        TransfurHandler handler = TransfurHandler.nonNullOf(holder);
+        if(handler.isTransfurred() && !handler.getTransfurType().isOrganic()) return Utils.get(GrabAbilityLatexScreen::new);
+
+        return Utils.get(GrabAbilityPlayerScreen::new);//organic latexes use same thing as humans
     }
 
     @Override
@@ -143,7 +143,7 @@ public class GrabAbility implements Ability {
         GrabData holderData = GrabData.dataOf(holder);
 
         if(holderData.getGrabbedBy() != null){
-            if(holder instanceof Player player) player.displayClientMessage(Component.translatable("message.a_changed.try_escape_tip", Component.keybind(Keybindings.ABILITY_KEY.getName())), true);
+            if(holder instanceof Player player) player.displayClientMessage(Component.translatable("message.a_changed.try_escape_tip", Component.keybind("key." + AChanged.MODID + ".ability_key")), true);
             return;
         }
         if(!TransfurManager.isTransfurred(holder)) return;

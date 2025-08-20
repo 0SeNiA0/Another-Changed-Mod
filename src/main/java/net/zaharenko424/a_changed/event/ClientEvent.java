@@ -95,19 +95,19 @@ public class ClientEvent {
 
     private static boolean quickAbilitySelect(AbilityHolder holder, List<? extends Ability> abilities){
         if(Keybindings.QUICK_SELECT_ABILITY_1.consumeClick() && !abilities.isEmpty()){
-            if(abilities.get(0).isActive()) {
+            if(abilities.get(0).isSelectable()) {
                 holder.selectAbility(abilities.get(0));
                 return true;
             }
         }
         if(Keybindings.QUICK_SELECT_ABILITY_2.consumeClick() && abilities.size() > 1){
-            if(abilities.get(1).isActive()) {
+            if(abilities.get(1).isSelectable()) {
                 holder.selectAbility(abilities.get(1));
                 return true;
             }
         }
         if(Keybindings.QUICK_SELECT_ABILITY_3.consumeClick() && abilities.size() > 2){
-            if(abilities.get(2).isActive()) {
+            if(abilities.get(2).isSelectable()) {
                 holder.selectAbility(abilities.get(2));
                 return true;
             }

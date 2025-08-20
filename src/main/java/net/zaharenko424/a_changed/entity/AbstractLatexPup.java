@@ -222,8 +222,6 @@ public abstract class AbstractLatexPup extends TamableAnimal implements LatexBea
             return;
         }
 
-        if(!isOrderedToSit()) return;
-
         LivingEntity owner = getOwner();
         if(owner == null) return;
         setInSittingPose((!(distanceToSqr(owner) < 144) || owner.getLastHurtByMob() == null) && isOrderedToSit());
@@ -376,6 +374,11 @@ public abstract class AbstractLatexPup extends TamableAnimal implements LatexBea
         }
 
         return level().isClientSide ? InteractionResult.CONSUME : InteractionResult.PASS;
+    }
+
+    @Override
+    public @Nullable LivingEntity getTarget() {
+        return getTargetFromBrain();
     }
 
     protected abstract void speedUpAging();

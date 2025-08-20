@@ -65,8 +65,8 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
         onUnTransfur = properties.onUnTransfur;
 
         abilities = properties.abilities.stream().map(DeferredHolder::get).sorted((ability1, ability2) -> {
-            boolean active0 = ability1.isActive();
-            boolean active1 = ability2.isActive();
+            boolean active0 = ability1.isSelectable();
+            boolean active1 = ability2.isSelectable();
             if(active0 == active1) return 0;
             return active0 ? -1 : 1;
         }).toList();

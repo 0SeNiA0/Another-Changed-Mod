@@ -1,4 +1,4 @@
-package net.zaharenko424.cmrs.client.gui.widget;
+package net.zaharenko424.cmrs.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -12,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.zaharenko424.cmrs.client.geom.Reusable;
+import net.zaharenko424.cmrs.client.gui.widget.Widget;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -83,6 +85,30 @@ public class WidgetHelper {
         return graphics.drawString(font, text, x - font.width(text) / 2f, y - 4, color, shadow);
     }
 
+    public static void renderScrollingString(GuiGraphics guiGraphics, Font font, String text, float centerX, float minX, float minY, float maxX, float maxY, int color, boolean shadow) {
+        int i = font.width(text);
+        int k = (int) (maxX - minX);
+        if(i <= k){
+            drawCenteredString(guiGraphics, font, text, Mth.clamp(centerX, minX + i / 2f, maxX - i / 2f), minY + maxY, color, shadow);
+            return;
+        }
+
+        int l = i - k;
+        double d0 = (double) Util.getMillis() / 1000.0;
+        double d1 = Math.max((double)l * 0.5, 3.0);
+        double d2 = Math.sin((Math.PI / 2) * Math.cos((Math.PI * 2) * d0 / d1)) / 2.0 + 0.5;
+        double d3 = Mth.lerp(d2, 0.0, l);
+        //Transform rect to screen coordinates to apply scissors
+        Matrix4f mat = guiGraphics.pose().last().pose();
+        Vector3f vec = Reusable.VEC3F.get();
+        guiGraphics.enableScissor((int) vec.set(minX, minY, 0).mulPosition(mat).x, (int) vec.y,
+                (int) vec.set(maxX, maxY, 0).mulPosition(mat).x, (int) vec.y);
+
+        guiGraphics.drawString(font, text, (float) (minX - d3), minY, color, false);
+
+        guiGraphics.disableScissor();
+    }
+
     public static int drawCenteredComp(GuiGraphics graphics, Font font, Component comp, float x, float y, int color, boolean shadow) {
         FormattedCharSequence formatted = comp.getVisualOrderText();
         return graphics.drawString(font, formatted, x - font.width(formatted) / 2f, y - 4, color, shadow);
@@ -103,10 +129,12 @@ public class WidgetHelper {
         double d3 = Mth.lerp(d2, 0.0, l);
         //Transform rect to screen coordinates to apply scissors
         Matrix4f mat = guiGraphics.pose().last().pose();
-        Vector3f v = new Vector3f(minX, minY, 0).mulPosition(mat);
-        Vector3f v1 = new Vector3f(maxX, maxY, 0).mulPosition(mat);
-        guiGraphics.enableScissor((int) v.x, (int) v.y, (int) v1.x, (int) v1.y);
+        Vector3f vec = Reusable.VEC3F.get();
+        guiGraphics.enableScissor((int) vec.set(minX, minY, 0).mulPosition(mat).x, (int) vec.y,
+                (int) vec.set(maxX, maxY, 0).mulPosition(mat).x, (int) vec.y);
+
         guiGraphics.drawString(font, text.getVisualOrderText(), (float) (minX - d3), minY, color, false);
+
         guiGraphics.disableScissor();
     }
 

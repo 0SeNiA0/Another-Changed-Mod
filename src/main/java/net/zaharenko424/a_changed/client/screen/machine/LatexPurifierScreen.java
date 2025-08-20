@@ -11,7 +11,7 @@ import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.LatexPurifierEntity;
 import net.zaharenko424.a_changed.menu.machine.LatexPurifierMenu;
 import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEntity, LatexPurifierMenu> {

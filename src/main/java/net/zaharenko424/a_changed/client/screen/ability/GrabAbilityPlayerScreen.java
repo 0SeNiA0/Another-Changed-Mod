@@ -16,7 +16,7 @@ import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
 import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;

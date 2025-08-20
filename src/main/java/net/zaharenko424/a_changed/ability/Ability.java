@@ -15,7 +15,7 @@ public interface Ability {
      * Only active abilities can be selected and activated.
      * @return whether the ability is active or passive.
      */
-    boolean isActive();
+    boolean isSelectable();
 
     /**
      * Called to draw the icon of this ability. x & y - coordinates of top left corner.

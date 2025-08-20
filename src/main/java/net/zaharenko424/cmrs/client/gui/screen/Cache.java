@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.zaharenko424.cmrs.client.gui.widget.RoundedButton;
 import net.zaharenko424.cmrs.client.gui.widget.RoundedRectWidget;
 import net.zaharenko424.cmrs.client.gui.widget.WidgetContainer;
-import net.zaharenko424.cmrs.client.gui.widget.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 
 public class Cache {
 
@@ -14,18 +14,20 @@ public class Cache {
 
     protected PlayerOverviewScreen localPlayerS;
     protected ModelManagerScreen modelListS;
+    protected ModelPropertyScreen propertyS;
 
     protected final RoundedRectWidget background = new RoundedRectWidget().setSize(600, 400).setRoundingRadius(25);
     protected final RoundedButton localPlayer = new RoundedButton();
     protected final RoundedButton modelList = new RoundedButton();
+    protected final RoundedButton modelProperties = new RoundedButton();
     protected final RoundedButton settings = new RoundedButton();
     protected final WidgetContainer window = new WidgetContainer().setSize(600, 400);
 
     public Cache(){
         background.rebuildMesh();
         localPlayer
-                .setOrigin(window.getWidth() * -.3f, -window.getHeight() / 2f + 20, 1)
-                .setSize(80, 20).setOutlineThickness(2).setRoundingRadius(10)
+                .setOrigin(window.getWidth() * -.35f, -window.getHeight() / 2f + 20, 1)
+                .setSize(100, 20).setOutlineThickness(2).setRoundingRadius(10)
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, widget -> minecraft.screen == localPlayerS || widget.isHovering()))
                 .setText(Component.literal("Your Models"))
                 .setOnClick((button, click) -> {
@@ -36,8 +38,8 @@ public class Cache {
                 .rebuildMesh();
 
         modelList
-                .setOrigin(0, -window.getHeight() / 2f + 20, 1)
-                .setSize(80, 20).setOutlineThickness(2).setRoundingRadius(10)
+                .setOrigin(window.getWidth() * -.125f, -window.getHeight() / 2f + 20, 1)
+                .setSize(100, 20).setOutlineThickness(2).setRoundingRadius(10)
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, widget -> minecraft.screen == modelListS || widget.isHovering()))
                 .setText(Component.literal("All Models"))
                 .setOnClick((button, click) -> {
@@ -47,12 +49,24 @@ public class Cache {
                 })
                 .rebuildMesh();
 
+        modelProperties
+                .setOrigin(window.getWidth() * .125f, -window.getHeight() / 2f + 20, 1)
+                .setSize(100, 20).setOutlineThickness(2).setRoundingRadius(10)
+                .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, widget -> minecraft.screen == propertyS || widget.isHovering()))
+                .setText(Component.literal("Model properties"))
+                .setOnClick((button, click) -> {
+                    if(minecraft.screen == propertyS) return false;
+                    minecraft.setScreen(getPropertyManager());
+                    return true;
+                })
+                .rebuildMesh();
+
         settings
-                .setOrigin(window.getWidth() * .3f, -window.getHeight() / 2f + 20, 1)
-                .setSize(80, 20).setOutlineThickness(2).setRoundingRadius(10)
+                .setOrigin(window.getWidth() * .35f, -window.getHeight() / 2f + 20, 1)
+                .setSize(100, 20).setOutlineThickness(2).setRoundingRadius(10)
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f))
                 .setText(Component.literal("Settings(WIP)"))
-                .setOnClick((button, click) -> false)
+                .setOnClick((button, click) -> true)
                 .rebuildMesh();
     }
 
@@ -66,6 +80,7 @@ public class Cache {
         window.addWidget(background);
         window.addWidget(localPlayer);
         window.addWidget(modelList);
+        window.addWidget(modelProperties);
         window.addWidget(settings);
 
         return window;
@@ -84,5 +99,10 @@ public class Cache {
     public ModelManagerScreen getModelManager() {
         if(modelListS == null) modelListS = new ModelManagerScreen(this);
         return modelListS;
+    }
+
+    public ModelPropertyScreen getPropertyManager(){
+        if(propertyS == null) propertyS = new ModelPropertyScreen(this);
+        return propertyS;
     }
 }

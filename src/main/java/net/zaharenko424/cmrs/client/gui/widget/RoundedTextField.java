@@ -16,6 +16,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.cmrs.util.Consumer4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,12 +32,13 @@ public class RoundedTextField extends RoundedRectWidget {
     protected Component defText;
 
     protected boolean active;
+    protected boolean editable = true;
     protected StringBuilder builder = new StringBuilder();
     protected String text, selection;
     protected int cursorPos, selectionPos;//position of "|" in text
     protected long blinkMillis;
 
-    public static final int defSelectionColor = FastColor.ARGB32.color(128, Color.BLUE.getRGB());
+    public static final int defSelectionColor = FastColor.ARGB32.color(64, Color.BLUE.getRGB());
     public static final int defCursorColor = Color.RED.getRGB();
     protected BiConsumer<RoundedTextField, PoseStack> renderTransform;
     protected Consumer4<RoundedTextField, GuiGraphics, Float, Float> onRender;
@@ -138,6 +140,15 @@ public class RoundedTextField extends RoundedRectWidget {
         return this;
     }
 
+    public RoundedTextField setEditable(boolean editable){
+        this.editable = editable;
+        return this;
+    }
+
+    public boolean isEditable(){
+        return editable;
+    }
+
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(!shouldRender() && defText == null && getText().isEmpty()) return;
@@ -155,7 +166,7 @@ public class RoundedTextField extends RoundedRectWidget {
         Font font = Minecraft.getInstance().font;
         float textOffset = -width / 2f + roundingRadius / 2f + 2;
         if(!text.isBlank()) {
-            guiGraphics.drawString(font, text, textOffset, -4.5f, Color.BLACK.getRGB(), false);
+            WidgetHelper.renderScrollingString(guiGraphics, font, text, textOffset, textOffset, -4.5f, -textOffset, 4.5f, Color.BLACK.getRGB(), false);
         } else if(defText != null) {
             WidgetHelper.renderScrollingComp(guiGraphics, font, defText, textOffset, textOffset, -4.5f, -textOffset, 4.5f, active ? Color.DARK_GRAY.getRGB() : Color.BLACK.getRGB(), false);
         }
@@ -295,7 +306,7 @@ public class RoundedTextField extends RoundedRectWidget {
 
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
-        if(!active || builder.length() >= maxLength || !StringUtil.isAllowedChatCharacter(codePoint)) return false;
+        if(!active || !isEditable() || builder.length() >= maxLength || !StringUtil.isAllowedChatCharacter(codePoint)) return false;
 
         if(selectionPos != cursorPos){
             insertOrReplaceText(String.valueOf(codePoint));
@@ -338,7 +349,7 @@ public class RoundedTextField extends RoundedRectWidget {
                 yield true;
             }//Max at last char
             case InputConstants.KEY_BACKSPACE -> {
-                if(cursorPos == 0) yield false;//If less than 0 something is very wrong
+                if(cursorPos == 0 || !isEditable()) yield false;//If less than 0 something is very wrong
                 if(selectionPos != cursorPos){
                     insertOrReplaceText("");
                     yield true;
@@ -350,7 +361,7 @@ public class RoundedTextField extends RoundedRectWidget {
                 yield true;
             }
             case InputConstants.KEY_DELETE -> {
-                if(builder.length() < cursorPos || builder.isEmpty()) yield false;
+                if(!isEditable() || builder.length() < cursorPos || builder.isEmpty()) yield false;
                 builder.deleteCharAt(cursorPos);
                 text = null;
                 if(onChanged != null) onChanged.accept(this);
@@ -360,19 +371,27 @@ public class RoundedTextField extends RoundedRectWidget {
                 if(Screen.isSelectAll(keyCode)){
                     cursorPos = builder.length();
                     setSelectionPos(0);
+                    yield true;
                 }
+
                 if(Screen.isCopy(keyCode)){
                     Minecraft.getInstance().keyboardHandler.setClipboard(getSelected());
+                    yield true;
                 }
+
+                if(!isEditable()) yield false;
+
                 if(Screen.isPaste(keyCode)){
                     insertOrReplaceText(TextFieldHelper.getClipboardContents(Minecraft.getInstance()));
                     yield true;
                 }
+
                 if(Screen.isCut(keyCode)) {
                     Minecraft.getInstance().keyboardHandler.setClipboard(getSelected());
                     insertOrReplaceText("");
                     yield true;
                 }
+
                 yield false;
             }
         };
@@ -385,7 +404,6 @@ public class RoundedTextField extends RoundedRectWidget {
         float localMouseX = (float) (mouseX - origin.x + 4);
         Font font = Minecraft.getInstance().font;
         setCursorPos(font.plainSubstrByWidth(getText(), (int) ((width / 2 - roundingRadius) + localMouseX / scale.x)).length());
-
         return true;
     }
 

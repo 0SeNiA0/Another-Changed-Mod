@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.zaharenko424.cmrs.client.CustomModelManager;
+import net.zaharenko424.cmrs.client.gui.LayoutHelper;
 import net.zaharenko424.cmrs.client.gui.widget.*;
 import net.zaharenko424.cmrs.api.ModelSetReason;
 import org.jetbrains.annotations.NotNull;
@@ -151,29 +152,7 @@ public class PlayerOverviewScreen extends Screen implements MouseMoveListener {
     }
 
     protected void positionWidgets(){
-        positionWidgets(modelContainer.getWidth() * -.475f, modelContainer.getHeight() * -.5f, modelContainer.getWidth() * .9f, modelContainer.getWidth() * .015f, modelContainer.getHeight() * .025f);
-    }
-
-    protected void positionWidgets(float topX, float leftY, float width, float paddingX, float paddingY){
-        float f = 0;
-        float height = 0;
-        float f1 = 0;
-        for (CMWidget cmw : models) {
-            if (width - f < cmw.getWidth()) {//do next row
-                f = cmw.getWidth() + paddingX;
-                height += f1 + paddingY;
-                f1 = cmw.getHeight();
-
-                cmw.setOrigin(topX + cmw.getWidth() / 2, leftY + height + cmw.getHeight() / 2, 0);
-                continue;
-            }
-
-            cmw.setOrigin(topX + f + cmw.getWidth() / 2, leftY + height + cmw.getHeight() / 2, 0);
-            f += cmw.getWidth() + paddingX;
-            if (cmw.getHeight() > f1) f1 = cmw.getHeight();
-        }
-
-        modelContainer.setActualHeight(height + f1);
+        LayoutHelper.tileLayout(modelContainer, models, modelContainer.getWidth() * -.475f, modelContainer.getHeight() * -.5f, modelContainer.getWidth() * .9f, modelContainer.getWidth() * .015f, modelContainer.getHeight() * .025f);
     }
 
     @Override
