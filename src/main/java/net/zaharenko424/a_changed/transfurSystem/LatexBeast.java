@@ -13,7 +13,7 @@ public interface LatexBeast extends AbilityHolder {
     @NotNull TransfurType<?> transfurType();
 
     @Override
-    default @NotNull List<? extends Ability> getAllowedAbilities(){
+    default @NotNull List<? extends Ability> getAbilities(){
         return transfurType().abilities;
     }
 

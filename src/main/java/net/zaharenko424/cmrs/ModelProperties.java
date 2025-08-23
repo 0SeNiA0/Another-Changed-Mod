@@ -15,12 +15,12 @@ import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.zaharenko424.cmrs.api.ModelProperty;
 import net.zaharenko424.cmrs.registry.AttachmentRegistry;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
-import net.zaharenko424.cmrs.util.MapView;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +51,7 @@ public class ModelProperties {
     }
 
     public Map<String, ModelProperty> properties(){
-        if(view == null) view = new MapView<>(properties);
+        if(view == null) view = Collections.unmodifiableMap(properties);
         return view;
     }
 

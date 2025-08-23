@@ -34,10 +34,12 @@ public class LatexGrabChance {
     }
 
     private static int get(@NotNull CommandSourceStack source){
-        float chance = GrabChanceData.of(source.getLevel()).getGrabChance();
+        Component comp = Component.translatable("command.a_changed.latex_grab_chance.get", GrabChanceData.of(source.getLevel()).getGrabChance());
+
         if(source.isPlayer()) {
-            source.sendSystemMessage(Component.translatable("command.a_changed.latex_grab_chance.get").append(String.valueOf(chance)));
-        } else LOGGER.info("Latex grab chance is {}", chance);
+            source.sendSystemMessage(comp);
+        } else LOGGER.info(comp.getString());
+
         return Command.SINGLE_SUCCESS;
     }
 
@@ -45,10 +47,12 @@ public class LatexGrabChance {
         GrabChanceData data = GrabChanceData.of(source.getLevel());
 
         if(data.getGrabChance() == chance) return Command.SINGLE_SUCCESS;
-        data.setGrabChance(chance);
 
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.a_changed.latex_grab_chance.set").append(String.valueOf(chance)));
-        LOGGER.info("Latex grab chance is set to {}", chance);
+        data.setGrabChance(chance);
+        Component comp = Component.translatable("command.a_changed.latex_grab_chance.set", String.valueOf(chance));
+
+        if(source.isPlayer()) source.sendSystemMessage(comp);
+        LOGGER.info(comp.getString());
 
         return Command.SINGLE_SUCCESS;
     }

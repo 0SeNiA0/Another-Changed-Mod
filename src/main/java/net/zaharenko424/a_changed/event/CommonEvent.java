@@ -300,7 +300,7 @@ public class CommonEvent {
         if(entity.level().isClientSide) return;
 
         AbilityHolder holder = AbilityUtils.of(entity);
-        if(holder != null) holder.getAllowedAbilities().forEach(ability -> ability.deactivate(entity));
+        if(holder != null) holder.getAbilities().forEach(ability -> ability.deactivate(entity));
 
         if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTFTarget(entity)) return;
 

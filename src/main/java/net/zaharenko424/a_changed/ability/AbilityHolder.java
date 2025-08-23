@@ -5,32 +5,60 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Set;
 
+@ParametersAreNonnullByDefault
 public interface AbilityHolder {
 
+    /**
+     * @return Selected ability.
+     */
     Ability getSelectedAbility();
 
     /**
-     * @return unmodifiable list.
+     * @return Ability list view.
      */
-    @NotNull List<? extends Ability> getAllowedAbilities();
+    @NotNull List<? extends Ability> getAbilities();
 
+    /**
+     * @return Whether this holder has specified ability.
+     */
     default boolean hasAbility(DeferredHolder<Ability, ? extends Ability> ability) {
-        return getAllowedAbilities().contains(ability.get());
+        return hasAbility(ability.get());
     }
 
+    /**
+     * @return Whether this holder has specified ability.
+     */
     default boolean hasAbility(Ability ability){
-        return getAllowedAbilities().contains(ability);
+        return getAbilities().contains(ability);
     }
 
-    default void selectAbility(@NotNull ResourceLocation abilityId){
+    /**
+     * @return Whether the abilities were set.
+     */
+    default boolean setAbilities(Set<Ability> abilities){
+        return false;
+    }
+
+    /**
+     *  Selects ability with specified abilityId.
+     */
+    default void selectAbility(ResourceLocation abilityId){
         selectAbility(AbilityUtils.abilityOf(abilityId));
     }
 
-    default void selectAbility(@NotNull DeferredHolder<Ability, ? extends Ability> ability){
+    /**
+     * Selects specified ability.
+     */
+    default void selectAbility(DeferredHolder<Ability, ? extends Ability> ability){
         selectAbility(ability.get());
     }
 
-    void selectAbility(@NotNull Ability ability);
+    /**
+     * Selects specified ability.
+     */
+    void selectAbility(Ability ability);
 }

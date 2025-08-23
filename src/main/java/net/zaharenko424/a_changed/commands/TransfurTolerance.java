@@ -49,9 +49,12 @@ public class TransfurTolerance {
     }
 
     private static int get(@NotNull CommandSourceStack source){
+        Component comp = Component.translatable("command.a_changed.transfur_tolerance.get", TransfurManager.TRANSFUR_TOLERANCE);
+
         if(source.isPlayer()) {
-            source.sendSystemMessage(Component.translatable("command.a_changed.transfur_tolerance.get").append(String.valueOf(TransfurManager.TRANSFUR_TOLERANCE)));
-        } else LOGGER.info("Transfur tolerance is {}", TransfurManager.TRANSFUR_TOLERANCE);
+            source.sendSystemMessage(comp);
+        } else LOGGER.info(comp.getString());
+
         return Command.SINGLE_SUCCESS;
     }
 
@@ -60,13 +63,16 @@ public class TransfurTolerance {
         TransfurManager.TRANSFUR_TOLERANCE = tolerance;
 
         TransfurToleranceData.setDirty(source.getLevel());
+        Component comp = Component.translatable("command.a_changed.transfur_tolerance.set", TransfurManager.TRANSFUR_TOLERANCE);
 
-        if(source.isPlayer()) source.sendSystemMessage(Component.translatable("command.a_changed.transfur_tolerance.set").append(String.valueOf(tolerance)));
-        LOGGER.info("Transfur tolerance is set to {}", tolerance);
+        if(source.isPlayer()) source.sendSystemMessage(comp);
+        LOGGER.info(comp.getString());
+
         source.getLevel().getServer().getAllLevels().forEach(level -> level.getAllEntities().forEach(entity -> {
             if(DamageSources.checkTFTarget(entity)) TransfurUtils.RECALCULATE_PROGRESS.accept((LivingEntity) entity);
         }));
         PacketDistributor.sendToAllPlayers(new ClientboundTransfurToleranceSyncPacket());
+
         return Command.SINGLE_SUCCESS;
     }
 }

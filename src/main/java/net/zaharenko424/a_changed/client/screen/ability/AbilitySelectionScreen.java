@@ -37,7 +37,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
         Player player = minecraft.player;
         holder = TransfurHandler.nonNullOf(player);
 
-        lastAbilities.addAll(holder.getAllowedAbilities());
+        lastAbilities.addAll(holder.getAbilities());
         int amount = lastAbilities.size();
 
         if(amount == 0){
@@ -82,8 +82,8 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
     protected void init() {
         super.init();
 
-        if(!holder.getAllowedAbilities().equals(lastAbilities)){
-            List<? extends Ability> abilities = holder.getAllowedAbilities();
+        if(!holder.getAbilities().equals(lastAbilities)){
+            List<? extends Ability> abilities = holder.getAbilities();
             int amount = abilities.size();
 
             if(amount == 0){
@@ -166,7 +166,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             return;
         }
 
-        if(!holder.getAllowedAbilities().equals(lastAbilities)) init();
+        if(!holder.getAbilities().equals(lastAbilities)) init();
     }
 
     @Override

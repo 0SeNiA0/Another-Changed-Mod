@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.entity;
 
+import com.mojang.datafixers.util.Unit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
@@ -50,7 +51,6 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
@@ -58,6 +58,7 @@ import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.registry.ActivityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
@@ -140,7 +141,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
 
     @Override
     public List<Activity> getActivityPriorities() {
-        return List.of(AChanged.TRANSFUR_HOLD.get(), AChanged.TRANSFUR_ATTACK.get(), Activity.FIGHT, Activity.SWIM, Activity.IDLE);
+        return List.of(ActivityRegistry.TRANSFUR_HOLD.get(), ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), ActivityRegistry.TRANSFUR_ATTACK.get(), Activity.FIGHT, Activity.SWIM, Activity.IDLE);
     }
 
     @Override
@@ -188,7 +189,7 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
     @SuppressWarnings("unchecked")
     public Map<Activity, BrainActivityGroup<? extends WaterLatexBeast>> getAdditionalTasks() {//  TargetTransfurrable goes here
         return Map.of(
-                AChanged.TRANSFUR_ATTACK.get(), new BrainActivityGroup<WaterLatexBeast>(AChanged.TRANSFUR_ATTACK.get()).behaviours(
+                ActivityRegistry.TRANSFUR_ATTACK.get(), new BrainActivityGroup<WaterLatexBeast>(ActivityRegistry.TRANSFUR_ATTACK.get()).behaviours(
                         new InvalidateAttackTarget<WaterLatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                         new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                         new SetWalkTargetToAttackTarget<>().speedMod((latex, target) -> 1.8f),
@@ -202,17 +203,29 @@ public class WaterLatexBeast extends AbstractLatexBeast implements SmartBrainOwn
                 ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
                 .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRYING_TO_TRANSFUR.get()),
 
-                AChanged.TRANSFUR_HOLD.get(), new BrainActivityGroup<WaterLatexBeast>(AChanged.TRANSFUR_HOLD.get()).behaviours(
+                ActivityRegistry.TRANSFUR_HOLD.get(), new BrainActivityGroup<WaterLatexBeast>(ActivityRegistry.TRANSFUR_HOLD.get()).behaviours(
                         new InvalidateWithCallback<>()
                                 .onInvalidate((latex, entity) -> {
                                     BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
                                     AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
                                     BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
-                                }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
+                                }).invalidateIf((latex, entity) -> {
+                                    if(isNonSurvivalOrTF(entity)) return true;
+
+                                    GrabData data = GrabData.dataOf(latex);
+                                    if(data.getGrabbedEntity() != null) return false;
+
+                                    BrainUtils.setForgettableMemory(latex, MemoryTypeRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), Unit.INSTANCE, 100);
+                                    return true;
+                                }),
                         new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
                                 .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))
                 ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
                 .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_HOLDING.get()),
+
+                ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), new BrainActivityGroup<WaterLatexBeast>(ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get()).behaviours(
+                        new Idle<>()
+                ).requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get()),
 
                 Activity.SWIM, new BrainActivityGroup<WaterLatexBeast>(Activity.SWIM).behaviours(
                         new FirstApplicableBehaviour<>(

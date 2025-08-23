@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
-import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
@@ -24,7 +23,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.worldgen.LabRotProcessor;
 import net.zaharenko424.cmrs.CMRS;
-import org.apache.logging.log4j.util.InternalApi;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import org.slf4j.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.zaharenko424.a_changed.registry.AbilityRegistry.ABILITIES;
+import static net.zaharenko424.a_changed.registry.ActivityRegistry.ACTIVITIES;
 import static net.zaharenko424.a_changed.registry.ArmorMaterialRegistry.ARMOR_MATERIALS;
 import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
@@ -60,14 +60,9 @@ public class AChanged {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     //Registries
-    public static final DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(BuiltInRegistries.ACTIVITY, MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
     public static final DeferredRegister<StructureProcessorType<?>> PROCESSORS = DeferredRegister.create(BuiltInRegistries.STRUCTURE_PROCESSOR, MODID);
-
-    //Activities
-    public static final DeferredHolder<Activity, Activity> TRANSFUR_ATTACK = ACTIVITIES.register("transfur_attack", () -> new Activity("transfur_attack"));
-    public static final DeferredHolder<Activity, Activity> TRANSFUR_HOLD = ACTIVITIES.register("transfur_hold", () -> new Activity("transfur_hold"));
 
     //Attributes
     /**
@@ -137,9 +132,9 @@ public class AChanged {
 
 
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_SPEC);
-        new CMRS(modEventBus);
+        new CMRS(modEventBus, container);
     }
 
-    @InternalApi
+    @ApiStatus.Internal
     public static boolean isSafeToAddBiomes = true;
 }

@@ -162,10 +162,10 @@ public class ENLanguageProvider extends LanguageProvider {
         addBlockFromId(YELLOW_LAB_STAIRS);
 
         //Command
-        addCommand("latex_grab_chance.get", "Latex grab chance is ");
-        addCommand("latex_grab_chance.set", "Latex grab chance is set to ");
-        addCommand("transfur_tolerance.get", "Transfur tolerance is ");
-        addCommand("transfur_tolerance.set", "Transfur tolerance is set to ");
+        addCommand("latex_grab_chance.get", "Latex grab chance is %1$s");
+        addCommand("latex_grab_chance.set", "Latex grab chance is set to %1$s");
+        addCommand("transfur_tolerance.get", "Transfur tolerance is %1$s");
+        addCommand("transfur_tolerance.set", "Transfur tolerance is set to %1$s");
 
         //Container
         addContainer("capacitor", "Capacitor");

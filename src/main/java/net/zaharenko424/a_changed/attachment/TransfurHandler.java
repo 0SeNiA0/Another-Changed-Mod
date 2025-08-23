@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static net.zaharenko424.a_changed.AChanged.*;
-import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.*;
+import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TOLERANCE;
 
 public class TransfurHandler implements AbilityHolder {
 
@@ -106,7 +106,7 @@ public class TransfurHandler implements AbilityHolder {
     }
 
     @Override
-    public @NotNull List<? extends Ability> getAllowedAbilities() {
+    public @NotNull List<? extends Ability> getAbilities() {
         return isTransfurred() ? transfurType.abilities : selectedAbility != null ? List.of(selectedAbility) : List.of();
     }
 
@@ -329,7 +329,7 @@ public class TransfurHandler implements AbilityHolder {
         if(selectedAbility != null) {
             selectedAbility.serverTick(holder);
 
-            getAllowedAbilities().forEach(abilityUnselected -> {
+            getAbilities().forEach(abilityUnselected -> {
                 if (abilityUnselected == selectedAbility) return;
                 abilityUnselected.serverTickUnselected(holder);
             });

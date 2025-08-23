@@ -73,7 +73,7 @@ public class ClientEvent {
 
     private static void handleAbilities(Minecraft minecraft, Player player){
         AbilityHolder holder = TransfurHandler.nonNullOf(player);
-        List<? extends Ability> abilities = holder.getAllowedAbilities();
+        List<? extends Ability> abilities = holder.getAbilities();
         if(abilities.isEmpty()) return;
 
         if(quickAbilitySelect(holder, abilities)) return;

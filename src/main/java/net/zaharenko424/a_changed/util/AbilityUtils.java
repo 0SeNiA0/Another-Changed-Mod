@@ -39,7 +39,7 @@ public class AbilityUtils {
 
         if(!(entity instanceof ServerPlayer player)) return;
 
-        List<? extends Ability> allowedAbilities = holder.getAllowedAbilities();
+        List<? extends Ability> allowedAbilities = holder.getAbilities();
         AbilityData data;
         for(Ability ability : allowedAbilities){
             if(ability == selected) continue;
