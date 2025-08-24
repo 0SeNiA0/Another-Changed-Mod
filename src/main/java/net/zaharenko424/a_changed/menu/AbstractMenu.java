@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractMenu extends AbstractContainerMenu {
 
-    protected AbstractMenu(@Nullable MenuType<?> pMenuType, int pContainerId) {
-        super(pMenuType, pContainerId);
+    protected AbstractMenu(@Nullable MenuType<?> menuType, int containerId) {
+        super(menuType, containerId);
     }
 
     protected void createPlayerHotbar(Inventory playerInv) {

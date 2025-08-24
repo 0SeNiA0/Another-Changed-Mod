@@ -52,23 +52,17 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
     @Override
     public void tick() {
-        boolean changed = false;
-        int maxExtract = energyStorage.getMaxExtract();
-
-        ItemStack stack = inventory.getStackInSlot(0);
-        if(!stack.isEmpty()) {
-            energyStorage.receiveEnergyFrom(stack.getCapability(Capabilities.EnergyStorage.ITEM), energyStorage.getMaxReceive(), false);
-            changed = true;
-        } else if(getEnergy() == 0) return;
-
-        stack = inventory.getStackInSlot(1);
-        if(!stack.isEmpty()) {
-            energyStorage.transferEnergyTo(stack.getCapability(Capabilities.EnergyStorage.ITEM), maxExtract, false);
-            changed = true;
-        }
+        consumeEnergyFrom(inventory.getStackInSlot(0));
 
         if(energyStorage.isEmpty()) {
-            if(changed) update();
+            updateIfChanged();
+            return;
+        }
+
+        transferEnergyTo(inventory.getStackInSlot(1));
+
+        if(energyStorage.isEmpty()) {
+            updateIfChanged();
             return;
         }
 
@@ -76,13 +70,13 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
         BlockPos pos = getBlockPos().relative(facing);
         BlockEntity entity = level.getBlockEntity(pos);
         if(entity == null) {
-            if(changed) update();
+            updateIfChanged();
             return;
         }
 
         if(entity instanceof AbstractProxyWire wire){
             wire.tickNetwork();
-            if(changed) update();
+            updateIfChanged();
             return;
         }
 
@@ -91,7 +85,7 @@ public class CapacitorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
             if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
         }
 
-        if(changed) update();
+        updateIfChanged();
     }
 
     @Override

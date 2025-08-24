@@ -46,7 +46,7 @@ public class StunLance extends SwordItem {
         if(stunLance.has(ComponentRegistry.ENABLED)){
             stunLance.remove(ComponentRegistry.ENABLED);
         } else {
-            if(stunLance.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= 500)
+            if(stunLance.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= StunBaton.ENERGY_PER_HIT)
                 stunLance.set(ComponentRegistry.ENABLED, Unit.INSTANCE);
             else return InteractionResultHolder.fail(stunLance);
         }
@@ -58,14 +58,16 @@ public class StunLance extends SwordItem {
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
-        ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(storage.getEnergyStored() < 500){
-            stack.remove(ComponentRegistry.ENABLED);
-            return true;
-        }
+        if(!(attacker instanceof Player player) || !player.isCreative()){
+            ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            if(storage.getEnergyStored() < StunBaton.ENERGY_PER_HIT) {
+                stack.remove(ComponentRegistry.ENABLED);
+                return true;
+            }
 
-        if(!(attacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
-        if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
+            storage.consumeEnergy(StunBaton.ENERGY_PER_HIT);
+            if(storage.getEnergyStored() < StunBaton.ENERGY_PER_HIT) stack.remove(ComponentRegistry.ENABLED);
+        }
 
         target.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
 

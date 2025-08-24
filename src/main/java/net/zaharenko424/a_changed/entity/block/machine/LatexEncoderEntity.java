@@ -3,9 +3,9 @@ package net.zaharenko424.a_changed.entity.block.machine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,16 +30,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class LatexEncoderEntity extends ProcessingMachine<ItemStackHandler, ExtendedEnergyStorage> {
+public class LatexEncoderEntity extends SimpleRecipeProcessingMachine<ItemStackHandler, ExtendedEnergyStorage, LatexEncoderRecipe> {
 
     private final RangedWrapper in = new RangedWrapper(inventory, 0, 7);
     private final RangedWrapper out = new RangedWrapper(inventory, 7, 8);
     private Gender gender = Gender.FEMALE;
-    private RecipeHolder<LatexEncoderRecipe> currentRecipe;
 
-
-    public LatexEncoderEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.LATEX_ENCODER_ENTITY.get(), pPos, pBlockState);
+    public LatexEncoderEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.LATEX_ENCODER_ENTITY.get(), pos, state, RecipeRegistry.LATEX_ENCODER_RECIPE);
     }
 
     @Override
@@ -57,22 +55,23 @@ public class LatexEncoderEntity extends ProcessingMachine<ItemStackHandler, Exte
 
             @Override
             protected void onContentsChanged(int slot) {
-                update();
+                inventoryChanged();
             }
         };
     }
 
     @Override
     ExtendedEnergyStorage initEnergy() {
-        return new ExtendedEnergyStorage(50000, 256, 0);
+        return new ExtendedEnergyStorage(50000, 256, 0){
+            @Override
+            public void onEnergyChanged() {
+                energyLevelChanged();
+            }
+        };
     }
 
     public Gender getSelectedGender(){
         return gender;
-    }
-
-    public boolean hasRecipe(){
-        return currentRecipe != null;
     }
 
     public void setData(int index, int data){
@@ -85,52 +84,25 @@ public class LatexEncoderEntity extends ProcessingMachine<ItemStackHandler, Exte
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return new LatexEncoderMenu(pContainerId, pPlayerInventory, this);
-    }
-
-    @Override
-    public void tick() {
-        if(!enabled || (hasRecipe() && getEnergy() < energyConsumption)){
-            setActive(false);
-            return;
-        }
-
-        if(!hasRecipe()){
-            Optional<RecipeHolder<LatexEncoderRecipe>> recipe = getRecipe();
-            if(recipe.isEmpty() || !inventory.insertItem(7, recipe.get().value().getResultItem(), true).isEmpty()) {
-                setActive(false);
-                return;
-            }
-
-            currentRecipe = recipe.get();
-            currentRecipe.value().assemble(container, level.registryAccess());
-            energyConsumption = currentRecipe.value().getEnergyConsumption();
-            recipeProcessingTime = currentRecipe.value().getProcessingTime();
-            setActive(true);
-            update();
-            return;
-        }
-
-        energyStorage.addEnergy(-energyConsumption);
-
-        if(progress < recipeProcessingTime){
-            progress++;
-        } else {
-            inventory.insertItem(7, currentRecipe.value().getResultItem(), false);
-            progress = 0;
-            currentRecipe = null;
-        }
-
-        setActive(true);
-        update();
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        return new LatexEncoderMenu(containerId, playerInventory, this);
     }
 
     private final LatexEncoderRecipeWrapper container = new LatexEncoderRecipeWrapper(in, this);
 
-    private @NotNull Optional<RecipeHolder<LatexEncoderRecipe>> getRecipe(){
+    protected @NotNull Optional<RecipeHolder<LatexEncoderRecipe>> getRecipe(){
         return level.getRecipeManager().getAllRecipesFor(RecipeRegistry.LATEX_ENCODER_RECIPE.get()).stream()
                 .filter(holder -> holder.value().matches(container, level)).findFirst();
+    }
+
+    @Override
+    protected void consumeInput(RegistryAccess access) {
+        currentRecipe.value().assemble(container, access);
+    }
+
+    @Override
+    protected boolean outputResult(LatexEncoderRecipe recipe, RegistryAccess access, boolean simulate) {
+        return inventory.insertItem(7, recipe.getResultItem(), simulate).isEmpty();
     }
 
     @Override
@@ -147,13 +119,11 @@ public class LatexEncoderEntity extends ProcessingMachine<ItemStackHandler, Exte
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.loadAdditional(tag, lookup);
         if(tag.contains("selectedGender"))  gender = Gender.valueOf(tag.getString("selectedGender"));
-        currentRecipe = tag.contains("recipe") ? level.getRecipeManager().byKeyTyped(RecipeRegistry.LATEX_ENCODER_RECIPE.get(), ResourceLocation.parse(tag.getString("recipe"))) : null;
     }
 
     @Override
     void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.save(tag, lookup);
         tag.putString("selectedGender", gender.toString());
-        if(currentRecipe != null) tag.putString("recipe", currentRecipe.id().toString());
     }
 }

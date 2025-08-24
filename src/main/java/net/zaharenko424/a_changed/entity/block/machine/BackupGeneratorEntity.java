@@ -24,12 +24,14 @@ public class BackupGeneratorEntity extends BlockEntity {
 
     public void tick(){
         if(!getBlockState().getValue(StateProperties.ACTIVE)) return;
-        if(energyStorage.getEnergyStored() < energyStorage.getMaxExtract()) energyStorage.addEnergy(energyStorage.getMaxExtract());
+        if(energyStorage.getEnergyStored() < energyStorage.getMaxExtract()) energyStorage.produceEnergy(energyStorage.getMaxExtract());
 
         BlockEntity entity;
         BlockPos pos;
         for(Direction direction : Direction.values()){
+            if(direction == getBlockState().getValue(BackupGenerator.FACING)) continue;
             if(energyStorage.isEmpty()) break;
+
             pos = worldPosition.relative(direction);
             entity = level.getBlockEntity(pos);
             if(entity == null) continue;

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,8 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
 
     protected final IT inventory;
     protected final ET energyStorage;
+
+    protected int changeCounter;
 
     public AbstractMachineEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
@@ -56,7 +59,12 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(ACTIVE, active));
     }
 
+    protected void updateIfChanged(){
+        if(changeCounter > 0) update();
+    }
+
     protected void update(){
+        changeCounter = 0;
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
@@ -69,6 +77,20 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
 
     public static boolean checkItemEnergyCap(@NotNull ItemStack stack){
         return stack.getCapability(Capabilities.EnergyStorage.ITEM) != null;
+    }
+
+    protected void consumeEnergyFrom(@NotNull ItemStack stack){
+        if(stack.isEmpty()) return;
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if(storage == null) return;
+        if(energyStorage.receiveEnergyFrom(storage, energyStorage.getMaxReceive(), false) > 0) changeCounter++;
+    }
+
+    protected void transferEnergyTo(@NotNull ItemStack stack){
+        if(stack.isEmpty()) return;
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if(storage == null) return;
+        if(energyStorage.transferEnergyTo(storage, energyStorage.getMaxExtract(), false) > 0) changeCounter++;
     }
 
     @Nullable
@@ -84,7 +106,7 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
         return tag;
     }
 
-    /*
+    /**
     *    use onDataPacket for handling updateTag on client
     */
 

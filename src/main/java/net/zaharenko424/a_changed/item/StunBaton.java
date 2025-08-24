@@ -28,6 +28,8 @@ import java.util.List;
 
 public class StunBaton extends SwordItem {
 
+    public static final int ENERGY_PER_HIT = 500;
+
     public StunBaton() {
         super(ArmorMaterialRegistry.STUN_WEAPON_TIER, new Properties().rarity(Rarity.UNCOMMON)
                 .attributes(createAttributes(ArmorMaterialRegistry.STUN_WEAPON_TIER, 3, -2.4f)));
@@ -41,7 +43,7 @@ public class StunBaton extends SwordItem {
         if(stunBaton.has(ComponentRegistry.ENABLED)){
             stunBaton.remove(ComponentRegistry.ENABLED);
         } else {
-            if(stunBaton.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= 500)
+            if(stunBaton.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= ENERGY_PER_HIT)
                 stunBaton.set(ComponentRegistry.ENABLED, Unit.INSTANCE);
             else return InteractionResultHolder.fail(stunBaton);
         }
@@ -53,14 +55,16 @@ public class StunBaton extends SwordItem {
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
-        ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(storage.getEnergyStored() < 500){
-            stack.remove(ComponentRegistry.ENABLED);
-            return true;
-        }
+        if(!(attacker instanceof Player player) || !player.isCreative()){
+            ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            if(storage.getEnergyStored() < ENERGY_PER_HIT) {
+                stack.remove(ComponentRegistry.ENABLED);
+                return true;
+            }
 
-        if(!(attacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
-        if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
+            storage.consumeEnergy(ENERGY_PER_HIT);
+            if(storage.getEnergyStored() < ENERGY_PER_HIT) stack.remove(ComponentRegistry.ENABLED);
+        }
 
         target.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
 

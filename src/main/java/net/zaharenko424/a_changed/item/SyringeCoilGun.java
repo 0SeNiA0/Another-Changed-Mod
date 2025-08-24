@@ -24,6 +24,8 @@ import java.util.List;
 
 public class SyringeCoilGun extends AbstractSyringeRifle {
 
+    public static final int ENERGY_PER_SHOT = 2000;
+
     public SyringeCoilGun() {
         super(new Properties().rarity(Rarity.RARE).durability(256), 5, 10);
     }
@@ -52,12 +54,12 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
 
     @Override
     public boolean hasFuel(@NotNull ItemStack rifle, @NotNull IItemHandler inventory) {
-        return rifle.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= 2000;
+        return rifle.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= ENERGY_PER_SHOT;
     }
 
     @Override
     void consumeFuel(@NotNull ItemStack rifle, @NotNull IItemHandler handler) {
-        ((ExtendedEnergyStorage)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).addEnergy(-2000);
+        ((ExtendedEnergyStorage)rifle.getCapability(Capabilities.EnergyStorage.ITEM)).consumeEnergy(ENERGY_PER_SHOT);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class SyringeCoilGun extends AbstractSyringeRifle {
 
         tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.energy",
                 stack.isEmpty() || stack.getCapability(Capabilities.EnergyStorage.ITEM) == null ? 0
-                        : Mth.floorDiv(stack.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored(), 2000)).withStyle(ChatFormatting.GREEN));
+                        : Mth.floorDiv(stack.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored(), ENERGY_PER_SHOT)).withStyle(ChatFormatting.GREEN));
 
         int count = 0;
         for(int i = 0; i < 4; i++){

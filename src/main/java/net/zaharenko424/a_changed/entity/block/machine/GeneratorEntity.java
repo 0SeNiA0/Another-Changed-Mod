@@ -69,12 +69,10 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
     }
 //Generates 16/t
     public void tick(){
-        boolean changed = false;
-
         if(burnTicks > 0){
             burnTicks--;
-            if(!energyStorage.isFull()) energyStorage.addEnergy(16);
-            changed = true;
+            if(!energyStorage.isFull()) energyStorage.produceEnergy(16);
+            changeCounter++;
         } else if(!energyStorage.isFull()) {
             ItemStack fuel = inventory.getStackInSlot(0);
             int burnTime = fuel.getBurnTime(null);
@@ -83,7 +81,7 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
                 burnTicks = burnTime;
                 maxBurnTicks = burnTime;
                 inventory.extractItem(0, 1, false);
-                changed = true;
+                changeCounter++;
             } else {
                 setActive(false);
             }
@@ -91,12 +89,16 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
             setActive(false);
         }
 
-        if(!energyStorage.isEmpty() && !inventory.getStackInSlot(1).isEmpty()){
-            IEnergyStorage storage = inventory.getStackInSlot(1).getCapability(Capabilities.EnergyStorage.ITEM);
-            if(storage != null) {
-                energyStorage.transferEnergyTo(storage, 100, false);
-                changed = true;
-            }
+        if(energyStorage.isEmpty()) {
+            updateIfChanged();
+            return;
+        }
+
+        transferEnergyTo(inventory.getStackInSlot(1));
+
+        if(energyStorage.isEmpty()) {
+            updateIfChanged();
+            return;
         }
 
         BlockEntity entity;
@@ -115,11 +117,11 @@ public class GeneratorEntity extends AbstractMachineEntity<ItemStackHandler, Ext
 
             if(storage != null && energyStorage.transferEnergyTo(storage, energyStorage.getMaxExtract(), false) != 0) {
                 if(entity instanceof AbstractMachineEntity<?, ?> machineEntity) machineEntity.update();
-                changed = true;
+                changeCounter++;
             }
         }
 
-        if(changed) update();
+        updateIfChanged();
     }
 
     @Override

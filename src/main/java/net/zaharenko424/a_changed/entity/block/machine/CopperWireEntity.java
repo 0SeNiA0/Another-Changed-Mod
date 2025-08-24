@@ -6,7 +6,7 @@ import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 
 public class CopperWireEntity extends AbstractProxyWire {
 
-    public CopperWireEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.COPPER_WIRE_ENTITY.get(), pPos, pBlockState);
+    public CopperWireEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.COPPER_WIRE_ENTITY.get(), pos, state);
     }
 }

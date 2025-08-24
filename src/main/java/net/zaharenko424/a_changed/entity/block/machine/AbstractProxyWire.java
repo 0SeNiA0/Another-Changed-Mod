@@ -19,8 +19,8 @@ public abstract class AbstractProxyWire extends BlockEntity {
     private WireNetworkCache networkCache;
     private final IEnergyStorage fakeStorage;
 
-    public AbstractProxyWire(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
-        super(pType, pPos, pBlockState);
+    public AbstractProxyWire(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         fakeStorage = new IEnergyStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {

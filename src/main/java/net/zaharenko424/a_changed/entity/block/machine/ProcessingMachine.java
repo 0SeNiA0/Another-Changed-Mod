@@ -3,11 +3,8 @@ package net.zaharenko424.a_changed.entity.block.machine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +16,17 @@ public abstract class ProcessingMachine <IT extends ItemStackHandler, ET extends
     protected int energyConsumption;
     protected int recipeProcessingTime;
 
-    protected int changeCounter;
+    protected final int pullEnergyFromSlot;
+    private boolean inventoryChangeRequired = false;
+    private boolean energyChangeRequired = false;
 
-    public ProcessingMachine(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
-        super(pType, pPos, pBlockState);
+    public ProcessingMachine(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        this(type, pos, state, -1);
+    }
+
+    public ProcessingMachine(BlockEntityType<?> type, BlockPos pos, BlockState state, int pullEnergyFromSlot) {
+        super(type, pos, state);
+        this.pullEnergyFromSlot = pullEnergyFromSlot;
     }
 
     public boolean isEnabled(){
@@ -62,25 +66,36 @@ public abstract class ProcessingMachine <IT extends ItemStackHandler, ET extends
         super.setActive(active);
     }
 
-    protected void updateIfChanged(){
-        if(changeCounter > 0) {
-            super.update();
-            changeCounter = 0;
-        }
+    protected void inventoryChanged(){
+        inventoryChangeRequired = false;
+        changeCounter++;
+    }
+
+    protected void awaitInventoryChanges(){
+        inventoryChangeRequired = true;
+    }
+
+    protected void energyLevelChanged(){
+        energyChangeRequired = false;
+        changeCounter++;
+    }
+
+    protected void awaitEnergyChanges(){
+        energyChangeRequired = true;
     }
 
     @Override
-    protected void update() {
-        super.update();
-        changeCounter = 0;
+    public void tick() {
+        if(pullEnergyFromSlot != -1) consumeEnergyFrom(inventory.getStackInSlot(pullEnergyFromSlot));
+
+        if(enabled) {
+            if (!energyChangeRequired && !inventoryChangeRequired) machineTick();
+        } else setActive(false);
+
+        updateIfChanged();
     }
 
-    protected void consumeEnergyFrom(@NotNull ItemStack item){
-        if(item.isEmpty()) return;
-        IEnergyStorage storage = item.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(storage == null) return;
-        if(energyStorage.receiveEnergyFrom(storage, energyStorage.getMaxReceive(), false) > 0) changeCounter++;
-    }
+    protected abstract void machineTick();
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {

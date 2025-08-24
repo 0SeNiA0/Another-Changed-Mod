@@ -40,8 +40,8 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
     protected static final byte maxParallel = 4;
     protected int parallelRecipes;
 
-    public DNAExtractorEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), pPos, pBlockState);
+    public DNAExtractorEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.get(), pos, state);
     }
 
     @Override
@@ -54,14 +54,19 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
 
             @Override
             protected void onContentsChanged(int slot) {
-                update();
+                inventoryChanged();
             }
         };
     }
 
     @Override
     ExtendedEnergyStorage initEnergy() {
-        return new ExtendedEnergyStorage(25000, 256, 0);
+        return new ExtendedEnergyStorage(25000, 256, 0){
+            @Override
+            public void onEnergyChanged() {
+                energyLevelChanged();
+            }
+        };
     }
 
     public int getRot(){
@@ -88,9 +93,10 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
     }
 
     @Override
-    public void tick() {
-        if(!enabled || (hasRecipe() && getEnergy() < energyConsumption)) {
+    protected void machineTick() {
+        if(hasRecipe() && getEnergy() < energyConsumption) {
             setActive(false);
+            awaitEnergyChanges();
             return;
         }
 
@@ -98,6 +104,7 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
             Optional<RecipeHolder<DNAExtractorRecipe>> recipe = getRecipe();
             if(recipe.isEmpty() || getEnergy() < recipe.get().value().getEnergyConsumption() || !resultsFit(recipe.get().value())){
                 setActive(false);
+                awaitInventoryChanges();
                 return;
             }
 
@@ -109,11 +116,11 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
             energyConsumption = currentRecipe.value().getEnergyConsumption();
             recipeProcessingTime = currentRecipe.value().getProcessingTime();
             setActive(true);
-            update();
+            changeCounter++;
             return;
         }
 
-        energyStorage.addEnergy(-energyConsumption);
+        energyStorage.consumeEnergy(energyConsumption);
         rotationDeg = (rotationDeg + 20) % 360;
 
         if(progress < recipeProcessingTime){
@@ -128,7 +135,7 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
         }
 
         setActive(true);
-        update();
+        changeCounter++;
     }
 
     @Override
@@ -161,11 +168,8 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
             return false;
         }
 
-        if(in.getStackInSlot(0).getItem() instanceof BloodSyringe
-                && (!outSlots[1].isEmpty()
-                    && parallelRecipes + outSlots[1].getCount() > outSlots[1].getMaxStackSize())) return false;
-
-        return true;
+        return !(in.getStackInSlot(0).getItem() instanceof BloodSyringe)
+                || (outSlots[1].isEmpty() || parallelRecipes + outSlots[1].getCount() <= outSlots[1].getMaxStackSize());
     }
 
     @Override

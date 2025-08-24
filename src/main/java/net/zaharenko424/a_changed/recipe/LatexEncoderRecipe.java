@@ -10,7 +10,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class LatexEncoderRecipe implements Recipe<LatexEncoderRecipeWrapper> {
+public class LatexEncoderRecipe implements MachineRecipe<LatexEncoderRecipeWrapper> {
 
     protected final NonNullList<Ingredient> ingredients;
     protected final Gender gender;
@@ -93,10 +92,12 @@ public class LatexEncoderRecipe implements Recipe<LatexEncoderRecipeWrapper> {
         return result.copy();
     }
 
+    @Override
     public int getEnergyConsumption() {
         return energyConsumption;
     }
 
+    @Override
     public int getProcessingTime() {
         return processingTime;
     }
