@@ -55,15 +55,18 @@ public abstract class ProcessingMachine <IT extends ItemStackHandler, ET extends
     }
 
     @Override
-    protected void setActive(boolean active) {//Reset progress if not active
-        if(!active) {
+    protected boolean setActive(boolean active) {//Reset progress if not active
+        boolean changed = super.setActive(active);
+        if(changed && !active){
             progress = 0;
             if(!hasRecipe()) {
                 energyConsumption = 0;
                 recipeProcessingTime = 0;
             }
+            changeCounter++;
         }
-        super.setActive(active);
+
+        return changed;
     }
 
     protected void inventoryChanged(){
@@ -112,8 +115,8 @@ public abstract class ProcessingMachine <IT extends ItemStackHandler, ET extends
     void save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
         super.save(tag, lookup);
         tag.putBoolean("enabled", enabled);
-        if(enabled && progress > 0){
-            tag.putInt("progress", progress);
+        if(enabled){
+            if(progress > 0) tag.putInt("progress", progress);
             tag.putInt("energyConsumption", energyConsumption);
             tag.putInt("recipeProcessingTime", recipeProcessingTime);
         }

@@ -47,36 +47,40 @@ public abstract class SimpleRecipeProcessingMachine<IT extends ItemStackHandler,
 
         RegistryAccess access = level.registryAccess();
         if(!hasRecipe()){
-            Optional<RecipeHolder<R>> recipe = getRecipe();
-            if (recipe.isEmpty() || !outputResult(recipe.get().value(), access, true)) {
-                setActive(false);
-                awaitInventoryChanges();
-                return;
-            }
-
-            currentRecipe = recipe.get();
-            consumeInput(access);//Consume item
-            energyConsumption = currentRecipe.value().getEnergyConsumption();
-            recipeProcessingTime = currentRecipe.value().getProcessingTime();
-            setActive(true);
-            changeCounter++;
+            tryStartRecipe(access);
             return;
         }
 
         energyStorage.consumeEnergy(energyConsumption);
 
-        onProcessingTick();
-
         if(progress < recipeProcessingTime){
+            onProcessingTick();
             progress++;
-        } else {
-            outputResult(currentRecipe.value(), access, false);
-            progress = 0;
-            currentRecipe = null;
+            changeCounter++;
+            return;
         }
 
-        setActive(true);
+        outputResult(currentRecipe.value(), access, false);
+        progress = 0;
+        currentRecipe = null;
+
+        tryStartRecipe(access);
+    }
+
+    protected void tryStartRecipe(RegistryAccess access){
+        Optional<RecipeHolder<R>> recipe = getRecipe();
+        if (recipe.isEmpty() || !outputResult(recipe.get().value(), access, true)) {
+            setActive(false);
+            awaitInventoryChanges();
+            return;
+        }
+
+        currentRecipe = recipe.get();
+        consumeInput(access);//Consume item
+        energyConsumption = currentRecipe.value().getEnergyConsumption();
+        recipeProcessingTime = currentRecipe.value().getProcessingTime();
         changeCounter++;
+        setActive(true);
     }
 
     protected void onProcessingTick(){}

@@ -101,22 +101,7 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
         }
 
         if(!hasRecipe()){
-            Optional<RecipeHolder<DNAExtractorRecipe>> recipe = getRecipe();
-            if(recipe.isEmpty() || getEnergy() < recipe.get().value().getEnergyConsumption() || !resultsFit(recipe.get().value())){
-                setActive(false);
-                awaitInventoryChanges();
-                return;
-            }
-
-            currentRecipe = recipe.get();
-            for(int i = 0; i < parallelRecipes; i++){
-                currentRecipe.value().assemble(container, level.registryAccess());
-            }
-            if(currentRecipe.value().getIngredient().getItems()[0].getItem() instanceof BloodSyringe) output.insertItem(1, ItemRegistry.SYRINGE_ITEM.toStack(parallelRecipes), false);
-            energyConsumption = currentRecipe.value().getEnergyConsumption();
-            recipeProcessingTime = currentRecipe.value().getProcessingTime();
-            setActive(true);
-            changeCounter++;
+            tryStartRecipe();
             return;
         }
 
@@ -125,29 +110,58 @@ public class DNAExtractorEntity extends ProcessingMachine<ItemStackHandler, Exte
 
         if(progress < recipeProcessingTime){
             progress++;
-        } else {
-            ItemStack result = currentRecipe.value().getResultItem(level.registryAccess());
-            result.setCount(result.getCount() * parallelRecipes);
-            inventory.insertItem(2, result, false);
-            progress = 0;
-            currentRecipe = null;
-            parallelRecipes = 0;
+            changeCounter++;
+            return;
         }
 
-        setActive(true);
+        ItemStack result = currentRecipe.value().getResultItem(level.registryAccess());
+        result.setCount(result.getCount() * parallelRecipes);
+        inventory.insertItem(2, result, false);
+        progress = 0;
+        currentRecipe = null;
+        parallelRecipes = 0;
+
+        tryStartRecipe();
+    }
+
+    protected void tryStartRecipe(){
+        Optional<RecipeHolder<DNAExtractorRecipe>> recipe = getRecipe();
+        if(recipe.isEmpty() || !resultsFit(recipe.get().value())){
+            setActive(false);
+            awaitInventoryChanges();
+            return;
+        }
+
+        if(getEnergy() < recipe.get().value().getEnergyConsumption()){
+            setActive(false);
+            awaitEnergyChanges();
+            return;
+        }
+
+        currentRecipe = recipe.get();
+        for(int i = 0; i < parallelRecipes; i++){
+            currentRecipe.value().assemble(container, level.registryAccess());
+        }
+        if(currentRecipe.value().getIngredient().getItems()[0].getItem() instanceof BloodSyringe) output.insertItem(1, ItemRegistry.SYRINGE_ITEM.toStack(parallelRecipes), false);
+        energyConsumption = currentRecipe.value().getEnergyConsumption();
+        recipeProcessingTime = currentRecipe.value().getProcessingTime();
         changeCounter++;
+        setActive(true);
     }
 
     @Override
-    protected void setActive(boolean active) {
-        if(!active && currentRecipe != null){
+    protected boolean setActive(boolean active) {
+        boolean changed = super.setActive(active);
+        if(changed && !active && currentRecipe != null){
             ItemStack waste = output.insertItem(0, ItemRegistry.BIO_WASTE.toStack(parallelRecipes), false);
             if(!waste.isEmpty()) Block.popResource(level, getBlockPos(), waste);
             currentRecipe = null;
             parallelRecipes = 0;
             enabled = false;
+            changeCounter++;
         }
-        super.setActive(active);
+
+        return changed;
     }
 
     private final SingleInputRecipeWrapper container = new SingleInputRecipeWrapper(inventory, 0);

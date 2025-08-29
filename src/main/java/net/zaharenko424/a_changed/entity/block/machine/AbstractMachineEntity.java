@@ -54,9 +54,11 @@ public abstract class AbstractMachineEntity <IT extends ItemStackHandler, ET ext
 
     public abstract void tick();
 
-    protected void setActive(boolean active){
-        if(getBlockState().getValue(ACTIVE) != active)
-            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(ACTIVE, active));
+    protected boolean setActive(boolean active){
+        if(getBlockState().getValue(ACTIVE) == active) return false;
+
+        level.setBlockAndUpdate(worldPosition, getBlockState().setValue(ACTIVE, active));
+        return true;
     }
 
     protected void updateIfChanged(){
