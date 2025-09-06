@@ -33,10 +33,10 @@ public class TallCrystal extends NotRotatedMultiBlock implements LatexImmuneBloc
     private static final VoxelShape SHAPE1 = SHAPE0.move(0,-1,0);
     private static final AABB aabb0 = SHAPE0.bounds();
     private static final AABB aabb1 = SHAPE1.bounds();
-    private final Supplier<? extends TransfurType> transfurType;
+    private final Supplier<? extends TransfurType<?>> transfurType;
     public static IntegerProperty PART = StateProperties.PART2;
 
-    public TallCrystal(Properties properties, Supplier<? extends TransfurType> transfurType) {
+    public TallCrystal(Properties properties, Supplier<? extends TransfurType<?>> transfurType) {
         super(properties.friction(.9f).speedFactor(.4f).jumpFactor(.2f).noCollission());
         this.transfurType = transfurType;
     }

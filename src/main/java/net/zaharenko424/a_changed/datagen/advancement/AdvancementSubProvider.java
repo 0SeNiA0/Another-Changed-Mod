@@ -123,7 +123,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                         true, true, false
                 )
                 .parent(root)
-                .addCriterion("get_transfurred", TransfurTrigger.TriggerInstance.playerTransfurred())
+                .addCriterion("get_transfurred", TransfurTrigger.TriggerInstance.playerTransfurredNoDeath())
                 .save(saver, resourceLoc("get_transfurred"), existingFileHelper);
         Advancement.Builder.recipeAdvancement()
                 .display(
@@ -135,7 +135,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                         true, true, false
                 )
                 .parent(getTransfurred)
-                .addCriterion("cat_transfur", TransfurTrigger.TriggerInstance.playerTransfurred(TransfurTypePredicate.of(TransfurTypePredicate.Type.CAT)))
+                .addCriterion("cat_transfur", TransfurTrigger.TriggerInstance.playerTransfurredNoDeath(TransfurTypePredicate.of(TransfurTypePredicate.Type.CAT)))
                 .save(saver, resourceLoc("cat_transfur"), existingFileHelper);
         Advancement.Builder.recipeAdvancement()
                 .display(
@@ -147,7 +147,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                         true, true, false
                 )
                 .parent(getTransfurred)
-                .addCriterion("swimming_transfur", TransfurTrigger.TriggerInstance.playerTransfurred(TransfurTypePredicate.of(TransfurTypePredicate.Type.SWIMMING)))
+                .addCriterion("swimming_transfur", TransfurTrigger.TriggerInstance.playerTransfurredNoDeath(TransfurTypePredicate.of(TransfurTypePredicate.Type.SWIMMING)))
                 .save(saver, resourceLoc("swimming_transfur"), existingFileHelper);
         Advancement.Builder.recipeAdvancement()
                 .display(
@@ -159,7 +159,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                         true, true, false
                 )
                 .parent(getTransfurred)
-                .addCriterion("flying_transfur", TransfurTrigger.TriggerInstance.playerTransfurred(TransfurTypePredicate.of(TransfurTypePredicate.Type.FLYING)))
+                .addCriterion("flying_transfur", TransfurTrigger.TriggerInstance.playerTransfurredNoDeath(TransfurTypePredicate.of(TransfurTypePredicate.Type.FLYING)))
                 .save(saver, resourceLoc("flying_transfur"), existingFileHelper);
         Advancement.Builder allTransfurs = Advancement.Builder.recipeAdvancement()
                 .display(
@@ -173,7 +173,7 @@ public class AdvancementSubProvider implements AdvancementProvider.AdvancementGe
                 .parent(getTransfurred);
         TransfurRegistry.TRANSFUR_TYPES.getEntries().forEach(type -> {
             if(type == TransfurRegistry.SPECIAL_TF) return;
-            allTransfurs.addCriterion(type.getId().toString(), TransfurTrigger.TriggerInstance.playerTransfurred(TransfurTypePredicate.of(type.get())));
+            allTransfurs.addCriterion(type.getId().toString(), TransfurTrigger.TriggerInstance.playerTransfurredNoDeath(TransfurTypePredicate.of(type.get())));
         });
         allTransfurs
                 .rewards(AdvancementRewards.Builder.experience(300))

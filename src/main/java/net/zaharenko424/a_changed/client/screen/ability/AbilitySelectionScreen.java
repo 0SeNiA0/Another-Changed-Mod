@@ -8,21 +8,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
-import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.api.AbilityHolder;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.util.AbilityUtils;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
 import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.WidgetHelper;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbilityPacket;
-import net.zaharenko424.a_changed.util.AbilityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SequencedSet;
 
 public class AbilitySelectionScreen extends Screen implements MouseMoveListener {
 
@@ -35,7 +35,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
 
         minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        holder = TransfurHandler.nonNullOf(player);
+        holder = AbilityUtils.of(player);
 
         lastAbilities.addAll(holder.getAbilities());
         int amount = lastAbilities.size();
@@ -65,7 +65,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
     protected RadialButton makeButton(Ability ability){
         return new RadialButton()
                 .setOutlineColorFunc(button -> {
-                    if(!ability.isSelectable()) return button.isHovering() ? Color.ORANGE.getRGB() : -14236;
+                    if(ability.isPassive()) return button.isHovering() ? Color.ORANGE.getRGB() : -14236;
                     if(holder.getSelectedAbility() == ability && button.isHovering()) return Color.GREEN.getRGB();
                     if(holder.getSelectedAbility() == ability) return -16711836;
                     return button.isHovering() ? Color.GRAY.getRGB() : Color.BLACK.getRGB();
@@ -82,8 +82,8 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
     protected void init() {
         super.init();
 
-        if(!holder.getAbilities().equals(lastAbilities)){
-            List<? extends Ability> abilities = holder.getAbilities();
+        SequencedSet<? extends Ability> abilities = holder.getAbilities();
+        if(abilities.size() != lastAbilities.size() || !abilities.containsAll(lastAbilities)){
             int amount = abilities.size();
 
             if(amount == 0){
@@ -102,8 +102,10 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             int in;
             float sizeRad = Mth.TWO_PI / amount;
             float off = Mth.DEG_TO_RAD * 4;
+
+            Iterator<? extends Ability> it = abilities.iterator();
             for(int i = 0; i < amount; i++){
-                ability = abilities.get(i);
+                ability = it.next();
 
                 in = lastAbilities.indexOf(ability);
                 if(in != -1){
@@ -111,7 +113,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
                     button = buttons.remove(in);
                     button.setRotation(Mth.HALF_PI + sizeRad * i + off).setSize(sizeRad - off * 2, Mth.DEG_TO_RAD * 8);
                     button.rebuildMesh();
-                    newButtons.add(buttons.remove(in));
+                    newButtons.add(button);
                     continue;
                 }
 
@@ -136,7 +138,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
         }
     }
 
-    protected boolean click(int button, Ability ability){
+    protected boolean click(int button, @NotNull Ability ability){
         Ability selected = holder.getSelectedAbility();
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
@@ -145,7 +147,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             return true;
         }
 
-        if(!ability.isSelectable()){
+        if(ability.isPassive()){
             if(ability.hasScreen()) minecraft.setScreen(ability.getScreen(minecraft.player));
             return true;
         }
@@ -155,7 +157,7 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             //return true;//TODO switch selected or just open the menu of clicked ability?
         }
 
-        PacketDistributor.sendToServer(new ServerboundSelectAbilityPacket(AbilityUtils.abilityIdOf(ability)));
+        holder.selectAbility(ability);
         return true;
     }
 
@@ -166,7 +168,8 @@ public class AbilitySelectionScreen extends Screen implements MouseMoveListener 
             return;
         }
 
-        if(!holder.getAbilities().equals(lastAbilities)) init();
+        SequencedSet<? extends Ability> abilities = holder.getAbilities();
+        if(abilities.size() != lastAbilities.size() || !abilities.containsAll(lastAbilities)) init();
     }
 
     @Override

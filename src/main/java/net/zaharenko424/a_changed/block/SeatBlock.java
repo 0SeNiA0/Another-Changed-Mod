@@ -18,8 +18,8 @@ public interface SeatBlock<S extends SeatEntity> {
             level.addFreshEntity(seat);
             list.add(seat);
         }
-        if(!list.get(0).isVehicle()){
-            player.startRiding(list.get(0));
+        if(!list.getFirst().isVehicle()){
+            player.startRiding(list.getFirst());
             return true;
         }
         return false;
@@ -28,7 +28,7 @@ public interface SeatBlock<S extends SeatEntity> {
     default void removeSeat(@NotNull Level level, BlockPos pos){
         List<S> list = level.getEntitiesOfClass(seatClass(), new AABB(pos));
         if(list.isEmpty()) return;
-        S seat = list.get(0);
+        S seat = list.getFirst();
         if(!seat.getPassengers().isEmpty()) seat.unRide();
         seat.discard();
     }

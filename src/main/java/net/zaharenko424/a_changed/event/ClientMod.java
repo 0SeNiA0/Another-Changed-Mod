@@ -276,7 +276,7 @@ public class ClientMod {
             public boolean isVisibleInGui(MobEffectInstance instance) {
                 return false;
             }
-        }, MobEffectRegistry.FRESH_AIR.get(), MobEffectRegistry.GRAB_COOLDOWN.get(), MobEffectRegistry.INVISIBLE_SLOWDOWN.get(),
+        }, MobEffectRegistry.FRESH_AIR.get(), MobEffectRegistry.INVISIBLE_SLOWDOWN.get(),
                 MobEffectRegistry.UNTRANSFUR_STACK.get());
     }
 

@@ -2,16 +2,12 @@ package net.zaharenko424.a_changed.ability;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.zaharenko424.a_changed.ability.api.PassiveAbility;
 import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
-import net.zaharenko424.a_changed.network.packets.ability.ClientboundRemoveAttachmentPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
@@ -37,27 +33,7 @@ public class LatexPupAgingAbility implements PassiveAbility {
     }
 
     @Override
-    public boolean hasScreen() {
-        return false;
-    }
-
-    @Override
-    public Screen getScreen(@NotNull Player holder) {
-        return null;
-    }
-
-    @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {
-        if(!holder.level().isClientSide) return;
-        LatexPupAgingData data = getAbilityData(holder);
-        data.fromPacket(buf);
-    }
-
-    @Override
-    public void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft) {}
-
-    @Override
-    public void serverTick(@NotNull LivingEntity holder) {
+    public void serverTickUnselected(@NotNull LivingEntity holder) {
         LatexPupAgingData data = getAbilityData(holder);
         if(data.isAgingFrozen()) return;
         boolean wasBaby = data.isBaby();
@@ -74,13 +50,12 @@ public class LatexPupAgingAbility implements PassiveAbility {
             return;
         }
 
-        if(wasBaby != data.isBaby() || holder.tickCount % 20 == 0) data.syncClients();//only sync every second
+        if(wasBaby != data.isBaby() || holder.tickCount % 20 == 0) data.sync();//only sync every second
     }
 
     @Override
     public void remove(@NotNull LivingEntity holder) {
         holder.removeData(AttachmentRegistry.LATEX_PUP_AGING_DATA);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, new ClientboundRemoveAttachmentPacket(holder.getId(), AttachmentRegistry.LATEX_PUP_AGING_DATA.getId()));
     }
 
     @Override

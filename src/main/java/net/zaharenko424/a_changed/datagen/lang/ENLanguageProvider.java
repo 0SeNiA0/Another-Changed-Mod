@@ -312,7 +312,6 @@ public class ENLanguageProvider extends LanguageProvider {
 
         //Message
         addMessage("grab_cooldown", "Grab ability is on cooldown for %1$s s");
-        addMessage("self_held_already", "%1$s is holding you already!");
         addMessage("target_held_already", "%1$s is holding %2$s already!");
         addMessage("cannot_grab_with_selected_mode", "Cannot grab %1$s with selected mode!");
         addMessage("grabbed_entity_changed_dim", "%1$s changed dimension");

@@ -1,6 +1,5 @@
-package net.zaharenko424.a_changed.ability;
+package net.zaharenko424.a_changed.ability.api;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,45 +10,46 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Ability {
 
-    /**
-     * Only active abilities can be selected and activated.
-     * @return whether the ability is active or passive.
-     */
-    boolean isSelectable();
+    default boolean isPassive(){
+        return ActivationType.isPassive(activationType());
+    }
 
     /**
      * Called to draw the icon of this ability. x & y - coordinates of top left corner.
      */
     void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay);
 
-    boolean hasScreen();
+    default boolean hasScreen(){
+        return false;
+    }
 
     /**
      * @return screen that will be shown to player when opening menu of this ability.
      */
-    Screen getScreen(@NotNull Player holder);
+    default Screen getScreen(@NotNull Player holder){
+        return null;
+    }
 
-    /**
-     * Handles all network activity regarding this ability (client & server) except activation & deactivation.
-     */
-    void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context);
+    boolean canUse(@NotNull LivingEntity holder);
 
-    /**
-     * Called when server receives ActivateAbilityPacket.
-     * @param oneShot whether the click is one-and-done or hold.
-     */
-    void activate(@NotNull LivingEntity holder, boolean oneShot, @NotNull FriendlyByteBuf additionalData);
+    default ActivationType activationType(){
+        return ActivationType.INSTANT;
+    }
 
-    /**
-     * Called when server receives DeactivateAbilityPacket.
-     */
-    void deactivate(@NotNull LivingEntity holder);
+    default boolean isActivated(LivingEntity holder){
+        return false;
+    }
+
+    default void activate(LivingEntity holder){}
+
+    default void deactivate(@NotNull LivingEntity holder){}
 
     /**
      * Called serverside when the ability is selected.
      */
     default void select(@NotNull LivingEntity holder){
-        getAbilityData(holder).syncClients();
+        AbilityData data = getAbilityData(holder);
+        if(data != null) data.sync();
     }
 
     /**
@@ -60,19 +60,14 @@ public interface Ability {
     }
 
     /**
-     * Handles client input and activates/deactivates ability accordingly.
+     * Handles all network activity regarding this ability (client & server) except activation & deactivation.
      */
-    void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft);
-
-    /**
-     * Handles client input while the ability is unselected.
-     */
-    default void inputTickUnselected(@NotNull Player localPlayer, @NotNull Minecraft minecraft){}
+    default void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context){}
 
     /**
      * Ticks ability serverside. Called only when the ability is selected.
      */
-    void serverTick(@NotNull LivingEntity holder);
+    default void serverTick(@NotNull LivingEntity holder){}
 
     /**
      * Ticks ability serverside. Called only when the ability is unselected.
@@ -82,7 +77,9 @@ public interface Ability {
     /**
      * @return ability data or null if there is no data.
      */
-    AbilityData getAbilityData(@NotNull LivingEntity holder);
+    default AbilityData getAbilityData(@NotNull LivingEntity holder){
+        return null;
+    }
 
     /**
      * Called serverside when this ability is added to the specified holder.

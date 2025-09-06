@@ -5,13 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -22,14 +20,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
-import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.block.CryoChamber;
 import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.PileOfOranges;
@@ -43,9 +37,6 @@ import net.zaharenko424.a_changed.block.smalldecor.BrokenFlask;
 import net.zaharenko424.a_changed.block.smalldecor.Flask;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.block.smalldecor.TestTubes;
-import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.cmrs.client.gui.screen.ModelManagerScreen;
-import net.zaharenko424.a_changed.client.screen.ability.AbilitySelectionScreen;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.util.Utils;
 
@@ -55,65 +46,6 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @EventBusSubscriber(modid = AChanged.MODID, value = Dist.CLIENT)
 public class ClientEvent {
-
-    @SubscribeEvent
-    public static void onKeyPress(InputEvent.Key event){
-        Minecraft minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
-
-        if(player == null) return;
-
-        if(Keybindings.MODEL_MANAGER.isDown()){
-            if(minecraft.screen == null) minecraft.setScreen(new ModelManagerScreen());
-            return;
-        }
-
-        handleAbilities(minecraft, player);
-    }
-
-    private static void handleAbilities(Minecraft minecraft, Player player){
-        AbilityHolder holder = TransfurHandler.nonNullOf(player);
-        List<? extends Ability> abilities = holder.getAbilities();
-        if(abilities.isEmpty()) return;
-
-        if(quickAbilitySelect(holder, abilities)) return;
-
-        if(Keybindings.ABILITY_SELECTION.isDown()){
-            Screen screen = new AbilitySelectionScreen();// <-- sets screen in init so check before setting
-            if(Minecraft.getInstance().screen == null) minecraft.setScreen(screen);
-            return;
-        }
-
-        Ability ability = holder.getSelectedAbility();
-        if(ability != null){
-            ability.inputTick(player, minecraft);
-            return;
-        }
-
-        abilities.forEach(unselected -> unselected.inputTickUnselected(player, minecraft));
-    }
-
-    private static boolean quickAbilitySelect(AbilityHolder holder, List<? extends Ability> abilities){
-        if(Keybindings.QUICK_SELECT_ABILITY_1.consumeClick() && !abilities.isEmpty()){
-            if(abilities.get(0).isSelectable()) {
-                holder.selectAbility(abilities.get(0));
-                return true;
-            }
-        }
-        if(Keybindings.QUICK_SELECT_ABILITY_2.consumeClick() && abilities.size() > 1){
-            if(abilities.get(1).isSelectable()) {
-                holder.selectAbility(abilities.get(1));
-                return true;
-            }
-        }
-        if(Keybindings.QUICK_SELECT_ABILITY_3.consumeClick() && abilities.size() > 2){
-            if(abilities.get(2).isSelectable()) {
-                holder.selectAbility(abilities.get(2));
-                return true;
-            }
-        }
-        return false;
-    }
 
     @SubscribeEvent
     public static void onRenderTooltip(RenderTooltipEvent.GatherComponents event){

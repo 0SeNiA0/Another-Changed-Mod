@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.mixin.entity;
 
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.Creeper;
@@ -26,8 +27,8 @@ public abstract class MixinCreeper extends Monster {
     @Inject(at = @At("TAIL"), method = "registerGoals")
     private void onRegisterGoals(CallbackInfo ci){
         goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Player.class,
-                entity -> !(entity instanceof Player player) || !TransfurManager.isTransfurred(player) || !AbilityUtils.hasCatAbility(player),
+                entity -> TransfurManager.isTransfurred(entity) && AbilityUtils.hasCatAbility(entity),
                 6, 1, 1.2,
-                entity -> !(entity instanceof Player) || !entity.isSpectator() && !((Player)entity).isCreative()));
+                EntitySelector.NO_CREATIVE_OR_SPECTATOR::test));
     }
 }

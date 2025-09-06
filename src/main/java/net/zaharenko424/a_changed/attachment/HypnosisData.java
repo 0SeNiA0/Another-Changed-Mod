@@ -1,26 +1,22 @@
 package net.zaharenko424.a_changed.attachment;
 
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.attachment.AttachmentSyncHandler;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.ability.AbilityData;
-import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySyncPacket;
-import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.ability.api.AbilityData;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * Whoever modifies the data is responsible for its synchronisation!
- */
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class HypnosisData implements AbilityData {
 
+    public static final Sync SYNC = new Sync();
+
     public final LivingEntity holder;
-    LivingEntity hypnotisedBy;
-    long lastHypnotised;
-    boolean activated;
+    private boolean activated;
 
     public HypnosisData(IAttachmentHolder holder){
         if(!(holder instanceof LivingEntity entity)) throw new IllegalArgumentException();
@@ -31,18 +27,7 @@ public class HypnosisData implements AbilityData {
         return holder.getData(AttachmentRegistry.HYPNOSIS_DATA);
     }
 
-    public LivingEntity getHypnotisedBy() {
-        if(holder.level().getGameTime() - lastHypnotised > 20 && !holder.level().tickRateManager().isFrozen()){
-            hypnotisedBy = null;
-        }
-        return hypnotisedBy;
-    }
-
-    public void setHypnotisedBy(LivingEntity hypnotisedBy) {
-        this.hypnotisedBy = hypnotisedBy;
-        lastHypnotised = holder.level().getGameTime();
-    }
-
+    @Override
     public boolean isActivated() {
         return activated;
     }
@@ -50,31 +35,34 @@ public class HypnosisData implements AbilityData {
     public void setActivated(boolean activated) {
         if(this.activated == activated) return;
         this.activated = activated;
-        syncClients();
+        sync();
     }
 
     @Override
-    public void syncClients() {
-        if(holder.level().isClientSide) return;
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, updatePacket());
+    public void sync() {
+        holder.syncData(AttachmentRegistry.HYPNOSIS_DATA);
     }
 
-    @Override
-    public void syncClient(@NotNull ServerPlayer receiver) {
-        PacketDistributor.sendToPlayer(receiver, updatePacket());
-    }
+    @ParametersAreNonnullByDefault
+    public static class Sync implements AttachmentSyncHandler<HypnosisData> {
 
-    private ClientboundAbilitySyncPacket updatePacket() {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(1));
-        //buf.writeVarInt(hypnotisedBy != null ? hypnotisedBy.getId() : -1);
-        buf.writeBoolean(activated);
-        return new ClientboundAbilitySyncPacket(holder.getId(), AbilityRegistry.HYPNOSIS_ABILITY.getId(), buf);
-    }
+        private Sync(){}
 
-    @Override
-    public void fromPacket(@NotNull FriendlyByteBuf packet) {
-        //int id = packet.readVarInt();
-        //hypnotisedBy = id == -1 ? null : !(holder.level().getEntity(id) instanceof LivingEntity living) ? null : living;
-        activated = packet.readBoolean();
+        @Override
+        public boolean sendToPlayer(IAttachmentHolder holder, ServerPlayer to) {
+            return holder == to;//Only sync to self, others don't need to know when this is activated
+        }
+
+        @Override
+        public void write(RegistryFriendlyByteBuf buf, HypnosisData attachment, boolean initialSync) {
+            buf.writeBoolean(attachment.activated);
+        }
+
+        @Override
+        public @Nullable HypnosisData read(IAttachmentHolder holder, RegistryFriendlyByteBuf buf, @Nullable HypnosisData previousValue) {
+            HypnosisData data = previousValue == null ? new HypnosisData(holder) : previousValue;
+            data.activated = buf.readBoolean();
+            return data;
+        }
     }
 }

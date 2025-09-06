@@ -110,5 +110,5 @@ public class GenderIngredient {
                 }
             },
             e -> DataResult.success(e.name())
-    );;
+    );
 }

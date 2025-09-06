@@ -14,7 +14,7 @@ import static net.zaharenko424.a_changed.AChanged.textureLoc;
 
 public enum GrabMode {
     ASSIMILATE(entity -> entity.getType().is(AChangedTags.Entity.TRANSFURRABLE_TAG) && !TransfurManager.isTransfurred(entity), true, true, textureLoc("gui/grab_assimilate")),
-    REPLICATE(entity -> entity.getType().is(AChangedTags.Entity.TRANSFURRABLE_TAG) && !TransfurManager.isTransfurred(entity), true, true, textureLoc("gui/grab_replicate")),
+    REPLICATE(ASSIMILATE.checkTarget, true, true, textureLoc("gui/grab_replicate")),
     FRIENDLY(entity -> entity instanceof Player, false, false, textureLoc("gui/grab_friendly")),
     NONE(entity -> entity.getType().is(AChangedTags.Entity.TRANSFURRABLE_TAG) || entity instanceof LatexBeast, false, true, textureLoc("gui/grab_none"));
 

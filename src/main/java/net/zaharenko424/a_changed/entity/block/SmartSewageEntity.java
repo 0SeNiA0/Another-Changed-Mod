@@ -39,7 +39,7 @@ public class SmartSewageEntity extends BlockEntity {
             entity = null;
             return;
         }
-        entity = list.get(0);
+        entity = list.getFirst();
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,2));
     }
 }

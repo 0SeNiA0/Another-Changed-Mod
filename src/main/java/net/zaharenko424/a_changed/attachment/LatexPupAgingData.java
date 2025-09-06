@@ -1,24 +1,25 @@
 package net.zaharenko424.a_changed.attachment;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.attachment.AttachmentSyncHandler;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.ability.AbilityData;
-import net.zaharenko424.a_changed.network.packets.ability.ClientboundAbilitySyncPacket;
-import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.ability.api.AbilityData;
+import net.zaharenko424.a_changed.registry.AttachmentRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class LatexPupAgingData implements AbilityData {
 
     public static final Serializer SERIALIZER = new Serializer();
+    public static final Sync SYNC = new Sync();
+
     private static final int babyUntil = 24000;
     public static final int turnAfter = 48000;
 
@@ -38,7 +39,7 @@ public class LatexPupAgingData implements AbilityData {
     public void setBaby(boolean baby){
         if(holder.level().isClientSide) return;
         age = baby ? 0 : babyUntil;
-        syncClients();
+        sync();
     }
 
     public boolean isAboutToTurn(){
@@ -53,7 +54,7 @@ public class LatexPupAgingData implements AbilityData {
         if(holder.level().isClientSide) return;
         if(age < 0) age = 0;
         this.age = age;
-        syncClients();
+        sync();
     }
 
     public boolean isAgingFrozen(){
@@ -63,7 +64,7 @@ public class LatexPupAgingData implements AbilityData {
     public void freezeAging(boolean freeze){
         if(holder.level().isClientSide || freezeAging == freeze) return;
         freezeAging = freeze;
-        syncClients();
+        sync();
     }
 
     public void tickAge(){
@@ -79,35 +80,17 @@ public class LatexPupAgingData implements AbilityData {
     }
 
     @Override
-    public void syncClients() {
-        if(holder.level().isClientSide) return;
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(holder, updatePacket());
+    public void sync() {
+        holder.syncData(AttachmentRegistry.LATEX_PUP_AGING_DATA);
     }
 
-    @Override
-    public void syncClient(@NotNull ServerPlayer receiver) {
-        PacketDistributor.sendToPlayer(receiver, updatePacket());
-    }
-
-    private ClientboundAbilitySyncPacket updatePacket() {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(6));
-        buf.writeVarInt(age);
-        buf.writeBoolean(freezeAging);
-        return new ClientboundAbilitySyncPacket(holder.getId(), AbilityRegistry.DL_PUP_AGE.getId(), buf);
-    }
-
-    @Override
-    public void fromPacket(@NotNull FriendlyByteBuf packet) {
-        boolean wasBaby = isBaby();
-        age = packet.readVarInt();
-        if(wasBaby != isBaby()) holder.refreshDimensions();
-        freezeAging = packet.readBoolean();
-    }
-
+    @ParametersAreNonnullByDefault
     public static class Serializer implements IAttachmentSerializer<CompoundTag, LatexPupAgingData> {
 
+        private Serializer(){}
+
         @Override
-        public @NotNull LatexPupAgingData read(@NotNull IAttachmentHolder holder, @NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+        public @NotNull LatexPupAgingData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
             LatexPupAgingData data = new LatexPupAgingData(holder);
             data.age = tag.getInt("age");
             data.freezeAging = tag.getBoolean("freeze");
@@ -115,12 +98,32 @@ public class LatexPupAgingData implements AbilityData {
         }
 
         @Override
-        public @Nullable CompoundTag write(@NotNull LatexPupAgingData attachment, HolderLookup.@NotNull Provider provider) {
+        public @Nullable CompoundTag write(LatexPupAgingData attachment, HolderLookup.Provider provider) {
             if(attachment.age == 0 || attachment.age >= LatexPupAgingData.turnAfter) return null;
             CompoundTag tag = new CompoundTag();
             tag.putInt("age", attachment.age);
             tag.putBoolean("freeze", attachment.freezeAging);
             return tag;
+        }
+    }
+
+    @ParametersAreNonnullByDefault
+    public static class Sync implements AttachmentSyncHandler<LatexPupAgingData> {
+
+        private Sync(){}
+
+        @Override
+        public void write(RegistryFriendlyByteBuf buf, LatexPupAgingData attachment, boolean initialSync) {
+            buf.writeVarInt(attachment.age);
+            buf.writeBoolean(attachment.freezeAging);
+        }
+
+        @Override
+        public @Nullable LatexPupAgingData read(IAttachmentHolder holder, RegistryFriendlyByteBuf buf, @Nullable LatexPupAgingData previousValue) {
+            LatexPupAgingData data = previousValue == null ? new LatexPupAgingData(holder) : previousValue;
+            data.age = buf.readVarInt();
+            data.freezeAging = buf.readBoolean();
+            return data;
         }
     }
 }

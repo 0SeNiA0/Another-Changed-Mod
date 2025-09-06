@@ -1,8 +1,6 @@
 package net.zaharenko424.a_changed.entity;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
@@ -39,8 +37,8 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.ItemTemptingSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import net.zaharenko424.a_changed.ability.Ability;
 import net.zaharenko424.a_changed.ability.DLPupMeltAbility;
+import net.zaharenko424.a_changed.ability.api.Ability;
 import net.zaharenko424.a_changed.attachment.DLPupMeltData;
 import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetAttackTarget;
@@ -83,19 +81,16 @@ public class DarkLatexPup extends AbstractLatexPup implements SmartBrainOwner<Da
     }
 
     public boolean isMolten(){
-        return AbilityRegistry.DL_PUP_MELT.get().getAbilityData(this).isMolten();
+        return AbilityRegistry.DL_PUP_MELT.get().getAbilityData(this).isActivated();
     }
-
-    private static FriendlyByteBuf dummy;
 
     public void setMolten(boolean molten){
         if(level().isClientSide) return;
         DLPupMeltAbility ability = AbilityRegistry.DL_PUP_MELT.get();
         DLPupMeltData data = ability.getAbilityData(this);
-        if(molten == data.isMolten()) return;
+        if(molten == data.isActivated()) return;
         if(molten) {
-            if(dummy == null) dummy = new FriendlyByteBuf(Unpooled.wrappedBuffer(new byte[0]));
-            ability.activate(this, false, dummy);
+            ability.activate(this);
         } else ability.deactivate(this);
     }
 

@@ -18,7 +18,7 @@ public class StabilizedLatexSyringeItem extends LatexSyringeItem {
 
     @Override
     protected void transfur(ItemStack stack, LivingEntity entity) {
-        TransfurType transfurType = decodeTransfur(stack);
+        TransfurType<?> transfurType = decodeTransfur(stack);
         if(transfurType != null) TransfurHandler.nonNullOf(entity).transfur(transfurType, TransfurContext.TRANSFUR);
     }
 
@@ -27,14 +27,14 @@ public class StabilizedLatexSyringeItem extends LatexSyringeItem {
         if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
 
         if(DamageSources.checkTFTarget(entity)) {
-            TransfurType transfurType = decodeTransfur(stack);
+            TransfurType<?> transfurType = decodeTransfur(stack);
             if(transfurType != null) TransfurHandler.nonNullOf(entity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2, transfurType, TransfurContext.TRANSFUR);
         }
 
         return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
-    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
+    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType<?> transfurType){
         ItemStack syringe = ItemRegistry.STABILIZED_LATEX_SYRINGE.toStack();
         syringe.set(ComponentRegistry.TRANSFUR_TYPE, transfurType.id);
         return syringe;

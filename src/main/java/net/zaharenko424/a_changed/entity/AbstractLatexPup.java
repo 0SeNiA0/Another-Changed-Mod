@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.api.Ability;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
@@ -79,7 +79,12 @@ public abstract class AbstractLatexPup extends TamableAnimal implements LatexBea
     }
 
     @Override
-    public void selectAbility(@NotNull Ability ability) {}
+    public LivingEntity asEntity() {
+        return this;
+    }
+
+    @Override
+    public void selectAbility(Ability ability) {}
 
     public boolean isInterested() {
         return entityData.get(DATA_INTERESTED_ID);

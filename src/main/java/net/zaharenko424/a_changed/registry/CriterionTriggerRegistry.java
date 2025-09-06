@@ -19,6 +19,6 @@ public class CriterionTriggerRegistry {
     public static final DeferredHolder<CriterionTrigger<?>, ShotWithSyringeTrigger> SYRINGE_BOUNCED_OFF_PLAYER = TRIGGER_TYPES.register("syringe_bounced_off_player", ShotWithSyringeTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, SteppedOnSyringeTrigger> ENTITY_STEPPED_ON_SYRINGE = TRIGGER_TYPES.register("entity_stepped_on_syringe", SteppedOnSyringeTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, SteppedOnSyringeTrigger> PLAYER_STEPPED_ON_SYRINGE = TRIGGER_TYPES.register("player_stepped_on_syringe", SteppedOnSyringeTrigger::new);
-    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED = TRIGGER_TYPES.register("player_transfurred", TransfurTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED_NO_DEATH = TRIGGER_TYPES.register("player_transfurred_no_death", TransfurTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED_ENTITY = TRIGGER_TYPES.register("player_transfurred_entity", TransfurTrigger::new);
 }

@@ -46,6 +46,14 @@ public class TransfurManager {
         return TransfurRegistry.TRANSFUR_REGISTRY.get(transfurType);
     }
 
+    public static @Nullable TransfurType<?> getTransfurType(int id){
+        return TransfurRegistry.TRANSFUR_REGISTRY.byId(id);
+    }
+
+    public static int getTransfurId(@Nullable TransfurType<?> transfurType){
+        return TransfurRegistry.TRANSFUR_REGISTRY.getId(transfurType);
+    }
+
     public static boolean isOrganic(@NotNull Player player){
         return getTransfurType(player).isOrganic();
     }
@@ -63,9 +71,5 @@ public class TransfurManager {
     public static GrabMode getGrabMode(@NotNull LivingEntity entity){
         GrabData data = GrabData.dataOf(entity);
         return data != null ? data.getMode() : null;
-    }
-
-    public static boolean wantsToBeGrabbed(@NotNull Player player){
-        return GrabData.dataOf(player).wantsToBeGrabbed();
     }
 }

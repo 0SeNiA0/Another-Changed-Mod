@@ -22,10 +22,10 @@ import java.util.function.Supplier;
 
 public class LatexItem extends Item {
 
-    private final Supplier<? extends TransfurType> transfurType;
+    private final Supplier<? extends TransfurType<?>> transfurType;
     private final Latex type;
 
-    public LatexItem(@NotNull Supplier<? extends TransfurType> transfurType, Latex type) {
+    public LatexItem(@NotNull Supplier<? extends TransfurType<?>> transfurType, Latex type) {
         super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationModifier(1).build()));
         this.transfurType = transfurType;
         this.type = type;

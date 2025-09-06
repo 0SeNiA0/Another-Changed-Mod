@@ -17,7 +17,7 @@ public class TransfurUtilsClient {
      * @return New modelId
      */
     @Contract("_, _, null -> null")
-    public static ResourceLocation updateTFModel(@NotNull AbstractClientPlayer player, @Nullable ResourceLocation modelIdO, @Nullable TransfurType transfurType){
+    public static ResourceLocation updateTFModel(@NotNull AbstractClientPlayer player, @Nullable ResourceLocation modelIdO, @Nullable TransfurType<?> transfurType){
         ResourceLocation modelId = null;
         if(transfurType != null){
             modelId = transfurType.getModelIdFor(player);//Leave it like this for now. Might be a problem if getModelId() will check for ability data that isn't synced yet

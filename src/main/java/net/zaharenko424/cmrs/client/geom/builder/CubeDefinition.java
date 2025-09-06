@@ -20,7 +20,7 @@ public class CubeDefinition {
             cube -> cube.inflate,
             ByteBufCodecs.map(Object2ObjectArrayMap::new, NeoForgeStreamCodecs.enumCodec(Direction.class), StreamCodec.<FriendlyByteBuf, UVData>of(
                     (buffer, uv) -> buffer.writeFloat(uv.u1()).writeFloat(uv.v1()).writeFloat(uv.u2()).writeFloat(uv.v2()),
-                    buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, uv -> uv.faces()),
+                    buffer -> new UVData(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat()))).map(CubeUV::new, CubeUV::faces),
             cube -> cube.uv,
             ByteBufCodecs.VAR_INT,
             cube -> cube.renderId,

@@ -46,9 +46,6 @@ public class MobEffectRegistry {
     public static final DeferredHolder<MobEffect, FriendlyGrabEffect> FRIENDLY_GRAB = EFFECTS
             .register("friendly_grab", FriendlyGrabEffect::new);
 
-    public static final DeferredHolder<MobEffect, UnRemovableEffect> GRAB_COOLDOWN = EFFECTS
-            .register("grab_cooldown", ()-> new UnRemovableEffect(MobEffectCategory.NEUTRAL, 0));
-
     public static final DeferredHolder<MobEffect, UnRemovableEffect> GRABBED_DEBUFF = EFFECTS
             .register("grabbed_debuff", ()-> (UnRemovableEffect) new UnRemovableEffect(MobEffectCategory.HARMFUL, 0)
                 .addAttributeModifier(Attributes.ATTACK_DAMAGE, resourceLoc("grabbed_attack_damage"), -20, AttributeModifier.Operation.ADD_VALUE));

@@ -46,7 +46,7 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        TransfurType transfur = TransfurManager.getTransfurType(transfurType);
+        TransfurType<?> transfur = TransfurManager.getTransfurType(transfurType);
         if(transfur == null) return 0;
         TransfurHandler.nonNullOf(player).transfur(transfur, TransfurContext.TRANSFUR);
         return Command.SINGLE_SUCCESS;

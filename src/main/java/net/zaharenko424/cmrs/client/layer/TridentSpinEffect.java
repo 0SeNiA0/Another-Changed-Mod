@@ -25,10 +25,11 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TridentSpinEffect implements RenderLayer {
 
-    public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.of((buffer, value) -> {
-            StreamCodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC);
-    }, buffer ->
-            new TridentSpinEffect(StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC))
+    public static final StreamCodec<FriendlyByteBuf, TridentSpinEffect> CODEC = StreamCodec.of(
+            (buffer, value) ->
+                    StreamCodecUtils.writeOptionally(value.transform, !value.transform.isEmpty(), buffer, PoseTransform.CODEC),
+            buffer ->
+                    new TridentSpinEffect(StreamCodecUtils.readOptionally(buffer, PoseTransform.CODEC))
     );
 
     private final ModelPart box;

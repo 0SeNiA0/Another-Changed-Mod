@@ -18,6 +18,7 @@ import net.neoforged.neoforge.items.ComponentItemHandler;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.event.CommonEvent;
 import net.zaharenko424.a_changed.capability.energy.ItemEnergyCapability;
 import net.zaharenko424.a_changed.entity.*;
 import net.zaharenko424.a_changed.entity.block.machine.AbstractMachineEntity;
@@ -25,9 +26,7 @@ import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.ServerPacketHandler;
 import net.zaharenko424.a_changed.network.packets.*;
-import net.zaharenko424.a_changed.network.packets.ability.*;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
-import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ServerboundTransfurChoicePacket;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
@@ -57,23 +56,7 @@ public class CommonMod {
         //Lambda SHOULDN'T be replaced with method reference on handleClient! -> server will crash
 
         //Ability
-        registrar.playToServer(ServerboundActivateAbilityPacket.TYPE, ServerboundActivateAbilityPacket.CODEC,
-                ServerPacketHandler.INSTANCE::handleActivateAbilityPacket);
-
-        registrar.playToServer(ServerboundDeactivateAbilityPacket.TYPE, ServerboundDeactivateAbilityPacket.CODEC,
-                ServerPacketHandler.INSTANCE::handleDeactivateAbilityPacket);
-
-        registrar.playToServer(ServerboundSelectAbilityPacket.TYPE, ServerboundSelectAbilityPacket.CODEC,
-                ServerPacketHandler.INSTANCE::handleSelectAbilityPacket);
-
-        registrar.playToClient(ClientboundAbilitySyncPacket.TYPE, ClientboundAbilitySyncPacket.CODEC,
-                (packet, context) -> ClientPacketHandler.INSTANCE.handleAbilitySyncPacket(packet, context));
-
-        registrar.playToClient(ClientboundRemoveAttachmentPacket.TYPE, ClientboundRemoveAttachmentPacket.CODEC,
-                (packet, context) -> ClientPacketHandler.INSTANCE.handleRemoveAttachmentPacket(packet, context));
-
-        registrar.playToServer(ServerboundAbilityPacket.TYPE, ServerboundAbilityPacket.CODEC,
-                ServerPacketHandler.INSTANCE::handleAbilityPacket);
+        CommonEvent.onRegisterPayloads(registrar);
 
         //Smooth look
         registrar.playToClient(ClientboundSmoothLookPacket.TYPE, ClientboundSmoothLookPacket.CODEC,
@@ -82,10 +65,6 @@ public class CommonMod {
         //Transfur tolerance update
         registrar.commonToClient(ClientboundTransfurToleranceSyncPacket.TYPE, ClientboundTransfurToleranceSyncPacket.CODEC,
                 (packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurToleranceSync(packet));
-
-        //Transfur sync
-        registrar.playToClient(ClientboundTransfurSyncPacket.TYPE, ClientboundTransfurSyncPacket.CODEC,
-                (packet, context) -> ClientPacketHandler.INSTANCE.handleTransfurSyncPacket(packet, context));
 
         //Transfur screen
         registrar.playToClient(ClientboundOpenTransfurScreenPacket.TYPE, ClientboundOpenTransfurScreenPacket.CODEC,

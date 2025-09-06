@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.ability.api.AbilityHolder;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.attachment.GrabChanceData;
 import net.zaharenko424.a_changed.attachment.GrabData;
@@ -94,6 +94,6 @@ public class TryGrab<E extends Mob> extends DelayedBehaviour<E> {
     }
 
     protected boolean isCloseEnoughForGrab(LivingEntity entity, LivingEntity target){
-        return entity.distanceToSqr(target) <= GrabAbility.CLOSE_ENOUGH;
+        return entity.distanceToSqr(target) <= GrabAbility.CLOSE_ENOUGH_SQR;
     }
 }

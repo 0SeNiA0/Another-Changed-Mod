@@ -37,13 +37,13 @@ public class LatexSyringeItem extends AbstractSyringe {
 
     @Override
     public int getContentsColor(ItemStack stack) {
-        TransfurType transfurType = decodeTransfur(stack);
+        TransfurType<?> transfurType = decodeTransfur(stack);
         return transfurType != null ? transfurType.getPrimaryColor() : Color.WHITE.getRGB();
     }
 
     @Override
     public int getSecondaryColor(ItemStack stack) {
-        TransfurType transfurType = decodeTransfur(stack);
+        TransfurType<?> transfurType = decodeTransfur(stack);
         return transfurType != null ? transfurType.getSecondaryColor() : 0;
     }
 
@@ -64,7 +64,7 @@ public class LatexSyringeItem extends AbstractSyringe {
     }
 
     protected void transfur(ItemStack stack, LivingEntity entity){
-        TransfurType transfurType = decodeTransfur(stack);
+        TransfurType<?> transfurType = decodeTransfur(stack);
         if(transfurType != null) TransfurHandler.nonNullOf(entity).transfur(transfurType, TransfurContext.DEF);
     }
 
@@ -73,7 +73,7 @@ public class LatexSyringeItem extends AbstractSyringe {
         if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
 
         if(DamageSources.checkTFTarget(entity)) {
-            TransfurType transfurType = decodeTransfur(stack);
+            TransfurType<?> transfurType = decodeTransfur(stack);
             if(transfurType != null) TransfurHandler.nonNullOf(entity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2, transfurType, TransfurContext.DEF);
         }
 
@@ -88,7 +88,7 @@ public class LatexSyringeItem extends AbstractSyringe {
         } else tooltipComponents.add(Component.literal("Invalid transfur type!"));
     }
 
-    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType transfurType){
+    public static @NotNull ItemStack encodeTransfur(@NotNull TransfurType<?> transfurType){
         ItemStack syringe = ItemRegistry.LATEX_SYRINGE.toStack();
         syringe.set(ComponentRegistry.TRANSFUR_TYPE, transfurType.id);
         return syringe;
@@ -100,7 +100,7 @@ public class LatexSyringeItem extends AbstractSyringe {
         return latexSyringe.get(ComponentRegistry.TRANSFUR_TYPE);
     }
 
-    public static @Nullable TransfurType decodeTransfur(@NotNull ItemStack latexSyringe){
+    public static @Nullable TransfurType<?> decodeTransfur(@NotNull ItemStack latexSyringe){
         ResourceLocation tfId = decodeTransfurId(latexSyringe);
         if(tfId == null) return null;
         return TransfurManager.getTransfurType(tfId);

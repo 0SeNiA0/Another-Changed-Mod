@@ -1,18 +1,16 @@
 package net.zaharenko424.a_changed.util;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityData;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
-import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.ability.AbilityHolderAttachment;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.api.AbilityHolder;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class AbilityUtils {
@@ -27,37 +25,27 @@ public class AbilityUtils {
 
     public static @Nullable AbilityHolder of(LivingEntity holder){
         if(holder instanceof AbilityHolder aHolder) return aHolder;
-        return TransfurHandler.of(holder);
+        return holder instanceof Player player ? of(player) : null;
     }
 
-    public static void syncAbilities(LivingEntity entity){
+    public static AbilityHolder of(Player player){
+        return AbilityHolderAttachment.of(player);
+    }
+
+    public static void deactivateAbilities(LivingEntity entity){
         AbilityHolder holder = of(entity);
         if(holder == null) return;
 
-        Ability selected = holder.getSelectedAbility();
-        if(selected != null) selected.select(entity);
-
-        if(!(entity instanceof ServerPlayer player)) return;
-
-        List<? extends Ability> allowedAbilities = holder.getAbilities();
-        AbilityData data;
-        for(Ability ability : allowedAbilities){
-            if(ability == selected) continue;
-
-            data = ability.getAbilityData(player);
-            if(data != null) data.syncClient(player);//only sync to self as these abilities are not selected but might display data to player
+        for(Ability ability : holder.getAbilities()){
+            ability.deactivate(entity);
         }
     }
 
-    public static void syncSelectedAbility(ServerPlayer player, ServerPlayer sendTo){
-        AbilityHolder holder = of(player);
-        if(holder == null) return;
+    public static void syncAbilities(LivingEntity entity){
+        if(entity.level().isClientSide) return;
 
-        Ability selected = holder.getSelectedAbility();
-        if(selected == null) return;
-
-        AbilityData data = selected.getAbilityData(player);
-        if(data != null) data.syncClient(sendTo);
+        AbilityHolder holder = of(entity);
+        if(holder != null) holder.syncAbilities();
     }
 
     public static boolean hasAbility(Ability ability, LivingEntity holder){

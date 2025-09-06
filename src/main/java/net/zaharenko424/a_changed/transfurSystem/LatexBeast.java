@@ -1,19 +1,19 @@
 package net.zaharenko424.a_changed.transfurSystem;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.api.AbilityHolder;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.SequencedSet;
 
 public interface LatexBeast extends AbilityHolder {
 
     @NotNull TransfurType<?> transfurType();
 
     @Override
-    default @NotNull List<? extends Ability> getAbilities(){
+    default @NotNull SequencedSet<? extends Ability> getAbilities(){
         return transfurType().abilities;
     }
 

@@ -38,7 +38,7 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.ItemTemptingSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.api.Ability;
 import net.zaharenko424.a_changed.attachment.LatexPupAgingData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetAttackTarget;

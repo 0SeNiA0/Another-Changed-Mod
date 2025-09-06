@@ -12,13 +12,13 @@ import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 public class AddTransfurProgressEvent extends Event implements ICancellableEvent {
 
     private final LivingEntity entity;
-    private final TransfurType transfurType;
+    private final TransfurType<?> transfurType;
     private final float rawProgressToAdd;
     private float progressToAdd;
     private final TransfurContext context;
     private TransfurContext newContext;
 
-    public AddTransfurProgressEvent(LivingEntity entity, TransfurType transfurType, float rawProgressToAdd, TransfurContext context){
+    public AddTransfurProgressEvent(LivingEntity entity, TransfurType<?> transfurType, float rawProgressToAdd, TransfurContext context){
         this.entity = entity;
         this.transfurType = transfurType;
         this.rawProgressToAdd = rawProgressToAdd;
@@ -30,7 +30,7 @@ public class AddTransfurProgressEvent extends Event implements ICancellableEvent
         return entity;
     }
 
-    public TransfurType getTransfurType() {
+    public TransfurType<?> getTransfurType() {
         return transfurType;
     }
 

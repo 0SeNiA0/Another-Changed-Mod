@@ -1,24 +1,22 @@
 package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.ability.GrabMode;
+import net.zaharenko424.a_changed.ability.network.packets.BidirectionalAbilityPacket;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
-import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.WidgetHelper;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
 
 public class GrabAbilityLatexScreen extends Screen implements MouseMoveListener {
 
@@ -57,9 +55,7 @@ public class GrabAbilityLatexScreen extends Screen implements MouseMoveListener 
                     return true;
                 })
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .02f, .02f, w -> w.isHovering() || data.getMode() == mode))
-                .setRenderIcon(((button, graphics, x, y) -> {
-                    WidgetHelper.blit(mode.texture, graphics.pose(), x-16, y-16, 32, 32, 64, 64);
-                }))
+                .setRenderIcon(((button, graphics, x, y) -> WidgetHelper.blit(mode.texture, graphics.pose(), x-16, y-16, 32, 32, 64, 64)))
                 .setExtendClickAreaOutside(true).setExtendClickAreaInside(true);
     }
 
@@ -85,8 +81,8 @@ public class GrabAbilityLatexScreen extends Screen implements MouseMoveListener 
     }
 
     protected void click(GrabMode mode){
-        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
-                new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(0).writeEnum(mode)));
+        PacketDistributor.sendToServer(new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY,
+                buf -> buf.writeByte(0).writeEnum(mode), 2));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }

@@ -5,11 +5,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.*;
+import net.zaharenko424.a_changed.ability.api.Ability;
 
 public class AbilityRegistry {
 
     public static final DeferredRegister<Ability> ABILITIES = DeferredRegister.create(AChanged.resourceLoc("transfur_abilities"), AChanged.MODID);
-    public static final Registry<Ability> ABILITY_REGISTRY = ABILITIES.makeRegistry(builder -> {});
+    public static final Registry<Ability> ABILITY_REGISTRY = ABILITIES.makeRegistry(builder -> builder.sync(true));
 
     public static final DeferredHolder<Ability, CatAbility> CAT_PASSIVE = ABILITIES
             .register("cat_ability", CatAbility::new);

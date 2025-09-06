@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.mixin.entity;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Inventory;
@@ -111,6 +112,7 @@ public abstract class MixinPlayer extends LivingEntity {
      */
     @ModifyReturnValue(at = @At("RETURN"), method = "getDefaultDimensions")
     private EntityDimensions onGetDimensions(EntityDimensions original, Pose pose) {
+        if(self() instanceof ServerPlayer sPlayer && sPlayer.connection == null) return original;
         TransfurHandler handler = TransfurHandler.of(this);
         EntityDimensions dimensions = null;
         if(handler != null && handler.isTransfurred()) dimensions = handler.getTransfurType().getPoseDimensions(this, pose);

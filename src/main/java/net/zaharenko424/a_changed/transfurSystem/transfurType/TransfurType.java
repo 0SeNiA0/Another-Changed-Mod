@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -14,21 +15,20 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.SequencedSetView;
 import net.zaharenko424.cmrs.client.CustomModelManager;
 import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
 import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -49,8 +49,9 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
     /**
      * Unmodifiable!
      */
-    public final List<? extends Ability> abilities;
+    public final SequencedSet<Ability> abilities;
 
+    @SuppressWarnings("unchecked")
     public TransfurType(@NotNull Properties<T> properties){
         id = properties.location;
         entityType = properties.entityType;
@@ -64,12 +65,12 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
         onTransfur = properties.onTransfur;
         onUnTransfur = properties.onUnTransfur;
 
-        abilities = properties.abilities.stream().map(DeferredHolder::get).distinct().sorted((ability1, ability2) -> {
-            boolean active0 = ability1.isSelectable();
-            boolean active1 = ability2.isSelectable();
-            if(active0 == active1) return 0;
+        abilities = new SequencedSetView<>((List<Ability>) properties.abilities.stream().map(DeferredHolder::get).distinct().sorted((ability1, ability2) -> {
+            boolean active0 = !ability1.isPassive();
+            boolean active1 = !ability2.isPassive();
+            if (active0 == active1) return 0;
             return active0 ? -1 : 1;
-        }).toList();
+        }).toList());
     }
 
     /**
@@ -126,6 +127,18 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
 
     public void onUnTransfur(@NotNull LivingEntity entity){
         if(onUnTransfur != null) onUnTransfur.accept(entity);
+    }
+
+    public boolean is(TransfurType<?> type){
+        return this == type;
+    }
+
+    public boolean is(DeferredHolder<TransfurType<?>, ? extends TransfurType<?>> type){
+        return this == type.get();
+    }
+
+    public boolean is(TagKey<TransfurType<?>> tag){
+        return TransfurRegistry.TRANSFUR_REGISTRY.getHolder(id).map(holder -> holder.is(tag)).orElse(false);
     }
 
     public Component fancyName(){

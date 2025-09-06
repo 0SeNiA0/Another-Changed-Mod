@@ -19,9 +19,8 @@ import static net.zaharenko424.a_changed.AChanged.resourceLoc;
 public class TransfurRegistry {
 
     public static final DeferredRegister<TransfurType<?>> TRANSFUR_TYPES = DeferredRegister.create(resourceLoc("transfur_registry"), MODID);
-    public static final Registry<TransfurType<?>> TRANSFUR_REGISTRY = TRANSFUR_TYPES.makeRegistry(builder->{});
+    public static final Registry<TransfurType<?>> TRANSFUR_REGISTRY = TRANSFUR_TYPES.makeRegistry(builder -> builder.sync(true));
 
-    //Transfur types
     public static final DeferredHolder<TransfurType<?>, BeiFeng> BEI_FENG_TF = TRANSFUR_TYPES
             .register("bei_feng", ()-> new BeiFeng(resourceLoc("bei_feng")));
 

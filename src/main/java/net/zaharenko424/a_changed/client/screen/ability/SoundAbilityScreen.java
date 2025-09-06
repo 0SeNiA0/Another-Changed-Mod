@@ -2,26 +2,24 @@ package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.network.packets.BidirectionalAbilityPacket;
 import net.zaharenko424.a_changed.client.Keybindings;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
 import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.WidgetHelper;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -78,8 +76,8 @@ public abstract class SoundAbilityScreen extends Screen implements MouseMoveList
     }
 
     protected boolean click(int soundIndex){
-        PacketDistributor.sendToServer(new ServerboundAbilityPacket(ability().getId(),
-                new FriendlyByteBuf(Unpooled.wrappedBuffer(new byte[]{(byte) soundIndex}))));
+        PacketDistributor.sendToServer(new BidirectionalAbilityPacket(ability(),
+                buf -> buf.writeByte(soundIndex), 1));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         return true;
@@ -92,7 +90,7 @@ public abstract class SoundAbilityScreen extends Screen implements MouseMoveList
             return;
         }
 
-        if(!TransfurHandler.nonNullOf(minecraft.player).hasAbility(ability())) minecraft.setScreen(null);
+        if(!AbilityUtils.hasAbility(ability(), minecraft.player)) minecraft.setScreen(null);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
         ingredients.set(0, Ingredient.of(ItemRegistry.SYRINGE_ITEM));
     }
 
-    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull TransfurType transfurType){
+    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull TransfurType<?> transfurType){
         return new LatexEncoderRecipeBuilder(LatexSyringeItem.encodeTransfur(transfurType), transfurType.getGender());
     }
 

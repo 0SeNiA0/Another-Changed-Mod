@@ -16,7 +16,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
-import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.api.Ability;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
@@ -76,6 +76,11 @@ public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
     @Override
     public @NotNull TransfurType<?> transfurType() {
         return transfurType;
+    }
+
+    @Override
+    public LivingEntity asEntity() {
+        return this;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.zaharenko424.cmrs.util;
 
+import com.google.common.collect.Iterators;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class SetView <E> implements Set<E> {
 
     @Override
     public @NotNull Iterator<E> iterator() {
-        return new IteratorView<>(set.iterator());
+        return Iterators.unmodifiableIterator(set.iterator());
     }
 
     @Override

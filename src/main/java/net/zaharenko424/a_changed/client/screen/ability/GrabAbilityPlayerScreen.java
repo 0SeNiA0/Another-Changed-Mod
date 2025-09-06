@@ -1,25 +1,23 @@
 package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.network.packets.BidirectionalAbilityPacket;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
-import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.WidgetHelper;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
 
 public class GrabAbilityPlayerScreen extends Screen implements MouseMoveListener {
 
@@ -42,9 +40,7 @@ public class GrabAbilityPlayerScreen extends Screen implements MouseMoveListener
                     return true;
                 })
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .02f, .02f, w -> w.isHovering() || data.wantsToBeGrabbed()))
-                .setRenderIcon((button, graphics, x, y) -> {
-                    WidgetHelper.blit(yes, graphics.pose(), x-16, y-16, 32, 32, 64, 64);
-                })
+                .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(yes, graphics.pose(), x-16, y-16, 32, 32, 64, 64))
                 .setExtendClickAreaOutside(true).setExtendClickAreaInside(true);
         buttonY.rebuildMesh();
 
@@ -58,9 +54,7 @@ public class GrabAbilityPlayerScreen extends Screen implements MouseMoveListener
                     return true;
                 })
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .02f, .02f, w -> w.isHovering() || !data.wantsToBeGrabbed()))
-                .setRenderIcon((button, graphics, x, y) -> {
-                    WidgetHelper.blit(nope, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64);
-                })
+                .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(nope, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64))
                 .setExtendClickAreaOutside(true).setExtendClickAreaInside(true);
         buttonN.rebuildMesh();
 
@@ -82,8 +76,8 @@ public class GrabAbilityPlayerScreen extends Screen implements MouseMoveListener
     }
 
     protected void click(boolean y){
-        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
-                new FriendlyByteBuf(Unpooled.buffer()).writeByte(1).writeBoolean(y)));
+        PacketDistributor.sendToServer(new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY,
+                buf -> buf.writeByte(1).writeBoolean(y), 2));
 
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }

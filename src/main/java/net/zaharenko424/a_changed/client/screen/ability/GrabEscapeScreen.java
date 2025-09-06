@@ -1,11 +1,9 @@
 package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -13,13 +11,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
-import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
-import net.zaharenko424.cmrs.client.gui.WidgetHelper;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
+import net.zaharenko424.a_changed.ability.network.packets.BidirectionalAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -59,9 +57,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                         return true;
                     })
                     .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, button -> selected[0]))
-                    .setRenderIcon((button, graphics, x, y) -> {
-                        WidgetHelper.blit(KEY_SPACE, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64);
-                    });
+                    .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(KEY_SPACE, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64));
             button1.rebuildMesh();
             buttons.add(button1);
             return;
@@ -93,9 +89,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                     return true;
                 })
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, button -> selected[0]))
-                .setRenderIcon((button, graphics, x, y) -> {
-                    WidgetHelper.blit(type.tex0, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64);
-                });
+                .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(type.tex0, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64));
         button1.rebuildMesh();
         buttons.add(button1);
         RadialButton button2 = makeButton()
@@ -108,9 +102,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                     return true;
                 })
                 .setRenderTransform(WidgetHelper.hoverAnim(.1f, .025f, .025f, button -> selected[1]))
-                .setRenderIcon((button, graphics, x, y) -> {
-                    WidgetHelper.blit(type.tex1, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64);
-                });
+                .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(type.tex1, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64));
         button2.rebuildMesh();
         buttons.add(button2);
     }
@@ -144,8 +136,8 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
     }
 
     protected void success(){
-        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
-                new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(true)));
+        PacketDistributor.sendToServer(new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY,
+                buf -> buf.writeByte(2).writeBoolean(true), 2));
         minecraft.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
         minecraft.setScreen(null);
     }

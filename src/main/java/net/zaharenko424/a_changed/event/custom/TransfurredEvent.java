@@ -37,12 +37,12 @@ public class TransfurredEvent extends Event {
         this.context = context;
         this.source = source;
 
-        if(entity instanceof ServerPlayer player) {
-            CriterionTriggerRegistry.PLAYER_TRANSFURRED.get().trigger(player, source, transfurType);
-        } else {
-            if(source != null && source.getEntity() instanceof ServerPlayer player){
-                CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
-            }
+        if(entity instanceof ServerPlayer player && entity.isAlive()) {
+            CriterionTriggerRegistry.PLAYER_TRANSFURRED_NO_DEATH.get().trigger(player, source, transfurType);
+        }
+
+        if(source != null && source.getEntity() instanceof ServerPlayer player){
+            CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
         }
     }
 

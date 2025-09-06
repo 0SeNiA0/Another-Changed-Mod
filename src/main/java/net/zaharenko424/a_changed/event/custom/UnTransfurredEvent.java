@@ -11,10 +11,10 @@ import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 public class UnTransfurredEvent extends Event {
 
     private final Player player;
-    private final TransfurType prevTransfurType;
+    private final TransfurType<?> prevTransfurType;
     private final TransfurContext context;
 
-    public UnTransfurredEvent(Player player, TransfurType prevTransfurType, TransfurContext context){
+    public UnTransfurredEvent(Player player, TransfurType<?> prevTransfurType, TransfurContext context){
         this.player = player;
         this.prevTransfurType = prevTransfurType;
         this.context = context;
@@ -24,7 +24,7 @@ public class UnTransfurredEvent extends Event {
         return player;
     }
 
-    public TransfurType getPrevTransfurType() {
+    public TransfurType<?> getPrevTransfurType() {
         return prevTransfurType;
     }
 

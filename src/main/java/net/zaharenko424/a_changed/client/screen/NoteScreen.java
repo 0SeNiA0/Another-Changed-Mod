@@ -529,70 +529,53 @@ public class NoteScreen extends Screen {
         return new Rect2i(i, k, j - i, l - k);
     }
 
-    static class DisplayCache {
-        static final NoteScreen.DisplayCache EMPTY = new NoteScreen.DisplayCache(
+    record DisplayCache(String fullText, Pos2i cursor, boolean cursorAtEnd, int[] lineStarts, LineInfo[] lines, Rect2i[] selection) {
+        static final DisplayCache EMPTY = new DisplayCache(
                 "",
-                new NoteScreen.Pos2i(0, 0),
+                new Pos2i(0, 0),
                 true,
                 new int[]{0},
-                new NoteScreen.LineInfo[]{new NoteScreen.LineInfo(Style.EMPTY, "", 0, 0)},
+                new LineInfo[]{new LineInfo(Style.EMPTY, "", 0, 0)},
                 new Rect2i[0]
         );
-        private final String fullText;
-        final NoteScreen.Pos2i cursor;
-        final boolean cursorAtEnd;
-        private final int[] lineStarts;
-        final NoteScreen.LineInfo[] lines;
-        final Rect2i[] selection;
 
-        public DisplayCache(
-                String p_98201_, NoteScreen.Pos2i p_98202_, boolean p_98203_, int[] p_98204_, NoteScreen.LineInfo[] p_98205_, Rect2i[] p_98206_
-        ) {
-            fullText = p_98201_;
-            cursor = p_98202_;
-            cursorAtEnd = p_98203_;
-            lineStarts = p_98204_;
-            lines = p_98205_;
-            selection = p_98206_;
-        }
-
-        public int getIndexAtPosition(Font p_98214_, NoteScreen.Pos2i p_98215_) {
-            int i = p_98215_.y / 9;
-            if (i < 0) {
-                return 0;
-            } else if (i >= lines.length) {
-                return fullText.length();
-            } else {
-                NoteScreen.LineInfo bookeditscreen$lineinfo = lines[i];
-                return lineStarts[i] + p_98214_.getSplitter().plainIndexAtWidth(bookeditscreen$lineinfo.contents, p_98215_.x, bookeditscreen$lineinfo.style);
-            }
-        }
-
-        public int changeLine(int p_98211_, int p_98212_) {
-            int i = NoteScreen.findLineFromPos(lineStarts, p_98211_);
-            int j = i + p_98212_;
-            int k;
-            if (0 <= j && j < lineStarts.length) {
-                int l = p_98211_ - lineStarts[i];
-                int i1 = lines[j].contents.length();
-                k = lineStarts[j] + Math.min(l, i1);
-            } else {
-                k = p_98211_;
+        public int getIndexAtPosition(Font p_98214_, Pos2i p_98215_) {
+                int i = p_98215_.y / 9;
+                if (i < 0) {
+                    return 0;
+                } else if (i >= lines.length) {
+                    return fullText.length();
+                } else {
+                    LineInfo bookeditscreen$lineinfo = lines[i];
+                    return lineStarts[i] + p_98214_.getSplitter().plainIndexAtWidth(bookeditscreen$lineinfo.contents, p_98215_.x, bookeditscreen$lineinfo.style);
+                }
             }
 
-            return k;
-        }
+            public int changeLine(int p_98211_, int p_98212_) {
+                int i = NoteScreen.findLineFromPos(lineStarts, p_98211_);
+                int j = i + p_98212_;
+                int k;
+                if (0 <= j && j < lineStarts.length) {
+                    int l = p_98211_ - lineStarts[i];
+                    int i1 = lines[j].contents.length();
+                    k = lineStarts[j] + Math.min(l, i1);
+                } else {
+                    k = p_98211_;
+                }
 
-        public int findLineStart(int p_98209_) {
-            int i = NoteScreen.findLineFromPos(lineStarts, p_98209_);
-            return lineStarts[i];
-        }
+                return k;
+            }
 
-        public int findLineEnd(int p_98219_) {
-            int i = NoteScreen.findLineFromPos(lineStarts, p_98219_);
-            return lineStarts[i] + lines[i].contents.length();
+            public int findLineStart(int p_98209_) {
+                int i = NoteScreen.findLineFromPos(lineStarts, p_98209_);
+                return lineStarts[i];
+            }
+
+            public int findLineEnd(int p_98219_) {
+                int i = NoteScreen.findLineFromPos(lineStarts, p_98219_);
+                return lineStarts[i] + lines[i].contents.length();
+            }
         }
-    }
 
     static class LineInfo {
         final Style style;
@@ -610,13 +593,5 @@ public class NoteScreen extends Screen {
         }
     }
 
-    static class Pos2i {
-        public final int x;
-        public final int y;
-
-        Pos2i(int p_98249_, int p_98250_) {
-            x = p_98249_;
-            y = p_98250_;
-        }
-    }
+    record Pos2i(int x, int y) {}
 }

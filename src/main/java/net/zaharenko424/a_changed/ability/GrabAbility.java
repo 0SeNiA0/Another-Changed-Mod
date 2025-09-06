@@ -1,6 +1,5 @@
 package net.zaharenko424.a_changed.ability;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,27 +10,28 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.api.ActivationType;
+import net.zaharenko424.a_changed.ability.network.packets.BidirectionalAbilityPacket;
 import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
-import net.zaharenko424.a_changed.client.Keybindings;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityLatexScreen;
 import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen;
 import net.zaharenko424.a_changed.client.screen.ability.GrabEscapeScreen;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundAbilityPacket;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundActivateAbilityPacket;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundDeactivateAbilityPacket;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
+import net.zaharenko424.a_changed.util.ClipUtil;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -39,12 +39,8 @@ import org.joml.Vector3f;
 
 public class GrabAbility implements Ability {
 
-    public static final float CLOSE_ENOUGH = (float) (2.5 * 2.5);
-
-    @Override
-    public boolean isSelectable() {
-        return true;
-    }
+    public static final float CLOSE_ENOUGH = 2.5f;
+    public static final float CLOSE_ENOUGH_SQR = CLOSE_ENOUGH * CLOSE_ENOUGH;
 
     @Override
     public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
@@ -76,39 +72,55 @@ public class GrabAbility implements Ability {
     }
 
     @Override
-    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {
-        GrabData holderData = getAbilityData(holder);
+    public boolean canUse(@NotNull LivingEntity holder) {
+        TransfurType<?> tf = TransfurManager.getTransfurType(holder);
+        return tf != null ? tf.abilities.contains(this) : GrabData.dataOf(holder).getGrabbedBy() != null;
+    }
 
-        if(holder.level().isClientSide){
-            holderData.fromPacket(buf);
-            return;
-        }
+    //make special activationType to account for grab escape (if grabbed act as INSTANT, otherwise SWITCH_CROUCH)
+    private static final ActivationType TYPE = ((holder, controller, ability) -> {
+        GrabData data = ((GrabAbility)ability).getAbilityData(holder.asEntity());
+        if(data.getGrabbedBy() != null) {
+            ActivationType.INSTANT.onInput(holder, controller, ability);
+        } else ActivationType.SWITCH_CROUCH.onInput(holder, controller, ability);
+    });
 
-        switch(buf.readByte()){
-            case 0 -> holderData.setMode(buf.readEnum(GrabMode.class));
-            case 1 -> holderData.setWantsToBeGrabbed(buf.readBoolean());
-            case 2 -> {
-                holderData.escape(buf.readBoolean());
-                holderData.syncClient((ServerPlayer) holder);
-            }
-        }
+    @Override
+    public ActivationType activationType() {
+        return TYPE;
     }
 
     @Override
-    public void activate(@NotNull LivingEntity holder, boolean oneShot, @NotNull FriendlyByteBuf additionalData) {
-        if(!additionalData.isReadable()) {
-            getAbilityData(holder).drop();
-        } else {
-            int target = additionalData.readVarInt();
-            if(!(holder.level().getEntity(target) instanceof LivingEntity living)) return;
-            activate(holder, living);
-        }
+    public boolean isActivated(LivingEntity holder) {
+        return getAbilityData(holder).isActivated();
     }
 
-    public void activate(@NotNull LivingEntity holder, LivingEntity entity){
-        if(TransfurManager.isGrabbed(entity) || holder.distanceTo(entity) > 3 ) return;
+    @Override
+    public void activate(LivingEntity holder) {
+        GrabData data = getAbilityData(holder);
 
-        GrabData.dataOf(holder).grab(entity);
+        LivingEntity grabbedBy = data.getGrabbedBy();
+        if(grabbedBy != null){
+            if(getAbilityData(grabbedBy).getMode().isOffensive()) {
+                if(holder instanceof ServerPlayer player) PacketDistributor.sendToPlayer(player, new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY, buf -> {}, 0));
+                return;
+            }
+
+            data.escape(false);
+            return;
+        }
+
+        EntityHitResult entityHit = ClipUtil.getLookingAt(holder, CLOSE_ENOUGH, true, e -> e instanceof LivingEntity && !e.isSpectator());
+        if(entityHit == null) return;
+
+        tryGrab(holder, data, (LivingEntity) entityHit.getEntity());
+    }
+
+    public void activate(@NotNull LivingEntity holder, @NotNull LivingEntity target){
+        GrabData data = getAbilityData(holder);
+        if(data.getGrabbedBy() != null) return;
+
+        tryGrab(holder, data, target);
     }
 
     @Override
@@ -117,25 +129,21 @@ public class GrabAbility implements Ability {
     }
 
     @Override
-    public void inputTick(@NotNull Player localPlayer, @NotNull Minecraft minecraft) {
-        if(!Keybindings.ABILITY_KEY.consumeClick()) return;
-
-        if(TransfurManager.isTransfurred(localPlayer)) {
-            clientGrabLogic(localPlayer, minecraft);
+    public void handleData(@NotNull LivingEntity holder, @NotNull FriendlyByteBuf buf, @NotNull IPayloadContext context) {
+        if(holder.level().isClientSide) {
+            Minecraft.getInstance().setScreen(Utils.get(GrabEscapeScreen::new));
             return;
         }
+        GrabData holderData = getAbilityData(holder);
 
-        GrabData data = getAbilityData(localPlayer);
-        LivingEntity grabbedBy = data.getGrabbedBy();
-        if(grabbedBy == null) return;
-
-        if(getAbilityData(grabbedBy).getMode().isOffensive()) {
-            if(minecraft.screen == null) minecraft.setScreen(Utils.get(GrabEscapeScreen::new));
-            return;
+        switch(buf.readByte()){
+            case 0 -> holderData.setMode(buf.readEnum(GrabMode.class));
+            case 1 -> holderData.setWantsToBeGrabbed(buf.readBoolean());
+            case 2 -> {
+                holderData.escape(buf.readBoolean());
+                holderData.sync();
+            }
         }
-
-        PacketDistributor.sendToServer(new ServerboundAbilityPacket(AbilityRegistry.GRAB_ABILITY.getId(),
-                new FriendlyByteBuf(Unpooled.buffer(2)).writeByte(2).writeBoolean(false)));
     }
 
     @Override
@@ -151,7 +159,11 @@ public class GrabAbility implements Ability {
         LivingEntity grabbedEntity = holderData.getGrabbedEntity();
         GrabMode mode = holderData.getMode();
 
-        if(grabbedEntity == null) return;
+        if(grabbedEntity == null) {
+            holderData.tickCooldown();
+            return;
+        }
+
         if(!grabbedEntity.isAlive()) {
             if(holder instanceof Player player) {
                 player.displayClientMessage(Component.translatable(switch (grabbedEntity.getRemovalReason()){
@@ -191,7 +203,7 @@ public class GrabAbility implements Ability {
         } else if(mode == GrabMode.REPLICATE){
             TransfurHandler handler = TransfurHandler.of(grabbedEntity);
             handler.addTransfurProgress((TransfurManager.TRANSFUR_TOLERANCE - handler.getTransfurProgress()) / grabbedEntity.getEffect(MobEffectRegistry.GRABBED_DEBUFF).getDuration(), TransfurManager.getTransfurType(holder), TransfurContext.DEF);
-            if(handler.isTransfurred() || handler.isBeingTransfurred()) holderData.drop();
+            if(handler.isTransfurred() || handler.isBeingTransfurred() || grabbedEntity.isDeadOrDying()) holderData.drop();
         }
     }
 
@@ -200,57 +212,40 @@ public class GrabAbility implements Ability {
         return GrabData.dataOf(holder);
     }
 
-    private void clientGrabLogic(Player holder, Minecraft minecraft){
-        GrabData holderData = getAbilityData(holder);
-        if(holderData.getGrabbedEntity() != null){
-            if(holder.isCrouching()){
-                PacketDistributor.sendToServer(new ServerboundDeactivateAbilityPacket());
-                return;
-            }
-            return;
-        }
+    private void tryGrab(LivingEntity holder, GrabData holderData, LivingEntity target){
+        if(holder.distanceToSqr(target) > CLOSE_ENOUGH_SQR || holderData.getGrabbedEntity() != null
+                || TransfurManager.isBeingTransfurred(target)) return;
 
-        if(!TransfurManager.isTransfurred(holder)) return;
+        if(holderData.getGrabbedEntity() != null) return;
 
-        Entity crosshairEntity = minecraft.crosshairPickEntity;
-        if(!(crosshairEntity instanceof LivingEntity entity) || holder.distanceToSqr(crosshairEntity) > CLOSE_ENOUGH
-                || TransfurManager.isBeingTransfurred(entity)) return;
-
-        if(holderData.getGrabbedBy() != null) {
-            holder.displayClientMessage(Component.translatable("message.a_changed.self_held_already",
-                    nameOrFallback(entity, "Something")),true);
-            return;
-        }
-
-        GrabData targetData = getAbilityData(entity);
+        GrabData targetData = getAbilityData(target);
         if(targetData.getGrabbedBy() != null){
-            holder.displayClientMessage(Component.translatable("message.a_changed.target_held_already",
-                    nameOrFallback(targetData.getGrabbedBy(), "Something"), nameOrFallback(entity, "the target entity")), true);
+            maybeDisplayMessage(holder, Component.translatable("message.a_changed.target_held_already",
+                    nameOrFallback(targetData.getGrabbedBy(), "Something"), nameOrFallback(target, "the target entity")));
             return;
         }
 
-        MobEffectInstance cooldown = holder.getEffect(MobEffectRegistry.GRAB_COOLDOWN);
-        if(cooldown != null){
-            holder.displayClientMessage(Component.translatable("message.a_changed.grab_cooldown",
-                    String.valueOf(cooldown.getDuration() / 20f)), true);
+        int cooldown = holderData.getGrabCooldown();
+        if(cooldown > 0){
+            maybeDisplayMessage(holder, Component.translatable("message.a_changed.grab_cooldown",
+                    String.valueOf(cooldown / 20f)));
             return;
         }
 
         GrabMode mode = holderData.getMode();
-        if(!mode.checkTarget(entity)) {
-            holder.displayClientMessage(Component.translatable("message.a_changed.cannot_grab_with_selected_mode",
-                    nameOrFallback(entity, "this entity")), true);
+        if(!mode.checkTarget(target)) {
+            maybeDisplayMessage(holder, Component.translatable("message.a_changed.cannot_grab_with_selected_mode",
+                    nameOrFallback(target, "this entity")));
             return;
         }
 
-        if(!mode.isOffensive() && entity instanceof Player pl && !targetData.wantsToBeGrabbed()){
-            holder.displayClientMessage(Component.translatable("message.a_changed.player_doesnt_want_to_be_grabbed",
-                    pl.getDisplayName()), true);
+        if(!mode.isOffensive() && target instanceof Player pl && !targetData.wantsToBeGrabbed()){
+            maybeDisplayMessage(holder, Component.translatable("message.a_changed.player_doesnt_want_to_be_grabbed",
+                    pl.getDisplayName()));
             return;
         }
 
-        PacketDistributor.sendToServer(new ServerboundActivateAbilityPacket(true,
-                new FriendlyByteBuf(Unpooled.buffer(4)).writeVarInt(entity.getId())));
+        holderData.grab(target);
     }
 
     Object nameOrFallback(LivingEntity entity, String fallback){
@@ -258,9 +253,11 @@ public class GrabAbility implements Ability {
         return fallback;
     }
 
-    private static final float TELEPORT_THRESHOLD = 2.5f * 2.5f;
+    void maybeDisplayMessage(LivingEntity holder, Component component){
+        if(holder instanceof Player player) player.displayClientMessage(component, true);
+    }
 
-    private void hold(LivingEntity holder, LivingEntity grabbedEntity, GrabMode mode){
+    private void hold(LivingEntity holder, LivingEntity grabbedEntity, GrabMode mode){//TODO improve with something similar to vanilla riding
         float distance = 1.2f;
         if(mode == GrabMode.ASSIMILATE){
             distance -= grabbedEntity.hasEffect(MobEffectRegistry.GRABBED_DEBUFF)
@@ -275,7 +272,7 @@ public class GrabAbility implements Ability {
                 .sub((float) grabbedEntity.getX(), (float) grabbedEntity.getY() + grabbedEntity.getBbHeight() / 1.6f, (float) grabbedEntity.getZ());
 
         grabbedEntity.fallDistance = 0;
-        if(pos.lengthSquared() >= TELEPORT_THRESHOLD){
+        if(pos.lengthSquared() >= CLOSE_ENOUGH_SQR){
             grabbedEntity.teleportRelative(pos.x, pos.y, pos.z);
         } else grabbedEntity.setDeltaMovement(pos.x, pos.y, pos.z);
 

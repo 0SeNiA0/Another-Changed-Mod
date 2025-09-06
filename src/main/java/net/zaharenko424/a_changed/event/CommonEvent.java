@@ -34,8 +34,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.ability.event.CopyAbilitiesOnDeathEvent;
+import net.zaharenko424.a_changed.ability.event.InitializePlayerAbilitiesEvent;
 import net.zaharenko424.a_changed.attachment.GrabChanceData;
 import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
@@ -52,8 +52,6 @@ import net.zaharenko424.a_changed.util.TransfurUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @ParametersAreNonnullByDefault
 @EventBusSubscriber(modid = AChanged.MODID)
@@ -80,6 +78,11 @@ public class CommonEvent {
         TransfurToleranceData.of(level);
     }
 
+    @SubscribeEvent
+    public static void onInitAbilities(InitializePlayerAbilitiesEvent event){
+        TransfurHandler.nonNullOf(event.getEntity()).addTFAbilitiesOrDef();
+    }
+
     /**
      * Send capability data to player
      */
@@ -91,28 +94,9 @@ public class CommonEvent {
         PacketDistributor.sendToPlayer(player, new ClientboundTransfurToleranceSyncPacket());
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        handler.syncClients();
         if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
 
-        AbilityUtils.syncAbilities(player);
-
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
-        Player player = event.getEntity();
-        if(player.level().isClientSide) return;
-
-        TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        Ability selected = handler.getSelectedAbility();
-        if(selected != null) selected.deactivate(player);
-    }
-
-    @SubscribeEvent
-    public static void onPlayerDeath(LivingDeathEvent event){
-        if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(TransfurManager.isHoldingEntity(player)) AbilityRegistry.GRAB_ABILITY.get().deactivate(player);
     }
 
     @SubscribeEvent
@@ -299,31 +283,12 @@ public class CommonEvent {
         LivingEntity entity = event.getEntity();
         if(entity.level().isClientSide) return;
 
-        AbilityHolder holder = AbilityUtils.of(entity);
-        if(holder != null) holder.getAbilities().forEach(ability -> ability.deactivate(entity));
-
         if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTFTarget(entity)) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(entity);
         if(handler.getTransfurProgress() == 0 || handler.getTransfurType() == null) return;
 
         handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
-    }
-
-    /**
-     * Send data about remote player to other player
-     */
-    @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof ServerPlayer target)) return;
-        ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        TransfurHandler handler = TransfurHandler.of(target);
-        if(handler != null) {
-            handler.syncClient(player);
-
-            AbilityUtils.syncSelectedAbility(target, player);
-        }
     }
 
     /**
@@ -336,39 +301,18 @@ public class CommonEvent {
         PacketDistributor.sendToPlayer(event.getPlayer(), data.getPacket(null));
     }
 
-    /**
-     * Sync tf data on respawn etc.
-     */
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onPlayerClone(PlayerEvent.Clone event){
-        ServerPlayer player = (ServerPlayer) event.getEntity();
+    @SubscribeEvent
+    public static void onCopyAbilities(CopyAbilitiesOnDeathEvent event){
+        Player player = event.getEntity();
+        TransfurHandler tf = TransfurHandler.nonNullOf(event.getDead());
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                TransfurHandler handler = TransfurHandler.nonNullOf(player);
-                handler.syncClients();
+        if(!tf.isTransfurred() || !player.level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR)) return;
 
-                AbilityUtils.syncAbilities(player);
-            }
-        },25);
+        event.copyProvider(TransfurHandler.ABILITY_PROVIDER);
     }
 
-    /**
-     * Sync tf data after changing dimension.
-     */
-    @SubscribeEvent
-    public static void onPlayerChangeDim(PlayerEvent.PlayerChangedDimensionEvent event){
-        ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                TransfurHandler handler = TransfurHandler.nonNullOf(player);
-                handler.syncClient(player);
-
-                AbilityUtils.syncAbilities(player);
-            }
-        },25);
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onPlayerClone(PlayerEvent.Clone event){
+        TransfurHandler.nonNullOf(event.getEntity()).addDefAbilities();//Data is sent before player respawns on client. Send later?
     }
 }

@@ -8,6 +8,7 @@
   },
   "plugin": "net.zaharenko424.a_changed.MixinConfig",
   "mixins": [
+    "ability.AttachmentTypeAccessor",
     "MixinBlockBehaviour",
     "MixinDebugStick",
     "MixinLevel",
@@ -17,6 +18,7 @@
     "MixinServerLevel",
     "MixinSimpleBlockFeature",
     "MixinStructureTemplate",
+    "ability.MixinAttachmentSync",
     "entity.MixinCat",
     "entity.MixinCreeper",
     "entity.MixinEntity",

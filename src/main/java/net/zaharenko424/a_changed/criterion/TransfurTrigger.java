@@ -22,7 +22,7 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
         return TriggerInstance.CODEC;
     }
 
-    public void trigger(ServerPlayer player, DamageSource damageSource, TransfurType transfurType){
+    public void trigger(ServerPlayer player, DamageSource damageSource, TransfurType<?> transfurType){
         trigger(player, instance -> instance.matches(player, damageSource, transfurType));
     }
 
@@ -37,13 +37,13 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
                         Codec.optionalField("transfur_type_predicate", TransfurTypePredicate.CODEC, false).forGetter(TriggerInstance::transfurType)
                 ).apply(builder, TriggerInstance::new));
 
-        public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurred(){
-            return CriterionTriggerRegistry.PLAYER_TRANSFURRED.get()
+        public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurredNoDeath(){
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED_NO_DEATH.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.empty()));
         }
 
-        public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurred(TransfurTypePredicate transfurType){
-            return CriterionTriggerRegistry.PLAYER_TRANSFURRED.get()
+        public static Criterion<TransfurTrigger.TriggerInstance> playerTransfurredNoDeath(TransfurTypePredicate transfurType){
+            return CriterionTriggerRegistry.PLAYER_TRANSFURRED_NO_DEATH.get()
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.of(transfurType)));
         }
 
@@ -77,7 +77,7 @@ public class TransfurTrigger extends SimpleCriterionTrigger<TransfurTrigger.Trig
                     .createCriterion(new TriggerInstance(Optional.empty(), Optional.empty(), Optional.empty()));
         }*/
 
-        public boolean matches(ServerPlayer player, DamageSource source, TransfurType transfurType){
+        public boolean matches(ServerPlayer player, DamageSource source, TransfurType<?> transfurType){
             if(damagePredicate.isPresent()) {
                 if(source == null || !damagePredicate.get().matches(player, source)) return false;
             }

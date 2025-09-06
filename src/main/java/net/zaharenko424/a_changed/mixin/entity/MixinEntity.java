@@ -42,9 +42,9 @@ public abstract class MixinEntity {
         DLPupMeltAbility ability = AbilityRegistry.DL_PUP_MELT.get();
 
         if((entity instanceof LivingEntity living
-                && AbilityUtils.hasAbility(ability, living) && ability.getAbilityData(living).isMolten())
+                && AbilityUtils.hasAbility(ability, living) && ability.getAbilityData(living).isActivated())
             || ((Object)this instanceof LivingEntity self
-                && AbilityUtils.hasAbility(ability, self) && ability.getAbilityData(self).isMolten())) {
+                && AbilityUtils.hasAbility(ability, self) && ability.getAbilityData(self).isActivated())) {
             return true;//Don't push molten DL Pup & don't push entities as molten DL Pup
         }
 

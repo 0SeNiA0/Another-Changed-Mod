@@ -31,7 +31,7 @@ public class DarkLatexPup extends AbstractLatexPup<net.zaharenko424.a_changed.en
     @Override
     public @Nullable ResourceLocation getModelIdFor(@NotNull LivingEntity entity) {
         DLPupMeltData data = AbilityRegistry.DL_PUP_MELT.get().getAbilityData(entity);
-        return data.isMolten() ? molten : super.getModelIdFor(entity);
+        return data.isActivated() ? molten : super.getModelIdFor(entity);
     }
 
     protected final EntityDimensions dimensions = new EntityDimensions(.6f, .85f, .68f,
@@ -41,7 +41,7 @@ public class DarkLatexPup extends AbstractLatexPup<net.zaharenko424.a_changed.en
 
     @Override
     public @Nullable EntityDimensions getPoseDimensions(@NotNull LivingEntity entity, @NotNull Pose pose) {
-        if (AbilityRegistry.DL_PUP_MELT.get().getAbilityData(entity).isMolten()) return dimensionsMolten.scale(entity.getAgeScale());
+        if (AbilityRegistry.DL_PUP_MELT.get().getAbilityData(entity).isActivated()) return dimensionsMolten.scale(entity.getAgeScale());
         return dimensions.scale(entity.getAgeScale());
     }
 }
