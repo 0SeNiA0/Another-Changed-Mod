@@ -15,7 +15,7 @@ import java.util.List;
 public class PowerCell extends Item {
 
     public PowerCell(@NotNull Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
     }
 
     @Override

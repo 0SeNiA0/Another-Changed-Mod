@@ -28,6 +28,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
+        addSimpleSound(BLOW1);
         add(BUTTON_PRESSED, definition()
                 .subtitle(subtitle("button_pressed"))
                 .with(sound(AChanged.resourceLoc("decision1"))));

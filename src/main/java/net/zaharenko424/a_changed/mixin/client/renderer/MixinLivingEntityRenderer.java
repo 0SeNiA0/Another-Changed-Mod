@@ -49,7 +49,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if(progress <= 0) return;
 
         MatrixStack.push(stack);
-        stack.scale(1.02f, 1.02f, 1.02f);
+        stack.scale(1.01f, 1.01f, 1.01f);
         int primaryColor = handler.getTransfurType().getPrimaryColor();
 
         model.renderToBuffer(stack, pBuffer.getBuffer(RenderType.entityTranslucent(achanged$TEXTURE)),

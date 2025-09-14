@@ -11,6 +11,7 @@ public class SoundRegistry {
 
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, AChanged.MODID);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOW1 = registerVariableRange("blow1");
     public static final DeferredHolder<SoundEvent, SoundEvent> BUTTON_PRESSED = registerVariableRange("button_pressed");
     public static final DeferredHolder<SoundEvent, SoundEvent> COMPRESSOR = registerVariableRange("compressor");
     public static final DeferredHolder<SoundEvent, SoundEvent> DOOR_CLOSE = registerVariableRange("door_close");

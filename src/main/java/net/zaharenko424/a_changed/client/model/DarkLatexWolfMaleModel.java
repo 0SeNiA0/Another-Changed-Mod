@@ -12,6 +12,7 @@ import net.zaharenko424.a_changed.client.animation.Animations;
 import net.zaharenko424.a_changed.client.animation.FallFlyingAnim;
 import net.zaharenko424.a_changed.client.animation.HumanoidAnim;
 import net.zaharenko424.a_changed.client.animation.SwimAnim;
+import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.animation.KeyframeAnimator;
@@ -39,16 +40,17 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.Map;
 
-public class LatexWolfMaleModel<E extends LivingEntity>  extends UniversalCustomModel<E> {
+public class DarkLatexWolfMaleModel<E extends LivingEntity>  extends UniversalCustomModel<E> {
 
-    public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(AChanged.resourceLoc("latex_wolf_male"),"main");
+    public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(TransfurRegistry.DARK_LATEX_WOLF_M_TF.getId(), "main");
+    private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/dark_latex_wolf_male");
 
-    public LatexWolfMaleModel(ResourceLocation texture) {
+    public DarkLatexWolfMaleModel() {
         super(ModelDefinitionCache.getInstance().bake(bodyLayer),
-                List.of(Texture.fromAsset(texture, 2)),
+                List.of(Texture.fromAsset(TEXTURE, 2)),
                 List.of(new CutOut(0), new VanillaTexArmor(ArmorItem.Type.HELMET), new VanillaTexArmor(ArmorItem.Type.CHESTPLATE), new VanillaTexArmor(ArmorItem.Type.LEGGINGS), new VanillaTexArmor(ArmorItem.Type.BOOTS),
-                        new OpaqueColor(ModelPropertyKeys.RIGHT_IRIS, -16678657), new OpaqueColor(ModelPropertyKeys.LEFT_IRIS, -16678657),
-                        new OpaqueColor(ModelPropertyKeys.BEANS, -1)),
+                        new OpaqueColor(ModelPropertyKeys.RIGHT_IRIS, -1), new OpaqueColor(ModelPropertyKeys.LEFT_IRIS, -1),
+                        new OpaqueColor(ModelPropertyKeys.BEANS, -14672611)),
                 List.of(new ItemOnHead("head"), new ItemInHandLayer(
                         "right_arm", new PoseTransform(new Vector3f(1/16f, 0, 0), null, new Vector3f(-1, -1, 1)),
                         "left_arm", new PoseTransform(new Vector3f(-1/16f, 0, 0), null, new Vector3f(-1, -1, 1))
@@ -85,14 +87,50 @@ public class LatexWolfMaleModel<E extends LivingEntity>  extends UniversalCustom
 
         GroupDefinition root = groupDefinition.addOrReplaceChild("root", GroupBuilder.create());
         GroupDefinition head = root.addOrReplaceChild("head", GroupBuilder.create()
-                .addMesh(new float[]{2.5f, 5, -4.025f, 2.5f, 3.5f, -4.025f, 1.5f, 5, -4.025f, 1.5f, 3.5f, -4.025f}, new float[]{0, 16, 16, 1, 16, 0, 3, 0, 0, 2, 0, 16}, 5)
-                .addMesh(new float[]{-2.5f, 5, -4.025f, -2.5f, 3.5f, -4.025f, -1.5f, 5, -4.025f, -1.5f, 3.5f, -4.025f}, new float[]{3, 0, 0, 1, 16, 0, 0, 16, 16, 2, 0, 16}, 6)
+                .addMesh(new float[]{2.5f, 4.5f, -4.025f, 2.5f, 3.5f, -4.025f, 1.5f, 4.5f, -4.025f, 1.5f, 3.5f, -4.025f}, new float[]{0, 16, 16, 1, 16, 0, 3, 0, 0, 2, 0, 16}, 5)
+                .addMesh(new float[]{-2.5f, 4.5f, -4.025f, -2.5f, 3.5f, -4.025f, -1.5f, 4.5f, -4.025f, -1.5f, 3.5f, -4.025f}, new float[]{3, 0, 0, 1, 16, 0, 0, 16, 16, 2, 0, 16}, 6)
                 .addBox(-4, 0, -4, 8, 8, 8, new CubeUV().down(8, 20, 0, 28).north(8, 20, 0, 12).up(24, 24, 16, 16).west(24, 16, 16, 8).east(16, 20, 8, 12).south(24, 8, 16, 0))
                 .addBox(-4, 0, -4, 8, 8, 8, new Vector3f(0.6f), new CubeUV().down(24, 0, 16, 8).north(16, 16, 8, 8).up(16, 8, 8, 0).west(24, 16, 16, 8).east(8, 16, 0, 8).south(32, 16, 24, 8), 1), PartPose.offset(0, 24, 0));
         head.addOrReplaceChild("right_ear", GroupBuilder.create()
                 .addMesh(new float[]{-1, 5, 4, -1, 5, -1, -1, -2, 4, -1, -2, -1, 1, 5, 4, 1, 5, -1, 1, -2, 4, 1, -2, -1, -0.99f, 2, 4, -0.99f, 5, 1, 0.99f, 2, 4, 0.99f, 5, 1}, new float[]{0, 39, 32, 1, 34, 32, 3, 34, 39, 2, 39, 39, 5, 13, 36, 4, 8, 36, 6, 8, 43, 7, 13, 43, 5, 49, 31, 1, 47, 31, 0, 47, 36, 4, 49, 36, 4, 24, 47, 0, 22, 47, 2, 22, 54, 6, 24, 54, 1, 26, 47, 5, 24, 47, 7, 24, 54, 3, 26, 54, 11, 18, 48, 9, 16, 48, 8, 16, 52, 10, 18, 52}), PartPose.offsetAndRotation(3, 7, -1, 0.4276f, 0.384f, -0.3665f));
         head.addOrReplaceChild("left_ear", GroupBuilder.create()
                 .addMesh(new float[]{1, 5, 4, 1, 5, -1, 1, -2, 4, 1, -2, -1, -1, 5, 4, -1, 5, -1, -1, -2, 4, -1, -2, -1, 0.99f, 2, 4, 0.99f, 5, 1, -0.99f, 2, 4, -0.99f, 5, 1}, new float[]{3, 29, 39, 1, 29, 32, 0, 24, 32, 2, 24, 39, 6, 34, 39, 4, 34, 32, 5, 29, 32, 7, 29, 39, 0, 33, 47, 1, 33, 52, 5, 31, 52, 4, 31, 47, 2, 47, 53, 0, 47, 46, 4, 45, 46, 6, 45, 53, 7, 22, 54, 5, 22, 47, 1, 20, 47, 3, 20, 54, 8, 42, 32, 9, 42, 28, 11, 40, 28, 10, 40, 32}), PartPose.offsetAndRotation(-3, 7, -1, 0.4276f, -0.384f, 0.3665f));
+        GroupDefinition mask = head.addOrReplaceChild("mask", GroupBuilder.create()
+                .addBox(-0.5f, -0.9f, -0.5f, 1, 4.9f, 0.5f, new CubeUV().down(0, 0, 1, 0.5f).north(4, 15, 3, 14).up(3, 14, 4, 15).west(3.5f, 15, 3, 14).east(3.5f, 15, 3, 14).south(1, 4.9f, 0, 0))
+                .addBox(-0.5f, -2, -2.1f, 1, 1, 0.1f, new CubeUV().down(3.5f, 14, 4.5f, 14.1f).north(4.5f, 15, 3.5f, 14).up(0, 0, 1, 0.1f).west(0.1f, 1, 0, 0).east(0.1f, 1, 0, 0).south(4.5f, 15, 3.5f, 14))
+                .addBox(0.5f, -2.5f, -2.1f, 1.5f, 1.5f, 0.1f, new CubeUV().down(3.5f, 14, 4.5f, 15).north(4.5f, 15, 3.5f, 14).up(0, 0, 1.5f, 0.1f).west(4.5f, 15, 3.5f, 14).east(4.5f, 15, 3.5f, 14).south(4.5f, 15, 3.5f, 14))
+                .addBox(-2, -2.5f, -2.1f, 1.5f, 1.5f, 0.1f, new CubeUV().down(3.5f, 14, 4.5f, 15).north(4.5f, 15, 3.5f, 14).up(0, 0, 1.5f, 0.1f).west(4.5f, 15, 3.5f, 14).east(4.5f, 15, 3.5f, 14).south(4.5f, 15, 3.5f, 14))
+                .addBox(-2.1f, -1, -2.1f, 4.2f, 0.1f, 2.1f, new CubeUV().down(3, 13.5f, 4, 14.5f).north(4, 14.5f, 3, 13.5f).up(3, 13.5f, 4, 14.5f).west(4, 14.5f, 3, 13.5f).east(4, 14.5f, 3, 13.5f).south(4.2f, 0.1f, 0, 0))
+                .addBox(-2.1f, -2.5f, -2.1f, 0.1f, 1.5f, 0.6f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14.5f).north(4.5f, 14.5f, 3.5f, 13.5f).west(4.5f, 14.5f, 3.5f, 13.5f).east(4.5f, 14.5f, 3.5f, 13.5f).south(4.5f, 14.5f, 3.5f, 13.5f))
+                .addBox(-2.1f, -2, -1.5f, 0.1f, 1, 1, new CubeUV().down(3.5f, 13.5f, 3.6f, 14.5f).north(3.6f, 14.5f, 3.5f, 13.5f).up(0, 0, 0.1f, 1).west(4.5f, 14.5f, 3.5f, 13.5f).east(4.5f, 14.5f, 3.5f, 13.5f).south(0.1f, 1, 0, 0))
+                .addBox(2, -2, -1.5f, 0.1f, 1, 1, new CubeUV().down(3, 13.5f, 3.1f, 14.5f).north(3.1f, 14.5f, 3, 13.5f).up(0, 0, 0.1f, 1).west(4, 14.5f, 3, 13.5f).east(4, 14.5f, 3, 13.5f).south(0.1f, 1, 0, 0))
+                .addBox(2, -2.5f, -2.1f, 0.1f, 1.5f, 0.6f, new CubeUV().down(3.5f, 14, 4.5f, 15).north(4.5f, 15, 3.5f, 14).west(4.5f, 15, 3.5f, 14).east(4.5f, 15, 3.5f, 14).south(4.5f, 15, 3.5f, 14))
+                .addBox(0.5f, 1, -0.5f, 1, 2.5f, 0.5f, new CubeUV().down(3, 13.5f, 4, 14.5f).north(4, 14.5f, 3, 13.5f).up(3, 13.5f, 4, 14.5f).east(3.5f, 14.5f, 3, 13.5f).south(1, 2.5f, 0, 0))
+                .addBox(1.5f, 1.5f, -0.5f, 1, 1, 0.5f, new CubeUV().down(3, 13.5f, 4, 14).north(4, 14.5f, 3, 13.5f).up(3, 13.5f, 4, 14).east(3.5f, 14.5f, 3, 13.5f).south(1, 1, 0, 0))
+                .addBox(1.5f, 2.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().north(5, 14, 4, 13).up(4, 13, 5, 14).east(5, 14, 4, 13))
+                .addBox(-2, 2.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().north(4.5f, 14, 3.5f, 13).up(3.5f, 13, 4.5f, 14).west(4.5f, 14, 3.5f, 13))
+                .addBox(-3.5f, 1, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().north(4, 14, 3, 13).up(3, 13, 3.5f, 14).west(3.5f, 14, 3, 13))
+                .addBox(3, 1, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14.5f).east(4.5f, 14.5f, 3.5f, 13.5f))
+                .addBox(0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3, 13, 4, 14).north(4, 14, 3, 13).east(4, 14, 3, 13))
+                .addBox(2, -2.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3.5f, 13, 4.5f, 14).north(4.5f, 14, 3.5f, 13).west(4, 13.5f, 4, 13.5f).east(4.5f, 14, 3.5f, 13))
+                .addBox(-2.5f, -2.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3, 13.5f, 4, 14.5f).north(4, 14.5f, 3, 13.5f).west(4, 14.5f, 3, 13.5f).east(4, 14, 4, 14))
+                .addBox(0.5f, -0.9f, -0.5f, 0.5f, 0.4f, 0.5f, new CubeUV().north(4, 14, 3, 13).up(3, 13, 4, 14).east(4, 14, 3, 13))
+                .addBox(-1, -0.9f, -0.5f, 0.5f, 0.4f, 0.5f, new CubeUV().north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14.5f).west(4.5f, 14.5f, 3.5f, 13.5f))
+                .addBox(-1, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14.5f).north(4.5f, 14.5f, 3.5f, 13.5f).west(4.5f, 14.5f, 3.5f, 13.5f))
+                .addBox(-3, 1, -0.5f, 0.5f, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4.5f, 14.5f, 3.5f, 13.5f).east(4.5f, 14.5f, 3.5f, 13.5f).south(0.5f, 1, 0, 0))
+                .addBox(2.5f, 1, -0.5f, 0.5f, 1, 0.5f, new CubeUV().down(3.5f, 13, 4.5f, 13.5f).north(4.5f, 14, 3.5f, 13).up(3.5f, 13, 4.5f, 13.5f).west(4.5f, 14, 3.5f, 13).east(4.5f, 14, 3.5f, 13).south(0.5f, 1, 0, 0))
+                .addBox(3, -1, -0.5f, 0.5f, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4.5f, 14.5f, 3.5f, 13.5f).east(4.5f, 14.5f, 3.5f, 13.5f).south(0.5f, 1, 0, 0))
+                .addBox(-3.5f, -1, -0.5f, 0.5f, 1, 0.5f, new CubeUV().down(3, 13.5f, 4, 14).north(4, 14.5f, 3, 13.5f).up(3, 13.5f, 4, 14).west(4, 14.5f, 3, 13.5f).east(4, 14.5f, 3, 13.5f).south(0.5f, 1, 0, 0))
+                .addBox(3, 0, -0.5f, 1, 1, 0.5f, new CubeUV().down(3.5f, 13, 4.5f, 13.5f).north(4.5f, 14, 3.5f, 13).up(3.5f, 13, 4.5f, 13.5f).west(4, 14, 3.5f, 13).east(4, 14, 3.5f, 13).south(1, 1, 0, 0))
+                .addBox(2, -2, -0.5f, 1, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4, 14.5f, 3.5f, 13.5f).east(4, 14.5f, 3.5f, 13.5f).south(1, 1, 0, 0))
+                .addBox(-3, -2, -0.5f, 1, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4, 14.5f, 3.5f, 13.5f).east(4, 14.5f, 3.5f, 13.5f).south(1, 1, 0, 0))
+                .addBox(-4, 0, -0.5f, 1, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4, 14.5f, 3.5f, 13.5f).east(4, 14.5f, 3.5f, 13.5f).south(1, 1, 0, 0))
+                .addBox(-2.5f, 1.5f, -0.5f, 1, 1, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14).north(4.5f, 14.5f, 3.5f, 13.5f).up(3.5f, 13.5f, 4.5f, 14).west(4, 14.5f, 3.5f, 13.5f).south(1, 1, 0, 0))
+                .addBox(-1.5f, 1, -0.5f, 1, 2.5f, 0.5f, new CubeUV().down(3, 13.5f, 4, 14.5f).north(4, 14.5f, 3, 13.5f).up(3, 13.5f, 4, 14.5f).west(3.5f, 14.5f, 3, 13.5f).south(1, 2.5f, 0, 0)), PartPose.offset(0, 4, -4));
+        mask.addOrReplaceChild("cube", GroupBuilder.create()
+                .addBox(0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3, 13, 4, 14).north(4, 14, 3, 13).east(4, 14, 3, 13)), PartPose.offset(1, 0.5f, 0));
+        mask.addOrReplaceChild("cube_i0", GroupBuilder.create()
+                .addBox(-1, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, new CubeUV().down(3.5f, 13.5f, 4.5f, 14.5f).north(4.5f, 14.5f, 3.5f, 13.5f).west(4.5f, 14.5f, 3.5f, 13.5f)), PartPose.offset(-1, 0.5f, 0));
         head.addOrReplaceChild("maw", GroupBuilder.create()
                 .addBox(-2, -1, -2, 4, 2, 2, new CubeUV().down(52, 14, 48, 16).north(16, 50, 12, 48).up(52, 14, 48, 12).west(20, 50, 18, 48).east(45, 40, 43, 38)), PartPose.offset(0, 2, -4));
         head.addOrReplaceChild("maw_i0", GroupBuilder.create()

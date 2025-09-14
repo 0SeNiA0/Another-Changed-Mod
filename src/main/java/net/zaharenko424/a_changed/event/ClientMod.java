@@ -334,6 +334,8 @@ public class ClientMod {
 
         event.registerModelDefinition(BeiFengModel.bodyLayer, BeiFengModel.model());
 
+        event.registerModelDefinition(GasWolfModel.bodyLayer, GasWolfModel.model());
+
         event.registerModelDefinition(DarkLatexPupModel.bodyLayer, DarkLatexPupModel.model());
         event.registerModelDefinition(DLPupMoltenModel.bodyLayer, DLPupMoltenModel.model());
 
@@ -345,8 +347,14 @@ public class ClientMod {
         event.registerModelDefinition(LatexSharkFemaleModel.bodyLayer, LatexSharkFemaleModel.model());
         event.registerModelDefinition(LatexSharkMaleModel.bodyLayer, LatexSharkMaleModel.model());
 
-        event.registerModelDefinition(LatexWolfFemaleModel.bodyLayer, LatexWolfFemaleModel.model());
         event.registerModelDefinition(LatexWolfMaleModel.bodyLayer, LatexWolfMaleModel.model());
+
+        event.registerModelDefinition(DarkLatexWolfFemaleModel.bodyLayer, DarkLatexWolfFemaleModel.model());
+        event.registerModelDefinition(DarkLatexWolfMaleModel.bodyLayer, DarkLatexWolfMaleModel.model());
+
+        event.registerModelDefinition(PureWhiteLatexWolfModel.bodyLayer, PureWhiteLatexWolfModel.model());
+        event.registerModelDefinition(WhiteLatexPupModel.bodyLayer, WhiteLatexPupModel.model());
+        event.registerModelDefinition(WhiteLatexWolfFemaleModel.bodyLayer, WhiteLatexWolfFemaleModel.model());
 
         event.registerModelDefinition(YufengDragonModel.bodyLayer, YufengDragonModel.model());
     }

@@ -152,19 +152,25 @@ public class ModelPropertyManager {
 
 
     public <P extends ModelProperty> ModelProperty setProperty(String key, P property){
-        return bound.put(key, property);
+        ModelProperty old = bound.put(key, property);
+        updateClientProperties();
+        return old;
     }
 
 
     public ModelProperty removeProperty(String key){
-        return bound.remove(key);
+        ModelProperty old = bound.remove(key);
+        updateClientProperties();
+        return old;
     }
 
     public <P extends ModelProperty> P removeProperty(String key, ModelPropertyType<P> type){
         ModelProperty property = bound.get(key);
         if(property == null || property.type().get() != type) return null;
 
-        return (P) bound.remove(key);
+        P old = (P) bound.remove(key);
+        updateClientProperties();
+        return old;
     }
 
     //----------------------------------------- Internal ----------------------------------------//
@@ -204,6 +210,14 @@ public class ModelPropertyManager {
 
         if(!player.connection.hasChannel(ServerboundModelPropertySync.TYPE)) return;//TODO add toast that server does not have CMRS?
         PacketDistributor.sendToServer(new ServerboundModelPropertySync(properties.properties()));
+    }
+
+    public void updateClientProperties(){
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player == null) return;
+
+        Map<String, ModelProperty> serverProperties = getServerProperties(server.getLoggableAddress(true));
+        player.getData(AttachmentRegistry.MODEL_PROPERTIES).set(serverProperties != null ? serverProperties : mainProperties);
     }
 
     private void updateClientProperties(ModelProperties properties){

@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.ability;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -7,7 +8,9 @@ import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +30,7 @@ import net.zaharenko424.a_changed.client.screen.ability.GrabAbilityPlayerScreen;
 import net.zaharenko424.a_changed.client.screen.ability.GrabEscapeScreen;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
+import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
@@ -34,6 +38,7 @@ import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.util.ClipUtil;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import net.zaharenko424.a_changed.util.Utils;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -41,15 +46,29 @@ public class GrabAbility implements Ability {
 
     public static final float CLOSE_ENOUGH = 2.5f;
     public static final float CLOSE_ENOUGH_SQR = CLOSE_ENOUGH * CLOSE_ENOUGH;
+    private static final ResourceLocation cooldownMask = AChanged.textureLoc("gui/grab_cooldown");
 
     @Override
     public void drawIcon(@NotNull Player player, @NotNull GuiGraphics graphics, int x, int y, boolean overlay) {
         GrabData holderData = getAbilityData(player);
         if(TransfurManager.isTransfurred(player)) {
-            if(holderData.isActivated())
-                graphics.blit(HypnosisAbility.activated, x - 16, y - 16, 0, 0, 0, 64, 64, 64, 64);
             graphics.blit(holderData.getMode().texture,
                     x, y, 32, 32, 0, 0, 64, 64, 64, 64);
+
+            if(holderData.isActivated()) {
+                graphics.blit(HypnosisAbility.activated, x - 16, y - 16, 0, 0, 0, 64, 64, 64, 64);
+            } else {
+                int cooldown = holderData.getGrabCooldown();
+                if(cooldown > 0){
+                    float percentage = (float) cooldown / GrabData.grabCooldown_;
+                    float height = 28 * percentage;
+                    float texHeight = height * 2;
+                    RenderSystem.enableBlend();
+                    WidgetHelper.blit(cooldownMask, graphics.pose(),
+                            x, y + 30 - height, 1, 32, height, 0, 60 - texHeight, 64, texHeight, 64, 64);
+                    RenderSystem.disableBlend();
+                }
+            }
         } else {
             graphics.blit(holderData.wantsToBeGrabbed() ? GrabAbilityPlayerScreen.yes : GrabAbilityPlayerScreen.nope,
                     x, y, 32, 32, 0, 0, 64, 64, 64, 64);
@@ -140,6 +159,10 @@ public class GrabAbility implements Ability {
             case 0 -> holderData.setMode(buf.readEnum(GrabMode.class));
             case 1 -> holderData.setWantsToBeGrabbed(buf.readBoolean());
             case 2 -> {
+                if(holderData.getGrabbedBy() == null) return;
+                holder.level().playSound(null, holder, SoundRegistry.BLOW1.get(), SoundSource.PLAYERS, 1, 1);
+            }
+            case 3 -> {
                 holderData.escape(buf.readBoolean());
                 holderData.sync();
             }

@@ -43,6 +43,7 @@ import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallb
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.ActivityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
@@ -152,6 +153,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
                         new FirstApplicableBehaviour<>(
                                 new TryGrab<>(),
                                 new AnimatableMeleeAttack<>(0)
+                                        .startCondition(latex -> latex.getTarget() != null && !TransfurManager.isGrabbed(latex.getTarget()))
                         )
                 ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
                 .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRYING_TO_TRANSFUR.get()),

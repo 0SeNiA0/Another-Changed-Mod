@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.zaharenko424.a_changed.ability.api.PassiveAbility;
 import net.zaharenko424.a_changed.client.screen.ability.WolfAbilityScreen;
@@ -39,7 +38,7 @@ public class WolfAbility implements PassiveAbility {
 
     @Override
     public Screen getScreen(@NotNull Player holder) {
-        return FMLLoader.getDist().isClient() ? Utils.get(()-> new WolfAbilityScreen(sounds)) : null;
+        return Utils.get(()-> new WolfAbilityScreen(sounds));
     }
 
     @Override

@@ -33,7 +33,7 @@ public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
     @Override
     public void setupAnim(@NotNull RoombaEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         root.getAllParts().forEach(ModelPart::resetPose);
-        root.yRot = pNetHeadYaw * Mth.DEG_TO_RAD;
+        root.yRot = (180 - pEntity.getViewYRot(pAgeInTicks - pEntity.tickCount)) * Mth.DEG_TO_RAD;
 
         float rotDeg = pEntity.tickCount % 90 * 4;
         float rotDegNext = (pEntity.tickCount + 1) % 90 * 4;

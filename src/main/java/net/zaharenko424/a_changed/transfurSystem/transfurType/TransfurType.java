@@ -3,6 +3,7 @@ package net.zaharenko424.a_changed.transfurSystem.transfurType;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,8 +23,8 @@ import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import net.zaharenko424.a_changed.util.SequencedSetView;
+import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.client.CustomModelManager;
-import net.zaharenko424.cmrs.client.model.UniversalCustomModel;
 import net.zaharenko424.cmrs.event.RegisterBuiltInModelsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,7 +79,7 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
      */
     public abstract void registerModels(@NotNull RegisterBuiltInModelsEvent event);
 
-    public UniversalCustomModel<LivingEntity> getDefaultModel(){
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> M getDefaultModel(){
         return CustomModelManager.getInstance().getModel(id);
     }
 
@@ -90,7 +91,7 @@ public abstract class TransfurType <T extends LivingEntity & LatexBeast> {
         return id;
     }
 
-    public @Nullable UniversalCustomModel<LivingEntity> getModelFor(@NotNull LivingEntity entity){
+    public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> @Nullable M getModelFor(@NotNull E entity){
         ResourceLocation modelId = getModelIdFor(entity);
         if(modelId == null) return null;
         return CustomModelManager.getInstance().getModel(modelId);

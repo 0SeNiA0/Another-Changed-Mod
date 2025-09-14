@@ -26,7 +26,7 @@ public class RoombaEntity extends PathfinderMob {
 
     @Override
     protected void registerGoals() {
-        WaterAvoidingRandomStrollGoal goal = new WaterAvoidingRandomStrollGoal(this, .5);
+        WaterAvoidingRandomStrollGoal goal = new WaterAvoidingRandomStrollGoal(this, .25);
         goal.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         goalSelector.addGoal(0, goal);
         goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -39,6 +39,16 @@ public class RoombaEntity extends PathfinderMob {
                 .add(Attributes.MOVEMENT_SPEED, .5)
                 .add(Attributes.FOLLOW_RANGE, 16)
                 .add(Attributes.ARMOR, 2);
+    }
+
+    @Override
+    public float maxUpStep() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return 0;
     }
 
     @Override

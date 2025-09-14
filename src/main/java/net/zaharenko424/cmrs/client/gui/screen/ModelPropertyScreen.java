@@ -64,6 +64,7 @@ public class ModelPropertyScreen extends Screen implements MouseMoveListener {
 
             String selectedO = selectedProperty != null ? selectedProperty.key : null;
             ModelPropertyManager.getInstance().loadJSONFromFile();
+            ModelPropertyManager.getInstance().updateClientProperties();
             changed = false;
 
             updateProfiles();
@@ -77,6 +78,7 @@ public class ModelPropertyScreen extends Screen implements MouseMoveListener {
 
             String selectedO = selectedProperty != null ? selectedProperty.key : null;
             ModelPropertyManager.getInstance().loadJSON();
+            ModelPropertyManager.getInstance().updateClientProperties();
             changed = false;
 
             updateProfiles();

@@ -50,7 +50,7 @@ public class DLPupMeltAbility implements Ability {
 
     @Override
     public void activate(@NotNull LivingEntity holder) {
-        playSound(holder);
+        playSound(holder);//TODO set molten model with packet here
         holder.forceAddEffect(new MobEffectInstance(MobEffectRegistry.INVISIBLE_SLOWDOWN, -1, 6, false, false, false), null);
         getAbilityData(holder).setMolten(true);
         holder.refreshDimensions();

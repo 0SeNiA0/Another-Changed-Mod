@@ -38,15 +38,15 @@ public class TransfurRegistry {
             .register("dark_latex_pup", ()-> new DarkLatexPup(TransfurType.Properties
                     .of(resourceLoc("dark_latex_pup"), EntityRegistry.DARK_LATEX_PUP, Latex.DARK)));
 
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> DARK_LATEX_WOLF_F_TF = TRANSFUR_TYPES
-            .register("dark_latex_wolf_female", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, DarkLatexWolf> DARK_LATEX_WOLF_F_TF = TRANSFUR_TYPES
+            .register("dark_latex_wolf_female", ()-> new DarkLatexWolf(TransfurType.Properties
                     .of(resourceLoc("dark_latex_wolf_female"), EntityRegistry.DARK_LATEX_WOLF_FEMALE, Latex.DARK).gender(Gender.FEMALE).colors(-13686230, -14146010)));
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> DARK_LATEX_WOLF_M_TF = TRANSFUR_TYPES
-            .register("dark_latex_wolf_male", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, DarkLatexWolf> DARK_LATEX_WOLF_M_TF = TRANSFUR_TYPES
+            .register("dark_latex_wolf_male", ()-> new DarkLatexWolf(TransfurType.Properties
                     .of(resourceLoc("dark_latex_wolf_male"), EntityRegistry.DARK_LATEX_WOLF_MALE, Latex.DARK).gender(Gender.MALE).colors(-13686230, -14146010)));
 
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> GAS_WOLF_TF = TRANSFUR_TYPES
-            .register("gas_wolf", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, GasWolf> GAS_WOLF_TF = TRANSFUR_TYPES
+            .register("gas_wolf", ()-> new GasWolf(TransfurType.Properties
                     .of(resourceLoc("gas_wolf"), EntityRegistry.GAS_WOLF, Latex.WHITE).poseSize(Pose.STANDING, EntityDimensions.scalable(.6f,1.85f))
                     .colors(-13686230, -14146010).organic(true)));
 
@@ -58,8 +58,8 @@ public class TransfurRegistry {
     public static final DeferredHolder<TransfurType<?>, LatexShark> LATEX_SHARK_M_TF = TRANSFUR_TYPES
             .register("latex_shark_male", ()-> new LatexShark(resourceLoc("latex_shark_male"), Gender.MALE));
 
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> PURE_WHITE_LATEX_WOLF_TF = TRANSFUR_TYPES
-            .register("pure_white_latex_wolf", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, PureWhiteLatexWolf> PURE_WHITE_LATEX_WOLF_TF = TRANSFUR_TYPES
+            .register("pure_white_latex_wolf", ()-> new PureWhiteLatexWolf(TransfurType.Properties
                     .of(resourceLoc("pure_white_latex_wolf"), EntityRegistry.PURE_WHITE_LATEX_WOLF, Latex.WHITE)));
 
     public static final DeferredHolder<TransfurType<?>, SnowLeopard> SNOW_LEOPARD_F_TF = TRANSFUR_TYPES
@@ -75,11 +75,11 @@ public class TransfurRegistry {
             .register("white_latex_pup", ()-> new WhiteLatexPup(TransfurType.Properties
                     .of(resourceLoc("white_latex_pup"), EntityRegistry.WHITE_LATEX_PUP, Latex.WHITE)));
 
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> WHITE_LATEX_WOLF_F_TF = TRANSFUR_TYPES
-            .register("white_latex_wolf_female", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, WhiteLatexWolf> WHITE_LATEX_WOLF_F_TF = TRANSFUR_TYPES
+            .register("white_latex_wolf_female", ()-> new WhiteLatexWolf(TransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_female"), EntityRegistry.WHITE_LATEX_WOLF_FEMALE, Latex.WHITE).gender(Gender.FEMALE)));
-    public static final DeferredHolder<TransfurType<?>, LatexWolf> WHITE_LATEX_WOLF_M_TF = TRANSFUR_TYPES
-            .register("white_latex_wolf_male", ()-> new LatexWolf(TransfurType.Properties
+    public static final DeferredHolder<TransfurType<?>, WhiteLatexWolf> WHITE_LATEX_WOLF_M_TF = TRANSFUR_TYPES
+            .register("white_latex_wolf_male", ()-> new WhiteLatexWolf(TransfurType.Properties
                     .of(resourceLoc("white_latex_wolf_male"), EntityRegistry.WHITE_LATEX_WOLF_MALE, Latex.WHITE).gender(Gender.MALE)));
 
     public static final DeferredHolder<TransfurType<?>, YufengDragon> YUFENG_DRAGON_TF = TRANSFUR_TYPES

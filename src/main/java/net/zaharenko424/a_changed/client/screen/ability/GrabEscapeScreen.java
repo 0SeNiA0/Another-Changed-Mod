@@ -53,6 +53,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                     .setOnClick((button, click) -> {
                         if(click != InputConstants.KEY_SPACE) return false;
                         selected[0] = !selected[0];
+                        playSound();
                         if(type.clicksRequired <= ++clicks[0]) success();
                         return true;
                     })
@@ -85,6 +86,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                     if(click != type.switchKey0 || selected[0]) return false;
                     selected[0] = true;
                     selected[1] = false;
+                    playSound();
                     if(type.clicksRequired <= ++clicks[0]) success();
                     return true;
                 })
@@ -98,6 +100,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                     if(click != type.switchKey1 || selected[1]) return false;
                     selected[1] = true;
                     selected[0] = false;
+                    playSound();
                     if(type.clicksRequired <= ++clicks[0]) success();
                     return true;
                 })
@@ -105,6 +108,11 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
                 .setRenderIcon((button, graphics, x, y) -> WidgetHelper.blit(type.tex1, graphics.pose(), x - 16, y - 16, 32, 32, 64, 64));
         button2.rebuildMesh();
         buttons.add(button2);
+    }
+
+    protected void playSound(){
+        PacketDistributor.sendToServer(new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY,
+                buf -> buf.writeByte(2), 1));
     }
 
     @Override
@@ -137,7 +145,7 @@ public class GrabEscapeScreen extends Screen implements MouseMoveListener {
 
     protected void success(){
         PacketDistributor.sendToServer(new BidirectionalAbilityPacket(AbilityRegistry.GRAB_ABILITY,
-                buf -> buf.writeByte(2).writeBoolean(true), 2));
+                buf -> buf.writeByte(3).writeBoolean(true), 1));
         minecraft.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
         minecraft.setScreen(null);
     }

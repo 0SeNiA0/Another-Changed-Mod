@@ -15,6 +15,6 @@ public class LatexWolf extends TransfurType<LatexBeast> {
 
     @Override
     public void registerModels(@NotNull RegisterBuiltInModelsEvent event) {
-        event.registerModelSupplier(id, ClientOnly.latexWolfModel(gender, id));
+        event.registerModelSupplier(id, ClientOnly.latexWolfModel(id));
     }
 }
