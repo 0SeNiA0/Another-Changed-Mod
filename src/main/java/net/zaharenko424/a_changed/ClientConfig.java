@@ -15,7 +15,7 @@ public class ClientConfig {
 
         HIDDEN_RELOAD = builder
                 .comment("Tells the mod whether to reload the resources after generating lightly latex covered textures on startup.",
-                        "If turned off, the newly generated textures wont be automatically loaded (textures from converted textures folder will be loaded)")
+                        "If turned off, the newly generated textures won't be automatically loaded (textures from converted textures folder will be loaded)")
                 .define("hidden_reload", true);
 
         LIGHTLY_COVERED_BLOCKS = builder
