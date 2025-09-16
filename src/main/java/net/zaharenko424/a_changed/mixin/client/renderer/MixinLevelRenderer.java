@@ -19,13 +19,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.event.ClientEvent;
 import net.zaharenko424.a_changed.item.BuildersWand;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -64,12 +64,12 @@ public abstract class MixinLevelRenderer {
         HitResult hitResult = Minecraft.getInstance().hitResult;
 
         BuildersWand.Data data = item.getOrDefault(ComponentRegistry.BUILDERS_WAND_DATA, BuildersWand.Data.DEF);
-        if(data.from() == null) return;
+        if(data.from().isEmpty()) return;
 
         BuildersWand.Mode mode = data.mode();
         boolean destroyReplace = mode == BuildersWand.Mode.DESTROY || mode == BuildersWand.Mode.REPLACE;
 
-        BlockPos from = data.from();
+        BlockPos from = data.from().get();
         BlockPos to;
         if(destroyReplace && hitResult.getType() == HitResult.Type.BLOCK){
             to = ((BlockHitResult) hitResult).getBlockPos();

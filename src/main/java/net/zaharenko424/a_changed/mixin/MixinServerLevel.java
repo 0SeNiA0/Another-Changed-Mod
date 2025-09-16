@@ -15,12 +15,13 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
@@ -44,7 +45,7 @@ public abstract class MixinServerLevel extends Level {
         final LatexCoveredData data = LatexCoveredData.of(chunk);
 
         if(!LatexCoveredData.isLatex(original) && LatexCoveredData.isStateNotCoverable(original)) {//If block should not be covered, but is covered, uncover it.
-            data.coverWith(pos, CoveredWith.NOTHING);
+            if(data.getCoveredWith(pos) != CoveredWith.NOTHING) data.coverWith(pos, CoveredWith.NOTHING);
             return original;
         }
 
@@ -59,6 +60,10 @@ public abstract class MixinServerLevel extends Level {
         } else {
             coveredWith = data.getCoveredWith(pos);
             if(coveredWith == CoveredWith.NOTHING) return original;
+            if(coveredWith.isLightlyCovered) {//Fully convert current block with 25% chance
+                if(random.nextFloat() > .75f) data.coverWith(pos, coveredWith == CoveredWith.LIGHT_DARK_LATEX ? CoveredWith.DARK_LATEX : CoveredWith.WHITE_LATEX);
+                return original;
+            }
         }
 
         BlockPos pos1;
@@ -66,7 +71,8 @@ public abstract class MixinServerLevel extends Level {
         LevelChunk chunk1;
         LatexCoveredData data1;
 
-        for(Direction direction : Direction.values()){
+        Collection<Direction> list = Direction.allShuffled(random);
+        for(Direction direction : list){
             pos1 = pos.relative(direction);
             if(!isLoaded(pos1)) continue;
             state1 = getBlockState(pos1);
@@ -74,8 +80,8 @@ public abstract class MixinServerLevel extends Level {
             chunk1 = getChunkAt(pos1);
             data1 = (chunk == chunk1 ? data : LatexCoveredData.of(chunk1));
 
-            if(data1.getCoveredWith(pos1) != CoveredWith.NOTHING) continue;
-            data1.coverWith(pos1, coveredWith);
+            if(data1.getCoveredWith(pos1) != CoveredWith.NOTHING) continue;//Lightly convert neighbouring block
+            data1.coverWith(pos1, coveredWith == CoveredWith.DARK_LATEX ? CoveredWith.LIGHT_DARK_LATEX : CoveredWith.LIGHT_WHITE_LATEX);
             break;
         }
 

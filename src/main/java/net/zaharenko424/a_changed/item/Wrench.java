@@ -2,13 +2,13 @@ package net.zaharenko424.a_changed.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.block.machines.Wrenchable;
+import net.zaharenko424.a_changed.block.machine.Wrenchable;
 import org.jetbrains.annotations.NotNull;
 
 public class Wrench extends TieredItem {
@@ -22,8 +22,9 @@ public class Wrench extends TieredItem {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         if(level.isClientSide || !(level.getBlockState(pos).getBlock() instanceof Wrenchable wrenchable)) return super.useOn(context);
+
         InteractionResult result = wrenchable.useWrenchOn(level.getBlockState(pos), pos, (ServerLevel) level, context);
-        ServerPlayer player = (ServerPlayer) context.getPlayer();
+        Player player = context.getPlayer();
         if(result.consumesAction() && (player == null || !player.isCreative())) context.getItemInHand().hurtAndBreak(2, ((ServerLevel)level), null, i -> {});
         return result;
     }

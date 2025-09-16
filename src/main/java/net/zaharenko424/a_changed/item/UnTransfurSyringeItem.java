@@ -1,20 +1,23 @@
 package net.zaharenko424.a_changed.item;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.entity.projectile.SyringeProjectile;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
+import net.zaharenko424.a_changed.registry.MobEffectRegistry;
+import net.zaharenko424.a_changed.transfurSystem.DamageSources;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 public class UnTransfurSyringeItem extends AbstractSyringe {
 
@@ -27,39 +30,67 @@ public class UnTransfurSyringeItem extends AbstractSyringe {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(!TransfurManager.isTransfurred(pPlayer)) return InteractionResultHolder.pass(pPlayer.getItemInHand(pUsedHand));
-        return super.use(pLevel, pPlayer, pUsedHand);
+    public int getContentsColor(ItemStack stack) {
+        return Color.GREEN.getRGB();
     }
 
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack item, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
-        Player player = (Player) p_41411_;
-        if(!p_41410_.isClientSide){
-            if(TransfurManager.isTransfurred(player)){
-                use(item, (ServerPlayer) player);
-            } else {
-                giveDebuffs((ServerPlayer) player, 2);
-                giveWither(player, .5f);
-            }
+    public int getSecondaryColor(ItemStack stack) {
+        return 0;
+    }
+
+    @Override
+    protected ItemStack applyUseEffects(@NotNull ItemStack item, @NotNull Level level, @NotNull LivingEntity entity){
+        if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
+
+        if(entity instanceof LatexBeast){
+            entity.hurt(DamageSources.untransfurKill(level, entity), Float.MAX_VALUE);
+            return ItemRegistry.SYRINGE_ITEM.toStack();
         }
-        return onUse(item, new ItemStack(ItemRegistry.SYRINGE_ITEM.get()), player);
+
+        if(TransfurManager.isTransfurred(entity)){
+            untransfur(item, entity);
+        } else {
+            giveDebuffs(entity, 2);
+            giveWither(entity, .5f, 1);
+        }
+        return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
-    protected void use(ItemStack item, ServerPlayer player){
-        TransfurHandler.nonNullOf(player).unTransfur(TransfurContext.UNTRANSFUR);
-        if(player.getRandom().nextFloat() > .5) giveDebuffs(player, 1);
+    @Override
+    public ItemStack applyEffectsAsProjectile(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, @NotNull SyringeProjectile syringe, Entity shooter) {
+        if(level.isClientSide) return ItemRegistry.SYRINGE_ITEM.toStack();
+
+        if(TransfurManager.isTransfurred(entity)){
+            if(!entity.hasEffect(MobEffectRegistry.UNTRANSFUR_STACK)){
+                entity.addEffect(new MobEffectInstance(MobEffectRegistry.UNTRANSFUR_STACK, 600));//stack for 30s
+                return ItemRegistry.SYRINGE_ITEM.toStack();
+            }
+
+            if(entity instanceof LatexBeast) {
+                entity.hurt(DamageSources.untransfurKill(level, syringe, shooter), Float.MAX_VALUE);
+            } else untransfur(stack, entity);
+        } else {
+            giveDebuffs(entity, 2);
+            giveWither(entity, .5f, 1);
+        }
+        return ItemRegistry.SYRINGE_ITEM.toStack();
     }
 
-    protected void giveDebuffs(@NotNull ServerPlayer player, int durationMul){
+    protected void untransfur(@NotNull ItemStack item, @NotNull LivingEntity entity){
+        TransfurHandler.nonNullOf(entity).unTransfur(TransfurContext.UNTRANSFUR);
+        if(entity.getRandom().nextFloat() > .5) giveDebuffs(entity, 1);
+    }
+
+    protected void giveDebuffs(@NotNull LivingEntity entity, int durationMul){
         int duration = 60 * durationMul;
-        player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0, false, false));
-        player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 0, false, false));
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 1, false, false));
+        entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0, false, false));
+        entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 0, false, false));
+        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 1, false, false));
     }
 
-    protected void giveWither(@NotNull Player player, float chance){
-        if(player.getRandom().nextFloat() > 1 - chance)
-            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 1, false, false));
+    protected void giveWither(@NotNull LivingEntity entity, float chance, float durationMul){
+        if(entity.getRandom().nextFloat() > 1 - chance)
+            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) (120 * durationMul), 1, false, false));
     }
 }

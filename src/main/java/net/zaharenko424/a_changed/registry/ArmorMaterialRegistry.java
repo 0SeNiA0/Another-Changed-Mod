@@ -2,10 +2,14 @@ package net.zaharenko424.a_changed.registry;
 
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
@@ -19,11 +23,11 @@ public class ArmorMaterialRegistry {
 
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> HAZMAT = ARMOR_MATERIALS.register("hazmat", () -> new ArmorMaterial(
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-                map.put(ArmorItem.Type.BOOTS, 2);
+                map.put(ArmorItem.Type.BOOTS, 3);
                 map.put(ArmorItem.Type.LEGGINGS, 4);
-                map.put(ArmorItem.Type.CHESTPLATE, 3);
-                map.put(ArmorItem.Type.HELMET, 2);
-                map.put(ArmorItem.Type.BODY, 3);
+                map.put(ArmorItem.Type.CHESTPLATE, 5);
+                map.put(ArmorItem.Type.HELMET, 3);
+                map.put(ArmorItem.Type.BODY, 8);
             }),
             15,
             SoundEvents.ARMOR_EQUIP_LEATHER,
@@ -48,4 +52,6 @@ public class ArmorMaterialRegistry {
             0,
             0
     ));
+
+    public static final SimpleTier STUN_WEAPON_TIER = new SimpleTier(Tiers.WOOD.getIncorrectBlocksForDrops(), 512, Tiers.WOOD.getSpeed(), Tiers.WOOD.getAttackDamageBonus(), 0, () -> Ingredient.of(ItemTags.create(ResourceLocation.parse("c:plates/iron"))));
 }

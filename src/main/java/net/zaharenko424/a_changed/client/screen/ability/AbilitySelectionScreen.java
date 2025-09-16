@@ -2,104 +2,162 @@ package net.zaharenko424.a_changed.client.screen.ability;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.a_changed.ability.api.AbilityHolder;
 import net.zaharenko424.a_changed.client.Keybindings;
-import net.zaharenko424.a_changed.client.screen.AbstractRadialMenuScreen;
-import net.zaharenko424.a_changed.network.packets.ability.ServerboundSelectAbilityPacket;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import net.zaharenko424.a_changed.util.AbilityUtils;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
+import net.zaharenko424.cmrs.client.gui.screen.MouseMoveListener;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SequencedSet;
 
-public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
+public class AbilitySelectionScreen extends Screen implements MouseMoveListener {
 
-    private TransfurType transfurType;
-    private Ability selected;
+    protected AbilityHolder holder;
+    protected final List<RadialButton> buttons = new ArrayList<>();
+    protected final List<Ability> lastAbilities = new ArrayList<>();
 
     public AbilitySelectionScreen() {
-        super(Component.empty(), 100, 60);
+        super(Component.empty());
+
+        minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        holder = AbilityUtils.of(player);
+
+        lastAbilities.addAll(holder.getAbilities());
+        int amount = lastAbilities.size();
+
+        if(amount == 0){
+            minecraft.setScreen(null);
+            return;
+        }
+
+        if(amount == 1 && lastAbilities.getFirst().hasScreen()){
+            minecraft.setScreen(lastAbilities.getFirst().getScreen(player));
+            return;
+        }
+
+        float sizeRad = Mth.TWO_PI / amount;
+        float off = Mth.DEG_TO_RAD * 4;
+
+        RadialButton button;
+        for(int i = 0; i < amount; i++){
+            button = makeButton(lastAbilities.get(i))
+                    .setRotation(Mth.HALF_PI + sizeRad * i + off).setSize(sizeRad - off * 2, Mth.DEG_TO_RAD * 8);
+            button.rebuildMesh();
+            buttons.add(button);
+        }
+    }
+
+    protected RadialButton makeButton(Ability ability){
+        return new RadialButton()
+                .setOutlineColorFunc(button -> {
+                    if(ability.isPassive()) return button.isHovering() ? Color.ORANGE.getRGB() : -14236;
+                    if(holder.getSelectedAbility() == ability && button.isHovering()) return Color.GREEN.getRGB();
+                    if(holder.getSelectedAbility() == ability) return -16711836;
+                    return button.isHovering() ? Color.GRAY.getRGB() : Color.BLACK.getRGB();
+                })
+                .setRadius(100).setThickness(60, 4)
+                .setOnClick((button, click) -> click(click, ability))
+                .setRenderTransform(WidgetHelper.hoverAnim(.1f, .02f, .02f, w -> w.isHovering() || ability == holder.getSelectedAbility()))
+                .setRenderIcon((button, graphics, x, y) ->
+                        ability.drawIcon(minecraft.player, graphics, x.intValue() - 16, y.intValue() - 16, false))
+                .setExtendClickAreaOutside(true).setExtendClickAreaInside(true);
     }
 
     @Override
     protected void init() {
         super.init();
-        if(!TransfurManager.isTransfurred(minecraft.player)){//TMP potentially remove this in future if non tf players will have more abilities
-            minecraft.setScreen(null);
-            return;
+
+        SequencedSet<? extends Ability> abilities = holder.getAbilities();
+        if(abilities.size() != lastAbilities.size() || !abilities.containsAll(lastAbilities)){
+            int amount = abilities.size();
+
+            if(amount == 0){
+                minecraft.setScreen(null);
+                return;
+            }
+
+            if(amount == 1 && abilities.getFirst().hasScreen()){
+                minecraft.setScreen(abilities.getFirst().getScreen(minecraft.player));
+                return;
+            }
+
+            List<RadialButton> newButtons = new ArrayList<>(amount);
+            Ability ability;
+            RadialButton button;
+            int in;
+            float sizeRad = Mth.TWO_PI / amount;
+            float off = Mth.DEG_TO_RAD * 4;
+
+            Iterator<? extends Ability> it = abilities.iterator();
+            for(int i = 0; i < amount; i++){
+                ability = it.next();
+
+                in = lastAbilities.indexOf(ability);
+                if(in != -1){
+                    lastAbilities.remove(ability);
+                    button = buttons.remove(in);
+                    button.setRotation(Mth.HALF_PI + sizeRad * i + off).setSize(sizeRad - off * 2, Mth.DEG_TO_RAD * 8);
+                    button.rebuildMesh();
+                    newButtons.add(button);
+                    continue;
+                }
+
+                button = makeButton(ability)
+                        .setRotation(Mth.HALF_PI + sizeRad * i + off).setSize(sizeRad - off * 2, Mth.DEG_TO_RAD * 8);
+                button.rebuildMesh();
+                newButtons.add(button);
+            }
+
+            buttons.clear();
+            buttons.addAll(newButtons);
+            lastAbilities.clear();
+            lastAbilities.addAll(abilities);
         }
-        transfurType = TransfurManager.getTransfurType(minecraft.player);
 
-        buttons.clear();
+        int halfWidth = width / 2;
+        int halfHeight = height / 2;
 
-        List<? extends Ability> abilities = transfurType.abilities;
-        int amount = abilities.size();
-
-        if(amount == 0) {
-            minecraft.setScreen(null);
-            return;
-        }
-        if(amount == 1 && abilities.get(0).hasScreen()) {
-            minecraft.setScreen(abilities.get(0).getScreen(minecraft.player));
-            return;
-        }
-        selected = TransfurHandler.nonNullOf(minecraft.player).getSelectedAbility();
-        currentlyActive = abilities.indexOf(selected);
-
-        int sizeDeg = 360 / amount;
-        //int i = 90 - sizeDeg / 2;
-        int i = 90 + sizeDeg / 2;
-
-        for(int ii = 0; ii < amount; ii++){
-            addRadialButton(i, i += sizeDeg, halfWidth, halfHeight);
+        for(RadialButton button : buttons) {
+            button.setOrigin(halfWidth, halfHeight, 0);
+            addRenderableWidget(button);
         }
     }
 
-    @Override
-    protected int buttonColor(int button) {
-        if(button == selectedButton && !transfurType.abilities.get(selectedButton).isActive()) return Color.ORANGE.getRGB();
-        return super.buttonColor(button);
-    }
-
-    @Override
-    protected void renderIcon(GuiGraphics guiGraphics, int x, int y, float partialTick, int button) {
-        transfurType.abilities.get(button).drawIcon(minecraft.player, guiGraphics, x, y, false);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
-        if(super.mouseClicked(mouseX, mouseY, pButton)) return true;
-        if(selectedButton == -1) return false;
-
-        if(selectedButton == currentlyActive){
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            if(selected.hasScreen()) minecraft.setScreen(selected.getScreen(minecraft.player));
-            return true;
-        }
-
-        Ability selected = transfurType.abilities.get(selectedButton);
-
-        if(pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT || !selected.isActive()){
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-            if(selected.hasScreen()) minecraft.setScreen(selected.getScreen(minecraft.player));
-            return true;
-        }
-
-        if(!transfurType.abilities.get(selectedButton).isActive()) return true;
-        currentlyActive = selectedButton;
-
-        PacketDistributor.sendToServer(
-                new ServerboundSelectAbilityPacket(AbilityUtils.abilityIdOf(transfurType.abilities.get(currentlyActive))));
-
+    protected boolean click(int button, @NotNull Ability ability){
+        Ability selected = holder.getSelectedAbility();
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+
+        if(ability == selected){
+            if(selected.hasScreen()) minecraft.setScreen(selected.getScreen(minecraft.player));
+            return true;
+        }
+
+        if(ability.isPassive()){
+            if(ability.hasScreen()) minecraft.setScreen(ability.getScreen(minecraft.player));
+            return true;
+        }
+
+        if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+            if(ability.hasScreen()) minecraft.setScreen(ability.getScreen(minecraft.player));
+            //return true;//TODO switch selected or just open the menu of clicked ability?
+        }
+
+        holder.selectAbility(ability);
         return true;
     }
 
@@ -109,19 +167,9 @@ public class AbilitySelectionScreen extends AbstractRadialMenuScreen {
             minecraft.setScreen(null);
             return;
         }
-        if(!TransfurManager.isTransfurred(minecraft.player)) {//TMP a bit of hardcoding until more abilities are added to non tf players
-            minecraft.setScreen(new GrabAbilityPlayerScreen());
-            return;
-        }
-        if(TransfurManager.getTransfurType(minecraft.player) != transfurType) {
-            init();
-        } else {
-            Ability newSelected = TransfurHandler.nonNullOf(minecraft.player).getSelectedAbility();
-            if (newSelected != selected) {
-                selected = newSelected;
-                currentlyActive = transfurType.abilities.indexOf(selected);
-            }
-        }
+
+        SequencedSet<? extends Ability> abilities = holder.getAbilities();
+        if(abilities.size() != lastAbilities.size() || !abilities.containsAll(lastAbilities)) init();
     }
 
     @Override

@@ -13,11 +13,11 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,9 +30,9 @@ public class LatexManipulator extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand pUsedHand) {
-        if(level.isClientSide || pUsedHand != InteractionHand.MAIN_HAND) return super.use(level, player, pUsedHand);
-        ItemStack manipulator = player.getItemInHand(pUsedHand);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        if(level.isClientSide || usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand);
+        ItemStack manipulator = player.getItemInHand(usedHand);
         DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> transfurType = ComponentRegistry.TRANSFUR_TYPE;
 
         if(player.isCrouching()){
@@ -46,9 +46,9 @@ public class LatexManipulator extends Item {
             if(TransfurManager.isTransfurred(player)){
                 handler.unTransfur(TransfurContext.UNTRANSFUR);             //success unTF
             } else if(manipulator.has(transfurType)) {
-                TransfurType transfurType1 = TransfurManager.getTransfurType(manipulator.get(transfurType));
+                TransfurType<?> transfurType1 = TransfurManager.getTransfurType(manipulator.get(transfurType));
                 if(transfurType1 == null) return InteractionResultHolder.pass(manipulator);
-                handler.transfur(transfurType1, TransfurContext.TRANSFUR_TF);//success, tf
+                handler.transfur(transfurType1, TransfurContext.TRANSFUR);//success, tf
             } else return InteractionResultHolder.pass(manipulator);
         }
 

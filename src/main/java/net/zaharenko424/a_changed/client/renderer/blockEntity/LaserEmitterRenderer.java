@@ -12,10 +12,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.block.LaserEmitterEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,7 +33,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     private final ModelPart beam;
 
     public LaserEmitterRenderer(){
-        beam = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("beam");
+        beam = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("beam");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){
@@ -48,19 +53,22 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     }
 
     @Override
-    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
+    public void render(LaserEmitterEntity emitter, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if(!emitter.isActive()) return;
-        poseStack.pushPose();
-        poseStack.translate(.5,0,.5);
+
+        MatrixStack.push(stack);
+        stack.translate(.5,0,.5);
+
         beam.resetPose();
         setupBeam(emitter.getDirection(), emitter.getLaserLength());
-        beam.render(poseStack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), light, OverlayTexture.NO_OVERLAY);
-        poseStack.popPose();
+        beam.render(stack, buffer.getBuffer(RenderType.beaconBeam(TEXTURE, false)), packedLight, OverlayTexture.NO_OVERLAY);
+
+        MatrixStack.pop(stack);
     }
 
-    protected void setupBeam(Direction direction, int length){
+    protected void setupBeam(Direction direction, float length){
         beam.zScale = length;
-        float offset = (.5f + (float) length / 2) * 16;
+        float offset = (.5f + length / 2) * 16;
         switch (direction){
             case NORTH -> beam.z -= offset;
             case SOUTH -> beam.z += offset;

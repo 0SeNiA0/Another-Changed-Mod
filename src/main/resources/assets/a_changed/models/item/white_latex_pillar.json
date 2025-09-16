@@ -1,0 +1,41 @@
+{
+  "loader": "neoforge:obj",
+  "model": "a_changed:models/item/white_latex_pillar/white_latex_pillar.obj",
+  "textures": {
+    "texture0": "a_changed:block/white_latex_block",
+    "particle": "#texture0"
+  },
+  "emissive_ambient": false,
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 2.5, 0],
+      "scale": [0.375, 0.375, 0.375]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 2.5, 0],
+      "scale": [0.375, 0.375, 0.375]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 45, 0],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 225, 0],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "ground": {
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, -2.25, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "fixed": {
+      "translation": [0, -1.75, 0],
+      "scale": [0.5, 0.5, 0.5]
+    }
+  }
+}

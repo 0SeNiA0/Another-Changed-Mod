@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class WallSign extends WallSignBlock {
 
-    public WallSign(Properties pProperties, WoodType pType) {
-        super(pType, pProperties);
+    public WallSign(Properties properties, WoodType woodType) {
+        super(woodType, properties);
     }
 
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new SignEntity(pPos, pState);
+    public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new SignEntity(pos, state);
     }
 }

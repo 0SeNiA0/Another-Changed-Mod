@@ -17,11 +17,14 @@ public class Keybindings {
             InputConstants.Type.KEYSYM, InputConstants.KEY_M, CATEGORY);
 
     public static final KeyMapping QUICK_SELECT_ABILITY_1 = new KeyMapping(name(".quick_select_ability_1"), KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM, InputConstants.KEY_ESCAPE, CATEGORY);
+            InputConstants.Type.KEYSYM, -1, CATEGORY);
     public static final KeyMapping QUICK_SELECT_ABILITY_2 = new KeyMapping(name(".quick_select_ability_2"), KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM, InputConstants.KEY_ESCAPE, CATEGORY);
+            InputConstants.Type.KEYSYM, -1, CATEGORY);
     public static final KeyMapping QUICK_SELECT_ABILITY_3 = new KeyMapping(name(".quick_select_ability_3"), KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM, InputConstants.KEY_ESCAPE, CATEGORY);
+            InputConstants.Type.KEYSYM, -1, CATEGORY);
+
+    public static final KeyMapping MODEL_MANAGER = new KeyMapping(name(".model_manager"), KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, InputConstants.KEY_I, CATEGORY);
 
     @Contract(pure = true)
     private static @NotNull String name(String str){

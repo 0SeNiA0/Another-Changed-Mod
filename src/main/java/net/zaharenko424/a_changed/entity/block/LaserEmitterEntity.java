@@ -10,19 +10,24 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.LaserEmitter;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.zaharenko424.a_changed.AChangedTags;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.block.LaserEmitter;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.util.DynamicClipContext;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -34,67 +39,67 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class LaserEmitterEntity extends BlockEntity {
 
-    private boolean active;
-    private int lengthCache = 0;
-    private Direction directionCache = getBlockState().getValue(LaserEmitter.FACING);
+    private static final int MAX_LENGTH = 32;
+
+    private float lengthCache = 0;
+    private Direction directionCache;
     private AABB aabbCache;
     private int tick;
 
-    public LaserEmitterEntity(BlockPos p_155229_, BlockState p_155230_) {
-        super(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), p_155229_, p_155230_);
-        active = p_155230_.getValue(StateProperties.ACTIVE);
+    public LaserEmitterEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.LASER_EMITTER_ENTITY.get(), pos, state);
     }
+
 
     public boolean isActive(){
-        return active;
+        return getBlockState().getValue(StateProperties.ACTIVE);
     }
 
-    public int getLaserLength(){
+    public float getLaserLength(){
         return lengthCache;
     }
 
     public Direction getDirection(){
-        return directionCache;
+        return getBlockState().getValue(LaserEmitter.FACING);
     }
 
     public AABB getLaserAABB(){
-        return aabbCache != null ? aabbCache : new AABB(worldPosition);
+        if(aabbCache == null) aabbCache = new AABB(worldPosition);
+        return aabbCache;
     }
 
-    public void switchActive(){
-        active = !active;
-    }
 
     public void tick(){
-        if(!active) return;
+        BlockState state = getBlockState();
+        if(!state.getValue(StateProperties.ACTIVE)) return;
         tick++;
         if(tick < 10) return;
         tick = 0;
 
-        directionCache = getBlockState().getValue(LaserEmitter.FACING);
-        BlockPos.MutableBlockPos pos = worldPosition.mutable();
-        BlockState state;
-        int length = 0;
+        Direction direction = state.getValue(LaserEmitter.FACING);
 
-        while (length <= 20){
-            pos.move(directionCache);
-            state = level.getBlockState(pos);
-            if(!state.is(AChanged.LASER_TRANSPARENT)) break;
-            length++;
-        }
+        Vec3 center = worldPosition.getCenter();
+        Vec3 start = center.relative(direction, .5);
+        BlockHitResult result = level.clip(new DynamicClipContext(start, center.relative(direction,  MAX_LENGTH + 1.5),
+                (state1, level, pos, context) ->
+                        state1.is(AChangedTags.Block.LASER_TRANSPARENT)
+                                ? Shapes.empty()
+                                : ClipContext.Block.COLLIDER.get(state1, level, pos, context),
+                ClipContext.Fluid.NONE::canPick, CollisionContext.empty()));
 
-        if(lengthCache == length){
+        float length = (float) result.getLocation().distanceTo(start);
+
+        if(lengthCache == length && direction == directionCache){
             transfurEntities();
             return;
         }
-        lengthCache = length;
 
-        float halfLength = (float) length / 2;
+        lengthCache = length;
+        directionCache = direction;
+
         Vector3f step = directionCache.step();
-        aabbCache = new AABB(worldPosition.relative(directionCache))
-                .deflate(step.x == 0 ? .25f : 0, step.y == 0 ? .25f : 0, step.z == 0 ? .25f : 0)
-                .inflate(Math.abs(step.x) * halfLength, Math.abs(step.y) * halfLength, Math.abs(step.z) * halfLength)
-                .move(new Vec3(step.mul(halfLength)));
+        aabbCache = new AABB(start, result.getLocation())
+                .inflate(step.x == 0 ? .25 : 0, step.y == 0 ? .25f : 0, step.z == 0 ? .25f : 0);
 
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
 
@@ -102,10 +107,11 @@ public class LaserEmitterEntity extends BlockEntity {
     }
 
     protected void transfurEntities(){
-        level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTarget).forEach(entity -> {
+        level.getEntitiesOfClass(LivingEntity.class, aabbCache, DamageSources::checkTFTarget).forEach(entity -> {
             if(!entity.getItemBySlot(EquipmentSlot.LEGS).is(ItemRegistry.BLACK_LATEX_SHORTS.get())) return;
-            TransfurHandler handler = TransfurHandler.of(entity);
-            if(handler != null) handler.transfur(TransfurRegistry.BENIGN_TF.get(), TransfurContext.TRANSFUR_DEF);
+
+            TransfurHandler handler = TransfurHandler.nonNullOf(entity);
+            handler.transfur(TransfurRegistry.BENIGN_TF.get(), TransfurContext.DEF);
         });
     }
 
@@ -118,9 +124,7 @@ public class LaserEmitterEntity extends BlockEntity {
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider lookup) {
         CompoundTag tag = new CompoundTag();
-        tag.putBoolean("active", active);
-        tag.putInt("length", lengthCache);
-        tag.putString("direction", directionCache.toString());
+        tag.putFloat("length", lengthCache);
         NBTUtils.putAABB(tag, aabbCache != null ? aabbCache : new AABB(worldPosition));
         return tag;
     }
@@ -132,9 +136,7 @@ public class LaserEmitterEntity extends BlockEntity {
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
-        active = tag.getBoolean("active");
-        lengthCache = tag.getInt("length");
-        directionCache = Direction.byName(tag.getString("direction"));
+        lengthCache = tag.getFloat("length");
         aabbCache = NBTUtils.getAABB(tag);
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.LocalPlayerExtension;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,8 +24,8 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
     @Unique
     float achanged$targetYRot, achanged$targetXRot, achanged$speed;
 
-    public MixinLocalPlayer(Level pLevel, BlockPos pPos, float pYRot, GameProfile pGameProfile) {
-        super(pLevel, pPos, pYRot, pGameProfile);
+    public MixinLocalPlayer(Level level, BlockPos pos, float yRot, GameProfile gameProfile) {
+        super(level, pos, yRot, gameProfile);
     }
 
     /**
@@ -34,8 +34,8 @@ public abstract class MixinLocalPlayer extends Player implements LocalPlayerExte
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;canElytraFly(Lnet/minecraft/world/entity/LivingEntity;)Z"),
             method = "aiStep")
     private boolean onFlyElytraCheck(boolean original) {
-        if(TransfurManager.hasFallFlyingAbility(this)) return true;
-        return  original;
+        if(AbilityUtils.hasFallFlyingAbility(this)) return true;
+        return original;
     }
 
     /**

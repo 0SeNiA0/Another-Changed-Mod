@@ -20,8 +20,8 @@ public class NoteEntity extends BlockEntity {
     private List<String> text = new ArrayList<>();
     private boolean finalized = false;
 
-    public NoteEntity(BlockPos p_155229_, BlockState p_155230_) {
-        super(BlockEntityRegistry.NOTE_ENTITY.get(), p_155229_, p_155230_);
+    public NoteEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.NOTE_ENTITY.get(), pos, state);
     }
 
     public boolean isFinalized(){
@@ -39,17 +39,17 @@ public class NoteEntity extends BlockEntity {
     }
 
     @Override
-    public void loadAdditional(CompoundTag p_155245_, HolderLookup.@NotNull Provider lookup) {
-        super.loadAdditional(p_155245_, lookup);
-        CompoundTag modTag = NBTUtils.modTag(p_155245_);
+    public void loadAdditional(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.loadAdditional(tag, lookup);
+        CompoundTag modTag = NBTUtils.modTag(tag);
         NBTUtils.readFromTag(modTag,text);
         finalized = modTag.getBoolean("finalized");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag p_187471_, HolderLookup.@NotNull Provider lookup) {
-        super.saveAdditional(p_187471_, lookup);
-        CompoundTag modTag = NBTUtils.modTag(p_187471_);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.@NotNull Provider lookup) {
+        super.saveAdditional(tag, lookup);
+        CompoundTag modTag = NBTUtils.modTag(tag);
         NBTUtils.writeToTag(modTag, text);
         modTag.putBoolean("finalized", finalized);
     }

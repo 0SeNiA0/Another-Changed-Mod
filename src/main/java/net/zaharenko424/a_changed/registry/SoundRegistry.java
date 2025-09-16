@@ -11,6 +11,7 @@ public class SoundRegistry {
 
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, AChanged.MODID);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOW1 = registerVariableRange("blow1");
     public static final DeferredHolder<SoundEvent, SoundEvent> BUTTON_PRESSED = registerVariableRange("button_pressed");
     public static final DeferredHolder<SoundEvent, SoundEvent> COMPRESSOR = registerVariableRange("compressor");
     public static final DeferredHolder<SoundEvent, SoundEvent> DOOR_CLOSE = registerVariableRange("door_close");
@@ -26,6 +27,7 @@ public class SoundRegistry {
     public static final DeferredHolder<SoundEvent, SoundEvent> SMART_SEWAGE_CONSUME = registerVariableRange("smart_sewage_absorb");
     public static final DeferredHolder<SoundEvent, SoundEvent> SPACE_DOOR_CLOSE = registerVariableRange("space_door_close");
     public static final DeferredHolder<SoundEvent, SoundEvent> SPACE_DOOR_OPEN = registerVariableRange("space_door_open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SWITCH = registerVariableRange("switch1");
     public static final DeferredHolder<SoundEvent, SoundEvent> TRANSFUR = registerVariableRange("transfur");
     public static final DeferredHolder<SoundEvent, SoundEvent> TRANSFUR_1 = registerVariableRange("transfur_1");
     //SoundType ...

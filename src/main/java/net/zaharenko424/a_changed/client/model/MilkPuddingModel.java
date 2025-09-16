@@ -6,23 +6,24 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.util.Mth;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
-import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.NoYFlip;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.a_changed.entity.MilkPuddingEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class MilkPuddingModel extends EntityModel<MilkPuddingEntity> {
+public class MilkPuddingModel extends EntityModel<MilkPuddingEntity> implements NoYFlip {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(EntityRegistry.MILK_PUDDING.getId(), "main");
 
     private final ModelPart root;
 
     public MilkPuddingModel(){
-        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getChild("root");
+        root = ModelDefinitionCache.getInstance().bake(bodyLayer).getDirectChild("root");
     }
 
     @Override

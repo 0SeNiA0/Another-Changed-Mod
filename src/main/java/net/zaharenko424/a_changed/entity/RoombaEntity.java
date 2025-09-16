@@ -20,13 +20,13 @@ import java.util.EnumSet;
 
 public class RoombaEntity extends PathfinderMob {
 
-    public RoombaEntity(Level pLevel) {
-        super(EntityRegistry.ROOMBA_ENTITY.get(), pLevel);
+    public RoombaEntity(Level level) {
+        super(EntityRegistry.ROOMBA_ENTITY.get(), level);
     }
 
     @Override
     protected void registerGoals() {
-        WaterAvoidingRandomStrollGoal goal = new WaterAvoidingRandomStrollGoal(this, .5);
+        WaterAvoidingRandomStrollGoal goal = new WaterAvoidingRandomStrollGoal(this, .25);
         goal.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         goalSelector.addGoal(0, goal);
         goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -42,12 +42,22 @@ public class RoombaEntity extends PathfinderMob {
     }
 
     @Override
-    public boolean canAttack(@NotNull LivingEntity pTarget) {
+    public float maxUpStep() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return 0;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
         return false;
     }
 
     @Override
-    public boolean canAttack(@NotNull LivingEntity pLivingentity, @NotNull TargetingConditions pCondition) {
+    public boolean canAttack(@NotNull LivingEntity entity, @NotNull TargetingConditions condition) {
         return false;
     }
 

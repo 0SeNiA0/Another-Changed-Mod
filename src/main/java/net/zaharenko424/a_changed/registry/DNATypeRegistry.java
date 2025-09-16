@@ -19,8 +19,8 @@ public class DNATypeRegistry {
 
     public static final DeferredHolder<DNAType, DNAType> APPLE_DNA = DNA_TYPES.register("apple", ()-> new DNAType(Items.APPLE::getDefaultInstance));
     public static final DeferredHolder<DNAType, DNAType> CAT_DNA = entityDna("cat", EntityType.CAT);
-    public static final DeferredHolder<DNAType, DNAType> COD_DNA = entityDna("cod", EntityType.COD);
-    public static final DeferredHolder<DNAType, DNAType> SALMON_DNA = entityDna("salmon", EntityType.SALMON);
+    public static final DeferredHolder<DNAType, DNAType> COD_DNA = DNA_TYPES.register("cod", ()-> new DNAType(Items.COD::getDefaultInstance));
+    public static final DeferredHolder<DNAType, DNAType> SALMON_DNA = DNA_TYPES.register("salmon", ()-> new DNAType(Items.SALMON::getDefaultInstance));
     public static final DeferredHolder<DNAType, DNAType> WOLF_DNA = entityDna("wolf", EntityType.WOLF);
 
     private static @NotNull DeferredHolder<DNAType, DNAType> entityDna(String name, EntityType<?> entityType){

@@ -5,14 +5,22 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.ability.*;
+import net.zaharenko424.a_changed.ability.api.Ability;
 
 public class AbilityRegistry {
 
     public static final DeferredRegister<Ability> ABILITIES = DeferredRegister.create(AChanged.resourceLoc("transfur_abilities"), AChanged.MODID);
-    public static final Registry<Ability> ABILITY_REGISTRY = ABILITIES.makeRegistry(builder -> {});
+    public static final Registry<Ability> ABILITY_REGISTRY = ABILITIES.makeRegistry(builder -> builder.sync(true));
 
     public static final DeferredHolder<Ability, CatAbility> CAT_PASSIVE = ABILITIES
             .register("cat_ability", CatAbility::new);
+
+    public static final DeferredHolder<Ability, LatexPupAgingAbility> DL_PUP_AGE = ABILITIES
+            .register("dl_pup_age", () -> new LatexPupAgingAbility(pup ->
+                    (pup.getRandom().nextBoolean() ? TransfurRegistry.DARK_LATEX_WOLF_F_TF : TransfurRegistry.DARK_LATEX_WOLF_M_TF).get()));
+
+    public static final DeferredHolder<Ability, DLPupMeltAbility> DL_PUP_MELT = ABILITIES
+            .register("dl_pup_melt", DLPupMeltAbility::new);
 
     public static final DeferredHolder<Ability, FallFlyingAbility> FALL_FLYING_PASSIVE = ABILITIES
             .register("fall_flying_ability", FallFlyingAbility::new);
@@ -25,6 +33,10 @@ public class AbilityRegistry {
 
     public static final DeferredHolder<Ability, HypnosisAbility> HYPNOSIS_ABILITY = ABILITIES
             .register("hypnosis_ability", HypnosisAbility::new);
+
+    public static final DeferredHolder<Ability, ? extends LatexPupAgingAbility> WL_PUP_AGE = ABILITIES
+            .register("wl_pup_age", () -> new LatexPupAgingAbility(pup ->
+                    TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get()));
 
     public static final DeferredHolder<Ability, ? extends Ability> WOLF_PASSIVE = ABILITIES
             .register("wolf_ability", WolfAbility::new);

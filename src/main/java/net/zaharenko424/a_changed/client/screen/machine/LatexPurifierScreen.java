@@ -1,0 +1,60 @@
+package net.zaharenko424.a_changed.client.screen.machine;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.entity.block.machine.LatexPurifierEntity;
+import net.zaharenko424.a_changed.menu.machine.LatexPurifierMenu;
+import net.zaharenko424.a_changed.network.packets.ServerboundProcessingMachinePacket;
+import net.zaharenko424.cmrs.client.gui.WidgetHelper;
+import org.jetbrains.annotations.NotNull;
+
+public class LatexPurifierScreen extends AbstractMachineScreen<LatexPurifierEntity, LatexPurifierMenu> {
+
+    public static final ResourceLocation TEXTURE = AChanged.textureLoc("gui/latex_purifier");
+
+    public LatexPurifierScreen(LatexPurifierMenu menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title, true);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+        renderTooltip(guiGraphics, pMouseX, pMouseY);
+    }
+
+    @Override
+    protected void renderBg(@NotNull GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+        drawEnergySidebar(guiGraphics, entity.getEnergyConsumption(), 256, pPartialTick);
+        guiGraphics.blit(TEXTURE, leftPos, topPos, 175, 165, 0, 0, 175, 165, 256, 166);
+
+        int progress = entity.getProgress();
+        if(progress > 0) {
+            float progressBar = (float) progress / entity.getRecipeProcessingTime() * 24f;
+
+            WidgetHelper.blit(TEXTURE, guiGraphics.pose(), leftPos + 76, topPos + 35, progressBar, 16,
+                    176, 0, progressBar, 16, 256, 166);
+        }
+
+        if(!entity.isEnabled()){
+            guiGraphics.blit(TEXTURE, leftPos + 149, topPos + 60, 0, 176, 17, 20, 20, 256, 166);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(areaClicked(leftPos + 149, leftPos + 168, topPos + 60, topPos + 79, mouseX, mouseY)){
+            PacketDistributor.sendToServer(new ServerboundProcessingMachinePacket(entity.getBlockPos(), 0, entity.isEnabled() ? 0 : 1));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            return true;
+            //enable / disable
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+}

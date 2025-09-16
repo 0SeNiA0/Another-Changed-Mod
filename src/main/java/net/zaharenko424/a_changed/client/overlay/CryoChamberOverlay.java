@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.CryoChamber;
+import net.zaharenko424.a_changed.block.CryoChamber;
 import net.zaharenko424.a_changed.entity.block.CryoChamberEntity;
 
 public class CryoChamberOverlay {

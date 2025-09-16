@@ -3,9 +3,14 @@ package net.zaharenko424.a_changed.datagen.worldgen.biome;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.*;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.a_changed.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,9 +18,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class WhiteLatexBiome {
 
+    public static final ResourceKey<ConfiguredFeature<?,?>> WHITE_LATEX_PILLAR = Utils.resourceKey(Registries.CONFIGURED_FEATURE, "white_latex_pillar");
+    public static final ResourceKey<PlacedFeature> WHITE_LATEX_PILLAR_PLACED = Utils.resourceKey(Registries.PLACED_FEATURE, "white_latex_pillar");
+
     public static @NotNull Biome biome(BootstrapContext<Biome> context){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
+        spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.PURE_WHITE_LATEX_WOLF.get(), 100, 1, 3));
+        spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_PUP.get(), 50, 1, 2));
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_FEMALE.get(), 100, 1, 3));
         spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityRegistry.WHITE_LATEX_WOLF_MALE.get(), 100, 1, 3));
 
@@ -26,6 +36,8 @@ public class WhiteLatexBiome {
         //we need to follow the same order as vanilla biomes for the BiomeDefaultFeatures
         DarkLatexBiome.globalOverworldGeneration(biomeBuilder);
         BiomeDefaultFeatures.addDefaultOres(biomeBuilder);
+
+        biomeBuilder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WHITE_LATEX_PILLAR_PLACED);
 
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(false)

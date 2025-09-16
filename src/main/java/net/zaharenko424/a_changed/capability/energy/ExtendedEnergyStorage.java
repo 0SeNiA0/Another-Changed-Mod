@@ -49,16 +49,18 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
         return maxExtract;
     }
 
-    /**
-     * Only used to override maxReceive/maxExtract checks
-     * @param amount amount of energy to add
-     */
-    public void addEnergy(int amount){
+    public void consumeEnergy(int amount){
+        if(amount < 0) return;
+        setEnergy(energy - amount);
+    }
+
+    public void produceEnergy(int amount){
+        if(amount < 0) return;
         setEnergy(energy + amount);
     }
 
     protected void setEnergy(int amount){
-        energy = Math.min(amount, capacity);
+        energy = Math.max(0, Math.min(amount, capacity));
         onEnergyChanged();
     }
 
@@ -112,7 +114,7 @@ public class ExtendedEnergyStorage implements IEnergyStorage, INBTSerializable<T
      * @return
     Amount of energy that was (or would have been, if simulated) transferred from this storage to provided one.
      */
-    public int transferEnergyTo(IEnergyStorage receiver, int amount, boolean simulate){
+    public int transferEnergyTo(@NotNull IEnergyStorage receiver, int amount, boolean simulate){
         if(amount < 0 || isEmpty() || !canExtract() || !receiver.canReceive()) return 0;
         int canGive = extractEnergy(amount, true);
         int canReceive = receiver.receiveEnergy(amount, true);

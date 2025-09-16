@@ -4,9 +4,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.registry.CriterionTriggerRegistry;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
+import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,37 +17,53 @@ import org.jetbrains.annotations.Nullable;
 public class TransfurredEvent extends Event {
 
     private final LivingEntity entity;
-    private final AbstractLatexBeast latex;
-    private final TransfurType transfurType;
+    private final LatexBeast latex;
+    private final TransfurType<?> previous;
+    private final TransfurType<?> transfurType;
+    private final TransfurContext context;
     private final DamageSource source;
 
     @ApiStatus.Internal
-    public TransfurredEvent(LivingEntity entity, AbstractLatexBeast latex, TransfurType transfurType){
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType<?> transfurType, TransfurContext context){
+        this(entity, latex, null, transfurType, context, entity.getLastDamageSource());
+    }
+
+    @ApiStatus.Internal
+    public TransfurredEvent(LivingEntity entity, LatexBeast latex, TransfurType<?> previous, TransfurType<?> transfurType, TransfurContext context, DamageSource source){
         this.entity = entity;
         this.latex = latex;
+        this.previous = previous;
         this.transfurType = transfurType;
-        this.source = entity.getLastDamageSource();
+        this.context = context;
+        this.source = source;
 
-        if(entity instanceof ServerPlayer player) {
-            AChanged.PLAYER_TRANSFURRED.get().trigger(player, source, transfurType);
-        } else {
-            if(source != null && source.getEntity() instanceof ServerPlayer player){
-                AChanged.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
-            }
+        if(entity instanceof ServerPlayer player && entity.isAlive()) {
+            CriterionTriggerRegistry.PLAYER_TRANSFURRED_NO_DEATH.get().trigger(player, source, transfurType);
         }
 
+        if(source != null && source.getEntity() instanceof ServerPlayer player){
+            CriterionTriggerRegistry.PLAYER_TRANSFURRED_ENTITY.get().trigger(player, source, transfurType);
+        }
     }
 
     public LivingEntity getEntity(){
         return entity;
     }
 
-    public @Nullable AbstractLatexBeast getLatex() {
+    public @Nullable LatexBeast getLatex() {
         return latex;
     }
 
-    public TransfurType getTransfurType(){
+    public @Nullable TransfurType<?> getPrevious(){
+        return previous;
+    }
+
+    public TransfurType<?> getTransfurType(){
         return transfurType;
+    }
+
+    public TransfurContext getContext() {
+        return context;
     }
 
     public @Nullable DamageSource getSource(){

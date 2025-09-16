@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.zaharenko424.a_changed.block.ISeatBlock;
+import net.zaharenko424.a_changed.block.SeatBlock;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.util.NBTUtils;
 import org.jetbrains.annotations.NotNull;
@@ -43,20 +43,20 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    public boolean shouldRender(double p_20296_, double p_20297_, double p_20298_) {
+    public boolean shouldRender(double x, double y, double z) {
         return false;
     }
 
     @Override
-    protected void addPassenger(@NotNull Entity p_20349_) {
-        if(!entityData.get(RENDER_PLAYER)) p_20349_.setInvisible(true);
-        super.addPassenger(p_20349_);
+    protected void addPassenger(@NotNull Entity passenger) {
+        if(!entityData.get(RENDER_PLAYER)) passenger.setInvisible(true);
+        super.addPassenger(passenger);
     }
 
     @Override
-    protected void removePassenger(@NotNull Entity p_20352_) {
-        super.removePassenger(p_20352_);
-        if(p_20352_ instanceof LivingEntity entity && !entity.hasEffect(MobEffects.INVISIBILITY)) p_20352_.setInvisible(false);
+    protected void removePassenger(@NotNull Entity passenger) {
+        super.removePassenger(passenger);
+        if(passenger instanceof LivingEntity entity && !entity.hasEffect(MobEffects.INVISIBILITY)) passenger.setInvisible(false);
     }
 
     private int tick = 0;
@@ -64,7 +64,7 @@ public class SeatEntity extends Entity {
     public void tick() {
         tick++;
         if(tick % 20 == 0){
-            if(!(level().getBlockState(blockPosition()).getBlock() instanceof ISeatBlock)){
+            if(!(level().getBlockState(blockPosition()).getBlock() instanceof SeatBlock)){
                 if(isVehicle()) getFirstPassenger().stopRiding();
                 discard();
                 return;
@@ -79,12 +79,12 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(@NotNull CompoundTag p_20052_) {
-        entityData.set(RENDER_PLAYER, NBTUtils.modTag(p_20052_).getBoolean("renderPlayer"));
+    protected void readAdditionalSaveData(@NotNull CompoundTag tag) {
+        entityData.set(RENDER_PLAYER, NBTUtils.modTag(tag).getBoolean("renderPlayer"));
     }
 
     @Override
-    protected void addAdditionalSaveData(@NotNull CompoundTag p_20139_) {
-        NBTUtils.modTag(p_20139_).putBoolean("renderPlayer", entityData.get(RENDER_PLAYER));
+    protected void addAdditionalSaveData(@NotNull CompoundTag tag) {
+        NBTUtils.modTag(tag).putBoolean("renderPlayer", entityData.get(RENDER_PLAYER));
     }
 }

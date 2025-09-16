@@ -7,30 +7,21 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundSmoothLookPacket;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
-import static net.zaharenko424.a_changed.registry.EntityRegistry.WHITE_LATEX_WOLF_MALE;
 import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.TRANSFUR_TOLERANCE;
-import static net.zaharenko424.a_changed.transfurSystem.TransfurManager.getTransfurEntity;
 
 public class TransfurUtils {
 
@@ -41,64 +32,34 @@ public class TransfurUtils {
 
         if(handler.isTransfurred() || handler.isBeingTransfurred()) return;
         if(handler.getTransfurProgress() >= TRANSFUR_TOLERANCE && handler.getTransfurType() != null)
-            handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
+            handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     };
 
-    public static void addModifiers(LivingEntity holder, TransfurType transfurType){
-        AttributeMap map = holder.getAttributes();
-        AttributeInstance[] instance = new AttributeInstance[1];
-        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
-            if(!map.hasAttribute(attribute)){
-                AChanged.LOGGER.error("Attempted to add transfur modifier to not existing attribute {} {}", attribute, transfurType);
-                return;
-            }
-
-            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
-                float maxHealthO = holder.getMaxHealth();
-                instance[0] = map.getInstance(attribute);
-                for(AttributeModifier modifier : modifiers){
-                    instance[0].addTransientModifier(modifier);
-                }
-                float diff = holder.getMaxHealth() - maxHealthO;
-                if(diff > 0) holder.setHealth(holder.getHealth() + diff);
-                return;
-            }
-
-            instance[0] = map.getInstance(attribute);
-            for(AttributeModifier modifier : modifiers){
-                instance[0].addTransientModifier(modifier);
-            }
-        });
+    public static void addModifiers(@NotNull LivingEntity holder, @NotNull TransfurType<?> transfurType){
+        float maxHealthO = holder.getMaxHealth();
+        holder.getAttributes().addTransientAttributeModifiers(transfurType.modifiers);
+        float maxHealth = holder.getMaxHealth();
+        float diff = maxHealth - maxHealthO;
+        if(diff > 0) {
+            holder.setHealth(holder.getHealth() + diff);
+            return;
+        }
+        if(holder.getHealth() > maxHealth) holder.setHealth(maxHealth);
     }
 
-    public static void removeModifiers(LivingEntity holder, TransfurType transfurType){
-        AttributeMap map = holder.getAttributes();
-        AttributeInstance[] instance = new AttributeInstance[1];
-        transfurType.modifiers.asMap().forEach((attribute, modifiers) -> {
-            if(!map.hasAttribute(attribute)) return;
-
-            if(holder instanceof Player && attribute == Attributes.MAX_HEALTH){
-                float maxHealthO = holder.getMaxHealth();
-                instance[0] = map.getInstance(attribute);
-                for(AttributeModifier modifier : modifiers){
-                    instance[0].removeModifier(modifier);
-                }
-                if(holder.getMaxHealth() - maxHealthO < 0) holder.setHealth(holder.getMaxHealth());
-                return;
-            }
-
-            instance[0] = map.getInstance(attribute);
-            for(AttributeModifier modifier : modifiers){
-                instance[0].removeModifier(modifier);
-            }
-        });
+    public static void removeModifiers(@NotNull LivingEntity holder, @NotNull TransfurType<?> transfurType){
+        holder.getAttributes().removeAttributeModifiers(transfurType.modifiers);
+        if(holder.getHealth() > holder.getMaxHealth()) holder.setHealth(holder.getMaxHealth());
     }
 
-    public static AbstractLatexBeast spawnLatex(@NotNull TransfurType transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
-        return Objects.requireNonNullElseGet(getTransfurEntity(transfurType.id), WHITE_LATEX_WOLF_MALE).spawn(level, pos, MobSpawnType.CONVERSION);
+    /**
+     * Returned entity can be safely cast to LivingEntity.
+     */
+    public static <T extends LivingEntity & LatexBeast> T spawnLatex(@NotNull TransfurType<T> transfurType, @NotNull ServerLevel level, @NotNull BlockPos pos){
+        return transfurType.getEntityType().spawn(level, pos, MobSpawnType.CONVERSION);
     }
 
-    public static Vec2 targetLookAngles(Vec3 looker, Vec3 target){
+    public static Vec2 targetLookAngles(@NotNull Vec3 looker, @NotNull Vec3 target){
         double dx = target.x() - looker.x();
         double dy = target.y() - looker.y();
         double dz = target.z() - looker.z();
@@ -117,7 +78,7 @@ public class TransfurUtils {
      * @param speed applies only to players. Dictates the speed with which the player will look at target.
      * @return whether the looker was pointed to target
      */
-    public static boolean smoothLookAt(LivingEntity looker, EntityAnchorArgument.Anchor anchor, Vec3 target, boolean mustSee, float speed){
+    public static boolean smoothLookAt(@NotNull LivingEntity looker, @NotNull EntityAnchorArgument.Anchor anchor, @NotNull Vec3 target, boolean mustSee, float speed){
         if(looker.level().isClientSide) return false;
 
         Vec3 lookerPos = anchor.apply(looker);

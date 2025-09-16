@@ -91,7 +91,7 @@ public class PileOfOrangesEntity extends BlockEntity {
         if(oranges.isEmpty()) return Shapes.empty();
         if(!changed) return cache;
         changed = false;
-        cache = oranges.get(0).getKey().shape;
+        cache = oranges.getFirst().getKey().shape;
         for(int i = 1; i < oranges.size(); i++){
             cache = Shapes.or(cache, oranges.get(i).getKey().shape);
         }

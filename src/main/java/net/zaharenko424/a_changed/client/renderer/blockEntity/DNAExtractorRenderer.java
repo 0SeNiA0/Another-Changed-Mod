@@ -1,7 +1,6 @@
 package net.zaharenko424.a_changed.client.renderer.blockEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -9,27 +8,28 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
-import net.zaharenko424.a_changed.entity.block.machines.DNAExtractorEntity;
-import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
+import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
+import net.zaharenko424.cmrs.api.MatrixStack;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEntity> {
 
-    public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.DNA_EXTRACTOR_ENTITY.getId(), "main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/dna_extractor_entity");
     private final ModelPart root;
     private final ModelPart[] tubes = new ModelPart[4];
 
     public DNAExtractorRenderer(){
-        root = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
-        tubes[0] = root.getChild("tube0");
-        tubes[1] = root.getChild("tube1");
-        tubes[2] = root.getChild("tube2");
-        tubes[3] = root.getChild("tube3");
+        root = bodyLayer().bake().getDirectChild("root");
+        tubes[0] = root.getDirectChild("tube0");
+        tubes[1] = root.getDirectChild("tube1");
+        tubes[2] = root.getDirectChild("tube2");
+        tubes[3] = root.getDirectChild("tube3");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){
@@ -59,20 +59,23 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     }
 
     @Override
-    public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource pBuffer, int packedLight, int pPackedOverlay) {
+    public void render(@NotNull DNAExtractorEntity extractor, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource source, int packedLight, int packedOverlay) {
         prepareTubes();
-        ItemStackHandler inv = extractor.getInventory();
-        for(int i = 0; i < 4; i++){
-            if(inv.getStackInSlot(i).isEmpty()) continue;
-            tubes[i].visible = true;
+
+        if(extractor.hasRecipe()) {
+            for (int i = 0; i < extractor.getParallelRecipes(); i++) {
+                tubes[i].visible = true;
+            }
         }
 
-        root.yRot = Mth.rotLerp(partialTick, extractor.getRotO(), extractor.getRot()) * Mth.DEG_TO_RAD;
+        int rotO = extractor.getRotO();
+        int rot = extractor.getRot();
+        root.yRot = Mth.lerp(partialTick, rotO, rotO > rot ? rot + 360 : rot) * Mth.DEG_TO_RAD;
 
-        poseStack.pushPose();
-        poseStack.translate(.5,0,.5);
-        root.render(poseStack, pBuffer.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
-        poseStack.popPose();
+        MatrixStack.push(stack);
+        stack.translate(.5,0,.5);
+        root.render(stack, source.getBuffer(RenderType.entityTranslucent(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
+        MatrixStack.pop(stack);
     }
 
     private void prepareTubes(){

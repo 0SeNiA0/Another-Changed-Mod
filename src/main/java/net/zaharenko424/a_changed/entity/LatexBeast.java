@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.entity;
 
+import com.mojang.datafixers.util.Unit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -36,13 +37,14 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.GrabData;
+import net.zaharenko424.a_changed.attachment.GrabData;
 import net.zaharenko424.a_changed.entity.ai.behaviour.attack.TryGrab;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.InvalidateWithCallback;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
+import net.zaharenko424.a_changed.registry.ActivityRegistry;
 import net.zaharenko424.a_changed.registry.MemoryTypeRegistry;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.worldgen.Biomes;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,8 +53,8 @@ import java.util.Map;
 
 public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<LatexBeast> {
 
-    public LatexBeast(@NotNull EntityType<? extends Monster> p_21368_, @NotNull Level p_21369_, @NotNull TransfurType transfurType) {
-        super(p_21368_, p_21369_, transfurType);
+    public LatexBeast(@NotNull EntityType<? extends Monster> type, @NotNull Level level, @NotNull TransfurType<?> transfurType) {
+        super(type, level, transfurType);
         ((GroundPathNavigation)navigation).setCanOpenDoors(true);
     }
 
@@ -61,7 +63,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     }
 
     @Override
-    protected @NotNull PathNavigation createNavigation(@NotNull Level pLevel) {
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         return new SmoothGroundNavigation(this, level());
     }
 
@@ -94,7 +96,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
 
     @Override
     public List<Activity> getActivityPriorities() {
-        return List.of(AChanged.TRANSFUR_HOLD.get(), AChanged.TRANSFUR_ATTACK.get(), Activity.FIGHT, Activity.IDLE);
+        return List.of(ActivityRegistry.TRANSFUR_HOLD.get(), ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), ActivityRegistry.TRANSFUR_ATTACK.get(), Activity.FIGHT, Activity.IDLE);
     }
 
     @Override
@@ -117,7 +119,6 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     public static final int LOOK_RANGE_SQR = 6 * 6;
 
     @Override
-    @SuppressWarnings("unchecked")
     public BrainActivityGroup<? extends LatexBeast> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 targetRetaliateLook(LOOK_RANGE_SQR),
@@ -131,7 +132,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     @Override
     public BrainActivityGroup<? extends LatexBeast> getFightTasks() {// Retaliate redirects here
         return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrNonTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
+                new InvalidateAttackTarget<LatexBeast>().whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                 new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump? 1 ~= 3 blocks
                 new SetWalkTargetToAttackTarget<>(),
                 new AnimatableMeleeAttack<>(0)
@@ -142,7 +143,7 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
     @SuppressWarnings("unchecked")
     public Map<Activity, BrainActivityGroup<? extends LatexBeast>> getAdditionalTasks() {//  TargetTransfurrable goes here
         return Map.of(
-                AChanged.TRANSFUR_ATTACK.get(), new BrainActivityGroup<LatexBeast>(AChanged.TRANSFUR_ATTACK.get()).behaviours(
+                ActivityRegistry.TRANSFUR_ATTACK.get(), new BrainActivityGroup<LatexBeast>(ActivityRegistry.TRANSFUR_ATTACK.get()).behaviours(
                         new InvalidateAttackTarget<LatexBeast>().invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity)).whenStopping(latex -> BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET)),
                         new ReactToUnreachableTarget<>().reaction((latex, flag) -> latex.setDeltaMovement(latex.getDeltaMovement().add(0, .75, 0))),//TODO jump?
                         new SetWalkTargetToAttackTarget<>(),
@@ -152,21 +153,34 @@ public class LatexBeast extends AbstractLatexBeast implements SmartBrainOwner<La
                         new FirstApplicableBehaviour<>(
                                 new TryGrab<>(),
                                 new AnimatableMeleeAttack<>(0)
+                                        .startCondition(latex -> latex.getTarget() != null && !TransfurManager.isGrabbed(latex.getTarget()))
                         )
                 ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
                 .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRYING_TO_TRANSFUR.get()),
 
-                AChanged.TRANSFUR_HOLD.get(), new BrainActivityGroup<LatexBeast>(AChanged.TRANSFUR_HOLD.get()).behaviours(
+                ActivityRegistry.TRANSFUR_HOLD.get(), new BrainActivityGroup<LatexBeast>(ActivityRegistry.TRANSFUR_HOLD.get()).behaviours(
                         new InvalidateWithCallback<>()
                                 .onInvalidate((latex, entity) -> {
                                         BrainUtils.clearMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get());
                                         AbilityRegistry.GRAB_ABILITY.get().deactivate(latex);
                                         BrainUtils.clearMemory(latex, MemoryModuleType.LOOK_TARGET);
-                                }).invalidateIf((latex, entity) -> isNonSurvivalOrTF(entity) || GrabData.dataOf(latex).getGrabbedEntity() == null),
+                                }).invalidateIf((latex, entity) -> {
+                                    if(isNonSurvivalOrTF(entity)) return true;
+
+                                    GrabData data = GrabData.dataOf(latex);
+                                    if(data.getGrabbedEntity() != null) return false;
+
+                                    BrainUtils.setForgettableMemory(latex, MemoryTypeRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), Unit.INSTANCE, 100);
+                                    return true;
+                                }),
                         new CustomHeldBehaviour<>(latex -> AbilityRegistry.GRAB_ABILITY.get().serverTick(latex))
                                 .stopIf(latex -> !BrainUtils.hasMemory(latex, MemoryTypeRegistry.TRANSFUR_HOLDING.get()))
                 ).onlyStartWithMemoryStatus(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)
-                .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_HOLDING.get())
+                .requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_HOLDING.get()),
+
+                ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get(), new BrainActivityGroup<LatexBeast>(ActivityRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get()).behaviours(
+                        new Idle<>()
+                ).requireAndWipeMemoriesOnUse(MemoryTypeRegistry.TRANSFUR_GRAB_ESCAPE_STUN.get())
         );
     }
 }

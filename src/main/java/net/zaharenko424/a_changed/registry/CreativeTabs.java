@@ -28,45 +28,58 @@ public class CreativeTabs {
                     output.accept(METAL_CAN_ITEM);
                     output.accept(ORANGE_LEAVES_ITEM);
                     output.accept(ORANGE_SAPLING_ITEM);
+                    //Building blocks
                     output.accept(HAZARD_BLOCK_ITEM);
                     output.accept(HAZARD_LAB_BLOCK_ITEM);
+                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(HAZARD_SLAB_ITEM);
+
+                    output.accept(BLUE_LAB_BLOCK_ITEM);
                     output.accept(BLUE_LAB_TILE_ITEM);
                     output.accept(BOLTED_BLUE_LAB_TILE_ITEM);
-                    output.accept(BOLTED_LAB_TILE_ITEM);
+                    output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
+                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
+                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
+
                     output.accept(BROWN_LAB_BLOCK_ITEM);
                     output.accept(CARPET_BLOCK_ITEM);
-                    output.accept(CONNECTED_BLUE_LAB_TILE_ITEM);
-                    output.accept(CONNECTED_LAB_TILE_ITEM);
+
                     output.accept(LAB_BLOCK_ITEM);
-                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(LAB_TILE_ITEM);
-                    output.accept(ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
-                    output.accept(VENT_WALL_ITEM);
-                    output.accept(YELLOW_LAB_BLOCK_ITEM);
-
-                    output.accept(BLUE_LAB_TILE_SLAB_ITEM);
-                    output.accept(HAZARD_SLAB_ITEM);
-                    output.accept(LAB_SLAB_ITEM);
-                    output.accept(LAB_TILE_SLAB_ITEM);
-                    output.accept(ORANGE_LAB_SLAB_ITEM);
-                    output.accept(YELLOW_LAB_SLAB_ITEM);
-
-                    output.accept(BLUE_LAB_TILE_STAIRS_ITEM);
-                    output.accept(HAZARD_STAIRS_ITEM);
+                    output.accept(BOLTED_LAB_TILE_ITEM);
+                    output.accept(CONNECTED_LAB_TILE_ITEM);
                     output.accept(LAB_STAIRS_ITEM);
                     output.accept(LAB_TILE_STAIRS_ITEM);
-                    output.accept(ORANGE_LAB_STAIRS_ITEM);
-                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+                    output.accept(LAB_SLAB_ITEM);
+                    output.accept(LAB_TILE_SLAB_ITEM);
 
+                    output.accept(LIGHT_BLUE_LAB_BLOCK_ITEM);
+                    output.accept(STRIPED_LIGHT_BLUE_LAB_BLOCK_ITEM);
+
+                    output.accept(ORANGE_LAB_BLOCK_ITEM);
+                    output.accept(STRIPED_ORANGE_LAB_BLOCK_ITEM);
+                    output.accept(ORANGE_LAB_STAIRS_ITEM);
+                    output.accept(ORANGE_LAB_SLAB_ITEM);
+
+                    output.accept(VENT_WALL_ITEM);
+                    output.accept(YELLOW_LAB_BLOCK_ITEM);
+                    output.accept(YELLOW_LAB_STAIRS_ITEM);
+                    output.accept(YELLOW_LAB_SLAB_ITEM);
+
+                    output.accept(LIME_FLOOR_CIRCLE_ITEM);
+                    output.accept(RED_FLOOR_CIRCLE_ITEM);
+
+                    output.accept(EXPOSED_PIPES_ITEM);
                     output.accept(SMART_SEWAGE_SYSTEM_ITEM);
                     output.accept(LAB_LAMP_ITEM);
                     output.accept(BIG_LAB_LAMP_ITEM);
                     output.accept(TV_SCREEN_ITEM);
                     output.accept(AIR_CONDITIONER_ITEM);
+                    output.accept(WHITEBOARD_ITEM);
 
                     output.accept(CUP_ITEM);
                     output.accept(BROKEN_CUP_ITEM);
+                    output.accept(DISC_ITEM);
                     output.accept(FLASK_ITEM);
                     output.accept(BROKEN_FLASK_ITEM);
                     output.accept(TEST_TUBES_ITEM);
@@ -113,7 +126,8 @@ public class CreativeTabs {
                     output.accept(LATEX_RESISTANT_GLASS_ITEM);
                     output.accept(LATEX_RESISTANT_GLASS_PANE_ITEM);
                     output.accept(GENERATOR_ITEM);
-                    output.accept(POWER_CELL);
+                    output.accept(BACKUP_GENERATOR_ITEM);
+                    output.accept(POWER_CELL.toStack());//Do toStack so that override that sets damage is called
                     output.accept(CAPACITOR_ITEM);
                     output.accept(COMPRESSOR_ITEM);
                     output.accept(COMPRESSED_AIR_CANISTER);
@@ -129,21 +143,21 @@ public class CreativeTabs {
                     output.accept(DERELICT_LATEX_PURIFIER_ITEM);
                     output.accept(UNTRANSFUR_SYNTHESIZER_COMPONENTS);
                     //Wood
-                    output.accept(ORANGE_BUTTON_ITEM);
-                    output.accept(ORANGE_DOOR_ITEM);
-                    output.accept(ORANGE_FENCE_ITEM);
-                    output.accept(ORANGE_FENCE_GATE_ITEM);
-                    output.accept(ORANGE_HANGING_SIGN_ITEM);
-                    output.accept(ORANGE_PLANKS_ITEM);
-                    output.accept(ORANGE_PRESSURE_PLATE_ITEM);
-                    output.accept(ORANGE_SIGN_ITEM);
-                    output.accept(ORANGE_SLAB_ITEM);
-                    output.accept(ORANGE_STAIRS_ITEM);
-                    output.accept(ORANGE_TRAPDOOR_ITEM);
                     output.accept(ORANGE_TREE_LOG_ITEM);
                     output.accept(ORANGE_WOOD_ITEM);
                     output.accept(STRIPPED_ORANGE_LOG_ITEM);
                     output.accept(STRIPPED_ORANGE_WOOD_ITEM);
+                    output.accept(ORANGE_PLANKS_ITEM);
+                    output.accept(ORANGE_STAIRS_ITEM);
+                    output.accept(ORANGE_SLAB_ITEM);
+                    output.accept(ORANGE_FENCE_ITEM);
+                    output.accept(ORANGE_FENCE_GATE_ITEM);
+                    output.accept(ORANGE_DOOR_ITEM);
+                    output.accept(ORANGE_TRAPDOOR_ITEM);
+                    output.accept(ORANGE_PRESSURE_PLATE_ITEM);
+                    output.accept(ORANGE_BUTTON_ITEM);
+                    output.accept(ORANGE_HANGING_SIGN_ITEM);
+                    output.accept(ORANGE_SIGN_ITEM);
                 }).build());
 
         CREATIVE_MODE_TABS.register("transfurs", ()-> CreativeModeTab.builder()
@@ -155,19 +169,21 @@ public class CreativeTabs {
                     output.accept(HAZMAT_LEGGINGS);
                     output.accept(HAZMAT_BOOTS);
 
-                    output.accept(STUN_BATON);
+                    output.accept(STUN_BATON.toStack());//Do toStack so that override that sets damage is called
+                    output.accept(STUN_LANCE.toStack());
 
                     output.accept(BLACK_LATEX_SHORTS);
 
                     output.accept(DARK_LATEX_ITEM);
                     output.accept(WHITE_LATEX_ITEM);
                     output.accept(DARK_LATEX_BLOCK_ITEM);
-                    output.accept(WHITE_LATEX_BLOCK_ITEM);
                     output.accept(DARK_LATEX_ICE_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_ITEM);
                     output.accept(DARK_LATEX_CRYSTAL_SHARD);
                     output.accept(GREEN_CRYSTAL_ITEM);
                     output.accept(GREEN_CRYSTAL_SHARD);
+                    output.accept(WHITE_LATEX_BLOCK_ITEM);
+                    output.accept(WHITE_LATEX_PILLAR_ITEM);
 
                     output.accept(LATEX_SOLVENT_BUCKET);
                     output.accept(WHITE_LATEX_BUCKET);
@@ -175,9 +191,11 @@ public class CreativeTabs {
 
                     output.accept(SYRINGE_ITEM);
                     output.accept(BLOOD_SYRINGE);
-                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE_ITEM);
-                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE_ITEM);
-                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE_ITEM);
+                    output.accept(ADRENALINE_SYRINGE);
+                    output.accept(LATEX_SOLVENT_SYRINGE);
+                    output.accept(UNIVERSAL_UNTRANSFUR_SYRINGE);
+                    output.accept(DARK_LATEX_UNTRANSFUR_SYRINGE);
+                    output.accept(WHITE_LATEX_UNTRANSFUR_SYRINGE);
                     output.accept(UNTRANSFUR_BOTTLE_ITEM);
                     output.accept(LATEX_MANIPULATOR);
 
@@ -187,7 +205,7 @@ public class CreativeTabs {
                     output.accept(WHITE_LATEX_BASE);
 
                     output.accept(PNEUMATIC_SYRINGE_RIFLE);
-                    output.accept(SYRINGE_COIL_GUN);
+                    output.accept(SYRINGE_COIL_GUN.toStack());//Do toStack so that override that sets damage is called
 
                     output.accept(ROOMBA_SPAWN_EGG);
 
@@ -205,6 +223,7 @@ public class CreativeTabs {
 
                     output.accept(BEI_FENG_EGG);
                     output.accept(BENIGN_EGG);
+                    output.accept(DARK_LATEX_PUP_EGG);
                     output.accept(DARK_LATEX_WOLF_F_EGG);
                     output.accept(DARK_LATEX_WOLF_M_EGG);
                     output.accept(GAS_WOLF_EGG);
@@ -214,6 +233,7 @@ public class CreativeTabs {
                     output.accept(PURE_WHITE_LATEX_WOLF_EGG);
                     output.accept(SNOW_LEOPARD_F_EGG);
                     output.accept(SNOW_LEOPARD_M_EGG);
+                    output.accept(WHITE_LATEX_PUP_EGG);
                     output.accept(WHITE_LATEX_WOLF_F_EGG);
                     output.accept(WHITE_LATEX_WOLF_M_EGG);
                     output.accept(YUFENG_DRAGON_EGG);

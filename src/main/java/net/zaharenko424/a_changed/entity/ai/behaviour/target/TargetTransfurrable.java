@@ -29,7 +29,7 @@ public class TargetTransfurrable<E extends Mob> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.HURT_BY, MemoryStatus.REGISTERED), Pair.of(MemoryModuleType.NEAREST_ATTACKABLE, MemoryStatus.REGISTERED), Pair.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryStatus.REGISTERED));
 
     protected Predicate<LivingEntity> canAttackPredicate = entity -> // Check if target can be transfurred \/
-        entity.isAlive() && (!(entity instanceof Player player) || !player.isCreative()) && DamageSources.checkTarget(entity);
+        entity.isAlive() && (!(entity instanceof Player player) || !player.isCreative()) && DamageSources.checkTFTarget(entity);
     protected BiPredicate<E, Entity> alertAlliesPredicate = (owner, attacker) -> false;
     protected BiPredicate<E, LivingEntity> allyPredicate = (owner, ally) -> {
         if (!owner.getClass().isAssignableFrom(ally.getClass()) || BrainUtils.getTargetOfEntity(ally) != null)

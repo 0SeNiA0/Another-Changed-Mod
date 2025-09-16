@@ -2,7 +2,6 @@ package net.zaharenko424.a_changed.menu;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
 import net.zaharenko424.a_changed.registry.MenuRegistry;
 import org.jetbrains.annotations.NotNull;
 

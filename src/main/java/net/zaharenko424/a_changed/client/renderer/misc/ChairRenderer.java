@@ -11,10 +11,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.geom.*;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.client.geom.*;
 import net.zaharenko424.a_changed.entity.RotatingChairEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
+import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
@@ -25,7 +29,7 @@ public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
 
     public ChairRenderer(EntityRendererProvider.Context context) {
         super(context);
-        chair = ModelDefinitionCache.INSTANCE.bake(LAYER).getChild("root");
+        chair = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
     }
 
     public static @NotNull ModelDefinition bodyLayer(){

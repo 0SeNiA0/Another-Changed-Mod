@@ -5,24 +5,25 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.EntityAccess;
-import net.zaharenko424.a_changed.attachments.GrabData;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.ability.DLPupMeltAbility;
+import net.zaharenko424.a_changed.attachment.GrabData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public abstract class MixinEntity implements EntityAccess {
+public abstract class MixinEntity {
 
     @Shadow private Level level;
 
@@ -34,11 +35,21 @@ public abstract class MixinEntity implements EntityAccess {
     /**
      * Stops grabbed entities from pushing the player, that grabbed them.
      */
-    @Inject(at = @At("HEAD"), method = "push(Lnet/minecraft/world/entity/Entity;)V", cancellable = true)
-    private void onPush(Entity entity, CallbackInfo ci){
-        if((entity instanceof Player player && TransfurManager.isGrabbed(player))
-                || (getSelf() instanceof Player player1 && GrabData.dataOf(player1).getGrabbedEntity() == entity))
-            ci.cancel();
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isPassengerOfSameVehicle(Lnet/minecraft/world/entity/Entity;)Z"),
+            method = "push(Lnet/minecraft/world/entity/Entity;)V")
+    private boolean onPush(boolean original, @Local(argsOnly = true) Entity entity){
+        if(original) return true;
+        DLPupMeltAbility ability = AbilityRegistry.DL_PUP_MELT.get();
+
+        if((entity instanceof LivingEntity living
+                && AbilityUtils.hasAbility(ability, living) && ability.getAbilityData(living).isActivated())
+            || ((Object)this instanceof LivingEntity self
+                && AbilityUtils.hasAbility(ability, self) && ability.getAbilityData(self).isActivated())) {
+            return true;//Don't push molten DL Pup & don't push entities as molten DL Pup
+        }
+
+        return (entity instanceof Player player && TransfurManager.isGrabbed(player))
+                || ((Object) this instanceof Player player1 && GrabData.dataOf(player1).getGrabbedEntity() == entity);
     }
 
     /**

@@ -9,9 +9,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,8 +40,8 @@ public abstract class MixinBlockModelShaper {
         CoveredWith coveredWith = LatexCoveredData.of(level.getChunkAt(pos)).getCoveredWith(pos);
         return switch(coveredWith){
             case NOTHING -> original;
-            case DARK_LATEX -> getBlockModel(BlockRegistry.DARK_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
-            case WHITE_LATEX -> getBlockModel(BlockRegistry.WHITE_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
+            case LIGHT_DARK_LATEX, DARK_LATEX -> getBlockModel(BlockRegistry.DARK_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
+            case LIGHT_WHITE_LATEX, WHITE_LATEX -> getBlockModel(BlockRegistry.WHITE_LATEX_BLOCK.get().defaultBlockState()).getParticleIcon(ModelData.EMPTY);
         };
     }
 

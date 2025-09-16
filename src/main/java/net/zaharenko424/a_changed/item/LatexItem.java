@@ -11,24 +11,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.registry.FluidRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
-import net.zaharenko424.a_changed.util.CoveredWith;
-import net.zaharenko424.a_changed.util.Latex;
+import net.zaharenko424.a_changed.transfurSystem.*;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 public class LatexItem extends Item {
 
-    private final Supplier<? extends TransfurType> transfurType;
+    private final Supplier<? extends TransfurType<?>> transfurType;
     private final Latex type;
 
-    public LatexItem(@NotNull Supplier<? extends TransfurType> transfurType, Latex type) {
+    public LatexItem(@NotNull Supplier<? extends TransfurType<?>> transfurType, Latex type) {
         super(new Properties().food(new FoodProperties.Builder().fast().nutrition(1).saturationModifier(1).build()));
         this.transfurType = transfurType;
         this.type = type;
@@ -55,9 +52,9 @@ public class LatexItem extends Item {
         if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return InteractionResult.PASS;
 
         if (type == Latex.DARK) {
-            data.coverWith(pos, CoveredWith.DARK_LATEX);
+            data.coverWith(pos, CoveredWith.LIGHT_DARK_LATEX);
         } else {
-            data.coverWith(pos, CoveredWith.WHITE_LATEX);
+            data.coverWith(pos, CoveredWith.LIGHT_WHITE_LATEX);
         }
 
         Player player = context.getPlayer();
@@ -67,18 +64,17 @@ public class LatexItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private static TransfurContext ADD_TF_NO_CHECK;
-
     @Override
-    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack p_41409_, @NotNull Level p_41410_, @NotNull LivingEntity p_41411_) {
-        Player player= (Player) p_41411_;
-        if(!p_41410_.isClientSide){
-            if(TransfurManager.isTransfurred(player)) return super.finishUsingItem(p_41409_,p_41410_,p_41411_);
-            if(ADD_TF_NO_CHECK == null) ADD_TF_NO_CHECK = TransfurContext.ADD_PROGRESS_DEF.withCheckResistance(false);
-            TransfurHandler.nonNullOf(player).addTransfurProgress(10f, transfurType.get(), ADD_TF_NO_CHECK);
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        if(!level.isClientSide){
+            if(TransfurManager.isTransfurred(entity)) return super.finishUsingItem(stack, level, entity);
+
+            if(DamageSources.checkTFTarget(entity)) {
+                TransfurHandler.nonNullOf(entity).addTransfurProgress(10f, transfurType.get(), TransfurContext.DEF_NO_CHECK);
+            } else entity.hurt(entity.damageSources().inWall(), 2);
         }
-        if(!player.isCreative()) p_41409_.shrink(1);
-        return p_41409_;
+
+        return super.finishUsingItem(stack, level, entity);
     }
 
     @Override

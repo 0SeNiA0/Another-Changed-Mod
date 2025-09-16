@@ -20,10 +20,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -32,26 +34,24 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.GrabChanceData;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.block.blocks.Note;
-import net.zaharenko424.a_changed.block.blocks.PileOfOranges;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.ability.event.CopyAbilitiesOnDeathEvent;
+import net.zaharenko424.a_changed.ability.event.InitializePlayerAbilitiesEvent;
+import net.zaharenko424.a_changed.attachment.GrabChanceData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.block.FloorCircle;
+import net.zaharenko424.a_changed.block.Note;
+import net.zaharenko424.a_changed.block.PileOfOranges;
 import net.zaharenko424.a_changed.commands.*;
-import net.zaharenko424.a_changed.entity.AbstractLatexBeast;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundOpenTransfurScreenPacket;
 import net.zaharenko424.a_changed.network.packets.transfur.ClientboundTransfurToleranceSyncPacket;
 import net.zaharenko424.a_changed.registry.*;
-import net.zaharenko424.a_changed.transfurSystem.DamageSources;
-import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.TransfurToleranceData;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.*;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @ParametersAreNonnullByDefault
 @EventBusSubscriber(modid = AChanged.MODID)
@@ -60,6 +60,7 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        LatexPupAging.register(dispatcher);
         GiveDNASample.register(dispatcher);
         LatexGrabChance.register(dispatcher);
         Transfur.register(dispatcher);
@@ -77,6 +78,11 @@ public class CommonEvent {
         TransfurToleranceData.of(level);
     }
 
+    @SubscribeEvent
+    public static void onInitAbilities(InitializePlayerAbilitiesEvent event){
+        TransfurHandler.nonNullOf(event.getEntity()).addTFAbilitiesOrDef();
+    }
+
     /**
      * Send capability data to player
      */
@@ -88,27 +94,14 @@ public class CommonEvent {
         PacketDistributor.sendToPlayer(player, new ClientboundTransfurToleranceSyncPacket());
 
         TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        handler.syncClients();
         if(handler.isBeingTransfurred()) PacketDistributor.sendToPlayer(player, new ClientboundOpenTransfurScreenPacket());
-
-        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
 
         TransfurUtils.RECALCULATE_PROGRESS.accept(player);
     }
 
     @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
-        Player player = event.getEntity();
-        if(player.level().isClientSide) return;
-
-        TransfurHandler handler = TransfurHandler.nonNullOf(player);
-        if(handler.getSelectedAbility() != null) handler.getSelectedAbility().deactivate(player);
-    }
-
-    @SubscribeEvent
-    public static void onPlayerDeath(LivingDeathEvent event){
-        if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(TransfurManager.isHoldingEntity(player)) AbilityRegistry.GRAB_ABILITY.get().deactivate(player);
+    public static void onSwapItems(LivingSwapItemsEvent.Hands event){
+        if(AbilityUtils.hasLatexPupAbilities(event.getEntity())) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -132,6 +125,18 @@ public class CommonEvent {
             return;
         }
 
+        if(item.is(Tags.Items.DYES_LIME)){
+            drawCircle(level, player, item, pos, direction, true);
+            denyEvent(event);
+            return;
+        }
+
+        if(item.is(Tags.Items.DYES_RED)){
+            drawCircle(level, player, item, pos, direction, false);
+            denyEvent(event);
+            return;
+        }
+
         if(item.is(ItemTags.BOOKSHELF_BOOKS)){
             handleBookRMB(level, player, item, pos);
             denyEvent(event);
@@ -145,9 +150,20 @@ public class CommonEvent {
         }
 
         if(item.is(Items.PAPER)){
-            handlePaperRMB(level, player, item, pos, direction);
+            handlePaperRMB(level, player, item, pos, direction, event.getFace());
             denyEvent(event);
         }
+    }
+
+    static void drawCircle(Level level, Player player, ItemStack item, BlockPos pos, Direction direction, boolean lime){
+        if(!level.getBlockState(pos).canBeReplaced()) {
+            pos = pos.above();
+            if(!level.getBlockState(pos).canBeReplaced()) return;
+        }
+
+        if(!BlockRegistry.LIME_FLOOR_CIRCLE.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlockAndUpdate(pos, (lime ? BlockRegistry.LIME_FLOOR_CIRCLE : BlockRegistry.RED_FLOOR_CIRCLE).get().defaultBlockState().setValue(FloorCircle.FACING, direction))) return;
+        if(!player.isCreative()) item.shrink(1);
     }
 
     static void handleBookRMB(Level level, Player player, ItemStack item, BlockPos pos){
@@ -155,9 +171,11 @@ public class CommonEvent {
             pos = pos.above();
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState(), 3)) return;
+
+        if(!BlockRegistry.BOOK_STACK.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlockAndUpdate(pos, BlockRegistry.BOOK_STACK.get().defaultBlockState())) return;
         level.getBlockEntity(pos, BlockEntityRegistry.BOOK_STACK_ENTITY.get()).ifPresent((entity ->
-                entity.addBook(item, (int) player.yHeadRot, !player.isCreative())));
+                entity.addItem(item, (int) player.yHeadRot, !player.isCreative())));
     }
 
     static void handleOrangeRMB(Level level, Player player, Vec3 hitVec, ItemStack item, BlockPos pos){
@@ -165,19 +183,37 @@ public class CommonEvent {
             pos = pos.above();
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
+
+        if(!BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState().canSurvive(level, pos)
+                || !level.setBlock(pos, BlockRegistry.PILE_OF_ORANGES.get().defaultBlockState(), 3)) return;
         level.getBlockEntity(pos, BlockEntityRegistry.PILE_OF_ORANGES_ENTITY.get()).ifPresent((entity -> {
             entity.addOrange(hitVec, (int) player.yHeadRot);
             if(!player.isCreative()) item.shrink(1);
         }));
     }
 
-    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction){
+    static void handlePaperRMB(Level level, Player player, ItemStack item, BlockPos pos, Direction direction, @Nullable Direction clickedFace){
+        if(clickedFace == Direction.UP){
+            if(!level.getBlockState(pos).canBeReplaced()) {
+                pos = pos.above();
+                if(!level.getBlockState(pos).canBeReplaced()) return;
+            }
+
+            if(!BlockRegistry.PAPER_STACK.get().defaultBlockState().canSurvive(level, pos)
+                    || !level.setBlockAndUpdate(pos, BlockRegistry.PAPER_STACK.get().defaultBlockState())) return;
+            level.getBlockEntity(pos, BlockEntityRegistry.PAPER_STACK_ENTITY.get()).ifPresent((entity ->
+                    entity.addItem(item, player.yHeadRot, !player.isCreative())));
+            if(!player.isCreative()) item.shrink(1);
+            return;
+        }
+
         if(!level.getBlockState(pos).canBeReplaced()) {
             pos = pos.relative(direction);
             if(!level.getBlockState(pos).canBeReplaced()) return;
         }
-        if(!level.setBlock(pos, BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction),3)) return;
+
+        BlockState state = BlockRegistry.NOTE.get().defaultBlockState().setValue(Note.FACING, direction);
+        if(!state.canSurvive(level, pos) || !level.setBlockAndUpdate(pos, state)) return;
         if(!player.isCreative()) item.shrink(1);
     }
 
@@ -210,23 +246,23 @@ public class CommonEvent {
         TransfurHandler tfHandler = TransfurHandler.of(entity);
         if(tfHandler != null){
             tfHandler.tick();
-            if(DamageSources.checkTarget(entity)){
+            if(DamageSources.checkTFTarget(entity)){
                 if(entity.isInFluidType(FluidRegistry.DARK_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
+                    if(entity.hurt(DamageSources.transfur(entity.level(),null),0.1f))
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.DARK_LATEX_WOLF_M_TF.get(), TransfurContext.DEF);
                     return;
                 }
                 if(entity.isInFluidType(FluidRegistry.WHITE_LATEX_TYPE.get())){
-                    if(entity.hurt(DamageSources.transfur(entity.level(), null,null),0.1f))
-                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.ADD_PROGRESS_DEF);
+                    if(entity.hurt(DamageSources.transfur(entity.level(),null),0.1f))
+                        tfHandler.addTransfurProgress(4f, TransfurRegistry.PURE_WHITE_LATEX_WOLF_TF.get(), TransfurContext.DEF);
                     return;
                 }
             }
-        }
 
-        if(!entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())) return;
-        if(entity instanceof AbstractLatexBeast || (entity instanceof Player player && TransfurManager.isTransfurred(player)))
-            entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT,200));
+            if(entity.isInFluidType(FluidRegistry.LATEX_SOLVENT_TYPE.get())){
+                entity.addEffect(new MobEffectInstance(MobEffectRegistry.LATEX_SOLVENT, 200));
+            }
+        }
     }
 
     /**
@@ -235,11 +271,8 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onLivingHurt(LivingDamageEvent.Pre event){
         LivingEntity entity = event.getEntity();
-        if(event.getSource().is(DamageTypeTags.IS_FALL)){
-            if((entity instanceof Player player && TransfurManager.isTransfurred(player) && TransfurManager.hasCatAbility(player))
-                    || (entity instanceof AbstractLatexBeast latex && latex.transfurType.abilities.contains(AbilityRegistry.CAT_PASSIVE.get())))
-                event.setNewDamage(event.getNewDamage() / 2);
-        }
+        if(!event.getSource().is(DamageTypeTags.IS_FALL)) return;
+        if(TransfurManager.isTransfurred(entity) && AbilityUtils.hasCatAbility(entity)) event.setNewDamage(event.getNewDamage() / 2);
     }
 
     /**
@@ -249,27 +282,13 @@ public class CommonEvent {
     public static void onLivingDeath(LivingDeathEvent event){
         LivingEntity entity = event.getEntity();
         if(entity.level().isClientSide) return;
-        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTarget(entity)) return;
+
+        if(entity instanceof Player || !event.getSource().is(DamageSources.transfur) || !DamageSources.checkTFTarget(entity)) return;
 
         TransfurHandler handler = TransfurHandler.nonNullOf(entity);
         if(handler.getTransfurProgress() == 0 || handler.getTransfurType() == null) return;
 
-        handler.transfur(handler.getTransfurType(), TransfurContext.TRANSFUR_DEF);
-    }
-
-    /**
-     * Send data about remote player to other player
-     */
-    @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.StartTracking event){
-        if(!(event.getTarget() instanceof LivingEntity target)) return;
-        ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        TransfurHandler handler = TransfurHandler.of(target);
-        if(handler != null) {
-            handler.syncClient(player);
-            if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(target).syncClient(player);
-        }
+        handler.transfur(handler.getTransfurType(), TransfurContext.DEF);
     }
 
     /**
@@ -282,21 +301,18 @@ public class CommonEvent {
         PacketDistributor.sendToPlayer(event.getPlayer(), data.getPacket(null));
     }
 
-    /**
-     * Clone capability data on respawn etc.
-     */
     @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone event){
-        if(!event.isWasDeath()) return;
-        ServerPlayer player = (ServerPlayer) event.getEntity();
+    public static void onCopyAbilities(CopyAbilitiesOnDeathEvent event){
+        Player player = event.getEntity();
+        TransfurHandler tf = TransfurHandler.nonNullOf(event.getDead());
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                TransfurHandler handler = TransfurHandler.nonNullOf(player);
-                handler.syncClients();
-                if(handler.getSelectedAbility() != null) handler.getSelectedAbility().getAbilityData(player).syncClients();
-            }
-        },25);
+        if(!tf.isTransfurred() || !player.level().getGameRules().getBoolean(AChanged.KEEP_TRANSFUR)) return;
+
+        event.copyProvider(TransfurHandler.ABILITY_PROVIDER);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onPlayerClone(PlayerEvent.Clone event){
+        TransfurHandler.nonNullOf(event.getEntity()).addDefAbilities();//Data is sent before player respawns on client. Send later?
     }
 }

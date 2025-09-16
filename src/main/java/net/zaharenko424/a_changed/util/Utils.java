@@ -7,22 +7,20 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.AChanged;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+
+import static net.zaharenko424.cmrs.util.Utils.FORMAT;
 
 @ParametersAreNonnullByDefault
 public class Utils {
@@ -34,13 +32,7 @@ public class Utils {
         return ResourceKey.create(registry, ResourceLocation.fromNamespaceAndPath(AChanged.MODID, str));
     }
 
-    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
-    public static <T> @NotNull T nonNullOrThrow(@Nullable T obj, RuntimeException exc) {
-        if(obj == null) throw exc;
-        return obj;
-    }
-
-    public static void sendToClient(ServerPlayer player, Packet<?> packet){
+    public static void sendVanillaToClient(ServerPlayer player, Packet<?> packet){
         player.connection.send(packet);
     }
 
@@ -62,13 +54,6 @@ public class Utils {
         return booleans;
     }
 
-    public static boolean canStacksStack(ItemStack stack, ItemStack stackWith){
-        if(stackWith.isEmpty() || !ItemStack.isSameItemSameComponents(stack, stackWith)) return true;
-        return stackWith.getCount() < stackWith.getMaxStackSize();
-    }
-
-    private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
-
     @Contract(pure = true)
     public static @NotNull String formatEnergy(int energy){
         if(energy >= 1000000000) return FORMAT.format((float) energy / 1000000000) + "B";
@@ -87,6 +72,10 @@ public class Utils {
         return nonNull;
     }
 
+    public static VoxelShape orUnoptimized(VoxelShape shape1, VoxelShape shape2){
+        return Shapes.joinUnoptimized(shape1, shape2, BooleanOp.OR);
+    }
+
     public static @NotNull VoxelShape rotateShape(Direction direction, VoxelShape source) {
         AtomicReference<VoxelShape> newShape = new AtomicReference<>(Shapes.empty());
         source.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
@@ -96,7 +85,7 @@ public class Utils {
             Vec3 v2 = rotateVec3(max, direction);
             VoxelShape s = Shapes.create(0.5 + Math.min(v1.x, v2.x), 0.5 + Math.min(v1.y, v2.y), 0.5 + Math.min(v1.z, v2.z),
                     0.5 + Math.max(v1.x, v2.x), 0.5 + Math.max(v1.y, v2.y), 0.5 + Math.max(v1.z, v2.z));
-            newShape.set(Shapes.or(newShape.get(), s));
+            newShape.set(orUnoptimized(newShape.get(), s));
         });
         return newShape.get();
     }
@@ -139,21 +128,6 @@ public class Utils {
         return -65.0F * limbSwing + limbSwing * limbSwing;
     }
 
-    public static boolean test(@Nullable ItemStack stack, Ingredient ingredient){
-        if(stack == null) return false;
-        for(ItemStack itemstack : ingredient.getItems()) {
-            if(ItemStack.isSameItemSameComponents(stack, itemstack) && stack.getCount() >= itemstack.getCount()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static <E extends MobEffectInstance> E makeUnremovable(E effect){
-        effect.getCures().clear();
-        return effect;
-    }
-
     public static boolean containsClass(Class<?> clazz, List<Class<?>> list){
         for (Class<?> block : list){
             if(block.isAssignableFrom(clazz)) return true;
@@ -162,7 +136,7 @@ public class Utils {
     }
 
     /**
-     * A way to scam Java/Minecraft to not crash trying to load client only stuff.
+     * A way to not load client only stuff on server.
      */
     public static  <T> T get(Supplier<T> supplier){
         return supplier.get();

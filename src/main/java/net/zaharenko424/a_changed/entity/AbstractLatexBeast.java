@@ -11,44 +11,48 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
-import net.zaharenko424.a_changed.ability.Ability;
-import net.zaharenko424.a_changed.ability.AbilityHolder;
+import net.zaharenko424.a_changed.ability.api.Ability;
 import net.zaharenko424.a_changed.ability.GrabAbility;
 import net.zaharenko424.a_changed.ability.GrabMode;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
-import net.zaharenko424.a_changed.entity.ai.behaviour.target.Retaliate;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.RetaliateOrTransfur;
+import net.zaharenko424.a_changed.entity.ai.behaviour.target.SetPlayerLookTarget;
 import net.zaharenko424.a_changed.entity.ai.behaviour.target.TargetTransfurrable;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
+import net.zaharenko424.a_changed.transfurSystem.LatexBeast;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.util.TransfurUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Latex entity contract -> result of getAllowedAbilities() should stay the same throughout the runtime.
  */
 @ParametersAreNonnullByDefault
-public abstract class AbstractLatexBeast extends Monster implements AbilityHolder {
+public abstract class AbstractLatexBeast extends Monster implements LatexBeast {
 
-    public final @NotNull TransfurType transfurType;
+    public final @NotNull TransfurType<?> transfurType;
     protected Ability selectedAbility;
 
-    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType transfurType) {
+    protected AbstractLatexBeast(EntityType<? extends Monster> entityType, Level level, TransfurType<?> transfurType) {
         super(entityType, level);
         this.transfurType = transfurType;
-        dimensions = transfurType.getPoseDimensions(Pose.STANDING);
+        EntityDimensions dimensions = transfurType.getPoseDimensions(this, Pose.STANDING);
+        if(dimensions != null) {
+            this.dimensions = dimensions;
+            refreshDimensions();
+        }
 
         TransfurUtils.addModifiers(this, transfurType);
         transfurType.onTransfur(this);
@@ -70,13 +74,18 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     }
 
     @Override
-    public Ability getSelectedAbility() {
-        return selectedAbility;
+    public @NotNull TransfurType<?> transfurType() {
+        return transfurType;
     }
 
     @Override
-    public @NotNull List<? extends Ability> getAllowedAbilities() {
-        return transfurType.abilities;
+    public LivingEntity asEntity() {
+        return this;
+    }
+
+    @Override
+    public Ability getSelectedAbility() {
+        return selectedAbility;
     }
 
     @Override
@@ -98,32 +107,37 @@ public abstract class AbstractLatexBeast extends Monster implements AbilityHolde
     }
 
     @Override
-    public @NotNull EntityDimensions getDefaultDimensions(Pose pPose) {
-        return transfurType.getPoseDimensions(pPose);
+    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+        return 0;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public @NotNull EntityDimensions getDefaultDimensions(Pose pPose) {
+        EntityDimensions dimensions = transfurType.getPoseDimensions(this, pPose);
+        return dimensions != null ? dimensions : super.getDefaultDimensions(pPose);
+    }
+
     protected <E extends AbstractLatexBeast> FirstApplicableBehaviour<E> targetRetaliateLook(float lookRangeSqr){
         return new FirstApplicableBehaviour<>(
                 new TargetTransfurrable<E>().startCondition(latex -> !latex.transfurType.isOrganic()),
-                new Retaliate<>(),
+                new RetaliateOrTransfur<>(),
                 new OneRandomBehaviour<>(
                         new SetPlayerLookTarget<E>()
                                 .predicate(player -> player.isAlive() && distanceToSqr(player) < lookRangeSqr)
-                                .runFor(latex -> latex.random.nextInt(60, 120)),
+                                .lookTime(latex -> latex.random.nextInt(60, 120)),
                         new SetRandomLookTarget<>())
         );
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTarget(target)) return super.doHurtTarget(target);
+        if(level().isClientSide || transfurType.isOrganic() || !DamageSources.checkTFTarget(target)) return super.doHurtTarget(target);
 
-        if(!target.hurt(DamageSources.transfur(null,this), 0.1F)) return false;
+        if(!target.hurt(DamageSources.transfur(this), 0.1F)) return false;
 
         setLastHurtMob(target);
         TransfurHandler.nonNullOf((LivingEntity) target)
-                .addTransfurProgress(5f, transfurType, TransfurContext.ADD_PROGRESS_DEF);
+                .addTransfurProgress(5f, transfurType, TransfurContext.DEF);
         return true;
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.zaharenko424.a_changed.AChanged;
+import net.zaharenko424.a_changed.AChangedTags;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 
@@ -28,7 +28,7 @@ public class SmartSewageEntity extends BlockEntity {
         if(tick < 20) return;
         tick = 0;
         List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, Shapes.block().bounds().move(worldPosition.above()),
-                (entity)-> entity.getType().is(AChanged.SEWAGE_SYSTEM_CONSUMABLE));
+                (entity)-> entity.getType().is(AChangedTags.Entity.SEWAGE_SYSTEM_CONSUMABLE));
         if(list.isEmpty()){
             entity = null;
             return;
@@ -39,7 +39,7 @@ public class SmartSewageEntity extends BlockEntity {
             entity = null;
             return;
         }
-        entity = list.get(0);
+        entity = list.getFirst();
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,2));
     }
 }

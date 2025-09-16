@@ -35,19 +35,19 @@ public class Flask extends Block implements SimpleWaterloggedBlock {
             Shapes.box(0.6875, 0, 0.375, 0.75, 0.3125, 0.625),
             Shapes.box(0.25, 0, 0.375, 0.3125, 0.3125, 0.625));
 
-    public Flask(Properties pProperties) {
-        super(pProperties);
+    public Flask(Properties properties) {
+        super(properties);
         registerDefaultState(stateDefinition.any().setValue(WATERLOGGED, false));
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext p_49820_) {
-        if(p_49820_.getLevel().getFluidState(p_49820_.getClickedPos()).getType() == Fluids.WATER) return defaultBlockState().setValue(WATERLOGGED, true);
+    public @Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        if(context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER) return defaultBlockState().setValue(WATERLOGGED, true);
         return defaultBlockState();
     }
 
@@ -65,13 +65,13 @@ public class Flask extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public boolean canSurvive(@NotNull BlockState p_60525_, @NotNull LevelReader p_60526_, @NotNull BlockPos p_60527_) {
-        BlockPos pos = p_60527_.below();
-        return p_60526_.getBlockState(pos).isFaceSturdy(p_60526_, pos, Direction.UP);
+    public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
+        BlockPos below = pos.below();
+        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> p_49915_) {
-        super.createBlockStateDefinition(p_49915_.add(WATERLOGGED));
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(WATERLOGGED));
     }
 }

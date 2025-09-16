@@ -14,7 +14,6 @@ public class EnergyStorageWrapper implements IEnergyStorage {
         this.maxExtract = maxExtract;
     }
 
-
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         if(!canReceive()) return 0;

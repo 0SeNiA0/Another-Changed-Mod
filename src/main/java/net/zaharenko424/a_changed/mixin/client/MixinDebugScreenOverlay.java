@@ -6,8 +6,8 @@ import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,8 +28,8 @@ public abstract class MixinDebugScreenOverlay {
 
         CoveredWith coveredWith = LatexCoveredData.of(getLevel().getChunkAt(pos)).getCoveredWith(pos);
         list.add("covered_with: " + switch(coveredWith){
-            case DARK_LATEX -> ChatFormatting.BLACK;
-            case WHITE_LATEX -> ChatFormatting.WHITE;
+            case LIGHT_DARK_LATEX, DARK_LATEX -> ChatFormatting.BLACK;
+            case LIGHT_WHITE_LATEX, WHITE_LATEX -> ChatFormatting.WHITE;
             case NOTHING -> ChatFormatting.GRAY;
         } + coveredWith);
     }

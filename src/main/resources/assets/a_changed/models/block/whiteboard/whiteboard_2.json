@@ -1,0 +1,35 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "a_changed:block/whiteboard",
+		"particle": "a_changed:block/whiteboard"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 14],
+			"to": [16, 14, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, -16, 14]},
+			"faces": {
+				"north": {"uv": [3.5, 0, 7.5, 3.5], "texture": "#0"},
+				"east": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"},
+				"south": {"uv": [0, 7, 4, 11], "texture": "#0"},
+				"west": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"},
+				"down": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"}
+			}
+		},
+		{
+			"from": [0, 14, 13],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-44, -14, 14]},
+			"faces": {
+				"north": {"uv": [5.325, 11.75, 10.625, 12.5], "texture": "#0"},
+				"east": {"uv": [5, 7, 5.75, 7.5], "texture": "#0"},
+				"south": {"uv": [5.325, 12.5, 10.625, 13.25], "texture": "#0"},
+				"west": {"uv": [5.75, 7, 6.5, 7.5], "texture": "#0"},
+				"up": {"uv": [10.775, 11, 5.45, 11.75], "texture": "#0"},
+				"down": {"uv": [16, 13.25, 0, 14], "texture": "#0"}
+			}
+		}
+	]
+}

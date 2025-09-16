@@ -11,7 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.zaharenko424.a_changed.block.blocks.ConnectedTextureBlockImpl;
+import net.zaharenko424.a_changed.block.ConnectedTextureBlockImpl;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +19,8 @@ import java.util.List;
 
 public class StateKey extends Item {
 
-    public StateKey(Properties pProperties) {
-        super(pProperties.durability(256));
+    public StateKey(Properties properties) {
+        super(properties.durability(256));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StateKey extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.translatable("tooltip.a_changed.state_key"));
     }

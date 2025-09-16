@@ -28,6 +28,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
+        addSimpleSound(BLOW1);
         add(BUTTON_PRESSED, definition()
                 .subtitle(subtitle("button_pressed"))
                 .with(sound(AChanged.resourceLoc("decision1"))));
@@ -47,6 +48,7 @@ public class SoundDefinitionProvider extends SoundDefinitionsProvider {
                 .with(sound(AChanged.resourceLoc("water1"))));
         addSimpleSound(SPACE_DOOR_CLOSE);
         addSimpleSound(SPACE_DOOR_OPEN);
+        addSimpleSound(SWITCH);
         addSimpleSound(TRANSFUR);
         addSimpleSound(TRANSFUR_1);
     }

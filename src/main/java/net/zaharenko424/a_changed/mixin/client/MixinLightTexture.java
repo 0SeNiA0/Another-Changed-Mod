@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.entity.player.Player;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -20,7 +21,7 @@ public abstract class MixinLightTexture {
         if(original) return true;
         Player player = Minecraft.getInstance().player;
         if(!TransfurManager.isTransfurred(player)) return false;
-        return TransfurManager.hasCatAbility(player)
-                || (TransfurManager.hasFishAbility(player) && player.isInWaterOrBubble());
+        return AbilityUtils.hasCatAbility(player)
+                || (AbilityUtils.hasFishAbility(player) && player.isInWaterOrBubble());
     }
 }

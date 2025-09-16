@@ -3,7 +3,7 @@ package net.zaharenko424.a_changed.recipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.zaharenko424.a_changed.entity.block.machines.LatexEncoderEntity;
+import net.zaharenko424.a_changed.entity.block.machine.LatexEncoderEntity;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import org.jetbrains.annotations.NotNull;
 

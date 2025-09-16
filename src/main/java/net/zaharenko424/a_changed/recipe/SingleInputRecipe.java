@@ -10,12 +10,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class SingleInputRecipe implements Recipe<SingleInputRecipeWrapper> {
+public abstract class SingleInputRecipe implements MachineRecipe<SingleInputRecipeWrapper> {
 
     protected final String group;
     protected final Ingredient ingredient;
@@ -59,13 +58,15 @@ public abstract class SingleInputRecipe implements Recipe<SingleInputRecipeWrapp
 
     @Override
     public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
-        return result;
+        return result.copy();
     }
 
+    @Override
     public int getEnergyConsumption() {
         return energyConsumption;
     }
 
+    @Override
     public int getProcessingTime() {
         return processingTime;
     }

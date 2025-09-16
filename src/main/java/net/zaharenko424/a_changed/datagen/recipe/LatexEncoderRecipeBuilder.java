@@ -23,7 +23,7 @@ import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.RecipeRegistry;
 import net.zaharenko424.a_changed.transfurSystem.Gender;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     public LatexEncoderRecipeBuilder(@NotNull ItemStack result, @NotNull Gender gender) {
-        ResourceLocation tf = LatexSyringeItem.decodeTransfur(result);
+        ResourceLocation tf = LatexSyringeItem.decodeTransfurId(result);
         if(tf == null || TransfurManager.getTransfurType(tf) == null)
             throw new IllegalArgumentException("Invalid latex syringe encoding! (" + tf + ")");
 
@@ -54,7 +54,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
         ingredients.set(0, Ingredient.of(ItemRegistry.SYRINGE_ITEM));
     }
 
-    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull TransfurType transfurType){
+    public static @NotNull LatexEncoderRecipeBuilder of(@NotNull TransfurType<?> transfurType){
         return new LatexEncoderRecipeBuilder(LatexSyringeItem.encodeTransfur(transfurType), transfurType.getGender());
     }
 
@@ -147,7 +147,7 @@ public class LatexEncoderRecipeBuilder implements RecipeBuilder {
 
     @Override
     public void save(@NotNull RecipeOutput pRecipeOutput) {
-        save(pRecipeOutput, Objects.requireNonNull(LatexSyringeItem.decodeTransfur(result)));
+        save(pRecipeOutput, Objects.requireNonNull(LatexSyringeItem.decodeTransfurId(result)));
     }
 
     @Override

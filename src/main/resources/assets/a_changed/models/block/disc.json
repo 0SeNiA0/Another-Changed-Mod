@@ -1,0 +1,8 @@
+{
+  "loader": "neoforge:obj",
+  "model": "a_changed:models/block/disc/disc.obj",
+  "textures": {
+    "texture0": "a_changed:block/disc",
+    "particle": "#texture0"
+  }
+}

@@ -9,18 +9,23 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.extensions.ILivingEntityExtension;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.attachments.LatexCoveredData;
+import net.zaharenko424.a_changed.attachment.LatexCoveredData;
+import net.zaharenko424.a_changed.registry.AbilityRegistry;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.util.CoveredWith;
+import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
+import net.zaharenko424.a_changed.util.AbilityUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -39,6 +44,15 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
 
     public MixinLivingEntity(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
+    }
+
+    @ModifyReturnValue(at = @At("RETURN"), method = "isBaby")
+    private boolean onIsBaby(boolean original){
+        if(self() instanceof Player player){
+            if(AbilityUtils.hasAbility(AbilityRegistry.DL_PUP_AGE, player)) return AbilityRegistry.DL_PUP_AGE.get().getAbilityData(player).isBaby();
+            if(AbilityUtils.hasAbility(AbilityRegistry.WL_PUP_AGE, player)) return AbilityRegistry.WL_PUP_AGE.get().getAbilityData(player).isBaby();
+        }
+        return original;
     }
 
     /**
@@ -79,8 +93,20 @@ public abstract class MixinLivingEntity extends Entity implements ILivingEntityE
     private boolean onUpdateFallFlying(boolean par2){
         if(!getSharedFlag(7) || onGround() || isPassenger() || hasEffect(MobEffects.LEVITATION)) return false;
 
-        if(!TransfurManager.hasFallFlyingAbility(self())) return par2;
+        if(!AbilityUtils.hasFallFlyingAbility(self())) return par2;
         gameEvent(GameEvent.ELYTRA_GLIDE);
         return true;
+    }
+
+    /**
+     *  Only allow putting on wolf armor or elytra.
+     */
+    @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getEquipmentSlot()Lnet/minecraft/world/entity/EquipmentSlot;"),
+            method = "getEquipmentSlotForItem")
+    private EquipmentSlot onGetEquipmentSlotForItem(EquipmentSlot original, @Local(argsOnly = true) ItemStack stack){
+        if(!AbilityUtils.hasLatexPupAbilities(self())) return original;
+
+        if(stack.is(Items.ELYTRA) || stack.is(Items.WOLF_ARMOR)) return original;
+        return EquipmentSlot.MAINHAND;
     }
 }

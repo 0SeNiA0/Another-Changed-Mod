@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
 import net.zaharenko424.a_changed.menu.SyringeCoilGunMenu;
-import net.zaharenko424.a_changed.menu.machines.*;
+import net.zaharenko424.a_changed.menu.machine.*;
 
 import static net.zaharenko424.a_changed.AChanged.MODID;
 

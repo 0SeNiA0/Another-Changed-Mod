@@ -12,11 +12,11 @@ import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
+import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import org.jetbrains.annotations.NotNull;
 
 public class Transfur {
@@ -46,9 +46,9 @@ public class Transfur {
     }
 
     private static int execute(@NotNull ResourceLocation transfurType, @NotNull ServerPlayer player){
-        TransfurType transfur = TransfurManager.getTransfurType(transfurType);
+        TransfurType<?> transfur = TransfurManager.getTransfurType(transfurType);
         if(transfur == null) return 0;
-        TransfurHandler.nonNullOf(player).transfur(transfur, TransfurContext.TRANSFUR_TF);
+        TransfurHandler.nonNullOf(player).transfur(transfur, TransfurContext.TRANSFUR);
         return Command.SINGLE_SUCCESS;
     }
 }

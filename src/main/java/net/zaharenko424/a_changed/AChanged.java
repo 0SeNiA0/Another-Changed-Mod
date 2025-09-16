@@ -1,30 +1,29 @@
 package net.zaharenko424.a_changed;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
-import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zaharenko424.a_changed.criterion.TransfurTrigger;
+import net.zaharenko424.a_changed.worldgen.LabRotProcessor;
+import net.zaharenko424.cmrs.CMRS;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -32,12 +31,14 @@ import org.slf4j.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.zaharenko424.a_changed.registry.AbilityRegistry.ABILITIES;
+import static net.zaharenko424.a_changed.registry.ActivityRegistry.ACTIVITIES;
 import static net.zaharenko424.a_changed.registry.ArmorMaterialRegistry.ARMOR_MATERIALS;
 import static net.zaharenko424.a_changed.registry.AttachmentRegistry.ATTACHMENTS;
 import static net.zaharenko424.a_changed.registry.BlockEntityRegistry.BLOCK_ENTITIES;
 import static net.zaharenko424.a_changed.registry.BlockRegistry.BLOCKS;
 import static net.zaharenko424.a_changed.registry.ComponentRegistry.COMPONENTS;
 import static net.zaharenko424.a_changed.registry.CreativeTabs.CREATIVE_MODE_TABS;
+import static net.zaharenko424.a_changed.registry.CriterionTriggerRegistry.TRIGGER_TYPES;
 import static net.zaharenko424.a_changed.registry.DNATypeRegistry.DNA_TYPES;
 import static net.zaharenko424.a_changed.registry.EntityRegistry.ENTITIES;
 import static net.zaharenko424.a_changed.registry.FluidRegistry.FLUIDS;
@@ -59,14 +60,9 @@ public class AChanged {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     //Registries
-    public static final DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(BuiltInRegistries.ACTIVITY, MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, MODID);
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
-    public static final DeferredRegister<CriterionTrigger<?>> TRIGGER_TYPES = DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES, MODID);
-
-    //Activities
-    public static final DeferredHolder<Activity, Activity> TRANSFUR_ATTACK = ACTIVITIES.register("transfur_attack", () -> new Activity("transfur_attack"));
-    public static final DeferredHolder<Activity, Activity> TRANSFUR_HOLD = ACTIVITIES.register("transfur_hold", () -> new Activity("transfur_hold"));
+    public static final DeferredRegister<StructureProcessorType<?>> PROCESSORS = DeferredRegister.create(BuiltInRegistries.STRUCTURE_PROCESSOR, MODID);
 
     //Attributes
     /**
@@ -80,18 +76,11 @@ public class AChanged {
     //Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_GAS_PARTICLE = PARTICLE_TYPES.register("blue_gas", ()-> new SimpleParticleType(true));
 
-    //Trigger types
-    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED = TRIGGER_TYPES.register("player_transfurred", TransfurTrigger::new);
-    public static final DeferredHolder<CriterionTrigger<?>, TransfurTrigger> PLAYER_TRANSFURRED_ENTITY = TRIGGER_TYPES.register("player_transfurred_entity", TransfurTrigger::new);
-
-    //Tags
-    public static final TagKey<Block> LATEX_RESISTANT = TagKey.create(Registries.BLOCK, resourceLoc("latex_resistant"));
-    public static final TagKey<Block> LASER_TRANSPARENT = TagKey.create(Registries.BLOCK, resourceLoc("laser_transparent"));
-    public static final TagKey<EntityType<?>> TRANSFURRABLE_TAG = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("transfurrable"));
-    public static final TagKey<EntityType<?>> SEWAGE_SYSTEM_CONSUMABLE = TagKey.create(Registries.ENTITY_TYPE, resourceLoc("sewage_system_consumable"));
+    //Structure processors
+    public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<LabRotProcessor>> LAB_ROT_PROCESSOR = PROCESSORS.register("lab_rot", () -> () -> LabRotProcessor.CODEC);
 
     //Item tier
-    public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 2, 128, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));
+    public static final SimpleTier COPPER = new SimpleTier(BlockTags.INCORRECT_FOR_IRON_TOOL, 128, 4, 5, 12, ()-> Ingredient.of(Items.COPPER_INGOT));
 
     //Game rules
     public static final GameRules.Key<GameRules.BooleanValue> CHOOSE_TF_OR_DIE = GameRules.register("chooseTransfurOrDie", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
@@ -115,7 +104,7 @@ public class AChanged {
         return loc.withPrefix("textures/").withSuffix(".png");
     }
 
-    public AChanged(IEventBus modEventBus) {
+    public AChanged(IEventBus modEventBus, ModContainer container) {
         ABILITIES.register(modEventBus);
         ACTIVITIES.register(modEventBus);
         ARMOR_MATERIALS.register(modEventBus);
@@ -139,5 +128,13 @@ public class AChanged {
         PARTICLE_TYPES.register(modEventBus);
         SOUNDS.register(modEventBus);
         TRIGGER_TYPES.register(modEventBus);
+        PROCESSORS.register(modEventBus);
+
+
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_SPEC);
+        new CMRS(modEventBus, container);
     }
+
+    @ApiStatus.Internal
+    public static boolean isSafeToAddBiomes = true;
 }

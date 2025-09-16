@@ -4,7 +4,8 @@ import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.ability.Ability;
+import net.zaharenko424.a_changed.ability.api.Ability;
+import net.zaharenko424.cmrs.client.gui.widget.RadialButton;
 import net.zaharenko424.a_changed.registry.AbilityRegistry;
 
 import java.awt.*;
@@ -17,8 +18,9 @@ public class FishAbilityScreen extends SoundAbilityScreen {
     }
 
     @Override
-    protected int buttonColor(int button) {
-        return Color.CYAN.getRGB();
+    protected RadialButton makeButton(String name, int index, int radius, int thickness) {
+        return super.makeButton(name, index, radius, thickness)
+                .setOutlineColorFunc(button -> button.isHovering() ? Color.CYAN.getRGB() : -10158081);
     }
 
     @Override

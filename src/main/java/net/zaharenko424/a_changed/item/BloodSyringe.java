@@ -23,11 +23,11 @@ import java.util.List;
 public class BloodSyringe extends Item {
 
     public BloodSyringe() {
-        super(new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Properties().stacksTo(4).rarity(Rarity.UNCOMMON));
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack syringe, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack syringe, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(syringe, context, tooltipComponents, tooltipFlag);
         if(syringe.has(ComponentRegistry.BLOOD_TYPE)){
             MutableComponent component = Component.translatable("tooltip.a_changed.blood_syringe", syringe.get(ComponentRegistry.BLOOD_TYPE).toString()).withStyle(ChatFormatting.DARK_RED);

@@ -16,13 +16,13 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.blocks.*;
-import net.zaharenko424.a_changed.block.boxes.SmallCardboardBox;
-import net.zaharenko424.a_changed.block.doors.Abstract2By2Door;
-import net.zaharenko424.a_changed.block.doors.Abstract3By3Door;
-import net.zaharenko424.a_changed.block.machines.AbstractMachine;
-import net.zaharenko424.a_changed.block.machines.Capacitor;
-import net.zaharenko424.a_changed.block.machines.WireBlock;
+import net.zaharenko424.a_changed.block.*;
+import net.zaharenko424.a_changed.block.box.SmallCardboardBox;
+import net.zaharenko424.a_changed.block.door.Abstract2By2Door;
+import net.zaharenko424.a_changed.block.door.Abstract3By3Door;
+import net.zaharenko424.a_changed.block.machine.AbstractMachine;
+import net.zaharenko424.a_changed.block.machine.Capacitor;
+import net.zaharenko424.a_changed.block.machine.WireBlock;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;
@@ -46,10 +46,12 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
     @Override
     protected void registerStatesAndModels() {
         rotatedDoublePartBlock(AIR_CONDITIONER,null);
-        threeByThreeDoorWithItem(BIG_LAB_DOOR);
+        backupGenerator();
+        threeByThreeDoor(BIG_LAB_DOOR);
         rotatedDoublePartBlock(BIG_LAB_LAMP, null);
-        threeByThreeDoorWithItem(BIG_LIBRARY_DOOR);
-        threeByThreeDoorWithItem(BIG_MAINTENANCE_DOOR);
+        threeByThreeDoor(BIG_LIBRARY_DOOR);
+        threeByThreeDoor(BIG_MAINTENANCE_DOOR);
+        blockWithItem(BLUE_LAB_BLOCK);
         blockWithItem(BLUE_LAB_TILE);
         slabWithItem(BLUE_LAB_TILE_SLAB, blockLoc(BLUE_LAB_TILE));
         stairsWithItem(BLUE_LAB_TILE_STAIRS, blockLoc(BLUE_LAB_TILE));
@@ -80,6 +82,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         latexPuddleWithItem(DARK_LATEX_PUDDLE_M, false);
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_ENCODER);
         horizontalDirectionalBlockWithItem(DERELICT_LATEX_PURIFIER);
+        horizontalDirectionalBlock(DISC);
         machineLikeWithItem(DNA_EXTRACTOR, true);
         allDirectionalBlockWithItem(EXPOSED_PIPES);
         simpleBlockWithItemExisting(FLASK);
@@ -95,21 +98,23 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         blockWithItem(LAB_BLOCK);
         slabWithItem(LAB_SLAB, blockLoc(LAB_BLOCK));
         stairsWithItem(LAB_STAIRS, blockLoc(LAB_BLOCK));
-        twoByTwoDoorWithItem(LAB_DOOR);
+        twoByTwoDoor(LAB_DOOR);
         allDirectionalBlockWithItem(LAB_LAMP);
         blockWithItem(LAB_TILE);
         slabWithItem(LAB_TILE_SLAB, blockLoc(LAB_TILE));
         stairsWithItem(LAB_TILE_STAIRS, blockLoc(LAB_TILE));
         laserWithItem();
-        doublePartYBlockWithItem(LATEX_CONTAINER);
+        doublePartYBlockWItem(LATEX_CONTAINER);
         machineLikeWithItem(LATEX_ENCODER, false);
         machineLikeWithItem(LATEX_PURIFIER, false);
         simpleCubeWithItem(LATEX_RESISTANT_BLOCK);
         simpleBlockWithItem(LATEX_RESISTANT_GLASS.get(), models().cubeAll(LATEX_RESISTANT_GLASS.getId().getPath(), blockLoc(LATEX_RESISTANT_GLASS)).renderType("translucent"));
         paneBlockWithRenderType(LATEX_RESISTANT_GLASS_PANE.get(), blockLoc(LATEX_RESISTANT_GLASS), blockLoc(LATEX_RESISTANT_GLASS), "translucent");
         simpleBlock(LATEX_SOLVENT_BLOCK.get(),models().getBuilder(LATEX_SOLVENT_BLOCK.getId().getPath()).texture("particle", AChanged.MODID+":block/latex_solvent_still"));
-        twoByTwoDoorWithItem(LIBRARY_DOOR);
-        twoByTwoDoorWithItem(MAINTENANCE_DOOR);
+        twoByTwoDoor(LIBRARY_DOOR);
+        blockWithItem(LIGHT_BLUE_LAB_BLOCK);
+        horizontalDirectionalBlockWithItem(LIME_FLOOR_CIRCLE);
+        twoByTwoDoor(MAINTENANCE_DOOR);
         rotatedDoublePartBlock(METAL_BOX,null);
         metalCan(METAL_CAN);
         horizontalDirectionalBlockWithItem(BlockRegistry.NOTE);
@@ -137,13 +142,16 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
         logWithItem(ORANGE_TREE_LOG, null, null);
         logWithItem(ORANGE_WOOD, blockLoc(ORANGE_TREE_LOG), blockLoc(ORANGE_TREE_LOG));
+        simpleBlock(PAPER_STACK.get(), models().cubeAll(PAPER_STACK.getId().getPath(), blockLoc(PAPER_STACK).withSuffix("/paper")));
         pipe();
         simpleBlockWithItem(POTTED_ORANGE_SAPLING.get(), models().singleTexture(POTTED_ORANGE_SAPLING.getId().getPath(),
                 ResourceLocation.withDefaultNamespace("flower_pot_cross"), "plant", blockLoc(ORANGE_SAPLING)).renderType("cutout"));
+        horizontalDirectionalBlockWithItem(RED_FLOOR_CIRCLE);
         blockExisting(ROTATING_CHAIR);
         horizontalDirectionalBlockWithItem(SCANNER);
         smallCardboardBoxPileWithItem();
         smartSewageSystemWithItem();
+        pillarWithItem(STRIPED_LIGHT_BLUE_LAB_BLOCK, blockLoc(LIGHT_BLUE_LAB_BLOCK));
         pillarWithItem(STRIPED_ORANGE_LAB_BLOCK, blockLoc(ORANGE_LAB_BLOCK));
         logWithItem(STRIPPED_ORANGE_LOG, null, blockLoc(ORANGE_TREE_LOG).withSuffix("_top"));
         logWithItem(STRIPPED_ORANGE_WOOD, blockLoc(STRIPPED_ORANGE_LOG), blockLoc(STRIPPED_ORANGE_LOG));
@@ -155,8 +163,10 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         ventDuct();
         ventHatchWithItem();
         pillarWithItem(VENT_WALL,null);
+        whiteboard();
         blockWithItem(WHITE_LATEX_BLOCK);
         simpleBlock(WHITE_LATEX_FLUID_BLOCK.get(), models().getBuilder(WHITE_LATEX_FLUID_BLOCK.getId().getPath()).texture("particle", AChanged.MODID + ":block/white_latex_still"));
+        doublePartYBlockWOItem(WHITE_LATEX_PILLAR);
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_F, true);
         latexPuddleWithItem(WHITE_LATEX_PUDDLE_M, true);
         blockWithItem(YELLOW_LAB_BLOCK);
@@ -237,7 +247,16 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
         return models().cube(textureLoc+modelId, textureLoc.withSuffix(str0), textureLoc.withSuffix(str1), textureLoc.withSuffix(str2), textureLoc.withSuffix(str3), textureLoc.withSuffix(str4), textureLoc.withSuffix(str5)).texture("particle", textureLoc.withSuffix("0c"));
     }
 
-    private void doublePartYBlockWithItem(DeferredBlock<?> block){
+    private void doublePartYBlockWOItem(DeferredBlock<?> block){
+        ResourceLocation id = block.getId();
+        ModelFile part0 = models().getExistingFile(blockLoc(id));
+        ModelFile part_1 = models().getExistingFile(blockLoc(id).withSuffix("_1"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                new ConfiguredModel[]{new ConfiguredModel(state.getValue(StateProperties.PART2) == 1 ? part_1 : part0)}
+        );
+    }
+
+    private void doublePartYBlockWItem(DeferredBlock<?> block){
         ResourceLocation id = block.getId();
         ModelFile part0 = models().getExistingFile(blockLoc(id));
         ModelFile part_1 = models().getExistingFile(blockLoc(id).withSuffix("_1"));
@@ -493,14 +512,27 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
                         + (state.getValue(CryoChamber.OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
     }
 
-    private void threeByThreeDoorWithItem(DeferredBlock<? extends Abstract3By3Door> block){
+    private void whiteboard(){
+        DeferredBlock<Whiteboard> block = WHITEBOARD;
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART6))), state.getValue(HORIZONTAL_FACING)));
+    }
+
+    private void backupGenerator(){
+        DeferredBlock<BackupGenerator> block = BACKUP_GENERATOR;
+        ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
+        getVariantBuilder(block.get()).forAllStates(state ->
+                horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART9) + (state.getValue(ACTIVE) ? "_on" : ""))), state.getValue(HORIZONTAL_FACING)));
+    }
+
+    private void threeByThreeDoor(DeferredBlock<? extends Abstract3By3Door> block){
         ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART9) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));
-
     }
 
-    private void twoByTwoDoorWithItem(DeferredBlock<? extends Abstract2By2Door> block){
+    private void twoByTwoDoor(DeferredBlock<? extends Abstract2By2Door> block){
         ResourceLocation id = blockLoc(block.getId().withPrefix(block.getId().getPath() + "/"));
         getVariantBuilder(block.get()).forAllStates(state ->
                 horizontalRotatedModelAr(models().getExistingFile(id.withSuffix("_" + state.getValue(PART4) + (state.getValue(OPEN) ? "_open" : ""))), state.getValue(HORIZONTAL_FACING)));

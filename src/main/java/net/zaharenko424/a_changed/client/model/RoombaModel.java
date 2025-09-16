@@ -6,16 +6,17 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.util.Mth;
-import net.zaharenko424.a_changed.client.cmrs.ModelDefinitionCache;
-import net.zaharenko424.a_changed.client.cmrs.geom.GroupBuilder;
-import net.zaharenko424.a_changed.client.cmrs.geom.GroupDefinition;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelDefinition;
-import net.zaharenko424.a_changed.client.cmrs.geom.ModelPart;
+import net.zaharenko424.cmrs.client.ModelDefinitionCache;
+import net.zaharenko424.cmrs.api.NoYFlip;
+import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
+import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
+import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
+import net.zaharenko424.cmrs.client.geom.ModelPart;
 import net.zaharenko424.a_changed.entity.RoombaEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public class RoombaModel extends EntityModel<RoombaEntity> {
+public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(EntityRegistry.ROOMBA_ENTITY.getId(), "main");
 
@@ -24,19 +25,21 @@ public class RoombaModel extends EntityModel<RoombaEntity> {
     private final ModelPart brushLeft;
 
     public RoombaModel(){
-        root = ModelDefinitionCache.INSTANCE.bake(bodyLayer).getChild("root");
-        brushRight = root.getChild("brush_right");
-        brushLeft = root.getChild("brush_left");
+        root = ModelDefinitionCache.getInstance().bake(bodyLayer).getDirectChild("root");
+        brushRight = root.getDirectChild("brush_right");
+        brushLeft = root.getDirectChild("brush_left");
     }
 
     @Override
     public void setupAnim(@NotNull RoombaEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         root.getAllParts().forEach(ModelPart::resetPose);
-        root.yRot = pNetHeadYaw * Mth.DEG_TO_RAD;
+        root.yRot = (180 - pEntity.getViewYRot(pAgeInTicks - pEntity.tickCount)) * Mth.DEG_TO_RAD;
 
         float rotDeg = pEntity.tickCount % 90 * 4;
+        float rotDegNext = (pEntity.tickCount + 1) % 90 * 4;
+        if(rotDegNext < rotDeg) rotDegNext += rotDeg;
 
-        brushRight.yRot = rotDeg * Mth.DEG_TO_RAD;
+        brushRight.yRot = Mth.lerp(pAgeInTicks - pEntity.tickCount, rotDeg, rotDegNext) * Mth.DEG_TO_RAD;
         brushLeft.yRot = -brushRight.yRot;
     }
 

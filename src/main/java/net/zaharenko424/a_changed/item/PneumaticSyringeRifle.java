@@ -15,18 +15,20 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.zaharenko424.a_changed.menu.PneumaticSyringeRifleMenu;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
-import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
-import net.zaharenko424.a_changed.transfurSystem.transfurTypes.TransfurType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PneumaticSyringeRifle extends AbstractSyringeRifle {
 
     public PneumaticSyringeRifle() {
-        super(new Properties().rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Properties().rarity(Rarity.UNCOMMON).durability(128), 3, 20);
+    }
+
+    @Override
+    public boolean isValidRepairItem(@NotNull ItemStack stack, @NotNull ItemStack repairCandidate) {
+        return repairCandidate.is(ItemRegistry.PIPE_ITEM);
     }
 
     @Override
@@ -38,12 +40,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    TransfurType useFirst(@NotNull IItemHandler handler, boolean simulate) {
+    ItemStack useFirst(@NotNull IItemHandler handler, boolean simulate) {
         for(int i = 1; i < 9; i++){
-            if(!handler.getStackInSlot(i).isEmpty()) return TransfurManager.getTransfurType(
-                    Objects.requireNonNull(LatexSyringeItem.decodeTransfur(handler.extractItem(i, 1, simulate))));
+            if(!handler.getStackInSlot(i).isEmpty()) return simulate ? handler.extractItem(i, 1, true).copy()
+                    : handler.extractItem(i, 1, false);
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -59,12 +61,7 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    int velocity() {
-        return 3;
-    }
-
-    @Override
-    float accuracy() {
+    float inaccuracy(@NotNull Player player) {
         return 1.2f;
     }
 
@@ -74,17 +71,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
     }
 
     @Override
-    int cooldown() {
-        return 20;
-    }
-
-    @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         IItemHandler inventory = stack.getCapability(Capabilities.ItemHandler.ITEM);
         ItemStack canister = inventory.getStackInSlot(0);
 
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_air",
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.air",
                 canister.isEmpty() || !(canister.getItem() instanceof CompressedAirCanister) ? 0
                         : canister.getMaxDamage() - canister.getDamageValue()).withStyle(ChatFormatting.GRAY));
 
@@ -92,12 +84,12 @@ public class PneumaticSyringeRifle extends AbstractSyringeRifle {
         for(int i = 1; i < 9; i++){
             if(!inventory.getStackInSlot(i).isEmpty()) count++;
         }
-        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle_shots", count).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.a_changed.syringe_rifle.shots", count).withStyle(ChatFormatting.GRAY));
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return new PneumaticSyringeRifleMenu(pContainerId, pPlayerInventory, pPlayer.getMainHandItem());
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        return new PneumaticSyringeRifleMenu(containerId, playerInventory, player.getMainHandItem());
     }
 }

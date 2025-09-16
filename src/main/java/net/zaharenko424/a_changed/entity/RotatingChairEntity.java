@@ -5,10 +5,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class RotatingChairEntity extends SeatEntity {
 
@@ -21,7 +23,7 @@ public class RotatingChairEntity extends SeatEntity {
     }
 
     @Override
-    public boolean shouldRender(double p_20296_, double p_20297_, double p_20298_) {
+    public boolean shouldRender(double x, double y, double z) {
         return true;
     }
 
@@ -50,7 +52,17 @@ public class RotatingChairEntity extends SeatEntity {
     }
 
     @Override
-    public void setYRot(float pYRot) {
-        super.setYRot(Mth.wrapDegrees(pYRot));
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
+
+        List<RotatingChairEntity> entities = level().getEntitiesOfClass(RotatingChairEntity.class, Shapes.block().bounds().move(getOnPos()));
+        for (RotatingChairEntity entity : entities){
+            if(entity != this) entity.discard();
+        }
+    }
+
+    @Override
+    public void setYRot(float yRot) {
+        super.setYRot(Mth.wrapDegrees(yRot));
     }
 }

@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.*;
-import net.zaharenko424.a_changed.entity.block.machines.*;
+import net.zaharenko424.a_changed.entity.block.machine.*;
 import net.zaharenko424.a_changed.entity.block.sign.HangingSignEntity;
 import net.zaharenko424.a_changed.entity.block.sign.SignEntity;
 
@@ -22,6 +22,8 @@ public class BlockEntityRegistry {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AirConditionerEntity>> AIR_CONDITIONER_ENTITY = BLOCK_ENTITIES
             .register("air_conditioner", () -> BlockEntityType.Builder.of(AirConditionerEntity::new, AIR_CONDITIONER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BackupGeneratorEntity>> BACKUP_GENERATOR_ENTITY = BLOCK_ENTITIES
+            .register("backup_generator", () -> BlockEntityType.Builder.of(BackupGeneratorEntity::new, BACKUP_GENERATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BookStackEntity>> BOOK_STACK_ENTITY = BLOCK_ENTITIES
             .register("book_stack", () -> BlockEntityType.Builder.of(BookStackEntity::new, BOOK_STACK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoxPileEntity>> BOX_PILE_ENTITY = BLOCK_ENTITIES
@@ -55,7 +57,9 @@ public class BlockEntityRegistry {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatexPurifierEntity>> LATEX_PURIFIER_ENTITY = BLOCK_ENTITIES
             .register("latex_purifier", () -> BlockEntityType.Builder.of(LatexPurifierEntity::new, LATEX_PURIFIER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NoteEntity>> NOTE_ENTITY = BLOCK_ENTITIES
-            .register("note", () -> BlockEntityType.Builder.of(NoteEntity::new, NOTE.get()).build(null));
+            .register("note", () -> BlockEntityType.Builder.of(NoteEntity::new, NOTE.get(), NOTEPAD.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PaperStackEntity>> PAPER_STACK_ENTITY = BLOCK_ENTITIES
+            .register("paper_stack", () -> BlockEntityType.Builder.of(PaperStackEntity::new, PAPER_STACK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SignEntity>> SIGN_ENTITY = BLOCK_ENTITIES
             .register("sign", ()-> BlockEntityType.Builder.of(SignEntity::new, ORANGE_SIGN.get(), ORANGE_WALL_SIGN.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmartSewageEntity>> SMART_SEWAGE_ENTITY = BLOCK_ENTITIES

@@ -16,7 +16,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.zaharenko424.a_changed.block.SmallDecorBlock;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +26,8 @@ public class MetalCan extends SmallDecorBlock {
     protected static final VoxelShape SHAPE, SHAPE_OPEN;
     protected static final VoxelShapeCache CACHE = new VoxelShapeCache();
 
-    public MetalCan(Properties pProperties) {
-        super(pProperties);
+    public MetalCan(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(OPEN, false));
     }
 
@@ -38,9 +37,9 @@ public class MetalCan extends SmallDecorBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        boolean open = pState.getValue(OPEN);
-        return CACHE.getShape(pState.getValue(FACING), open ? 1 : 0, ()-> open ? SHAPE_OPEN : SHAPE);
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        boolean open = state.getValue(OPEN);
+        return CACHE.getShape(state.getValue(FACING), open ? 1 : 0, ()-> open ? SHAPE_OPEN : SHAPE);
     }
 
     @Override

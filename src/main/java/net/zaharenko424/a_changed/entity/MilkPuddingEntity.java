@@ -14,7 +14,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.zaharenko424.a_changed.capability.TransfurHandler;
+import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
@@ -35,7 +35,7 @@ public class MilkPuddingEntity extends Monster {
         goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1));
         goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, true, entity -> DamageSources.checkTarget(entity) && AbstractLatexBeast.isNonSurvivalOrNonTF(entity)));
+        targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, true, entity -> DamageSources.checkTFTarget(entity) && AbstractLatexBeast.isNonSurvivalOrNonTF(entity)));
     }
 
     public static AttributeSupplier.Builder createAttributes(){
@@ -53,14 +53,14 @@ public class MilkPuddingEntity extends Monster {
 
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
-        if(!DamageSources.checkTarget(pEntity) || !AbstractLatexBeast.isNonSurvivalOrNonTF((LivingEntity) pEntity)) {
+        if(!DamageSources.checkTFTarget(pEntity) || !AbstractLatexBeast.isNonSurvivalOrNonTF((LivingEntity) pEntity)) {
             setTarget(null);
             return false;
         }
 
-        TransfurHandler.of((LivingEntity) pEntity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2,
+        TransfurHandler.nonNullOf((LivingEntity) pEntity).addTransfurProgress(TransfurManager.TRANSFUR_TOLERANCE / 2,
                 random.nextFloat() > .5 ? TransfurRegistry.WHITE_LATEX_WOLF_F_TF.get() : TransfurRegistry.WHITE_LATEX_WOLF_M_TF.get(),
-                TransfurContext.ADD_PROGRESS_DEF);
+                TransfurContext.DEF);
         ((LivingEntity) pEntity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
         discard();
         return true;

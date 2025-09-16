@@ -10,11 +10,15 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.zaharenko424.a_changed.capability.energy.ExtendedEnergyStorage;
+import net.zaharenko424.a_changed.registry.ArmorMaterialRegistry;
 import net.zaharenko424.a_changed.registry.ComponentRegistry;
 import net.zaharenko424.a_changed.registry.MobEffectRegistry;
 import net.zaharenko424.a_changed.util.Utils;
@@ -24,31 +28,22 @@ import java.util.List;
 
 public class StunBaton extends SwordItem {
 
+    public static final int ENERGY_PER_HIT = 500;
+
     public StunBaton() {
-        super(Tiers.WOOD, new Properties().durability(100).rarity(Rarity.UNCOMMON)
-                .attributes(createAttributes(Tiers.WOOD, 3, -2.4f)));
+        super(ArmorMaterialRegistry.STUN_WEAPON_TIER, new Properties().rarity(Rarity.UNCOMMON)
+                .attributes(createAttributes(ArmorMaterialRegistry.STUN_WEAPON_TIER, 3, -2.4f)));
     }
 
     @Override
-    public boolean isBarVisible(@NotNull ItemStack pStack) {
-        return true;
-    }
-
-    @Override
-    public int getBarColor(@NotNull ItemStack pStack) {
-        if(pStack.has(ComponentRegistry.ENABLED)) return super.getBarColor(pStack);
-        return -4795971;
-    }
-
-    @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
-        if(pLevel.isClientSide || pUsedHand != InteractionHand.MAIN_HAND) return super.use(pLevel, pPlayer, pUsedHand);
-        ItemStack stunBaton = pPlayer.getMainHandItem();
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        if(level.isClientSide || usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand);
+        ItemStack stunBaton = player.getMainHandItem();
 
         if(stunBaton.has(ComponentRegistry.ENABLED)){
             stunBaton.remove(ComponentRegistry.ENABLED);
         } else {
-            if(stunBaton.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= 500)
+            if(stunBaton.getCapability(Capabilities.EnergyStorage.ITEM).getEnergyStored() >= ENERGY_PER_HIT)
                 stunBaton.set(ComponentRegistry.ENABLED, Unit.INSTANCE);
             else return InteractionResultHolder.fail(stunBaton);
         }
@@ -57,24 +52,31 @@ public class StunBaton extends SwordItem {
     }
 
     @Override
-    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity pTarget, @NotNull LivingEntity pAttacker) {
+    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if(!stack.has(ComponentRegistry.ENABLED)) return true;
 
-        ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if(!(pAttacker instanceof Player player) || !player.isCreative()) storage.addEnergy(-500);
-        if(storage.getEnergyStored() < 500) stack.remove(ComponentRegistry.ENABLED);
+        if(!(attacker instanceof Player player) || !player.isCreative()){
+            ExtendedEnergyStorage storage = (ExtendedEnergyStorage) stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            if(storage.getEnergyStored() < ENERGY_PER_HIT) {
+                stack.remove(ComponentRegistry.ENABLED);
+                return true;
+            }
 
-        pTarget.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
+            storage.consumeEnergy(ENERGY_PER_HIT);
+            if(storage.getEnergyStored() < ENERGY_PER_HIT) stack.remove(ComponentRegistry.ENABLED);
+        }
 
-        if(!(pAttacker instanceof Player player)) return true;
+        target.addEffect(new MobEffectInstance(MobEffectRegistry.ELECTROCUTED_DEBUFF, 80, 0, false, false));
+
+        if(!(attacker instanceof Player player)) return true;
 
         player.getCooldowns().addCooldown(stack.getItem(), 20);
 
         double entityReachSq = Mth.square(player.entityInteractionRange()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
         for(LivingEntity living : player.level()
-                .getEntitiesOfClass(LivingEntity.class, pTarget.getBoundingBox().inflate(1.0, 0.25, 1.0))) {
+                .getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(1.0, 0.25, 1.0))) {
             if (living != player
-                    && living != pTarget
+                    && living != target
                     && !player.isAlliedTo(living)
                     && (!(living instanceof ArmorStand) || !((ArmorStand)living).isMarker())
                     && player.distanceToSqr(living) < entityReachSq) {
@@ -88,15 +90,13 @@ public class StunBaton extends SwordItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+
+        if(stack.has(ComponentRegistry.ENABLED)){
+            tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.on").withStyle(ChatFormatting.DARK_GREEN));
+        } else tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton.off").withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.empty());
+
         IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
         tooltipComponents.add(Component.literal("EU: "+ Utils.formatEnergy(storage.getEnergyStored()) + "/" + Utils.formatEnergy(storage.getMaxEnergyStored())).withStyle(ChatFormatting.DARK_GREEN));
-        if(stack.has(ComponentRegistry.ENABLED)){
-            tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton_on").withStyle(ChatFormatting.DARK_GREEN));
-        } else tooltipComponents.add(Component.translatable("tooltip.a_changed.stun_baton_off").withStyle(ChatFormatting.GOLD));
-    }
-
-    @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return false;
     }
 }
