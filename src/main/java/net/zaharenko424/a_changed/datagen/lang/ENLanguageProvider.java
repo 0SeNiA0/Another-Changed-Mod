@@ -217,6 +217,7 @@ public class ENLanguageProvider extends LanguageProvider {
         addEntityType(EntityRegistry.ROOMBA_ENTITY, "Roomba");
         addEntityType(EntityRegistry.SNOW_LEOPARD_FEMALE, "Snow Leopard Female");
         addEntityType(EntityRegistry.SNOW_LEOPARD_MALE, "Snow Leopard Male");
+        addEntityType(EntityRegistry.WHITE_LATEX_PUP, "White Latex Pup");
         addEntityType(EntityRegistry.WHITE_LATEX_WOLF_FEMALE, "White Latex Wolf Female");
         addEntityType(EntityRegistry.WHITE_LATEX_WOLF_MALE, "White Latex Wolf Male");
         addEntityType(EntityRegistry.YUFENG_DRAGON, "Yufeng Dragon");

@@ -13,6 +13,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.datagen.advancement.AdvancementSubProvider;
 import net.zaharenko424.a_changed.datagen.lang.ENLanguageProvider;
+import net.zaharenko424.a_changed.datagen.lang.HULanguageProvider;
 import net.zaharenko424.a_changed.datagen.recipe.RecipeProvider;
 import net.zaharenko424.a_changed.datagen.worldgen.loot_table.LabLoot;
 import org.jetbrains.annotations.NotNull;
@@ -59,5 +60,7 @@ public final class DatagenEvent {
         generator.addProvider(event.includeClient(), new HeartConverter(new File("..\\..\\heart_templates"), out, AChanged.MODID));
 
         generator.addProvider(event.includeClient(), new ENLanguageProvider(out));
+
+        generator.addProvider(event.includeClient(), new HULanguageProvider(out));
     }
 }
