@@ -2,6 +2,7 @@ package net.zaharenko424.cmrs.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -109,7 +110,12 @@ public class CustomModelManager {
     public <E extends LivingEntity, M extends EntityModel<E> & CustomModel<E>> void renderModel(ResourceLocation modelId, E entity, PoseStack stack, int light){
         M model = getModel(modelId);
         if(model == null) return;
-        if(renderer == null) renderer = new AnyModelRenderer<>(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), null, null, null, null, null, null));
+        if(renderer == null) renderer = new AnyModelRenderer<>(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), null, null, null, null, null, null){
+            @Override
+            public @NotNull Font getFont() {
+                return Minecraft.getInstance().font;
+            }
+        });
         ((AnyModelRenderer<E, M>)renderer).render(model, entity, 0, 1, stack, Minecraft.getInstance().renderBuffers().bufferSource(), light);
     }
 

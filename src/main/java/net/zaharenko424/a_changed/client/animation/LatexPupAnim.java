@@ -3,8 +3,8 @@ package net.zaharenko424.a_changed.client.animation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.Targeting;
 import net.minecraft.world.phys.Vec3;
 import net.zaharenko424.a_changed.entity.AbstractLatexPup;
 import net.zaharenko424.cmrs.api.AnimationComponent;
@@ -38,7 +38,7 @@ public class LatexPupAnim extends AnimationComponent {
             limbSwing /= 2;
         }
 
-        if (entity instanceof PathfinderMob mob && mob.getTarget() != null) {
+        if (entity instanceof Targeting mob && mob.getTarget() != null) {
             tail.yRot = 0.0F;
         } else {
             tail.yRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
