@@ -367,6 +367,22 @@ public class HULanguageProvider extends LanguageProvider {
         addTooltip("wires", "Áteresztőképesség: %1$s EU/t");
 
         //Transfurs
-        TransfurRegistry.TRANSFUR_TYPES.getEntries().forEach(this::addTransfur);
+        add("transfur." + modid + ".bei_feng", "Pejfeng");
+        add("transfur." + modid + ".benign", "Jóságos latex");
+        add("transfur." + modid + ".dark_latex_pup", "Sötét latex farkaskölyök");
+        add("transfur." + modid + ".dark_latex_wolf_female", "Nőstény sötét latex farkas");
+        add("transfur." + modid + ".dark_latex_wolf_male", "Hím sötét latex farkas");
+        add("transfur." + modid + ".gas_wolf", "Gáz farkas");
+        add("transfur." + modid + ".hypno_cat", "Hipnómacska");
+        add("transfur." + modid + ".latex_shark_female", "Nőstény latex cápa");
+        add("transfur." + modid + ".latex_shark_male", "Hím latex cápa");
+        add("transfur." + modid + ".pure_white_latex_wolf", "Tiszta fehér latex farkas");
+        add("transfur." + modid + ".snow_leopard_female", "Nőstény hópárduc");
+        add("transfur." + modid + ".snow_leopard_male", "Hím hópárduc");
+        add("transfur." + modid + ".special", "Speciális");
+        add("transfur." + modid + ".white_latex_pup", "Fehér latex farkaskölyök");
+        add("transfur." + modid + ".white_latex_wolf_female", "Nőstény fehér latex farkas");
+        add("transfur." + modid + ".white_latex_wolf_male", "Hím fehér latex farkas");
+        add("transfur." + modid + ".yufeng_dragon", "Jüfeng sárkány");
     }
 }
