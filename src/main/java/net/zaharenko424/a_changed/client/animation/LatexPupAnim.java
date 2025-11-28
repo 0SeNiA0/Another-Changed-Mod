@@ -8,8 +8,9 @@ import net.minecraft.world.entity.Targeting;
 import net.minecraft.world.phys.Vec3;
 import net.zaharenko424.a_changed.entity.AbstractLatexPup;
 import net.zaharenko424.cmrs.api.AnimationComponent;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.Reusable;
+import org.joml.Vector3f;
 
 //Hardcoded dl pup animation
 public class LatexPupAnim extends AnimationComponent {
@@ -22,68 +23,67 @@ public class LatexPupAnim extends AnimationComponent {
     }
 
     @Override
-    public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        ModelPart head = root.getPart("head");
-        ModelPart body = root.getPart("body");
-        ModelPart upperBody = root.getPart("upper_body");
-        ModelPart tail = root.getPart("tail");
-        ModelPart rightLegFront = root.getPart("right_leg_front");
-        ModelPart leftLegFront = root.getPart("left_leg_front");
-        ModelPart rightLegBack = root.getPart("right_leg_back");
-        ModelPart leftLegBack = root.getPart("left_leg_back");
+    public <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        Node head = root.getPart("head");
+        Node body = root.getPart("body");
+        Node upperBody = root.getPart("upper_body");
+        Node tail = root.getPart("tail");
+        Node rightLegFront = root.getPart("right_leg_front");
+        Node leftLegFront = root.getPart("left_leg_front");
+        Node rightLegBack = root.getPart("right_leg_back");
+        Node leftLegBack = root.getPart("left_leg_back");
 
         if(entity.isBaby()){
-            root.offsetScale(Reusable.VEC3F.get().set(-.5f));
-            head.offsetScale(Reusable.VEC3F.get().set(1));
+            root.scale().add(Reusable.VEC3F.get().set(-.5f));
+            head.scale().add(Reusable.VEC3F.get().set(1));
             limbSwing /= 2;
         }
 
+        Vector3f tailRot = tail.rotation();
         if (entity instanceof Targeting mob && mob.getTarget() != null) {
-            tail.yRot = 0.0F;
+            tailRot.y = 0.0F;
         } else {
-            tail.yRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+            tailRot.y = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
         }
 
         Vec3 movement = entity.getDeltaMovement();
         if (entity instanceof TamableAnimal animal && animal.isInSittingPose() || (entity.isCrouching() && movement.x == 0 && movement.z == 0 && entity.fallDistance == 0)) {
-            if(entity instanceof TamableAnimal) root.y -= entity.isBaby() ? 1 : 2;
-            head.y += 1.8f;
+            if(entity instanceof TamableAnimal) root.translation().y -= entity.isBaby() ? 1 : 2;
+            head.translation().y += 1.8f;
 
-            body.y -= 2;
-            body.z -= 2;
-            body.xRot = -(float) (Math.PI / 4);
+            body.translation().add(0, -2, -2);
+            body.rotation().x = -(float) (Math.PI / 4);
 
-            upperBody.xRot = -(float) (Math.PI * 2.0 / 5.0);
+            upperBody.rotation().x = -(float) (Math.PI * 2.0 / 5.0);
 
-            rightLegFront.xRot = -5.811947F;
-            leftLegFront.xRot = -5.811947F;
+            rightLegFront.rotation().x = -5.811947F;
+            leftLegFront.rotation().x = -5.811947F;
 
-            rightLegBack.y -= 5;
-            rightLegBack.z -= 4.5f;
-            rightLegBack.xRot = -(float) (Math.PI * 3.0 / 2.0);
-            leftLegBack.y -= 5;
-            leftLegBack.z -= 4.5f;
-            leftLegBack.xRot = -(float) (Math.PI * 3.0 / 2.0);
+            rightLegBack.translation().add(0, -5, -4.5f);
+            rightLegBack.rotation().x = -(float) (Math.PI * 3.0 / 2.0);
 
-            tail.y -= 7;
-            tail.z -= 2;
-            tail.xRot = -100 * Mth.DEG_TO_RAD;
+            leftLegBack.translation().add(0, -5, -4.5f);
+            leftLegBack.rotation().x = -(float) (Math.PI * 3.0 / 2.0);
+
+            tail.translation().add(0, -7, -2);
+            tailRot.x = -100 * Mth.DEG_TO_RAD;
         } else {
-            rightLegBack.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-            leftLegBack.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-            rightLegFront.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-            leftLegFront.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+            rightLegBack.rotation().x = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+            leftLegBack.rotation().x = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+            rightLegFront.rotation().x = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+            leftLegFront.rotation().x = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
         }
 
+        Vector3f headRot = head.rotation();
         if(entity instanceof AbstractLatexPup pup) {
-            head.zRot = pup.getHeadRollAngle(partialTick) + pup.getBodyRollAngle(partialTick, 0.0F);
-            upperBody.zRot = pup.getBodyRollAngle(partialTick, -0.08F);
-            body.zRot = pup.getBodyRollAngle(partialTick, -0.16F);
-            tail.xRot = -pup.getTailAngle();
-            tail.zRot = pup.getBodyRollAngle(partialTick, -0.2F);
+            headRot.z = pup.getHeadRollAngle(partialTick) + pup.getBodyRollAngle(partialTick, 0.0F);
+            upperBody.rotation().z = pup.getBodyRollAngle(partialTick, -0.08F);
+            body.rotation().z = pup.getBodyRollAngle(partialTick, -0.16F);
+            tailRot.x = -pup.getTailAngle();
+            tailRot.z = pup.getBodyRollAngle(partialTick, -0.2F);
         }
 
-        head.xRot = -headPitch * (float) (Math.PI / 180.0);
-        head.yRot = -netHeadYaw * (float) (Math.PI / 180.0);
+        headRot.x = -headPitch * (float) (Math.PI / 180.0);
+        headRot.y = -netHeadYaw * (float) (Math.PI / 180.0);
     }
 }

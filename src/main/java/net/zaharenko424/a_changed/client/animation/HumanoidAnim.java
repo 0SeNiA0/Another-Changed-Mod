@@ -9,8 +9,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.a_changed.ability.GrabMode;
 import net.zaharenko424.cmrs.client.animation.AnimationUtils;
 import net.zaharenko424.cmrs.api.AnimationComponent;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.a_changed.transfurSystem.TransfurManager;
+import org.joml.Vector3f;
 
 import static net.zaharenko424.a_changed.util.Utils.quadraticArmUpdate;
 import static net.zaharenko424.a_changed.util.Utils.rotlerpRad;
@@ -26,8 +27,8 @@ public class HumanoidAnim extends AnimationComponent {
     }
 
     @Override
-    public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
-        ModelPart head = root.getPart("head");
+    public <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+        Node head = root.getPart("head");
 
         float swimAmount = entity.getSwimAmount(partialTick);
 
@@ -36,17 +37,18 @@ public class HumanoidAnim extends AnimationComponent {
 
         boolean flag = entity.getFallFlyingTicks() > 4;
         boolean flag1 = entity.isVisuallySwimming();
-        head.yRot = headYaw * Mth.DEG_TO_RAD;
+        Vector3f headRot = head.rotation();
+        headRot.y = headYaw * Mth.DEG_TO_RAD;
         if (flag) {
-            head.xRot = (float) Math.PI / 4;
+            headRot.x = (float) Math.PI / 4;
         } else if (swimAmount > 0.0F) {
             if (flag1) {
-                head.xRot = rotlerpRad(swimAmount, head.xRot, (float) Math.PI / 4);
+                headRot.x = rotlerpRad(swimAmount, headRot.x, (float) Math.PI / 4);
             } else {
-                head.xRot = rotlerpRad(swimAmount, head.xRot, headPitch * -Mth.DEG_TO_RAD);
+                headRot.x = rotlerpRad(swimAmount, headRot.x, headPitch * -Mth.DEG_TO_RAD);
             }
         } else {
-            head.xRot = headPitch * Mth.DEG_TO_RAD;
+            headRot.x = headPitch * Mth.DEG_TO_RAD;
         }
 
         float f = 1.0F;
@@ -58,10 +60,10 @@ public class HumanoidAnim extends AnimationComponent {
 
         if (f < 1.0F) f = 1.0F;
 
-        ModelPart rightArm = root.getPart("right_arm");
-        ModelPart leftArm = root.getPart("left_arm");
-        ModelPart rightLeg = root.getPart("right_leg");
-        ModelPart leftLeg = root.getPart("left_leg");
+        Node rightArm = root.getPart("right_arm");
+        Node leftArm = root.getPart("left_arm");
+        Node rightLeg = root.getPart("right_leg");
+        Node leftLeg = root.getPart("left_leg");
 
         rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F / f;
         leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F / f;
@@ -88,21 +90,21 @@ public class HumanoidAnim extends AnimationComponent {
 
         setupArms(entity, head, rightArm, leftArm, rightArmPose, leftArmPose);
 
-        ModelPart body = root.getPart("body");
+        Node body = root.getPart("body");
         float attackTime = entity.getAttackAnim(partialTick);
 
         setupAttackAnimation(entity, head, body, rightArm, leftArm, attackTime);
 
         if (entity.isCrouching()) setupCrouching(head, body, rightArm, leftArm, rightLeg, leftLeg);
 
-        if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(rightArm, ageInTicks, 1.0F);
+        if (rightArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobNode(rightArm, ageInTicks, 1.0F);
 
-        if (leftArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobModelPart(leftArm, ageInTicks, -1.0F);
+        if (leftArmPose != HumanoidModel.ArmPose.SPYGLASS) AnimationUtils.bobNode(leftArm, ageInTicks, -1.0F);
 
         if (swimAmount > 0.0F) setupSwimAnimation(entity, rightArm, leftArm, rightLeg, leftLeg, limbSwing, attackTime, swimAmount);
     }
 
-    protected <E extends LivingEntity> void setupArms(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm , HumanoidModel.ArmPose rightArmPose, HumanoidModel.ArmPose leftArmPose){
+    protected <E extends LivingEntity> void setupArms(E entity, Node head, Node rightArm, Node leftArm , HumanoidModel.ArmPose rightArmPose, HumanoidModel.ArmPose leftArmPose){
         boolean flag2 = entity.getMainArm() == HumanoidArm.RIGHT;
         if (entity.isUsingItem()) {
             boolean flag3 = entity.getUsedItemHand() == InteractionHand.MAIN_HAND;
@@ -123,29 +125,26 @@ public class HumanoidAnim extends AnimationComponent {
         }
     }
 
-    protected void setupRiding(ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg){
-        rightArm.xRot += (float) Math.PI / 5;
-        leftArm.xRot += (float) Math.PI / 5;
-        rightLeg.xRot = 1.4137167F;
-        rightLeg.yRot = (float) -Math.PI / 10;
-        rightLeg.zRot = 0.07853982F;
-        leftLeg.xRot = 1.4137167F;
-        leftLeg.yRot = (float) Math.PI / 10;
-        leftLeg.zRot = -0.07853982F;
+    protected void setupRiding(Node rightArm, Node leftArm, Node rightLeg, Node leftLeg){
+        rightArm.rotation().x += (float) Math.PI / 5;
+        leftArm.rotation().x += (float) Math.PI / 5;
+        rightLeg.rotation().set(1.4137167F, (float) -Math.PI / 10, 0.07853982F);
+        leftLeg.rotation().set(1.4137167F, (float) Math.PI / 10, -0.07853982F);
     }
 
-    protected void setupCrouching(ModelPart head, ModelPart body, ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg){
-        body.xRot -= 0.5f;
-        body.z += 5;
-        rightArm.xRot -= 0.4f;
-        rightArm.y -= 2;
-        leftArm.xRot -= 0.4f;
-        leftArm.y -= 2;
-        rightLeg.z += 4;
-        leftLeg.z += 4;
-        rightLeg.y += .2F;
-        leftLeg.y += .2F;
-        head.y -= 3;
+    protected void setupCrouching(Node head, Node body, Node rightArm, Node leftArm, Node rightLeg, Node leftLeg){
+        body.translation().z += 5;
+        body.rotation().x -= 0.5f;
+
+        rightArm.translation().y -= 2;
+        rightArm.rotation().x -= 0.4f;
+
+        leftArm.translation().y -= 2;
+        leftArm.rotation().x -= 0.4f;
+
+        rightLeg.translation().add(0, .2f, 4);
+        leftLeg.translation().add(0, .2f, 4);
+        head.translation().y -= 3;
     }
 
     protected <E extends LivingEntity> HumanoidArm getAttackArm(E entity) {
@@ -153,35 +152,41 @@ public class HumanoidAnim extends AnimationComponent {
         return entity.swingingArm == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.getOpposite();
     }
 
-    protected <E extends LivingEntity> void setupSwimAnimation(E entity, ModelPart rightArm, ModelPart leftArm, ModelPart rightLeg, ModelPart leftLeg, float limbSwing, float attackTime, float swimAmount){
+    protected <E extends LivingEntity> void setupSwimAnimation(E entity, Node rightArm, Node leftArm, Node rightLeg, Node leftLeg, float limbSwing, float attackTime, float swimAmount){
         float f5 = limbSwing % 26.0F;
         HumanoidArm humanoidarm = getAttackArm(entity);
         float f1 = humanoidarm == HumanoidArm.RIGHT && attackTime > 0.0F ? 0.0F : swimAmount;
         float f2 = humanoidarm == HumanoidArm.LEFT && attackTime > 0.0F ? 0.0F : swimAmount;
+        Vector3f leftArmRot = leftArm.rotation(), rightArmRot = rightArm.rotation();
         if (!entity.isUsingItem()) {
             if (f5 < 14.0F) {
-                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, 0.0F);
-                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, 0.0F);
-                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
-                leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI + 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
-                rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI - 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F));
+                leftArmRot.set(-rotlerpRad(f2, -leftArmRot.x, 0.0F),
+                        -rotlerpRad(f2, -leftArmRot.y, (float) Math.PI),
+                        rotlerpRad(f2, leftArmRot.z, (float) Math.PI + 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F)));
+
+                rightArmRot.set(-Mth.lerp(f1, -rightArmRot.x, 0.0F),
+                        -Mth.lerp(f1, -rightArmRot.y, (float) Math.PI),
+                        Mth.lerp(f1, rightArmRot.z, (float) Math.PI - 1.8707964F * quadraticArmUpdate(f5) / quadraticArmUpdate(14.0F)));
             } else if (f5 >= 14.0F && f5 < 22.0F) {
                 float f6 = (f5 - 14.0F) / 8.0F;
-                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, (float) (Math.PI / 2) * f6);
-                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, (float) (Math.PI / 2) * f6);
-                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
-                leftArm.zRot = rotlerpRad(f2, leftArm.zRot, 5.012389F - 1.8707964F * f6);
-                rightArm.zRot = Mth.lerp(f1, rightArm.zRot, 1.2707963F + 1.8707964F * f6);
+
+                leftArmRot.set(-rotlerpRad(f2, -leftArmRot.x, (float) (Math.PI / 2) * f6),
+                        -rotlerpRad(f2, -leftArmRot.y, (float) Math.PI),
+                        rotlerpRad(f2, leftArmRot.z, 5.012389F - 1.8707964F * f6));
+
+                rightArmRot.set(-Mth.lerp(f1, -rightArmRot.x, (float) (Math.PI / 2) * f6),
+                        -Mth.lerp(f1, -rightArmRot.y, (float) Math.PI),
+                        Mth.lerp(f1, rightArmRot.z, 1.2707963F + 1.8707964F * f6));
             } else if (f5 >= 22.0F && f5 < 26.0F) {
                 float f3 = (f5 - 22.0F) / 4.0F;
-                leftArm.xRot = -rotlerpRad(f2, -leftArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                rightArm.xRot = -Mth.lerp(f1, -rightArm.xRot, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3);
-                leftArm.yRot = -rotlerpRad(f2, -leftArm.yRot, (float) Math.PI);
-                rightArm.yRot = -Mth.lerp(f1, -rightArm.yRot, (float) Math.PI);
-                leftArm.zRot = rotlerpRad(f2, leftArm.zRot, (float) Math.PI);
-                rightArm.zRot = Mth.lerp(f1, rightArm.zRot, (float) Math.PI);
+
+                leftArmRot.set(-rotlerpRad(f2, -leftArmRot.x, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3),
+                        -rotlerpRad(f2, -leftArmRot.y, (float) Math.PI),
+                        rotlerpRad(f2, leftArmRot.z, (float) Math.PI));
+
+                rightArmRot.set(-Mth.lerp(f1, -rightArmRot.x, (float) (Math.PI / 2) - (float) (Math.PI / 2) * f3),
+                        -Mth.lerp(f1, -rightArmRot.y, (float) Math.PI),
+                        Mth.lerp(f1, rightArmRot.z, (float) Math.PI));
             }
         }
 
@@ -189,120 +194,117 @@ public class HumanoidAnim extends AnimationComponent {
         rightLeg.xRot = Mth.lerp(swimAmount, rightLeg.xRot, 0.3F * Mth.cos(limbSwing * 0.33333334F));
     }
 
-    protected <E extends LivingEntity> void setupAttackAnimation(E entity, ModelPart head, ModelPart body, ModelPart rightArm, ModelPart leftArm, float attackTime) {
+    protected <E extends LivingEntity> void setupAttackAnimation(E entity, Node head, Node body, Node rightArm, Node leftArm, float attackTime) {
         if (attackTime > 0.0F) {
             HumanoidArm humanoidarm = getAttackArm(entity);
-            ModelPart arm = humanoidarm == HumanoidArm.RIGHT ? rightArm : leftArm;
+            Node arm = humanoidarm == HumanoidArm.RIGHT ? rightArm : leftArm;
             float f = attackTime;
-            body.yRot -= Mth.sin(Mth.sqrt(f) * (float) (Math.PI * 2)) * 0.2F;
+            body.rotation().y -= Mth.sin(Mth.sqrt(f) * (float) (Math.PI * 2)) * 0.2F;
             if (humanoidarm == HumanoidArm.LEFT) {
-                body.yRot *= -1.0F;
+                body.rotation().y *= -1.0F;
             }
 
-            rightArm.yRot = body.yRot;
-            leftArm.yRot = body.yRot;
-            leftArm.xRot = body.yRot;
+            float bodyYRot = body.rotation().y;
+            rightArm.rotation().y = bodyYRot;
+            leftArm.rotation().y = bodyYRot;
+            leftArm.rotation().x = bodyYRot;
             f = 1.0F - attackTime;
             f *= f;
             f *= f;
             f = 1.0F - f;
             float f1 = Mth.sin(f * (float) Math.PI);
             float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.xRot + 0.7F) * 0.75F;
-            arm.xRot = f1 * 1.2F + f2;
-            arm.yRot = body.yRot * 2.0F;
-            arm.zRot = Mth.sin(attackTime * (float) Math.PI) * -0.4F;
+            arm.rotation().set(f1 * 1.2F + f2, bodyYRot * 2.0F, Mth.sin(attackTime * (float) Math.PI) * -0.4F);
         }
     }
 
-    protected <E extends LivingEntity> void poseRightArm(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm, HumanoidModel.ArmPose pose) {
+    protected <E extends LivingEntity> void poseRightArm(E entity, Node head, Node rightArm, Node leftArm, HumanoidModel.ArmPose pose) {
+        Vector3f rightArmRot = rightArm.rotation(), leftArmRot = leftArm.rotation(), headRot = head.rotation();
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
-            rightArm.xRot = Mth.PI / 2f + head.xRot;
-            rightArm.yRot = 0.1F + head.yRot;
+            rightArmRot.x = Mth.PI / 2f + headRot.x;
+            rightArmRot.y = 0.1F + headRot.y;
             return;
         }
 
         switch(pose) {
-            case EMPTY -> rightArm.yRot = 0.0F;
+            case EMPTY -> rightArmRot.y = 0.0F;
             case BLOCK -> {
-                rightArm.xRot = rightArm.xRot * -0.5F + 0.9424779F;
-                rightArm.yRot = (float) Math.PI / 6;
+                rightArmRot.x = rightArmRot.x * -0.5F + 0.9424779F;
+                rightArmRot.y = (float) Math.PI / 6;
             }
             case ITEM -> {
-                rightArm.xRot = rightArm.xRot * 0.5F + (float) (Math.PI / 10);
-                rightArm.yRot = 0.0F;
+                rightArmRot.x = rightArmRot.x * 0.5F + (float) (Math.PI / 10);
+                rightArmRot.y = 0.0F;
             }
             case THROW_SPEAR -> {
-                rightArm.xRot = rightArm.xRot * -0.5F + (float) Math.PI;
-                rightArm.yRot = 0.0F;
+                rightArmRot.x = rightArmRot.x * -0.5F + (float) Math.PI;
+                rightArmRot.y = 0.0F;
             }
             case BOW_AND_ARROW -> {
-                rightArm.yRot = 0.1F + head.yRot;
-                leftArm.yRot = -0.5F + head.yRot;
-                rightArm.xRot = (float) Math.PI / 2 + head.xRot;
-                leftArm.xRot = (float) Math.PI / 2 + head.xRot;
+                rightArmRot.y = 0.1F + headRot.y;
+                leftArmRot.y = -0.5F + headRot.y;
+                rightArmRot.x = (float) Math.PI / 2 + headRot.x;
+                leftArmRot.x = (float) Math.PI / 2 + headRot.x;
             }
             case CROSSBOW_CHARGE -> AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, true);
             case CROSSBOW_HOLD -> AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, true);
             case BRUSH -> {
-                rightArm.xRot = rightArm.xRot * -0.5F + (float) (Math.PI / 5);
-                rightArm.yRot = 0.0F;
+                rightArmRot.x = rightArmRot.x * -0.5F + (float) (Math.PI / 5);
+                rightArmRot.y = 0.0F;
             }
             case SPYGLASS -> {
-                rightArm.xRot = Mth.clamp(head.xRot + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
-                rightArm.yRot = head.yRot + (float) (Math.PI / 12);
+                rightArmRot.x = Mth.clamp(headRot.x + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
+                rightArmRot.y = headRot.y + (float) (Math.PI / 12);
             }
             case TOOT_HORN -> {
-                rightArm.xRot = (Mth.clamp(head.xRot, -1.2F, 1.2F) + 1.4835298F);
-                rightArm.yRot = head.yRot + (float) (Math.PI / 6);
+                rightArmRot.x = (Mth.clamp(headRot.x, -1.2F, 1.2F) + 1.4835298F);
+                rightArmRot.y = headRot.y + (float) (Math.PI / 6);
             }
         }
     }
 
-    protected <E extends LivingEntity> void poseLeftArm(E entity, ModelPart head, ModelPart rightArm, ModelPart leftArm, HumanoidModel.ArmPose pose) {
+    protected <E extends LivingEntity> void poseLeftArm(E entity, Node head, Node rightArm, Node leftArm, HumanoidModel.ArmPose pose) {
+        Vector3f rightArmRot = rightArm.rotation(), leftArmRot = leftArm.rotation(), headRot = head.rotation();
         if(TransfurManager.isHoldingEntity(entity) && TransfurManager.getGrabMode(entity) != GrabMode.FRIENDLY){
-            leftArm.xRot = Mth.PI / 2f + head.xRot;
-            leftArm.yRot = -0.1F + head.yRot;
+            leftArmRot.x = Mth.PI / 2f + headRot.x;
+            leftArmRot.y = -0.1F + headRot.y;
             return;
         }
+
         switch(pose) {
-            case EMPTY:
-                leftArm.yRot = 0.0F;
-                break;
-            case BLOCK:
-                leftArm.xRot = leftArm.xRot * -0.5F + 0.9424779F;
-                leftArm.yRot = (float) -Math.PI / 6;
-                break;
-            case ITEM:
-                leftArm.xRot = leftArm.xRot * 0.5F + (float) (Math.PI / 10);
-                leftArm.yRot = 0.0F;
-                break;
-            case THROW_SPEAR:
-                leftArm.xRot = leftArm.xRot * -0.5F + (float) Math.PI;
-                leftArm.yRot = 0.0F;
-                break;
-            case BOW_AND_ARROW:
-                rightArm.yRot = 0.5F + head.yRot;
-                leftArm.yRot = -0.1F + head.yRot;
-                rightArm.xRot = (float) Math.PI / 2 + head.xRot;
-                leftArm.xRot = (float) Math.PI / 2 + head.xRot;
-                break;
-            case CROSSBOW_CHARGE:
-                AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, false);
-                break;
-            case CROSSBOW_HOLD:
-                AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, false);
-                break;
-            case BRUSH:
-                leftArm.xRot = leftArm.xRot * -0.5F + (float) (Math.PI / 5);
-                leftArm.yRot = 0.0F;
-                break;
-            case SPYGLASS:
-                leftArm.xRot = Mth.clamp(head.xRot + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
-                leftArm.yRot = head.yRot - (float) (Math.PI / 12);
-                break;
-            case TOOT_HORN:
-                leftArm.xRot = -(Mth.clamp(head.xRot, -1.2F, 1.2F) - 1.4835298F);
-                leftArm.yRot = head.yRot - (float) (Math.PI / 6);
+            case EMPTY -> leftArmRot.y = 0.0F;
+            case BLOCK -> {
+                leftArmRot.x = leftArmRot.x * -0.5F + 0.9424779F;
+                leftArmRot.y = (float) -Math.PI / 6;
+            }
+            case ITEM -> {
+                leftArmRot.x = leftArmRot.x * 0.5F + (float) (Math.PI / 10);
+                leftArmRot.y = 0.0F;
+            }
+            case THROW_SPEAR -> {
+                leftArmRot.x = leftArmRot.x * -0.5F + (float) Math.PI;
+                leftArmRot.y = 0.0F;
+            }
+            case BOW_AND_ARROW -> {
+                rightArmRot.y = 0.5F + headRot.y;
+                leftArmRot.y = -0.1F + headRot.y;
+                rightArmRot.x = (float) Math.PI / 2 + headRot.x;
+                leftArmRot.x = (float) Math.PI / 2 + headRot.x;
+            }
+            case CROSSBOW_CHARGE -> AnimationUtils.animateCrossbowCharge(rightArm, leftArm, entity, false);
+            case CROSSBOW_HOLD -> AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, false);
+            case BRUSH -> {
+                leftArmRot.x = leftArmRot.x * -0.5F + (float) (Math.PI / 5);
+                leftArmRot.y = 0.0F;
+            }
+            case SPYGLASS -> {
+                leftArmRot.x = Mth.clamp(headRot.x + 1.9198622F - (entity.isCrouching() ? (float) (Math.PI / 12) : 0.0F), -2.4F, 3.3F);
+                leftArmRot.y = headRot.y - (float) (Math.PI / 12);
+            }
+            case TOOT_HORN -> {
+                leftArmRot.x = -(Mth.clamp(headRot.x, -1.2F, 1.2F) - 1.4835298F);
+                leftArmRot.y = headRot.y - (float) (Math.PI / 6);
+            }
         }
     }
 }

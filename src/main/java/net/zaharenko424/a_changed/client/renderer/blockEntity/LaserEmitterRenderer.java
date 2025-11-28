@@ -22,6 +22,7 @@ import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -30,7 +31,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.LASER_EMITTER_ENTITY.getId(), "beam");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/beam");
-    private final ModelPart beam;
+    private final Node beam;
 
     public LaserEmitterRenderer(){
         beam = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("beam");
@@ -67,26 +68,27 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterEnt
     }
 
     protected void setupBeam(Direction direction, float length){
-        beam.zScale = length;
+        beam.scale().z = length;
         float offset = (.5f + length / 2) * 16;
+        Vector3f translation = beam.translation(), rotation = beam.rotation();
         switch (direction){
-            case NORTH -> beam.z -= offset;
-            case SOUTH -> beam.z += offset;
+            case NORTH -> translation.z -= offset;
+            case SOUTH -> translation.z += offset;
             case WEST -> {
-                beam.x -= offset;
-                beam.yRot = Mth.PI/2;
+                translation.x -= offset;
+                rotation.y = Mth.PI/2;
             }
             case EAST -> {
-                beam.x += offset;
-                beam.yRot = -Mth.PI/2;
+                translation.x += offset;
+                rotation.y = -Mth.PI/2;
             }
             case UP -> {
-                beam.y += offset;
-                beam.xRot = -Mth.PI/2;
+                translation.y += offset;
+                rotation.x = -Mth.PI/2;
             }
             case DOWN -> {
-                beam.y -= offset;
-                beam.xRot = Mth.PI/2;
+                translation.y -= offset;
+                rotation.x = Mth.PI/2;
             }
         }
     }

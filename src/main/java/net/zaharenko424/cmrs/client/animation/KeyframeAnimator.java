@@ -3,7 +3,7 @@ package net.zaharenko424.cmrs.client.animation;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -14,35 +14,35 @@ public class KeyframeAnimator {
 
     private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
 
-    public static void animate(AnimationState animState, ModelPart root, AnimationDefinition animation, float ageInTicks) {
+    public static void animate(AnimationState animState, Node root, AnimationDefinition animation, float ageInTicks) {
         animate(animState, root, animation, ageInTicks, 1.0F);
     }
 
-    public static void animate(AnimationState animState, ModelPart root, AnimationDefinition animation, float ageInTicks, float speed) {
+    public static void animate(AnimationState animState, Node root, AnimationDefinition animation, float ageInTicks, float speed) {
         animState.updateTime(ageInTicks, speed);
         animState.ifStarted(animState1 ->
                 animate(root, animation, animState.getAccumulatedTime(), 1.0F));
     }
 
-    public static void animateWalk(ModelPart root, AnimationDefinition animation, float limbSwing, float limbSwingAmount, float maxSpeed, float scale) {
+    public static void animateWalk(Node root, AnimationDefinition animation, float limbSwing, float limbSwingAmount, float maxSpeed, float scale) {
         long i = (long)(limbSwing * 50.0F * maxSpeed);
         float f = Math.min(limbSwingAmount * scale, 1.0F);
         animate(root, animation, i, f);
     }
 
-    public static void applyStatic(ModelPart root, AnimationDefinition definition){
+    public static void applyStatic(Node root, AnimationDefinition definition){
         animate(root, definition, 0L, 1.0F);
     }
 
-    public static void animate(ModelPart root, AnimationDefinition definition, long time, float scale){
+    public static void animate(Node root, AnimationDefinition definition, long time, float scale){
         float elapsedSeconds = getElapsedSeconds(definition, time);
 
         for(Map.Entry<String, List<AnimationChannel>> entry : definition.boneAnimations().entrySet()) {
 
-            Optional<ModelPart> optional = getAnyDescendantWithName(root, entry.getKey());
+            Optional<Node> optional = getAnyDescendantWithName(root, entry.getKey());
             if(optional.isEmpty()) continue;
             List<AnimationChannel> list = entry.getValue();
-            ModelPart part = optional.get();
+            Node part = optional.get();
             list.forEach(channel -> {
                 Keyframe[] akeyframe = channel.keyframes();
                 int i = Math.max(0, Mth.binarySearch(0, akeyframe.length, num -> elapsedSeconds <= akeyframe[num].timestamp()) - 1);
@@ -63,7 +63,7 @@ public class KeyframeAnimator {
         }
     }
 
-    public static Optional<ModelPart> getAnyDescendantWithName(ModelPart root, String name) {
+    public static Optional<Node> getAnyDescendantWithName(Node root, String name) {
         return Optional.ofNullable(root.getPart(name));
     }
 

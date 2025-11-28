@@ -4,7 +4,8 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+
+import net.zaharenko424.cmrs.api.Node;
 import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,12 +49,12 @@ public record AnimationChannel(AnimationChannel.Target target, Keyframe... keyfr
     }
 
     public interface Target {
-        void apply(ModelPart var1, Vector3f var2);
+        void apply(Node var1, Vector3f var2);
     }
 
     public interface Targets {
-        AnimationChannel.Target POSITION = ModelPart::offsetPos;
-        AnimationChannel.Target ROTATION = ModelPart::offsetRotation;
-        AnimationChannel.Target SCALE = ModelPart::offsetScale;
+        AnimationChannel.Target POSITION = (node, vec) -> node.translation().add(vec);
+        AnimationChannel.Target ROTATION = (node, vec) -> node.rotation().add(vec);
+        AnimationChannel.Target SCALE = (node, vec) -> node.scale().add(vec);
     }
 }

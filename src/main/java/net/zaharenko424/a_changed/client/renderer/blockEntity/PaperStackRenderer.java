@@ -9,13 +9,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.AbstractStackEntity;
 import net.zaharenko424.a_changed.entity.block.PaperStackEntity;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -27,7 +28,7 @@ public class PaperStackRenderer implements BlockEntityRenderer<PaperStackEntity>
     private static final ResourceLocation PAPER_2 = AChanged.textureLoc("block/paper_stack/paper_written_1");
     private static final ResourceLocation PAPER_3 = AChanged.textureLoc("block/paper_stack/paper_written_2");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[]{PAPER_0, PAPER_1, PAPER_2, PAPER_3};
-    private final ModelPart paper;
+    private final Node paper;
 
     public PaperStackRenderer(){
         paper = bodyLayer().bake().getDirectChild("paper");
@@ -52,12 +53,13 @@ public class PaperStackRenderer implements BlockEntityRenderer<PaperStackEntity>
         net.zaharenko424.cmrs.client.renderer.MultiBufferSource source = net.zaharenko424.cmrs.client.renderer.MultiBufferSource.getInstance();
         AbstractStackEntity.Entry entry;
         int id;
+        Vector3f translation = paper.translation(), rotation = paper.rotation();
         for(int i = 0; i < list.size(); i++){
             paper.resetPose();
-            paper.y = i * .5f;
+            translation.y = i * .5f;
 
             entry = list.get(i);
-            paper.yRot = entry.rotation();
+            rotation.y = entry.rotation();
 
             id = entry.modelId();
             if(id > TEXTURES.length - 1) id = TEXTURES.length - 1;

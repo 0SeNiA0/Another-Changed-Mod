@@ -20,12 +20,13 @@ import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.CRYO_CHAMBER_ENTITY.getId(), "fluid");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/cryo_chamber");
-    private final ModelPart fluid;
+    private final Node fluid;
 
     public CryoChamberRenderer(){
         fluid = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("fluid");
@@ -62,8 +63,8 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
         if(chamber.isOpen() || chamber.getFluidAmount() == 0) return;
         fluid.resetPose();
         float scale = chamber.getFluidAmount() * .03125f;
-        fluid.yScale = scale;
-        fluid.y -= scale / 2;
+        fluid.scale().y = scale;
+        fluid.translation().y -= scale / 2;
         setupFluid(chamber.getDirection());
 
         MatrixStack.push(stack);
@@ -73,13 +74,14 @@ public class CryoChamberRenderer implements BlockEntityRenderer<CryoChamberEntit
     }
 
     private void setupFluid(@NotNull Direction direction){
+        Vector3f translation = fluid.translation();
         switch(direction){
-            case WEST -> fluid.x += 16;
+            case WEST -> translation.x += 16;
             case SOUTH -> {
-                fluid.x += 16;
-                fluid.z -= 16;
+                translation.x += 16;
+                translation.z -= 16;
             }
-            case EAST -> fluid.z -=16;
+            case EAST -> translation.z -=16;
         }
     }
 

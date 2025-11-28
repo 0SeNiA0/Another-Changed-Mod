@@ -5,11 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.util.RandomSource;
 import net.zaharenko424.cmrs.api.ISimpleVertexConsumer;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.model.RenderStack;
+import net.zaharenko424.cmrs.util.Utils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -21,28 +23,24 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
-public class ModelPart {
+public class Node implements net.zaharenko424.cmrs.api.Node {
 
-    public float x;
-    public float y;
-    public float z;
+    private final Vector3f translation = new Vector3f();
+    private final Vector3f rotation = new Vector3f();
+    private final Vector3f scale = new Vector3f(1);
+
     public float xRot;
-    public float yRot;
-    public float zRot;
-    public float xScale = 1;
-    public float yScale = 1;
-    public float zScale = 1;
     public boolean visible = true;
     public boolean draw = true;
     private final List<Cube> cubes;
     private final List<Mesh> meshes;
-    private final Map<String, ModelPart> children;
-    private final Map<String, ModelPart> allChildren;
-    private final Map<String, ModelPart> allParts;
+    private final Map<String, Node> children;
+    private final Map<String, Node> allChildren;
+    private final Map<String, Node> allNodes;
     private PartPose initialPose = PartPose.ZERO;
     private Object2FloatArrayMap<VertexData> animatedVertices;
 
-    public ModelPart(List<Cube> cubes, List<Mesh> meshes, Map<String, ModelPart> children, Map<String, ModelPart> allParts) {
+    public Node(List<Cube> cubes, List<Mesh> meshes, Map<String, Node> children, Map<String, Node> allNodes) {
         this.cubes = cubes;
         this.meshes = meshes;
         this.children = children;
@@ -51,7 +49,7 @@ public class ModelPart {
         this.children.forEach((name, part) -> allChildren.putAll(part.allChildren));
         allChildren.putAll(this.children);
 
-        this.allParts = allParts;
+        this.allNodes = allNodes;
     }
 
     void addAnimatedVertices(List<VertexData> data, float[] vertices){
@@ -61,9 +59,29 @@ public class ModelPart {
         }
     }
 
-    public PartPose storePose() {
-        return PartPose.offsetAndRotation(x, y, z, xRot, yRot, zRot);
+    @Override
+    public Vector3f translation() {
+        return translation;
     }
+
+    @Override
+    public Vector3f rotation() {
+        return rotation;
+    }
+
+    @Override
+    public Vector3f scale() {
+        return scale;
+    }
+
+    @Override
+    public Node getNode(String name) {
+        return getDirectChild(name);
+    }
+
+    /*public PartPose storePose() {//TODO make an alternative?
+        return PartPose.offsetAndRotation(x, y, z, xRot, yRot, zRot);
+    }*/
 
     public PartPose getInitialPose() {
         return initialPose;
@@ -73,47 +91,32 @@ public class ModelPart {
         initialPose = pose;
     }
 
+    @Override
     public void resetPose() {
         loadPose(initialPose);
     }
 
     public void loadPose(PartPose pose) {
-        x = pose.x;
-        y = pose.y;
-        z = pose.z;
-        xRot = pose.xRot;
-        yRot = pose.yRot;
-        zRot = pose.zRot;
-        xScale = 1.0F;
-        yScale = 1.0F;
-        zScale = 1.0F;
+        translation.set(pose.x, pose.y, pose.z);
+        rotation.set(pose.zRot, pose.yRot, pose.xRot);//TODO move to Quaternion eventually?
+        //rotation.set(Reusable.QUATERNION.get().identity().rotationZYX(pose.zRot, pose.yRot, pose.xRot));
+        scale.set(1);
     }
 
-    public void copyFrom(ModelPart from) {
-        xScale = from.xScale;
-        yScale = from.yScale;
-        zScale = from.zScale;
-        xRot = from.xRot;
-        yRot = from.yRot;
-        zRot = from.zRot;
-        x = from.x;
-        y = from.y;
-        z = from.z;
+    public void copyFrom(Node from) {
+        translation.set(from.translation);
+        rotation.set(from.rotation);
+        scale.set(from.scale);
     }
 
-    public void copyFrom(net.minecraft.client.model.geom.ModelPart part) {
-        xScale = part.xScale;
-        yScale = part.yScale;
-        zScale = part.zScale;
-        xRot = part.xRot;
-        yRot = part.yRot;
-        zRot = part.zRot;
-        x = part.x;
-        y = part.y;
-        z = part.z;
+    public void copyFrom(ModelPart part) {
+        translation.set(part.x, part.y, part.z);
+        rotation.set(part.zRot, part.yRot, part.xRot);
+        scale.set(part.xScale, part.yScale, part.zScale);
     }
 
-    public boolean hasChild(String name) {
+    @Override
+    public boolean hasNode(String name) {
         return this.children.containsKey(name);
     }
 
@@ -121,29 +124,17 @@ public class ModelPart {
         return !children.isEmpty();
     }
 
-    public ModelPart getDirectChild(String name) {
-        ModelPart modelPart = children.get(name);
-        if (modelPart == null) {
+    public Node getDirectChild(String name) {
+        Node node = children.get(name);
+        if (node == null) {
             throw new NoSuchElementException("Can't find part " + name);
         } else {
-            return modelPart;
+            return node;
         }
     }
 
-    public @Nullable ModelPart getPart(String name) {
-        return allParts.get(name);
-    }
-
-    public void setPos(float newX, float newY, float newZ) {
-        x = newX;
-        y = newY;
-        z = newZ;
-    }
-
-    public void setRotation(float newXRot, float newYRot, float newZRot) {
-        xRot = newXRot;
-        yRot = newYRot;
-        zRot = newZRot;
+    public @Nullable Node getPart(String name) {
+        return allNodes.get(name);
     }
 
     public void render(PoseStack poseStack, VertexConsumer consumer, int light, int overlay) {
@@ -174,7 +165,7 @@ public class ModelPart {
             }
         }
 
-        for (ModelPart modelpart : children.values()) {
+        for (Node modelpart : children.values()) {
             modelpart.render(matrixStack, consumer, animated);
         }
 
@@ -207,11 +198,11 @@ public class ModelPart {
         MatrixStack.pop(matrixStack);
     }
 
-    public void render(PoseStack poseStack, RenderStack stack, int light, int overlay, int color){
-        render(poseStack, stack, light, overlay, color, new ObjectArrayList<>());
+    public void render(PoseStack poseStack, RenderStack stack){
+        render(poseStack, stack, new ObjectArrayList<>());
     }
 
-    private void render(PoseStack matrixStack, RenderStack stack, int light, int overlay, int color, List<Mesh> animated) {
+    private void render(PoseStack matrixStack, RenderStack stack, List<Mesh> animated) {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
         PoseStack.Pose last = matrixStack.last();
         MatrixStack.push(matrixStack);
@@ -229,8 +220,8 @@ public class ModelPart {
             }
         }
 
-        for (ModelPart modelpart : children.values()) {
-            modelpart.render(matrixStack, stack, light, overlay, color, animated);
+        for (Node modelpart : children.values()) {
+            modelpart.render(matrixStack, stack, animated);
         }
 
         PoseStack.Pose pose = matrixStack.last();
@@ -248,10 +239,10 @@ public class ModelPart {
 
         if(draw) {
             for (Cube cube : this.cubes) {
-                stack.renderMesh(cube, pose, light, overlay, color);
+                stack.renderMesh(cube, pose);
             }
             for (Mesh mesh : meshes) {
-                stack.renderMesh(mesh, pose, light, overlay, color);
+                stack.renderMesh(mesh, pose);
                 animated.remove(mesh);
             }
         }
@@ -263,15 +254,11 @@ public class ModelPart {
     }
 
     public void translateAndRotate(PoseStack poseStack) {
-        if(x != 0 || y != 0 || z != 0) poseStack.translate(x / 16, y / 16, z / 16);
+        if(Utils.isNonZero(translation)) MatrixStack.translate(poseStack, translation.div(16, Reusable.VEC3F.get()));
 
-        if (xRot != 0 || yRot != 0 || zRot != 0) {
-            poseStack.mulPose(Reusable.QUATERNION.get().identity().rotationZYX(zRot, yRot, xRot));
-        }
+        if(Utils.isNonZero(rotation)) poseStack.mulPose(Reusable.QUATERNION.get().identity().rotationZYX(rotation.z, rotation.y, rotation.x));
 
-        if (xScale != 1 || yScale != 1 || zScale != 1) {
-            poseStack.scale(xScale, yScale, zScale);
-        }
+        if(Utils.isNonOne(scale)) MatrixStack.scale(poseStack, scale);
     }
 
     public boolean hasCubes(){
@@ -293,36 +280,18 @@ public class ModelPart {
         return cubes.isEmpty() && meshes.isEmpty() && children.isEmpty();
     }
 
-    public void offsetPos(Vector3f pos) {
-        x += pos.x();
-        y += pos.y();
-        z += pos.z();
-    }
-
-    public void offsetRotation(Vector3f rotation) {
-        xRot += rotation.x();
-        yRot += rotation.y();
-        zRot += rotation.z();
-    }
-
-    public void offsetScale(Vector3f scale) {
-        xScale += scale.x();
-        yScale += scale.y();
-        zScale += scale.z();
-    }
-
     /**
      * @return Unmodifiable map
      */
-    public Map<String, ModelPart> getChildren(){
+    public Map<String, Node> getChildren(){
         return children;
     }
 
-    public Stream<ModelPart> getAllParts() {
-        return allParts.values().stream();
+    public Stream<Node> getAllNodes() {
+        return allNodes.values().stream();
     }
 
-    public Stream<ModelPart> getAllChildParts(){
+    public Stream<Node> getAllChildParts(){
         return allChildren.values().stream();
     }
 }

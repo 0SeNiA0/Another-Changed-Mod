@@ -7,7 +7,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.zaharenko424.cmrs.client.geom.Cube;
 import net.zaharenko424.cmrs.client.geom.Mesh;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.PartPoseCodec;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -65,27 +65,27 @@ public class GroupDefinition {
         return groupDefinition;
     }
 
-    public ModelPart bake(float textureWidth, float textureHeight){
+    public Node bake(float textureWidth, float textureHeight){
         return bake(textureWidth, textureHeight, new HashMap<>());
     }
 
-    private ModelPart bake(float textureWidth, float textureHeight, Map<String, ModelPart> allParts) {
-        Object2ObjectArrayMap<String, ModelPart> children = this.children.entrySet().stream().collect(Collectors.toMap(
+    private Node bake(float textureWidth, float textureHeight, Map<String, Node> allNodes) {
+        Object2ObjectArrayMap<String, Node> children = this.children.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
-                group ->  group.getValue().bake(textureWidth, textureHeight, allParts),
+                group ->  group.getValue().bake(textureWidth, textureHeight, allNodes),
                 (p_171595_, p_171596_) -> p_171595_,
                 Object2ObjectArrayMap::new
         ));
 
-        allParts.putAll(children);
+        allNodes.putAll(children);
 
         List<Cube> cubes1 = cubes.stream().map(cube -> cube.bake(textureWidth,textureHeight)).toList();
         List<Mesh> meshes1 = meshes.stream().map(meshDef -> {
             Mesh mesh = meshDef.bake(textureWidth, textureHeight);
-            return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allParts) : mesh;
+            return meshDef.groups != null ? mesh.addAnimatedVertices(meshDef.groups, meshDef.vertexInfluence, allNodes) : mesh;
         }).toList();
 
-        ModelPart modelpart = new ModelPart(cubes1, meshes1, children, allParts);
+        Node modelpart = new Node(cubes1, meshes1, children, allNodes);
         modelpart.setInitialPose(partPose);
         modelpart.loadPose(partPose);
         return modelpart;

@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.zaharenko424.cmrs.api.AnimationComponent;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 
 public class FallFlyingAnim extends AnimationComponent {
 
@@ -19,7 +19,7 @@ public class FallFlyingAnim extends AnimationComponent {
     }
 
     @Override
-    public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         if(!entity.isFallFlying() || !(entity instanceof AbstractClientPlayer player)) return;
 
         if (!player.isAutoSpinAttack()) {

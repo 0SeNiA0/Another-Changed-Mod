@@ -17,7 +17,7 @@ import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.renderer.ExtraRenderTypes;
 import net.zaharenko424.a_changed.registry.ItemRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
 
     private static CustomBEWLR INSTANCE;
-    private final ModelPart absoluteSolver;
+    private final Node absoluteSolver;
     private final ResourceLocation solverTexture = AChanged.textureLoc("misc/absolute_solver");
 
 
@@ -60,9 +60,8 @@ public class CustomBEWLR extends BlockEntityWithoutLevelRenderer {
             float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
             float deg = time / 5f;
             float nextDeg = (time + 1) / 5f;
-            absoluteSolver.x = 7;
-            absoluteSolver.y = -3;
-            absoluteSolver.zRot = Mth.DEG_TO_RAD * Mth.rotLerp(partialTick, deg, nextDeg);
+            absoluteSolver.translation().add(7, -3, 0);
+            absoluteSolver.rotation().z = Mth.DEG_TO_RAD * Mth.rotLerp(partialTick, deg, nextDeg);
 
             absoluteSolver.render(stack, buffer.getBuffer(ExtraRenderTypes.OPAQUE_GLOW.apply(solverTexture)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             MatrixStack.pop(stack);

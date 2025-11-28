@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.machine.DNAExtractorEntity;
 import net.zaharenko424.cmrs.api.MatrixStack;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEntity> {
 
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/dna_extractor_entity");
-    private final ModelPart root;
-    private final ModelPart[] tubes = new ModelPart[4];
+    private final Node root;
+    private final Node[] tubes = new Node[4];
 
     public DNAExtractorRenderer(){
         root = bodyLayer().bake().getDirectChild("root");
@@ -70,7 +70,7 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
 
         int rotO = extractor.getRotO();
         int rot = extractor.getRot();
-        root.yRot = Mth.lerp(partialTick, rotO, rotO > rot ? rot + 360 : rot) * Mth.DEG_TO_RAD;
+        root.rotation().y = Mth.lerp(partialTick, rotO, rotO > rot ? rot + 360 : rot) * Mth.DEG_TO_RAD;
 
         MatrixStack.push(stack);
         stack.translate(.5,0,.5);
@@ -79,8 +79,8 @@ public class DNAExtractorRenderer implements BlockEntityRenderer<DNAExtractorEnt
     }
 
     private void prepareTubes(){
-        root.getAllParts().forEach(ModelPart::resetPose);
-        for(ModelPart part : tubes){
+        root.getAllNodes().forEach(Node::resetPose);
+        for(Node part : tubes){
             part.visible = false;
         }
     }

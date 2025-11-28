@@ -29,10 +29,10 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.LATEX_ENCODER_ENTITY.getId(), "main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/latex_encoder_entity");
-    private final ModelPart root;
-    private final ModelPart latexBase;
-    private final ModelPart dnaRoot;
-    private final ModelPart[] dna = new ModelPart[3];
+    private final Node root;
+    private final Node latexBase;
+    private final Node dnaRoot;
+    private final Node[] dna = new Node[3];
 
     public LatexEncoderRenderer(){
         root = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("root");
@@ -68,7 +68,7 @@ public class LatexEncoderRenderer implements BlockEntityRenderer<LatexEncoderEnt
     public void render(@NotNull LatexEncoderEntity encoder, float partialTick, @NotNull PoseStack stack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         root.resetPose();
         Direction direction = encoder.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
-        root.yRot = (direction.getAxis() == Direction.Axis.X ? direction.toYRot() : direction.getOpposite().toYRot()) * Mth.DEG_TO_RAD;
+        root.rotation().y = (direction.getAxis() == Direction.Axis.X ? direction.toYRot() : direction.getOpposite().toYRot()) * Mth.DEG_TO_RAD;
 
         MatrixStack.push(stack);
         stack.translate(.5,0,.5);

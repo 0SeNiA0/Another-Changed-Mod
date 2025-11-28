@@ -72,7 +72,7 @@ public class Mesh {
 
     //TODO put Map<String(modelPart name), List<IntFloatPair(vert index, influence)>> in each animated mesh ? -> all the data is contained inside the mesh. To check the names would need BiMap(allParts) or use modelPart as key here
     @ApiStatus.Internal
-    public Mesh addAnimatedVertices(String[] groups, float[][] vertexInfluence, Map<String, ModelPart> partLookup) {
+    public Mesh addAnimatedVertices(String[] groups, float[][] vertexInfluence, Map<String, Node> partLookup) {
         animated = true;
         for (int i = 0; i < groups.length; i++) {
             if (!partLookup.containsKey(groups[i])) continue;

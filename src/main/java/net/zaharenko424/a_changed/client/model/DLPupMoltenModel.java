@@ -10,7 +10,7 @@ import net.zaharenko424.a_changed.registry.TransfurRegistry;
 import net.zaharenko424.cmrs.api.AnimationComponent;
 import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.Reusable;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
@@ -47,11 +47,11 @@ public class DLPupMoltenModel <E extends LivingEntity> extends UniversalCustomMo
                 Map.of(ModelPropertyKeys.REMAP_UV, UnitProperty.INSTANCE),
                 List.of(new AnimationComponent() {
                             @Override
-                            public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+                            public <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
                                 if(!entity.isBaby()) return;
-                                root.offsetScale(Reusable.VEC3F.get().set(-.5));
-                                root.getPart("head").offsetScale(Reusable.VEC3F.get().set(.3));
-                                root.y -= 1;
+                                root.scale().add(Reusable.VEC3F.get().set(-.5));
+                                root.getPart("head").scale().add(Reusable.VEC3F.get().set(.3));
+                                root.translation().y -= 1;
                                 poseStack.scale(1.5f, 1.5f, 1.5f);
                                 poseStack.translate(0, -1/16f, 0);
                             }

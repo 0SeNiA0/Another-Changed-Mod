@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.a_changed.util.Utils;
 import net.zaharenko424.cmrs.api.*;
 import net.zaharenko424.cmrs.client.ModelPropertyManager;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.property.FPArms;
 import net.zaharenko424.cmrs.property.ModelPropertyType;
 import net.zaharenko424.cmrs.property.StringProperty;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 
 public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E> implements NoYFlip, CustomModel<E> {
 
-    protected final ModelPart root;
+    protected final Node root;
     protected final List<Texture> textures;
     protected final List<Material> materials;
     protected final List<RenderLayer> layers;
@@ -38,7 +38,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     protected final float shadowRadius;
     protected RenderStack stack;
 
-    public UniversalCustomModel(@NotNull ModelPart root, @NotNull List<Texture> textures, @NotNull List<Material> materials, @NotNull List<RenderLayer> layers, @NotNull Map<String, ModelProperty> properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
+    public UniversalCustomModel(@NotNull Node root, @NotNull List<Texture> textures, @NotNull List<Material> materials, @NotNull List<RenderLayer> layers, @NotNull Map<String, ModelProperty> properties, @NotNull List<AnimationComponent> animations, float shadowRadius){
         super(RenderType::entityCutoutNoCull);
         this.root = root.getPart("root");
         this.textures = List.copyOf(textures);
@@ -54,11 +54,11 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         this.shadowRadius = shadowRadius;
     }
 
-    public ModelPart root(){
+    public Node root(){
         return root;
     }
 
-    public ModelPart getPart(@NotNull String name){
+    public Node getPart(@NotNull String name){
         return root.getPart(name);
     }
 
@@ -144,7 +144,9 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         }
         overrides = null;
 
-        root().render(poseStack, stack, packedLight, packedOverlay, color);
+        stack.setDefProperties(packedLight, packedOverlay, color);
+
+        root().render(poseStack, stack);
 
         stack.reset();
     }
@@ -157,7 +159,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
     }
 
     public void setupAnim(@NotNull E entity, @NotNull PoseStack poseStack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
+        root.getAllNodes().forEach(Node::resetPose);
 
         float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(entity.level().tickRateManager().isEntityFrozen(entity));
         for(AnimationComponent anim : animations){
@@ -174,7 +176,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         FPArms fpArms = getProperty(ModelPropertyKeys.FP_ARMS, ModelPropertyRegistry.FP_ARMS);
         if(fpArms == null) return;
 
-        ModelPart part = fpArms.getTransformed(this, arm);
+        Node part = fpArms.getTransformed(this, arm);
         if(part == null) return;
 
         MultiBufferSource source = MultiBufferSource.getInstance();
@@ -188,7 +190,8 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
 
         setAllVisible(true, part);
         setDrawAll(true, part);
-        part.render(poseStack, getStack(), light, OverlayTexture.NO_OVERLAY, -1);
+        stack.setDefProperties(light, OverlayTexture.NO_OVERLAY, -1);
+        part.render(poseStack, getStack());
 
         stack.reset();
     }
@@ -203,7 +206,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
         if(entity.isSpectator()){
             setDrawAll(false);
 
-            ModelPart head = null;
+            Node head = null;
 
             StringProperty str = getProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING);
             if(str != null) head = getPart(str.str());
@@ -239,7 +242,7 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
      * Sets whether to draw all parts after provided part (including it)
      * @param part starting ModelPart
      */
-    public void setDrawAll(boolean draw, ModelPart part){
+    public void setDrawAll(boolean draw, Node part){
         part.draw = draw;
         part.getAllChildParts().forEach(part0 -> part0.draw = draw);
     }
@@ -248,13 +251,13 @@ public class UniversalCustomModel<E extends LivingEntity> extends EntityModel<E>
      * Sets visibility of all parts except for root.
      */
     public void setAllVisible(boolean visibility){
-        root.getAllParts().filter(part -> part != root).forEach(child -> child.visible = visibility);
+        root.getAllNodes().filter(part -> part != root).forEach(child -> child.visible = visibility);
     }
 
     /**
      * Sets visibility of all children of provided modelPart.
      */
-    public void setAllVisible(boolean visible, ModelPart part){
+    public void setAllVisible(boolean visible, Node part){
         part.visible = visible;
         part.getAllChildParts().forEach(child -> child.visible = visible);
     }

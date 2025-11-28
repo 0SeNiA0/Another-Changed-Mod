@@ -3,7 +3,7 @@ package net.zaharenko424.cmrs.client.geom.builder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class ModelDefinition {
         this.textureScale = textureScale;
     }
 
-    public ModelPart bake(){
+    public Node bake(){
         return root.bake(textureWidth / textureScale, textureHeight / textureScale);
     }
 

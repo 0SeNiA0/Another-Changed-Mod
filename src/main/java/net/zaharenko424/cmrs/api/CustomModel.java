@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.model.Texture;
 import net.zaharenko424.cmrs.property.ModelPropertyType;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +16,9 @@ import java.util.function.Function;
 
 public interface CustomModel <E extends LivingEntity> {
 
-    ModelPart root();
+    Node root();
 
-    ModelPart getPart(@NotNull String name);
+    Node getPart(@NotNull String name);
 
     boolean hasProperty(@NotNull String key, @NotNull ModelPropertyType<?> type);
 

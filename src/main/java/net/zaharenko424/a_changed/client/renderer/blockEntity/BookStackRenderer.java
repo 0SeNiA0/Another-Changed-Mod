@@ -9,13 +9,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.zaharenko424.a_changed.AChanged;
 import net.zaharenko424.a_changed.entity.block.AbstractStackEntity;
 import net.zaharenko424.a_changed.entity.block.BookStackEntity;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
 import net.zaharenko424.cmrs.client.renderer.TransparencyType;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -27,7 +28,7 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
     private static final ResourceLocation BOOK_2 = AChanged.textureLoc("block/book_stack/book_2");
     private static final ResourceLocation BOOK_3 = AChanged.textureLoc("block/book_stack/book_3");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[]{BOOK_0, BOOK_1, BOOK_2, BOOK_3};
-    private final ModelPart book;
+    private final Node book;
 
     public BookStackRenderer(){
         book = bodyLayer().bake().getDirectChild("book");
@@ -56,12 +57,13 @@ public class BookStackRenderer implements BlockEntityRenderer<BookStackEntity> {
         net.zaharenko424.cmrs.client.renderer.MultiBufferSource source = net.zaharenko424.cmrs.client.renderer.MultiBufferSource.getInstance();
         AbstractStackEntity.Entry entry;
         int id;
+        Vector3f translation = book.translation(), rotation = book.rotation();
         for(int i = 0; i < list.size(); i++){
             book.resetPose();
-            book.y = i * 2;
+            translation.y = i * 2;
 
             entry = list.get(i);
-            book.yRot = entry.rotation();
+            rotation.y = entry.rotation();
 
             id = entry.modelId();
             if(id > TEXTURES.length - 1) id = TEXTURES.length - 1;

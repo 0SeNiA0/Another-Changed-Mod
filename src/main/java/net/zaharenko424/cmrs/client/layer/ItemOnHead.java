@@ -23,7 +23,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.RenderLayer;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,12 +50,12 @@ public final class ItemOnHead implements RenderLayer {
         return RenderLayerRegistry.ITEM_ON_HEAD;
     }
 
-    public ModelPart getPart(@NotNull CustomModel<?> model){
+    public Node getPart(@NotNull CustomModel<?> model){
         return model.root().getPart(headName);
     }
 
     public void transformToHead(@NotNull CustomModel<?> model, @NotNull PoseStack stack){
-        ModelPart head = getPart(model);
+        Node head = getPart(model);
         if(head != null) head.translateAndRotate(stack);
     }
 

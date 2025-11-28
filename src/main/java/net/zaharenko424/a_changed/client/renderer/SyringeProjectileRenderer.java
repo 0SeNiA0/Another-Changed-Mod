@@ -22,7 +22,7 @@ import net.zaharenko424.a_changed.item.AbstractSyringe;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.ModelDefinitionCache;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.builder.CubeUV;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
@@ -35,8 +35,8 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(EntityRegistry.SYRINGE_PROJECTILE.getId(), "main");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("entity/syringe_projectile");
-    private final ModelPart root;
-    private final ModelPart piston;
+    private final Node root;
+    private final Node piston;
     private final RenderStack stack = new RenderStack();
 
     public SyringeProjectileRenderer(EntityRendererProvider.Context context) {
@@ -99,10 +99,11 @@ public class SyringeProjectileRenderer extends EntityRenderer<SyringeProjectile>
         }
 
         if(empty){
-            piston.y -= 3;
+            piston.translation().y -= 3;
         }
 
-        root.render(stack, this.stack, packedLight, OverlayTexture.NO_OVERLAY, -1);
+        this.stack.setDefProperties(packedLight, OverlayTexture.NO_OVERLAY, -1);
+        root.render(stack, this.stack);
         this.stack.reset();
 
         MatrixStack.pop(stack);

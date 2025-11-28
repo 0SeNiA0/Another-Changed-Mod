@@ -11,7 +11,7 @@ import net.zaharenko424.cmrs.api.NoYFlip;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.a_changed.entity.MilkPuddingEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class MilkPuddingModel extends EntityModel<MilkPuddingEntity> implements 
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(EntityRegistry.MILK_PUDDING.getId(), "main");
 
-    private final ModelPart root;
+    private final Node root;
 
     public MilkPuddingModel(){
         root = ModelDefinitionCache.getInstance().bake(bodyLayer).getDirectChild("root");
@@ -30,7 +30,7 @@ public class MilkPuddingModel extends EntityModel<MilkPuddingEntity> implements 
     public void setupAnim(MilkPuddingEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         root.resetPose();
 
-        root.yRot = Mth.DEG_TO_RAD * pEntity.getYRot();
+        root.rotation().y = Mth.DEG_TO_RAD * pEntity.getYRot();
     }
 
     @Override

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.RenderLayer;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.geom.Reusable;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
@@ -49,7 +49,7 @@ public class ItemInMawLayer implements RenderLayer {
     }
 
     public void transformToMaw(CustomModel<?> model, PoseStack matrixStack){
-        ModelPart part = model.getPart(maw);
+        Node part = model.getPart(maw);
         if(part != null) part.translateAndRotate(matrixStack);
         transform.apply(matrixStack);
     }

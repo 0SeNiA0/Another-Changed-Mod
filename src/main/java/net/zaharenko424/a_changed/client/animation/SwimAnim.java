@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.zaharenko424.cmrs.api.AnimationComponent;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 
 public class SwimAnim extends AnimationComponent {
 
@@ -17,7 +17,7 @@ public class SwimAnim extends AnimationComponent {
     }
 
     @Override
-    public <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float swimAmount = entity.getSwimAmount(partialTick);
         if(!entity.isFallFlying() && swimAmount > 0.0F) {
             float f3 = entity.isInWater() || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType)) ? -90.0F - entity.getXRot() : -90.0F;

@@ -5,7 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
+import net.zaharenko424.cmrs.util.Utils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -71,29 +72,32 @@ public final class PartTransform {
         this.scale = scale == null ? (relativeS ? new Vector3f() : new Vector3f(1)) : scale;
     }
 
-    public void apply(ModelPart part){
+    public void apply(Node node){
         if(relativeT){
-            if(!translate.equals(0, 0, 0)) part.offsetPos(translate);
+            if(Utils.isNonOne(translate)) node.translation().add(translate);
         } else {
-            if(translate.x() != Float.POSITIVE_INFINITY) part.x = translate.x();
-            if(translate.y() != Float.POSITIVE_INFINITY) part.y = translate.y();
-            if(translate.z() != Float.POSITIVE_INFINITY) part.z = translate.z();
+            Vector3f nodeTranslation = node.translation();
+            if(translate.x() != Float.POSITIVE_INFINITY) nodeTranslation.x = translate.x();
+            if(translate.y() != Float.POSITIVE_INFINITY) nodeTranslation.y = translate.y();
+            if(translate.z() != Float.POSITIVE_INFINITY) nodeTranslation.z = translate.z();
         }
 
         if(relativeR){
-            if(!rotate.equals(0, 0, 0)) part.offsetRotation(rotate);
+            if(Utils.isNonZero(rotate)) node.rotation().add(rotate);
         } else {
-            if(rotate.x() != Float.POSITIVE_INFINITY) part.xRot = rotate.x();
-            if(rotate.y() != Float.POSITIVE_INFINITY) part.yRot = rotate.y();
-            if(rotate.z() != Float.POSITIVE_INFINITY) part.zRot = rotate.z();
+            Vector3f nodeRotation = node.rotation();
+            if(rotate.x() != Float.POSITIVE_INFINITY) nodeRotation.x = rotate.x();
+            if(rotate.y() != Float.POSITIVE_INFINITY) nodeRotation.y = rotate.y();
+            if(rotate.z() != Float.POSITIVE_INFINITY) nodeRotation.z = rotate.z();
         }
 
         if(relativeS){
-            if(!scale.equals(0, 0, 0)) part.offsetScale(scale);
+            if(Utils.isNonZero(scale)) node.scale().add(scale);
         } else {
-            if(scale.x() != Float.POSITIVE_INFINITY) part.zScale = scale.x();
-            if(scale.y() != Float.POSITIVE_INFINITY) part.zScale = scale.y();
-            if(scale.z() != Float.POSITIVE_INFINITY) part.zScale = scale.z();
+            Vector3f nodeScale = node.scale();
+            if(scale.x() != Float.POSITIVE_INFINITY) nodeScale.x = scale.x();
+            if(scale.y() != Float.POSITIVE_INFINITY) nodeScale.y = scale.y();
+            if(scale.z() != Float.POSITIVE_INFINITY) nodeScale.z = scale.z();
         }
     }
 }

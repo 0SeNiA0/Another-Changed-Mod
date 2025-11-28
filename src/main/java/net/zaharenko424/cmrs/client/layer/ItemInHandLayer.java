@@ -20,12 +20,13 @@ import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.api.ModelPropertyKeys;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.api.RenderLayer;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.model.PoseTransform;
 import net.zaharenko424.cmrs.registry.RenderLayerRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 public final class ItemInHandLayer implements RenderLayer {
 //absolute translate, rotate, scale for now(not additive)
@@ -68,14 +69,15 @@ public final class ItemInHandLayer implements RenderLayer {
         return RenderLayerRegistry.ITEM_IN_HAND;
     }
 
-    public ModelPart getArm(CustomModel<?> model, HumanoidArm arm){
+    public Node getArm(CustomModel<?> model, HumanoidArm arm){
         String target = arm == HumanoidArm.RIGHT ? armR : armL;
         if(target == null) return null;
+
         return model.getPart(target);
     }
 
     public void transformToArm(CustomModel<?> model, HumanoidArm arm, PoseStack matrixStack){
-        ModelPart part = getArm(model, arm);
+        Node part = getArm(model, arm);
         if(part != null) part.translateAndRotate(matrixStack);
         if(arm == HumanoidArm.RIGHT){
             transformR.apply(matrixStack);
@@ -99,6 +101,7 @@ public final class ItemInHandLayer implements RenderLayer {
                 && (headOverride != null || model.hasProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING))) {
             if(renderArmWithSpyglass(livingEntity, model, itemStack, arm, matrixStack, buffer, packedLight)) return;
         }
+
         MatrixStack.push(matrixStack);
         transformToArm(model, arm, matrixStack);
         matrixStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
@@ -111,12 +114,14 @@ public final class ItemInHandLayer implements RenderLayer {
 
     private <E extends LivingEntity> boolean renderArmWithSpyglass(E entity, CustomModel<E> model, ItemStack stack, HumanoidArm arm, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight) {
         MatrixStack.push(matrixStack);
-        ModelPart modelpart = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING).str());
-        if(modelpart == null) return false;
-        float f = modelpart.xRot;
-        modelpart.xRot = Mth.clamp(modelpart.xRot, (float) (-Math.PI / 6), (float) (Math.PI / 2));
-        modelpart.translateAndRotate(matrixStack);
-        modelpart.xRot = f;
+        Node head = model.getPart(headOverride != null ? headOverride : model.getProperty(ModelPropertyKeys.HEAD, ModelPropertyRegistry.STRING).str());
+        if(head == null) return false;
+
+        Vector3f headRot = head.rotation();
+        float f = headRot.x;
+        headRot.x = Mth.clamp(headRot.x, (float) (-Math.PI / 6), (float) (Math.PI / 2));
+        head.translateAndRotate(matrixStack);
+        headRot.x = f;
         ItemOnHead.translateToHead(matrixStack, false);
         boolean flag = arm == HumanoidArm.LEFT;
         matrixStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625F, 0.0F);

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.zaharenko424.cmrs.api.CustomModel;
 import net.zaharenko424.cmrs.api.ModelProperty;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.cmrs.client.model.PartTransform;
 import net.zaharenko424.cmrs.registry.ModelPropertyRegistry;
 import net.zaharenko424.cmrs.util.StreamCodecUtils;
@@ -58,10 +58,10 @@ public final class FPArms implements ModelProperty {
         return ModelPropertyRegistry.FP_ARMS;
     }
 
-    public ModelPart getTransformed(CustomModel<?> model, HumanoidArm arm){
+    public Node getTransformed(CustomModel<?> model, HumanoidArm arm){
         String target = arm == HumanoidArm.RIGHT ? armR : armL;
         if(target == null) return null;
-        ModelPart part = model.getPart(target);
+        Node part = model.getPart(target);
         if(part == null) return null;
         part.resetPose();
         if(arm == HumanoidArm.RIGHT){

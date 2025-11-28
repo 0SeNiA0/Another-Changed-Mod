@@ -2,13 +2,13 @@ package net.zaharenko424.cmrs.api;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.entity.LivingEntity;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 
 public abstract class AnimationComponent {
 
     //REGISTRY_CODEC -> lookUp the builtIn animations in animation component registry
 
-    public abstract <E extends LivingEntity> void animate(ModelPart root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
+    public abstract <E extends LivingEntity> void animate(Node root, E entity, PoseStack poseStack, float partialTick, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
 
     /*public static final class Dynamic extends AnimationComponent {
 

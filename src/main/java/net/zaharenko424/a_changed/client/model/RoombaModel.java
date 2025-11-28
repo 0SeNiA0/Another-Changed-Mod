@@ -11,7 +11,7 @@ import net.zaharenko424.cmrs.api.NoYFlip;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.a_changed.entity.RoombaEntity;
 import net.zaharenko424.a_changed.registry.EntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +20,9 @@ public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
 
     public static final ModelLayerLocation bodyLayer = new ModelLayerLocation(EntityRegistry.ROOMBA_ENTITY.getId(), "main");
 
-    private final ModelPart root;
-    private final ModelPart brushRight;
-    private final ModelPart brushLeft;
+    private final Node root;
+    private final Node brushRight;
+    private final Node brushLeft;
 
     public RoombaModel(){
         root = ModelDefinitionCache.getInstance().bake(bodyLayer).getDirectChild("root");
@@ -32,15 +32,16 @@ public class RoombaModel extends EntityModel<RoombaEntity> implements NoYFlip {
 
     @Override
     public void setupAnim(@NotNull RoombaEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
-        root.yRot = (180 - pEntity.getViewYRot(pAgeInTicks - pEntity.tickCount)) * Mth.DEG_TO_RAD;
+        root.getAllNodes().forEach(Node::resetPose);
+        root.rotation().y = (180 - pEntity.getViewYRot(pAgeInTicks - pEntity.tickCount)) * Mth.DEG_TO_RAD;
 
         float rotDeg = pEntity.tickCount % 90 * 4;
         float rotDegNext = (pEntity.tickCount + 1) % 90 * 4;
         if(rotDegNext < rotDeg) rotDegNext += rotDeg;
 
-        brushRight.yRot = Mth.lerp(pAgeInTicks - pEntity.tickCount, rotDeg, rotDegNext) * Mth.DEG_TO_RAD;
-        brushLeft.yRot = -brushRight.yRot;
+        float brushRotation = Mth.lerp(pAgeInTicks - pEntity.tickCount, rotDeg, rotDegNext) * Mth.DEG_TO_RAD;
+        brushRight.rotation().y = brushRotation;
+        brushLeft.rotation().y = -brushRotation;
     }
 
     @Override

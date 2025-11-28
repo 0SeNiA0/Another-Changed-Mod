@@ -25,7 +25,7 @@ public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(EntityRegistry.CHAIR_ENTITY.getId(), "chair");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("block/chair");
-    private final ModelPart chair;
+    private final Node chair;
 
     public ChairRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -47,7 +47,7 @@ public class ChairRenderer extends EntityRenderer<RotatingChairEntity> {
 
     @Override
     public void render(@NotNull RotatingChairEntity entity, float pEntityYaw, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {
-        chair.yRot = Mth.rotLerp(pPartialTick, -entity.yRotO + 180, -entity.getYRot() + 180) * Mth.DEG_TO_RAD;
+        chair.rotation().y = Mth.rotLerp(pPartialTick, -entity.yRotO + 180, -entity.getYRot() + 180) * Mth.DEG_TO_RAD;
         chair.render(pPoseStack, pBuffer.getBuffer(RenderType.entitySolid(TEXTURE)),pPackedLight, OverlayTexture.NO_OVERLAY);
     }
 

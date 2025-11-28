@@ -65,12 +65,17 @@ public class RenderStack {
         map.clear();
     }
 
-    public void renderMesh(Mesh mesh, PoseStack.Pose matrix, int light, int overlay, int color){
+    public void setDefProperties(int light, int overlay, int color){
+        for(ParameterList parameters : map.values()){
+            if(parameters.multiConsumer.isEmpty()) continue;
+            parameters.multiConsumer.forEach(consumer ->
+                    ((Parameters)consumer).setupIfNS(overlay, color).light(light));
+        }
+    }
+
+    public void renderMesh(Mesh mesh, PoseStack.Pose matrix){
         ParameterList parameters = map.get(mesh.renderId);
         if(parameters == null || parameters.multiConsumer.isEmpty()) return;
-
-        parameters.multiConsumer.forEach(consumer ->
-                ((Parameters)consumer).setupIfNS(overlay, color).light(light));
 
         mesh.compile(matrix, parameters.multiConsumer);
     }

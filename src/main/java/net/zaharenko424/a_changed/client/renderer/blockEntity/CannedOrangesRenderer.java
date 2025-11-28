@@ -12,7 +12,7 @@ import net.zaharenko424.cmrs.client.ModelDefinitionCache;
 import net.zaharenko424.cmrs.client.geom.builder.GroupBuilder;
 import net.zaharenko424.cmrs.client.geom.builder.GroupDefinition;
 import net.zaharenko424.cmrs.client.geom.builder.ModelDefinition;
-import net.zaharenko424.cmrs.client.geom.ModelPart;
+import net.zaharenko424.cmrs.client.geom.Node;
 import net.zaharenko424.a_changed.entity.block.CannedOrangesEntity;
 import net.zaharenko424.a_changed.registry.BlockEntityRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class CannedOrangesRenderer implements BlockEntityRenderer<CannedOrangesE
 
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(BlockEntityRegistry.CANNED_ORANGES_ENTITY.getId(), "oranges");
     private static final ResourceLocation TEXTURE = AChanged.textureLoc("misc/oranges");
-    private final ModelPart oranges;
+    private final Node oranges;
 
     public CannedOrangesRenderer(){
         oranges = ModelDefinitionCache.getInstance().bake(LAYER).getDirectChild("circle");
@@ -41,7 +41,7 @@ public class CannedOrangesRenderer implements BlockEntityRenderer<CannedOrangesE
     public void render(@NotNull CannedOrangesEntity can, float pPartialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int pPackedLight, int pPackedOverlay) {
         if(!can.hasFoodLeft()) return;
         oranges.resetPose();
-        oranges.y = can.getFoodLeft();
+        oranges.translation().y = can.getFoodLeft();
         oranges.render(poseStack, buffer.getBuffer(RenderType.entitySolid(TEXTURE)), pPackedLight, pPackedOverlay);
     }
 }
