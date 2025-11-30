@@ -44,7 +44,7 @@ public abstract class MixinServerLevel extends Level {
     private BlockState onRandomTick(BlockState original, @Local(argsOnly = true) LevelChunk chunk, @Local BlockPos pos){
         final LatexCoveredData data = LatexCoveredData.of(chunk);
 
-        if(!LatexCoveredData.isLatex(original) && LatexCoveredData.isStateNotCoverable(original)) {//If block should not be covered, but is covered, uncover it.
+        if(!LatexCoveredData.isLatex(original) && LatexCoveredData.isLatexImmune(original)) {//If block should not be covered, but is covered, uncover it.
             if(data.getCoveredWith(pos) != CoveredWith.NOTHING) data.coverWith(pos, CoveredWith.NOTHING);
             return original;
         }
@@ -76,7 +76,7 @@ public abstract class MixinServerLevel extends Level {
             pos1 = pos.relative(direction);
             if(!isLoaded(pos1)) continue;
             state1 = getBlockState(pos1);
-            if(LatexCoveredData.isLatex(state1) || LatexCoveredData.isStateNotCoverable(state1)) continue;
+            if(LatexCoveredData.isLatex(state1) || LatexCoveredData.isLatexImmune(state1)) continue;
             chunk1 = getChunkAt(pos1);
             data1 = (chunk == chunk1 ? data : LatexCoveredData.of(chunk1));
 

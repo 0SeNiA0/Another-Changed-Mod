@@ -43,7 +43,7 @@ public abstract class MixinDebugStick {
     @ModifyExpressionValue(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/StateDefinition;getProperties()Ljava/util/Collection;"),
             method = "handleInteraction")
     private Collection<Property<?>> addLTCProperty(Collection<Property<?>> original, @Local(argsOnly = true) Player player, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) ItemStack debugStick){
-        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) {
+        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isLatexImmune(state)) {
             achanged$data = null;
             achanged$pos = null;
             debugStick.remove(ComponentRegistry.DEBUG_STICK_LATEX);

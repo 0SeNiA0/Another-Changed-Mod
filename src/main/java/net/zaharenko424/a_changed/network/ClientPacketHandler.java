@@ -39,7 +39,7 @@ public class ClientPacketHandler {
     public void handleLTCDataSync(ClientboundLTCDataPacket packet, IPayloadContext context){
         context.enqueueWork(() -> {
             LevelChunk chunk = minecraft.level.getChunk(packet.pos().x, packet.pos().z);
-            LatexCoveredData.of(chunk).readPacket(packet.flags(), packet.rawData());
+            LatexCoveredData.of(chunk).readPacket(packet.flags(), packet.buffer());
         });
     }
 

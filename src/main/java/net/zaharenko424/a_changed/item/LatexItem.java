@@ -46,7 +46,7 @@ public class LatexItem extends Item {
         Level level = context.getLevel();
         BlockState state = level.getBlockState(pos);
 
-        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) return InteractionResult.PASS;
+        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isLatexImmune(state)) return InteractionResult.PASS;
 
         LatexCoveredData data = LatexCoveredData.of(level.getChunkAt(pos));
         if(data.getCoveredWith(pos) != CoveredWith.NOTHING) return InteractionResult.PASS;

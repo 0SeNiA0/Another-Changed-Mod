@@ -29,7 +29,6 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
     private final Vector3f rotation = new Vector3f();
     private final Vector3f scale = new Vector3f(1);
 
-    public float xRot;
     public boolean visible = true;
     public boolean draw = true;
     private final List<Cube> cubes;
@@ -98,7 +97,7 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
 
     public void loadPose(PartPose pose) {
         translation.set(pose.x, pose.y, pose.z);
-        rotation.set(pose.zRot, pose.yRot, pose.xRot);//TODO move to Quaternion eventually?
+        rotation.set(pose.xRot, pose.yRot, pose.zRot);//TODO move to Quaternion eventually?
         //rotation.set(Reusable.QUATERNION.get().identity().rotationZYX(pose.zRot, pose.yRot, pose.xRot));
         scale.set(1);
     }

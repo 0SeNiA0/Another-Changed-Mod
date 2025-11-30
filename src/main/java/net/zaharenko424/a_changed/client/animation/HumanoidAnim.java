@@ -65,10 +65,10 @@ public class HumanoidAnim extends AnimationComponent {
         Node rightLeg = root.getPart("right_leg");
         Node leftLeg = root.getPart("left_leg");
 
-        rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F / f;
-        leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F / f;
-        rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / f;
-        leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / f;
+        rightArm.rotation().x = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F / f;
+        leftArm.rotation().x = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F / f;
+        rightLeg.rotation().x = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / f;
+        leftLeg.rotation().x = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / f;
 
         if (entity.isPassenger() && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit()))
             setupRiding(rightArm, leftArm, rightLeg, leftLeg);
@@ -190,8 +190,9 @@ public class HumanoidAnim extends AnimationComponent {
             }
         }
 
-        leftLeg.xRot = Mth.lerp(swimAmount, leftLeg.xRot, 0.3F * Mth.cos(limbSwing * 0.33333334F + (float) Math.PI));
-        rightLeg.xRot = Mth.lerp(swimAmount, rightLeg.xRot, 0.3F * Mth.cos(limbSwing * 0.33333334F));
+        Vector3f leftLegRot = leftLeg.rotation(), rightLegRot = rightLeg.rotation();
+        leftLegRot.x = Mth.lerp(swimAmount, leftLegRot.x, 0.3F * Mth.cos(limbSwing * 0.33333334F + (float) Math.PI));
+        rightLegRot.x = Mth.lerp(swimAmount, rightLegRot.x, 0.3F * Mth.cos(limbSwing * 0.33333334F));
     }
 
     protected <E extends LivingEntity> void setupAttackAnimation(E entity, Node head, Node body, Node rightArm, Node leftArm, float attackTime) {
@@ -213,7 +214,7 @@ public class HumanoidAnim extends AnimationComponent {
             f *= f;
             f = 1.0F - f;
             float f1 = Mth.sin(f * (float) Math.PI);
-            float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.xRot + 0.7F) * 0.75F;
+            float f2 = Mth.sin(attackTime * (float) Math.PI) * (head.rotation().x + 0.7F) * 0.75F;
             arm.rotation().set(f1 * 1.2F + f2, bodyYRot * 2.0F, Mth.sin(attackTime * (float) Math.PI) * -0.4F);
         }
     }

@@ -115,7 +115,7 @@ public abstract class MixinModelManager implements ModelManagerAccess {
         if(!path.startsWith("block") || path.endsWith("ltx")) return original;//make sure that there are no converted textures in hashSet!
 
         Block block = BuiltInRegistries.BLOCK.get(location.id());//accept textures only from block dir
-        if(LatexCoveredData.isStateNotCoverable(block.defaultBlockState())) return original;//TMP TAGS DON'T WORK BEFORE THE WORLD IS LOADED
+        if(LatexCoveredData.isLatexImmune(block.defaultBlockState())) return original;//TMP TAGS DON'T WORK BEFORE THE WORLD IS LOADED
 
         achanged$sprites.put(original.contents().name(), original);
         return original;

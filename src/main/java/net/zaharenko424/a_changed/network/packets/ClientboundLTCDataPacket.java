@@ -1,5 +1,6 @@
 package net.zaharenko424.a_changed.network.packets;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -13,6 +14,10 @@ public record ClientboundLTCDataPacket(ChunkPos pos, byte flags, byte[] rawData)
 
     public ClientboundLTCDataPacket(FriendlyByteBuf buf){
         this(new ChunkPos(buf.readVarInt(), buf.readVarInt()), buf.readByte(), buf.readByteArray());
+    }
+
+    public FriendlyByteBuf buffer(){
+        return new FriendlyByteBuf(Unpooled.wrappedBuffer(rawData));
     }
 
     public static final StreamCodec<FriendlyByteBuf, ClientboundLTCDataPacket> CODEC = StreamCodec.of((buf, packet) -> {

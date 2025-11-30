@@ -22,6 +22,7 @@ import net.zaharenko424.a_changed.block.sign.StandingSign;
 import net.zaharenko424.a_changed.block.sign.WallHangingSign;
 import net.zaharenko424.a_changed.block.sign.WallSign;
 import net.zaharenko424.a_changed.block.smalldecor.*;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.worldgen.OrangeTreeGrower;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,11 +75,11 @@ public class BlockRegistry {
     public static final DeferredBlock<CryoChamber> CRYO_CHAMBER = BLOCKS.register("cryo_chamber", ()-> new CryoChamber(metalDoorProperties()));
     public static final DeferredBlock<Cup> CUP = BLOCKS.register("cup", ()-> new Cup(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.4f)));
     public static final DeferredBlock<DangerSign> DANGER_SIGN = BLOCKS.register("danger_sign", ()-> new DangerSign(softMetal()));
-    public static final DeferredBlock<Block> DARK_LATEX_BLOCK = BLOCKS.registerSimpleBlock("dark_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
+    public static final DeferredBlock<LatexBlockImpl> DARK_LATEX_BLOCK = BLOCKS.register("dark_latex_block", ()-> new LatexBlockImpl(BlockBehaviour.Properties.of().mapColor(DyeColor.BLACK).strength(1.5f,1).sound(SoundType.SLIME_BLOCK), Latex.DARK));
     public static final DeferredBlock<Crystal> DARK_LATEX_CRYSTAL = BLOCKS.register("dark_latex_crystal", ()-> new Crystal(decorProperties(), TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> DARK_LATEX_CRYSTAL_ICE = BLOCKS.registerSimpleBlock("dark_latex_ice", BlockBehaviour.Properties.of().mapColor(MapColor.ICE).friction(1.1f).strength(0.5f).sound(SoundType.GLASS));
-    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_F = BLOCKS.register("dark_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_F_TF));
-    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_M = BLOCKS.register("dark_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), TransfurRegistry.DARK_LATEX_WOLF_M_TF));
+    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_F = BLOCKS.register("dark_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), Latex.DARK, TransfurRegistry.DARK_LATEX_WOLF_F_TF));
+    public static final DeferredBlock<LatexPuddle> DARK_LATEX_PUDDLE_M = BLOCKS.register("dark_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK), Latex.DARK, TransfurRegistry.DARK_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Disc> DISC = BLOCKS.register("disc", ()-> new Disc(BlockBehaviour.Properties.of().sound(SoundType.STONE).strength(.4f)));
     public static final DeferredBlock<AllDirectionalBlock> EXPOSED_PIPES = BLOCKS.register("exposed_pipes", ()-> new AllDirectionalBlock(decorProperties()));
     public static final DeferredBlock<Flask> FLASK = BLOCKS.register("flask", ()-> new Flask(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)));
@@ -137,10 +138,10 @@ public class BlockRegistry {
     public static final DeferredBlock<TrapDoorBlock> VENT_HATCH = BLOCKS.register("vent_hatch", ()-> new TrapDoorBlock(BlockSetType.STONE, softMetal().mapColor(DyeColor.GRAY).noOcclusion()));
     public static final DeferredBlock<Block> VENT_WALL = BLOCKS.registerSimpleBlock("vent_wall", decorProperties().mapColor(DyeColor.WHITE));
     public static final DeferredBlock<Whiteboard> WHITEBOARD = BLOCKS.register("whiteboard", ()-> new Whiteboard(decorProperties().mapColor(DyeColor.WHITE)));
-    public static final DeferredBlock<Block> WHITE_LATEX_BLOCK = BLOCKS.registerSimpleBlock("white_latex_block", BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(1.5f,1).sound(SoundType.SLIME_BLOCK));
+    public static final DeferredBlock<LatexBlockImpl> WHITE_LATEX_BLOCK = BLOCKS.register("white_latex_block", ()-> new LatexBlockImpl(BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(1.5f,1).sound(SoundType.SLIME_BLOCK), Latex.WHITE));
     public static final DeferredBlock<WhiteLatexPillar> WHITE_LATEX_PILLAR = BLOCKS.register("white_latex_pillar", ()-> new WhiteLatexPillar(BlockBehaviour.Properties.ofFullCopy(WHITE_LATEX_BLOCK.get())));
-    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).mapColor(DyeColor.WHITE), TransfurRegistry.WHITE_LATEX_WOLF_F_TF));
-    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_M = BLOCKS.register("white_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).mapColor(DyeColor.WHITE), TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
+    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_F = BLOCKS.register("white_latex_puddle_f", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).mapColor(DyeColor.WHITE), Latex.WHITE, TransfurRegistry.WHITE_LATEX_WOLF_F_TF));
+    public static final DeferredBlock<LatexPuddle> WHITE_LATEX_PUDDLE_M = BLOCKS.register("white_latex_puddle_m", ()-> new LatexPuddle(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).mapColor(DyeColor.WHITE), Latex.WHITE, TransfurRegistry.WHITE_LATEX_WOLF_M_TF));
     public static final DeferredBlock<Block> YELLOW_LAB_BLOCK = BLOCKS.registerSimpleBlock("yellow_lab_block", decorProperties().mapColor(DyeColor.YELLOW));
     public static final DeferredBlock<SlabBlock> YELLOW_LAB_SLAB = registerSlab("yellow_lab_slab");
     public static final DeferredBlock<StairBlock> YELLOW_LAB_STAIRS = registerStairs("yellow_lab_stairs", YELLOW_LAB_BLOCK);

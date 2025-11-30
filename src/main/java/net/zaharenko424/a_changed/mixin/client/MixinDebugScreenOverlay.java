@@ -24,7 +24,7 @@ public abstract class MixinDebugScreenOverlay {
     @Inject(at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2, shift = At.Shift.AFTER),
             method = "getSystemInformation")
     private void onBlockInformation(CallbackInfoReturnable<List<String>> cir, @Local List<String> list, @Local BlockState state, @Local BlockPos pos){
-        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isStateNotCoverable(state)) return;
+        if(LatexCoveredData.isLatex(state) || LatexCoveredData.isLatexImmune(state)) return;
 
         CoveredWith coveredWith = LatexCoveredData.of(getLevel().getChunkAt(pos)).getCoveredWith(pos);
         list.add("covered_with: " + switch(coveredWith){

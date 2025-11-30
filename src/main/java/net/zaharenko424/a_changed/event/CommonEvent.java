@@ -298,7 +298,7 @@ public class CommonEvent {
     public static void onChunkWatch(ChunkWatchEvent.Sent event){
         LatexCoveredData data = LatexCoveredData.of(event.getChunk());
         if(data.isEmpty()) return;
-        PacketDistributor.sendToPlayer(event.getPlayer(), data.getPacket(null));
+        PacketDistributor.sendToPlayer(event.getPlayer(), data.getUpdatePacket());
     }
 
     @SubscribeEvent

@@ -1,9 +1,21 @@
 package net.zaharenko424.a_changed.attachment;
 
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.shorts.ShortArrayList;
+import it.unimi.dsi.fastutil.shorts.ShortList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -16,19 +28,17 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.zaharenko424.a_changed.AChangedTags;
+import net.zaharenko424.a_changed.block.LatexBlock;
 import net.zaharenko424.a_changed.block.LatexImmuneBlock;
-import net.zaharenko424.a_changed.block.LatexPuddle;
 import net.zaharenko424.a_changed.network.ClientPacketHandler;
 import net.zaharenko424.a_changed.network.packets.ClientboundLTCDataPacket;
 import net.zaharenko424.a_changed.registry.AttachmentRegistry;
-import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.transfurSystem.CoveredWith;
+import net.zaharenko424.cmrs.util.StreamCodecUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public class LatexCoveredData {
 
@@ -41,20 +51,20 @@ public class LatexCoveredData {
     }
 
     public static boolean isLatex(BlockState state){
-        return state.is(BlockRegistry.DARK_LATEX_BLOCK) || state.is(BlockRegistry.WHITE_LATEX_BLOCK) || state.getBlock() instanceof LatexPuddle;
+        return state.getBlock() instanceof LatexBlock;
     }
 
     /**
      * @return true if state cannot be covered with latex.
      */
-    public static boolean isStateNotCoverable(@NotNull BlockState state){
+    public static boolean isLatexImmune(@NotNull BlockState state){
         Block block = state.getBlock();
         return state.isEmpty() || block instanceof LiquidBlock || block instanceof LatexImmuneBlock
                 || state.is(AChangedTags.Block.LATEX_RESISTANT) || state.getRenderShape() != RenderShape.MODEL;
     }
 
     private final LevelChunk holder;
-    private HashMap<BlockPos, CoveredWith> latexCoveredBlocks;
+    private Int2ObjectMap<Short2ObjectMap<CoveredWith>> sections;
     private HashSet<SectionPos> sectionsToUpdate;
 
     public LatexCoveredData(@NotNull IAttachmentHolder holder){
@@ -62,8 +72,30 @@ public class LatexCoveredData {
         this.holder = chunk;
     }
 
+    protected Short2ObjectMap<CoveredWith> getSection(BlockPos pos){
+        return sections == null ? null : sections.get(pos.getY() >> 4);
+    }
+
+    protected Short2ObjectMap<CoveredWith> getOrCreateSection(int sectionY){
+        if(sections == null) sections = new Int2ObjectOpenHashMap<>();
+        return sections.computeIfAbsent(sectionY, y -> new Short2ObjectOpenHashMap<>());
+    }
+
+    protected Short2ObjectMap<CoveredWith> getOrCreateSection(BlockPos pos){
+        return getOrCreateSection(pos.getY() >> 4);
+    }
+
+    protected boolean removeCover(BlockPos pos){
+        Short2ObjectMap<CoveredWith> section = getSection(pos);
+        if(section == null) return false;
+
+        CoveredWith cover = section.remove(toChunkRelative(pos));
+        if(section.isEmpty()) sections.remove(pos.getY() >> 4);
+        return cover != null;
+    }
+
     public boolean isEmpty(){
-        return latexCoveredBlocks == null || latexCoveredBlocks.isEmpty();
+        return sections == null || sections.isEmpty();
     }
 
     /**
@@ -71,29 +103,37 @@ public class LatexCoveredData {
      * @return CoveredWith.NOTHING if no data is present.
      */
     public CoveredWith getCoveredWith(@NotNull BlockPos pos){
-        if(latexCoveredBlocks == null) return CoveredWith.NOTHING;
-        return latexCoveredBlocks.getOrDefault(pos, CoveredWith.NOTHING);
+        Short2ObjectMap<CoveredWith> section = getSection(pos);
+        if(section == null) return CoveredWith.NOTHING;
+        return section.getOrDefault(toChunkRelative(pos), CoveredWith.NOTHING);
     }
 
     public void coverWith(@NotNull BlockPos pos, @NotNull CoveredWith coverWith){
         if(holder.getLevel().isClientSide || !verifyPos(pos)) return;
         BlockState state = holder.getBlockState(pos);
-        if((isLatex(state) || isStateNotCoverable(state)) && coverWith != CoveredWith.NOTHING) return;
+        if((isLatex(state) || isLatexImmune(state)) && coverWith != CoveredWith.NOTHING) return;
 
         if(coverWith == CoveredWith.NOTHING){
-            if(latexCoveredBlocks != null && latexCoveredBlocks.remove(pos) != null) {
+            if(removeCover(pos)) {
                 holder.setUnsaved(true);
-                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos));
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos, CoveredWith.NOTHING));
             }
 
             return;
         }
 
-        if(latexCoveredBlocks == null) latexCoveredBlocks = new HashMap<>();
-        latexCoveredBlocks.put(pos, coverWith);
+        getOrCreateSection(pos).put(toChunkRelative(pos), coverWith);
         holder.setUnsaved(true);
 
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) holder.getLevel(), holder.getPos(), getPacket(pos, coverWith));
+    }
+
+    public static short toChunkRelative(BlockPos pos){
+        return (short) (((pos.getX() & 0xF) << 12) | ((pos.getY() & 0xF) << 8) | ((pos.getZ() & 0xF) << 4));
+    }
+
+    public static BlockPos toGlobal(short chunkRelative, int section, ChunkPos chunkPos){
+        return chunkPos.getBlockAt(chunkRelative >> 12 & 0xF, (section << 4) | ((chunkRelative >> 8) & 0xF), (chunkRelative >> 4) & 0xF);
     }
 
     private boolean verifyPos(@NotNull BlockPos pos){
@@ -105,41 +145,178 @@ public class LatexCoveredData {
                 && pos.getZ() >> 4 == chPos.z;
     }
 
-    public void readPacket(byte flags, byte[] rawData) {
+    public void readPacket(byte flags, FriendlyByteBuf buf) {
         if(!holder.getLevel().isClientSide) return;
 
         if(flags == CLEAR_SYNC) {
-            if(latexCoveredBlocks != null) latexCoveredBlocks.clear();
+            if(sections != null) sections.clear();
             return;
         }
 
-        if(flags == FULL_SYNC && latexCoveredBlocks != null) latexCoveredBlocks.clear();
+        if(flags == DIFF_SYNC){
+            BlockPos pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+            CoveredWith cover = buf.readEnum(CoveredWith.class);
+            if(cover == CoveredWith.NOTHING) {
+                removeCover(pos);
+            } else getOrCreateSection(pos).put(toChunkRelative(pos), cover);
 
-        read_(rawData);
+            addSectionToUpdate(SectionPos.of(pos));
+            updateSections();
+            return;
+        }
+
+        if(flags == FULL_SYNC && sections != null) sections.clear();
+
+        read(buf);
     }
 
-    public CustomPacketPayload getPacket(@Nullable BlockPos pos){
+    public CustomPacketPayload getUpdatePacket(){
         if(holder.getLevel().isClientSide) return null;
-
-        if(isEmpty()){
-            if(pos == null) return new ClientboundLTCDataPacket(holder.getPos(), CLEAR_SYNC, new byte[0]);
-            byte[] data = new byte[3];
-            writeBlock(data, 0, pos.getX(), pos.getY(), pos.getZ(), CoveredWith.NOTHING);
-            return new ClientboundLTCDataPacket(holder.getPos(), DIFF_SYNC, data);
-        }
-
-        if(pos != null){
-            byte[] data = new byte[3];
-            writeBlock(data, 0, pos.getX(), pos.getY(), pos.getZ(), latexCoveredBlocks.getOrDefault(pos, CoveredWith.NOTHING));
-            return new ClientboundLTCDataPacket(holder.getPos(), DIFF_SYNC, data);
-        }
-
-        return new ClientboundLTCDataPacket(holder.getPos(), FULL_SYNC, write());
+        return getPacket(null, null);
     }
+
+    private CustomPacketPayload getPacket(@Nullable BlockPos pos, CoveredWith cover){
+        if(isEmpty()) return new ClientboundLTCDataPacket(holder.getPos(), CLEAR_SYNC, new byte[0]);
+
+        if(pos != null) return new ClientboundLTCDataPacket(holder.getPos(), DIFF_SYNC, StreamCodecUtils.writeCustomData(buf ->
+                buf.writeInt(pos.getX()).writeInt(pos.getY()).writeInt(pos.getZ()).writeEnum(cover)));
+
+        return new ClientboundLTCDataPacket(holder.getPos(), FULL_SYNC, StreamCodecUtils.writeCustomData(this::write));
+    }
+
+    private void read(FriendlyByteBuf buf){
+        int sectionCount = buf.readVarInt();
+        short sectionIndex;
+        Short2ObjectMap<CoveredWith> section;
+        CoveredWith cover;
+        int types, positions, posPairs;
+        short first;
+        byte second;
+        for(int i = 0; i < sectionCount; i++){
+            sectionIndex = buf.readShort();
+            section = getOrCreateSection(sectionIndex);
+            addSectionToUpdate(SectionPos.of(holder.getPos(), sectionIndex));
+
+            types = buf.readVarInt();
+
+            for(int type = 0; type < types; type++) {
+                cover = buf.readEnum(CoveredWith.class);
+                positions = buf.readVarInt();
+                posPairs = positions / 2;
+
+                for (int ii = 0; ii < posPairs; ii++) {//Split pos pairs
+                    first = buf.readShort();
+                    second = buf.readByte();
+                    addOrRemove(section, (short) (first & 0xFFF0), cover);
+                    addOrRemove(section, (short) ((first << 12) | ((second & 0xFF) << 4)), cover);
+                }
+
+                if(positions % 2 != 0) addOrRemove(section, buf.readShort(), cover);
+            }
+        }
+
+        sections.int2ObjectEntrySet().removeIf(entry -> entry.getValue().isEmpty());
+
+        updateSections();
+    }
+
+    private void addSectionToUpdate(SectionPos pos){
+        if(!holder.getLevel().isClientSide) return;
+        if(sectionsToUpdate == null) sectionsToUpdate = new HashSet<>();
+        sectionsToUpdate.add(pos);
+    }
+
+    private void updateSections(){
+        if(!holder.getLevel().isClientSide) return;
+        ClientPacketHandler.INSTANCE.updateChunkSections(sectionsToUpdate);
+        sectionsToUpdate.clear();
+    }
+
+    private void addOrRemove(Short2ObjectMap<CoveredWith> section, short pos, CoveredWith cover){
+        if(cover == CoveredWith.NOTHING) {
+            section.remove(pos);
+        } else section.put(pos, cover);
+    }
+
+    private void write(FriendlyByteBuf buf) {
+        buf.writeVarInt(sections.size());
+
+        Object2ObjectMap<CoveredWith, ShortList> inverse = new Object2ObjectArrayMap<>();
+        ShortList positions;
+        boolean lastFinished;
+        short prev = 0;
+        for(Int2ObjectMap.Entry<Short2ObjectMap<CoveredWith>> section : sections.int2ObjectEntrySet()){
+            buf.writeShort(section.getIntKey());
+
+            inverse.clear();
+            for(Short2ObjectMap.Entry<CoveredWith> entry : section.getValue().short2ObjectEntrySet()) {
+                inverse.computeIfAbsent(entry.getValue(), cover -> new ShortArrayList()).add(entry.getShortKey());
+            }
+
+            buf.writeVarInt(inverse.size());
+            for(Object2ObjectMap.Entry<CoveredWith, ShortList> type : inverse.object2ObjectEntrySet()){
+                buf.writeEnum(type.getKey());
+                positions = type.getValue();
+                buf.writeVarInt(positions.size());
+
+                lastFinished = true;
+                for(short pos : positions) {//Merge 1.5 byte positions into 3 byte pairs
+                    if(lastFinished){
+                        prev = pos;
+                        lastFinished = false;
+                        continue;
+                    }
+
+                    buf.writeByte(prev >> 8);
+                    buf.writeByte((prev & 0xF0) | ((pos >> 12) & 0xF));
+                    buf.writeByte((pos >> 4) & 0xFF);
+                    lastFinished = true;
+                }
+
+                if(!lastFinished) buf.writeShort(prev);
+            }
+        }
+    }
+//-7 -12 -90     1. (short)((byte)-7 << 8 & 0xFF00) | ((byte)-12 & 0xF0) -1552     2. (short)((((byte)-12 & 0xF) << 12) | (((byte)-90 & 0xFF) << 4)) 19040
+
+    public static class Serializer implements IAttachmentSerializer<Tag, LatexCoveredData> {
+
+        public static final int DATA_VERSION = 0;
+        public static final Serializer INSTANCE = new Serializer();
+
+        private Serializer(){}
+
+        @Override
+        public @NotNull LatexCoveredData read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider lookup) {
+            LatexCoveredData data = new LatexCoveredData(holder);
+            if(tag instanceof ByteArrayTag rawData && !rawData.isEmpty()) {
+                data.read_(rawData.getAsByteArray());
+                return data;
+            }
+
+            if(tag instanceof CompoundTag compound && compound.getInt("version") == DATA_VERSION){//TODO better old data handling
+                byte[] rawData = compound.getByteArray("data");
+                if(rawData.length != 0) data.read(new FriendlyByteBuf(Unpooled.wrappedBuffer(rawData)));
+            }
+            return data;
+        }
+
+        @Override
+        public @Nullable Tag write(@NotNull LatexCoveredData attachment, HolderLookup.@NotNull Provider lookup) {
+            if(attachment.isEmpty()) return null;
+
+            CompoundTag tag = new CompoundTag();
+            tag.putInt("version", DATA_VERSION);
+            tag.putByteArray("data", StreamCodecUtils.writeCustomData(attachment::write));
+
+            return tag;
+        }
+    }
+
+    //==================================================== Legacy read ===================================================//
 
     private void read_(byte[] rawData){
         int size = rawData.length / 3;
-        if(latexCoveredBlocks == null) latexCoveredBlocks = new HashMap<>(size);
 
         CoveredWith[] values = CoveredWith.values();
         ChunkPos pos = holder.getPos();
@@ -165,63 +342,13 @@ public class LatexCoveredData {
 
             coveredWith = values[yState >> 4];
 
-            if(coveredWith == CoveredWith.NOTHING){
-                latexCoveredBlocks.remove(blockPos);
-            } else latexCoveredBlocks.put(blockPos, coveredWith);
+            addOrRemove(getOrCreateSection(blockPos), toChunkRelative(blockPos), coveredWith);
 
-            if(holder.getLevel().isClientSide) {
-                if(sectionsToUpdate == null) sectionsToUpdate = new HashSet<>();
-                sectionsToUpdate.add(SectionPos.of(blockPos));
-            }
+            addSectionToUpdate(SectionPos.of(blockPos));
         }
 
-        if(holder.getLevel().isClientSide) {
-            ClientPacketHandler.INSTANCE.updateChunkSections(sectionsToUpdate);
-            sectionsToUpdate.clear();
-        }
-    }
+        sections.int2ObjectEntrySet().removeIf(entry -> entry.getValue().isEmpty());
 
-    private byte[] write() {
-        final int size = latexCoveredBlocks.size();
-        byte[] rawData = new byte[size * 3];
-
-        int i = 0;
-        BlockPos pos;
-        for(Map.Entry<BlockPos, CoveredWith> entry : latexCoveredBlocks.entrySet()){
-            pos = entry.getKey();
-            writeBlock(rawData, i * 3, pos.getX(), pos.getY(), pos.getZ(), entry.getValue());
-            i++;
-        }
-
-        return rawData;
-    }
-
-    private void writeBlock(byte[] rawData, int j, int bx, int by, int bz, CoveredWith coveredWith){
-        rawData[j] = (byte) ((bx & 0xF) | ((bz & 0xF) << 4));
-        rawData[j + 1] = (byte) (by & 0xFF);
-        rawData[j + 2] = (byte) (((by >> 8) & 0xF) | (coveredWith.ordinal() << 4));
-        if(by < 0){
-            rawData[j + 2] = (byte) (((by >> 28) & 0x8) | rawData[j + 2]);
-        }
-    }
-
-    public static class Serializer implements IAttachmentSerializer<ByteArrayTag, LatexCoveredData> {
-
-        public static final Serializer INSTANCE = new Serializer();
-
-        private Serializer(){}
-
-        @Override
-        public @NotNull LatexCoveredData read(@NotNull IAttachmentHolder holder, @NotNull ByteArrayTag tag, HolderLookup.@NotNull Provider lookup) {
-            LatexCoveredData data = new LatexCoveredData(holder);
-            if(!tag.isEmpty()) data.read_(tag.getAsByteArray());
-            return data;
-        }
-
-        @Override
-        public @Nullable ByteArrayTag write(@NotNull LatexCoveredData attachment, HolderLookup.@NotNull Provider lookup) {
-            if(attachment.isEmpty()) return null;
-            return new ByteArrayTag(attachment.write());
-        }
+        updateSections();
     }
 }

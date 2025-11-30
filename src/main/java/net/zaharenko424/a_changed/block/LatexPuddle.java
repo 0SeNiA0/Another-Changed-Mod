@@ -20,6 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.attachment.TransfurHandler;
 import net.zaharenko424.a_changed.transfurSystem.DamageSources;
+import net.zaharenko424.a_changed.transfurSystem.Latex;
 import net.zaharenko424.a_changed.transfurSystem.TransfurContext;
 import net.zaharenko424.a_changed.transfurSystem.transfurType.TransfurType;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
@@ -33,7 +34,7 @@ import static net.zaharenko424.a_changed.block.ConnectedTextureBlock.*;
 
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class LatexPuddle extends Block implements LatexImmuneBlock {
+public class LatexPuddle extends Block implements LatexBlock {
 
     private static final VoxelShape SHAPE0;
     private static final VoxelShape SHAPE_N;
@@ -43,16 +44,23 @@ public class LatexPuddle extends Block implements LatexImmuneBlock {
     private static final VoxelShape SHAPE_NESW = Shapes.box(0, 0, 0, 1, 0.0625, 1);
     private static final VoxelShapeCache CACHE = new VoxelShapeCache();
     private static final HashMap<VoxelShape, AABB> AABB_CACHE = new HashMap<>();
+    private final Latex latex;
     private final Supplier<? extends TransfurType<?>> transfurType;
 
-    public LatexPuddle(BlockBehaviour.Properties properties, Supplier<? extends TransfurType<?>> transfurType) {
+    public LatexPuddle(BlockBehaviour.Properties properties, Latex latex, Supplier<? extends TransfurType<?>> transfurType) {
         super(properties.friction(.9f).speedFactor(.6f).jumpFactor(.6f));
         registerDefaultState(stateDefinition.any()
                 .setValue(NORTH,false)
                 .setValue(EAST,false)
                 .setValue(SOUTH,false)
                 .setValue(WEST,false));
-        this.transfurType=transfurType;
+        this.latex = latex;
+        this.transfurType = transfurType;
+    }
+
+    @Override
+    public Latex getLatex() {
+        return latex;
     }
 
     @Override
