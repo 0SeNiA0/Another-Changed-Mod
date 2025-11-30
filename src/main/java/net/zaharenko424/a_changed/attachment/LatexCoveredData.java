@@ -64,7 +64,7 @@ public class LatexCoveredData {
     }
 
     private final LevelChunk holder;
-    private Int2ObjectMap<Short2ObjectMap<CoveredWith>> sections;
+    private Int2ObjectMap<Short2ObjectMap<CoveredWith>> sections; //Can be improved by using palette when there are > 512 blocks in a section -- Int2ObjectMap<Either<Short2ObjectMap<CoveredWith>, PalettedContainer<CoveredWith>>> sections;
     private HashSet<SectionPos> sectionsToUpdate;
 
     public LatexCoveredData(@NotNull IAttachmentHolder holder){
