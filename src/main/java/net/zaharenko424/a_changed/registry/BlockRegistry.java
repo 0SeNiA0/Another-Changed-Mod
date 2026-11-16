@@ -17,6 +17,7 @@ import net.zaharenko424.a_changed.block.box.TallBox;
 import net.zaharenko424.a_changed.block.box.TallCardboardBox;
 import net.zaharenko424.a_changed.block.door.*;
 import net.zaharenko424.a_changed.block.machine.*;
+import net.zaharenko424.a_changed.block.multi.CryoChamber;
 import net.zaharenko424.a_changed.block.sign.HangingSign;
 import net.zaharenko424.a_changed.block.sign.StandingSign;
 import net.zaharenko424.a_changed.block.sign.WallHangingSign;

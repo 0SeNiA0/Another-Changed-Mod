@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.zaharenko424.a_changed.AChanged;
-import net.zaharenko424.a_changed.block.CryoChamber;
+import net.zaharenko424.a_changed.block.multi.CryoChamber;
 import net.zaharenko424.a_changed.block.FloorCircle;
 import net.zaharenko424.a_changed.block.PileOfOranges;
 import net.zaharenko424.a_changed.block.door.BigLabDoor;

@@ -1,5 +1,6 @@
 package net.zaharenko424.cmrs.client.geom;
 
+import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
@@ -7,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.util.RandomSource;
 import net.zaharenko424.cmrs.api.ISimpleVertexConsumer;
 import net.zaharenko424.cmrs.api.MatrixStack;
 import net.zaharenko424.cmrs.client.model.RenderStack;
@@ -16,10 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
@@ -31,8 +28,8 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
 
     public boolean visible = true;
     public boolean draw = true;
-    private final List<Cube> cubes;
-    private final List<Mesh> meshes;
+    private final Set<Cube> cubes;
+    private final Set<Mesh> meshes;
     private final Map<String, Node> children;
     private final Map<String, Node> allChildren;
     private final Map<String, Node> allNodes;
@@ -40,8 +37,8 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
     private Object2FloatArrayMap<VertexData> animatedVertices;
 
     public Node(List<Cube> cubes, List<Mesh> meshes, Map<String, Node> children, Map<String, Node> allNodes) {
-        this.cubes = cubes;
-        this.meshes = meshes;
+        this.cubes = Set.copyOf(cubes);
+        this.meshes = Set.copyOf(meshes);
         this.children = children;
 
         allChildren = new HashMap<>();
@@ -114,11 +111,6 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
         scale.set(part.xScale, part.yScale, part.zScale);
     }
 
-    @Override
-    public boolean hasNode(String name) {
-        return this.children.containsKey(name);
-    }
-
     public boolean hasChildren(){
         return !children.isEmpty();
     }
@@ -150,7 +142,7 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
         PoseStack.Pose last = matrixStack.last();
         MatrixStack.push(matrixStack);
-        translateAndRotate(matrixStack);
+        applyTransformation(matrixStack);
 
         for (Mesh anim : animated) {
             anim.offset.add(initialPose.x, initialPose.y, initialPose.z);
@@ -205,7 +197,7 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
         if(!visible || (isEmpty() && (animatedVertices == null || animatedVertices.isEmpty()))) return;
         PoseStack.Pose last = matrixStack.last();
         MatrixStack.push(matrixStack);
-        translateAndRotate(matrixStack);
+        applyTransformation(matrixStack);
 
         for (Mesh anim : animated) {
             anim.offset.add(initialPose.x, initialPose.y, initialPose.z);
@@ -252,7 +244,7 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
         MatrixStack.pop(matrixStack);
     }
 
-    public void translateAndRotate(PoseStack poseStack) {
+    public void applyTransformation(PoseStack poseStack) {
         if(Utils.isNonZero(translation)) MatrixStack.translate(poseStack, translation.div(16, Reusable.VEC3F.get()));
 
         if(Utils.isNonZero(rotation)) poseStack.mulPose(Reusable.QUATERNION.get().identity().rotationZYX(rotation.z, rotation.y, rotation.x));
@@ -260,30 +252,17 @@ public class Node implements net.zaharenko424.cmrs.api.Node {
         if(Utils.isNonOne(scale)) MatrixStack.scale(poseStack, scale);
     }
 
-    public boolean hasCubes(){
-        return !cubes.isEmpty();
-    }
-
-    public boolean hasMeshes(){
-        return !meshes.isEmpty();
-    }
-
-    /**
-     * @return Random cube if any or null.
-     */
-    public Cube getRandomCube(RandomSource random) {
-        return hasCubes() ? cubes.get(random.nextInt(cubes.size())) : null;
+    @Override
+    public Set<Mesh> getMesh() {
+        return Sets.union(cubes, meshes);
     }
 
     public boolean isEmpty() {
         return cubes.isEmpty() && meshes.isEmpty() && children.isEmpty();
     }
 
-    /**
-     * @return Unmodifiable map
-     */
-    public Map<String, Node> getChildren(){
-        return children;
+    public Set<Node> getChildren(){
+        return Set.copyOf(children.values());
     }
 
     public Stream<Node> getAllNodes() {

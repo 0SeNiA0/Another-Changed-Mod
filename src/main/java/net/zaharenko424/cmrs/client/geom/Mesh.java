@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 
 import java.util.Map;
 
-public class Mesh {
+public class Mesh implements net.zaharenko424.cmrs.api.Mesh {
 
     protected final ImmutableList<VertexData> vertexData;
     protected final Quad[] quads;

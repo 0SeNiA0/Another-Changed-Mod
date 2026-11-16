@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.zaharenko424.a_changed.block.AbstractMultiBlock;
+import net.zaharenko424.a_changed.block.multi.AbstractMultiBlock;
 import net.zaharenko424.a_changed.block.GrowingFruitBlock;
 import net.zaharenko424.a_changed.block.Crystal;
 import net.zaharenko424.a_changed.block.TallCrystal;

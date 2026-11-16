@@ -23,6 +23,7 @@ import net.zaharenko424.a_changed.block.door.Abstract3By3Door;
 import net.zaharenko424.a_changed.block.machine.AbstractMachine;
 import net.zaharenko424.a_changed.block.machine.Capacitor;
 import net.zaharenko424.a_changed.block.machine.WireBlock;
+import net.zaharenko424.a_changed.block.multi.CryoChamber;
 import net.zaharenko424.a_changed.block.smalldecor.MetalCan;
 import net.zaharenko424.a_changed.registry.BlockRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;

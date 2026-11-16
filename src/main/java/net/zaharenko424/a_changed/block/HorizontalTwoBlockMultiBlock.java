@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.zaharenko424.a_changed.block.multi.AbstractMultiBlock;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.Nullable;
 

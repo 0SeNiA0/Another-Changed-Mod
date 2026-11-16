@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block;
+package net.zaharenko424.a_changed.block.multi;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -50,28 +50,30 @@ public abstract class AbstractMultiBlock extends Block {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getHorizontalDirection().getOpposite();
-        if(canBePlaced(context.getClickedPos(), direction, context.getLevel()))
+        if (canBePlaced(context.getClickedPos(), direction, context.getLevel()))
             return defaultBlockState().setValue(FACING, direction);
         return null;
     }
 
     protected boolean canBePlaced(BlockPos mainPos, Direction direction, Level level){
         BlockPos pos;
-        for(AbstractMultiBlock.Part part : parts().values()){
+        for (Part part : parts().values()){
             pos = part.toSecondaryPos(mainPos, direction);
-            if(!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) return false;
+            if (!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) return false;
         }
         return true;
     }
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-        if(level.isClientSide) return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        if (level.isClientSide) return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+
         BlockPos mainPos = getMainPos(state, pos);
         BlockState mainState = level.getBlockState(mainPos);
-        if(!super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)) return false;
-        if(!mainState.isAir() && mainPos != pos) {
-            if(willHarvest) Block.dropResources(mainState, level, mainPos,null, player, player.getMainHandItem());
+        if (!super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)) return false;
+
+        if (!mainState.isAir() && mainPos != pos) {
+            if (willHarvest) Block.dropResources(mainState, level, mainPos,null, player, player.getMainHandItem());
         }
         return true;
     }
@@ -79,18 +81,20 @@ public abstract class AbstractMultiBlock extends Block {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if(state.is(newState.getBlock())) return;
+
         super.onRemove(state, level, pos, newState, movedByPiston);
         BlockPos mainPos = getMainPos(state, pos);
-        if(state.getValue(part()) != 0){
-            if(level.getBlockState(mainPos).is(this)) level.setBlockAndUpdate(mainPos, Blocks.AIR.defaultBlockState());
+        if (state.getValue(part()) != 0){
+            if (level.getBlockState(mainPos).is(this)) level.setBlockAndUpdate(mainPos, Blocks.AIR.defaultBlockState());
             return;
         }
+
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
             BlockPos pos1 = part.toSecondaryPos(pos, direction);
             BlockState foundState = level.getBlockState(pos1);
 
-            if(id != 0 && foundState.is(this)) level.setBlockAndUpdate(pos1, Blocks.AIR.defaultBlockState());
+            if (id != 0 && foundState.is(this)) level.setBlockAndUpdate(pos1, Blocks.AIR.defaultBlockState());
         });
     }
 
@@ -98,7 +102,7 @@ public abstract class AbstractMultiBlock extends Block {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         Direction direction = state.getValue(FACING);
         parts().forEach((id, part) -> {
-            if(id == 0) return;
+            if (id == 0) return;
             level.setBlockAndUpdate(part.toSecondaryPos(pos, direction), state.setValue(part(), id));
         });
     }
@@ -114,8 +118,8 @@ public abstract class AbstractMultiBlock extends Block {
 
     protected boolean isPowered(BlockPos mainPos, BlockState mainState, Level level){
         Direction direction = mainState.getValue(FACING);
-        for(Part part : parts().values()){
-            if(level.hasNeighborSignal(part.toSecondaryPos(mainPos, direction))) return true;
+        for (Part part : parts().values()){
+            if (level.hasNeighborSignal(part.toSecondaryPos(mainPos, direction))) return true;
         }
         return false;
     }

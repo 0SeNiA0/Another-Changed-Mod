@@ -33,6 +33,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.zaharenko424.a_changed.block.door.Abstract3By3Door;
+import net.zaharenko424.a_changed.block.multi.AbstractMultiBlock;
 import net.zaharenko424.a_changed.entity.block.machine.BackupGeneratorEntity;
 import net.zaharenko424.a_changed.registry.SoundRegistry;
 import net.zaharenko424.a_changed.util.StateProperties;

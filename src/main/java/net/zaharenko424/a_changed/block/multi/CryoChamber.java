@@ -1,4 +1,4 @@
-package net.zaharenko424.a_changed.block;
+package net.zaharenko424.a_changed.block.multi;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;

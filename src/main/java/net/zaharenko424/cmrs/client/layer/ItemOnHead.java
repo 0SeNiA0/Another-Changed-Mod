@@ -56,7 +56,7 @@ public final class ItemOnHead implements RenderLayer {
 
     public void transformToHead(@NotNull CustomModel<?> model, @NotNull PoseStack stack){
         Node head = getPart(model);
-        if(head != null) head.translateAndRotate(stack);
+        if(head != null) head.applyTransformation(stack);
     }
 
     @Override

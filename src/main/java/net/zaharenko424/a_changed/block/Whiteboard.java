@@ -20,6 +20,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.zaharenko424.a_changed.block.multi.AbstractMultiBlock;
 import net.zaharenko424.a_changed.util.StateProperties;
 import net.zaharenko424.a_changed.util.VoxelShapeCache;
 import org.jetbrains.annotations.NotNull;

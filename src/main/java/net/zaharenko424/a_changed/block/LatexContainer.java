@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.zaharenko424.a_changed.block.AbstractMultiBlock.Part;
+import net.zaharenko424.a_changed.block.multi.AbstractMultiBlock.Part;
 import net.zaharenko424.a_changed.entity.block.LatexContainerEntity;
 import net.zaharenko424.a_changed.util.StateProperties;
 import org.jetbrains.annotations.NotNull;

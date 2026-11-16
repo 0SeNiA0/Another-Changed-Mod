@@ -50,7 +50,7 @@ public class ItemInMawLayer implements RenderLayer {
 
     public void transformToMaw(CustomModel<?> model, PoseStack matrixStack){
         Node part = model.getPart(maw);
-        if(part != null) part.translateAndRotate(matrixStack);
+        if(part != null) part.applyTransformation(matrixStack);
         transform.apply(matrixStack);
     }
 

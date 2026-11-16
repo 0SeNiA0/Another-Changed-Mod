@@ -78,7 +78,7 @@ public final class ItemInHandLayer implements RenderLayer {
 
     public void transformToArm(CustomModel<?> model, HumanoidArm arm, PoseStack matrixStack){
         Node part = getArm(model, arm);
-        if(part != null) part.translateAndRotate(matrixStack);
+        if(part != null) part.applyTransformation(matrixStack);
         if(arm == HumanoidArm.RIGHT){
             transformR.apply(matrixStack);
         } else transformL.apply(matrixStack);
@@ -120,7 +120,7 @@ public final class ItemInHandLayer implements RenderLayer {
         Vector3f headRot = head.rotation();
         float f = headRot.x;
         headRot.x = Mth.clamp(headRot.x, (float) (-Math.PI / 6), (float) (Math.PI / 2));
-        head.translateAndRotate(matrixStack);
+        head.applyTransformation(matrixStack);
         headRot.x = f;
         ItemOnHead.translateToHead(matrixStack, false);
         boolean flag = arm == HumanoidArm.LEFT;
